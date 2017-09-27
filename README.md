@@ -23,7 +23,6 @@ npm install --save data-point
 - [Transforms](#transforms)
   - [dataPoint.transform](#api-data-point-transform)
   - [TransformExpression](#transform-expression)
-  - [TransformMap](#transform-map)
 - [Reducers](#reducers)
   - [Accumulator](#accumulator)
   - [PathReducer](#path-reducer)
@@ -57,7 +56,7 @@ This section is meant to get you started with basic concepts of DataPoint's API,
 
 ### Hello World Example
 
-Trivial example of transforming an given **input** with a [FunctionReducer](#function-reducer).
+Trivial example of transforming a given **input** with a [FunctionReducer](#function-reducer).
 
 ```js
 const DataPoint = require('data-point')
@@ -80,7 +79,7 @@ Example at: [examples/hello-world.js](examples/hello-world.js)
 
 ## Async example
 
-Using [swapi.co](https://swapi.co) amazing api, the script below will get information about a planet and the residents of that planet.
+Using [swapi.co](https://swapi.co) amazing service, the script below will get information about a planet and the residents of that planet.
 
 ```js
 // create DataPoint Instance
@@ -96,9 +95,7 @@ dataPoint.addEntities({
 
   // hash entity to resolve a Planet
   'hash:Planet': {
-    // initial value will be the resolution of source:Planet
-    value: 'source:Planet',
-    // each Key of the result gets mapped
+    // each Key of the input gets mapped
     mapKeys: {
       // simple Object notation to extract data
       name: '$name',
@@ -108,15 +105,10 @@ dataPoint.addEntities({
     }
   },
 
-  // dynamic source entity, the full value of passed to it
-  // will become its url
-  'source:Resident': {
-    url: '{value}'
-  },
-
   // hash entity to resolve a Resident
   'hash:Resident': {
-    // initial value will be the resolution of source:Resident
+    // initial value will be the resolution of
+    // source:Resident
     value: 'source:Resident',
     // each key gets mapped
     mapKeys: {
@@ -124,6 +116,12 @@ dataPoint.addEntities({
       gender: '$gender',
       birthYear: '$birth_year'
     }
+  },
+
+  // dynamic source entity, the value that 
+  // was passed to this entity becomes the url
+  'source:Resident': {
+    url: '{value}'
   }
 })
 
@@ -131,7 +129,7 @@ const data = {
   planetId: 1
 }
 
-dataPoint.transform('hash:Planet', data).then((acc) => {
+dataPoint.transform('source:Planet | hash:Planet', data).then((acc) => {
   console.log(acc.value)
   /*
   { name: 'Tatooine',
@@ -216,8 +214,10 @@ Execute a [TransformExpression](#transform-expression) against a given _input_ v
 **SYNOPSIS**
 
 ```js
-dataPoint.transform(transformExpression, value, options) // promise
-dataPoint.transform(transformExpression, value, options, done) // nodejs callback function
+// promise
+dataPoint.transform(transformExpression, value, options)
+// nodejs callback function
+dataPoint.transform(transformExpression, value, options, done) 
 ```
 
 This method will return a **Promise** if `done` is omitted.
@@ -246,7 +246,7 @@ The following table describes the properties of the `options` argument.
 
 **Description**
 
-A **Transform Expression** object consists of a chain containing one or more [Reducers](#reducers), where the result (transformed data) of one reducer gets passed as input data to the next reducer in the chain. All reducers are executed serially and **asynchronously**.
+A **Transform Expression** object consists of a chain containing one or more [Reducers](#reducers), where the result (transformed value) of one reducer gets passed as input value to the next reducer in the chain. All reducers are executed serially and **asynchronously**.
 
 Transform Expressions can be represented in different ways: 
 
@@ -259,9 +259,9 @@ const t = '$results[0].users | app.validateUsers | model:User[]'
 const t = 'model:User[] | app.validateUsers | $[0]'
 
 // which could later be used as:
-
 dataPoint.transform(t, someInput).then((acc) => {
-  console.log(acc.value) // resolved result
+  // resolved result
+  console.log(acc.value)
 })
 ```
 
@@ -282,24 +282,10 @@ const t = ['$image[0].url', (acc, next) => { ... }]
 const t = ['$results[0].users | model:Users', (acc, next) => { ... }]
 
 // which could be later used as:
-
 dataPoint.transform(t, someInput).then((acc) => {
-  console.log(acc.value) // resolved result
+  // resolved result
+  console.log(acc.value)
 })
-```
-
-### <a name="transform-map">TransformMap</a>
-
-This structure allows you to map key/value pairs, where each value is of type [TransformExpression](#transform-expression).
-
-**SYNOPSIS**
-
-```js
-{
-  key1: TransformExpression,
-  key2: TransformExpression,
-  ...
-}
 ```
 
 ## <a name="reducers">Reducer</a>
@@ -318,7 +304,7 @@ DataPoint supports the following reducer types:
 
 This object is passed to reducers and to middleware callbacks; it contains contextual information about the current transformation (or middleware) being executed. 
 
-The `Accumulator.value` property is the data source from which you want to apply transformations. This property **SHOULD** be treated as read-only immutable **-never to be transformed-** object. Use it as your initial source and create a new object from it. This ensures that your reducers are [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0); pure functions produce no side effects. 
+The `Accumulator.value` property is the data source from which you want to apply transformations. This property **SHOULD** be treated as **read-only immutable object**. Use it as your initial source and create a new object from it. This ensures that your reducers are [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0); pure functions produce no side effects. 
 
 **Properties exposed:**
 
@@ -345,9 +331,9 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 
 | Option | Description |
 |:---|:---|
-| *.* | Reference to current `accumulator.value`. |
-| *..* | Gives you full access to current `accumulator`. |
-| *path* | Simple Object path notation to extract a path from current `accumulator.value`. |
+| *$.* | Reference to current `accumulator.value`. |
+| *$..* | Gives you full access to current `accumulator`. |
+| *$path* | Simple Object path notation to extract a path from current `accumulator.value`. |
 
 #### <a name="root-path">Root path $.</a>
 
@@ -366,7 +352,7 @@ const input = {
   }
 }
 
-dataPoint.transform('$', input).then((acc) => {
+dataPoint.transform('$.', input).then((acc) => {
   assert.equal(acc.value, input)
 })
 ```
@@ -608,8 +594,8 @@ dataPoint.addEntities({
 
 dataPoint.transform(['$a | transform:toUpperCase[]'], input).then((acc) => {
   assert.equal(acc.value[0], 'HELLO WORLD')
-  assert.equal(acc.value[1], 'HELLO Laia')
-  assert.equal(acc.value[2], 'HELLO Darek')
+  assert.equal(acc.value[1], 'HELLO LAIA')
+  assert.equal(acc.value[2], 'HELLO DAREK')
   assert.equal(acc.value[3], 'HELLO ITALY')
 })
 ```
@@ -1179,7 +1165,8 @@ dataPoint.addEntities({
 })
 
 dataPoint.transform('source:getOrgInfo', {}).then((acc) => {
-  console.log(acc.value) // entire result from https://api.github.com/orgs/nodejs
+  // entire result from https://api.github.com/orgs/nodejs
+  console.log(acc.value) 
 })
 ```
 
@@ -1201,7 +1188,7 @@ dataPoint.addEntities({
     // this object will be passed to request.js
     options: {
       headers: {
-        'User-Agent': 'request'
+        'User-Agent': 'DataPoint'
       }
     }
   }
@@ -1250,9 +1237,9 @@ Example at: [examples/entity-source-string-template.js](examples/entity-source-s
 
 ##### <a name="transform-object">TransformObject</a>
 
-A TransformObject is a Object where any property (at any level), that its key starts with the character `$` is treated as a  [TransformExpression](#transform-expression). Properties that do not start with a `$` character will be left untouched.
+A TransformObject is a Object where any property (at any level), that its key starts with the character `$` is treated as a [TransformExpression](#transform-expression). Properties that do not start with a `$` character will be left untouched.
 
-When an TransformObject is to be resolved, all TransformExpressions are resolved in parallel, and their values will be injected in place of the TransformExpression. Also the `$` character will be removed from the resolved property.
+When a TransformObject is to be resolved, all TransformExpressions are resolved in parallel, and their values will be injected in place of the TransformExpression. Also the `$` character will be removed from the resolved property.
 
 ```js
 dataPoint.addEntities({
@@ -1318,7 +1305,7 @@ For more examples of source entities, see the [Examples](examples), the unit tes
 
 A Hash entity transforms a _Hash_ like data structure. It enables you to manipulate the keys within a Hash. 
 
-To prevent unexpected results, **Hash** only can process **Plain Objects**, which are objects created by the Object constructor. 
+To prevent unexpected results, **Hash** can only process **Plain Objects**, which are objects created by the Object constructor. 
 
 Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these available reducers to a Hash entity. Keep in mind that those reducers will always be executed in a specific order:
 
@@ -1358,8 +1345,8 @@ dataPoint.addEntities({
 |:---|:---|:---|
 | *value* | [TransformExpression](#transform-expression) | The value to which the Entity resolves |
 | *mapKeys* | [TransformMap](#transform-map) | Map to a new set of key/values. Each value accepts a transform |
-| *omitKeys* | `String`[] | Omits keys from acc.value (Array of strings) |
-| *pickKeys* | `String`[] | Picks keys from acc.value (Array of strings) |
+| *omitKeys* | `String[]` | Omits keys from acc.value (Array of strings) |
+| *pickKeys* | `String[]` | Picks keys from acc.value (Array of strings) |
 | *addKeys* | [TransformMap](#transform-map) | Add/Override key/values. Each value accepts a transform |
 | *addValues* | `Object` | Add/Override hard-coded key/values |
 | *compose* | [ComposeReducer](#compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one operation gets passed to the next one|
@@ -1439,6 +1426,20 @@ dataPoint.transform('source:getOrgInfo | hash:OrgInfo').then((acc) => {
 ```
 
 Example at: [examples/entity-hash-mapKeys.js](examples/entity-hash-mapKeys.js)
+
+###### <a name="transform-map">TransformMap</a>
+
+This structure allows you to map key/value pairs, where each value is of type [TransformExpression](#transform-expression).
+
+**SYNOPSIS**
+
+```js
+{
+  key1: TransformExpression,
+  key2: TransformExpression,
+  ...
+}
+```
 
 ##### <a name="hash-addKeys">Hash.addKeys</a>
 
@@ -2373,7 +2374,7 @@ dataPoint.addValue(objectPath, value)
 
 DataPoint exposes a set of methods to help you build your own Custom Entity Types. With them you are enabled to build on top of the [base entity API](#entity-base-api). 
 
-### <a name="adding-entity-types">Adding new Entity Types
+### <a name="adding-entity-types">Adding new Entity Types</a>
 
 You may add new Entity Types through the [DataPoint.create](#api-data-point-create) method, or through the [dataPoint.addEntityTypes](#data-point-add-entity-types)
 
