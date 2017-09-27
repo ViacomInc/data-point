@@ -1,5 +1,7 @@
 # DataPoint
 
+[![Build Status](https://travis-ci.org/ViacomInc/data-point.svg?branch=ci)](https://travis-ci.org/ViacomInc/data-point) [![Coverage Status](https://coveralls.io/repos/github/ViacomInc/data-point/badge.svg?branch=ci)](https://coveralls.io/github/ViacomInc/data-point?branch=ci)
+
 > JavaScript Utility for collecting, processing and transforming data.
 
 DataPoint helps you reason with and streamline your data processing layer. With it you can collect, process, and transform data from multiple sources, and deliver the output in a tailored format to your end consumer. 
