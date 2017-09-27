@@ -1,0 +1,98 @@
+{
+  "name": "data-point",
+  "version": "0.0.0",
+  "description": "Data Processing and Transformation Utility",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/ViacomInc/data-point",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
+  },
+  "engines": {
+    "node": ">=4",
+    "npm": ">=2"
+  },
+  "author": {
+    "name": "Acatl Pacheco",
+    "email": "acatl.pacheco@viacom.com"
+  },
+  "contributors": [
+    {
+      "name": "Fred Ghosn",
+      "email": "fred.ghosn@viacomcontractor.com"
+    },
+    {
+      "name": "Yinig Chen",
+      "email": "Yining.Chen@viacom.com"
+    },
+    {
+      "name": "Matthew Armstrong",
+      "email": "MatthewR.Armstrong@viacom.com"
+    }
+  ],
+  "keywords": [
+    "reduce",
+    "transform",
+    "process",
+    "functional",
+    "compose",
+    "aggregate"
+  ],
+  "scripts": {
+    "precommit": "lint-staged",
+    "commit": "git-cz",
+    "test": "jest --coverage",
+    "watch:test": "jest --coverage --watch",
+    "lint": "standard --verbose | snazzy",
+    "release": "standard-version"
+  },
+  "files": [
+    "LICENSE",
+    "index.js",
+    "lib/"
+  ],
+  "dependencies": {
+    "ajv": "5.2.3",
+    "bluebird": "3.5.0",
+    "deep-freeze": "0.0.1",
+    "lodash": "4.17.4",
+    "request": "2.82.0",
+    "request-promise": "4.2.2"
+  },
+  "devDependencies": {
+    "benchmark": "2.1.4",
+    "commitizen": "2.9.6",
+    "cz-conventional-changelog": "2.0.0",
+    "jest": "21.1.0",
+    "lint-staged": "4.2.3",
+    "nock": "^8.0.0",
+    "prettier-standard": "6.0.0",
+    "semver": "5.4.1",
+    "snazzy": "7.0.0",
+    "standard": "10.0.3",
+    "standard-version": "4.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/utils/",
+      "/test/definitions/"
+    ]
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier-standard",
+      "git add",
+      "jest --bail --findRelatedTests"
+    ]
+  }
+}

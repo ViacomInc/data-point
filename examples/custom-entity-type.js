@@ -1,0 +1,76 @@
+const _ = require('lodash')
+
+const DataPoint = require('../')
+const Helpers = DataPoint.helpers
+
+// Entity Class
+function RenderTemplate () {}
+
+/**
+ * Entity Factory
+ * @param {*} spec - Entity Specification
+ * @return {RenderTemplate} RenderTemplate Instance
+ */
+function create (spec) {
+  // create an entity instance
+  const entity = Helpers.createEntity(RenderTemplate, spec)
+  // set/create template from spec.template value
+  entity.template = _.template(_.defaultTo(spec.template, ''))
+  return entity
+}
+
+/**
+ * Resolve entity
+ * @param {Accumulator} accumulator
+ * @param {function} resolveTransform
+ * @return {Promise}
+ */
+function resolve (accumulator, resolveTransform) {
+  // get Entity Spec
+  const spec = accumulator.reducer.spec
+  // resolve 'spec.value' TransformExpression
+  // against accumulator
+  return resolveTransform(accumulator, spec.value).then(acc => {
+    // execute lodash template against
+    // accumulator value
+    const output = spec.template(acc.value)
+    // set new accumulator.value
+    // this method creates a new acc object
+    return Helpers.set(acc, 'value', output)
+  })
+}
+
+/**
+ * RenderEntity API
+ */
+const RenderEntity = {
+  create,
+  resolve
+}
+
+// Create DataPoint instance
+const dataPoint = DataPoint.create({
+  // custom entity Types
+  entityTypes: {
+    // adds custom entity type 'render'
+    render: RenderEntity
+  },
+
+  entities: {
+    // uses new custom entity type
+    'render:HelloWorld': {
+      value: '$user',
+      template: '<h1>Hello <%= name %>!!</h1>'
+    }
+  }
+})
+
+const data = {
+  user: {
+    name: 'World'
+  }
+}
+
+dataPoint.transform('render:HelloWorld', data).then(acc => {
+  console.log(acc.value) // '<h1>Hello World!!</h1>'
+})
