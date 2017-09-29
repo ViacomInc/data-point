@@ -10,7 +10,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 ## Setup
 
 ```bash
-git clone git@github.com:Viacom/data-point.git
+git clone git@github.com:ViacomInc/data-point.git
 cd data-point
 npm install
 ```
@@ -31,13 +31,13 @@ npm run watch:test
 
 **Linting**
 
-Use are using [StandardJs](https://standardjs.com/) for linting
+We are using [StandardJs](https://standardjs.com/) for linting
 
 **Programming style**
 
-Aside from trying to follow common Javascript Best practices we have made an effort to follow a functional programming approach in our codebase, please help us continue with this pattern. 
+Aside from trying to follow common Javascript best practices we have made an effort to follow a functional programming approach in our codebase, please help us continue with this pattern. 
 
-If you are new to Functional programing there is a lot of good documentation out there, but a good introduction is Eric Elliott's Functional Programming Series. You can start with [What is Functional Programming](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0) and the more in depth [Composing Software](https://medium.com/javascript-scene/the-rise-and-fall-and-rise-of-functional-programming-composable-software-c2d91b424c8c#.2dfd6n6qe) posts are really good.
+If you are new to Functional programming there is a lot of good documentation out there, but a good introduction is Eric Elliott's Functional Programming Series. You can start with [What is Functional Programming](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0) and the more in depth [Composing Software](https://medium.com/javascript-scene/the-rise-and-fall-and-rise-of-functional-programming-composable-software-c2d91b424c8c#.2dfd6n6qe) posts are really good.
 
 **Javascript API restrictions**
 
@@ -51,7 +51,7 @@ That said, for asynchronous code please rely on using BlueBird's promise api.
 2. Create your feature branch `git checkout -b feature/my-new-feature`
 3. Commit your changes through `npm run commit`
 4. Push to the branch `git push origin feature/my-new-feature`
-5. Create a new [Pull Request](https://github.com/Viacom/data-path/compare)
+5. Create a new [Pull Request](https://github.com/ViacomInc/data-path/compare)
 
 Please update the [README.md](README.md) with details of changes to the interface.
 
