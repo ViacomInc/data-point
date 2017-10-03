@@ -1114,7 +1114,7 @@ Example at: [examples/entity-entry-error-handled.js](examples/entity-entry-error
 
 #### <a name="request-entity">Request Entity</a>
 
-Requests a remote source, using [Request](https://github.com/request/request) behind the scenes. The features supported by Request are also exposed/supported by Request.
+Requests a remote source, using [request](https://github.com/request/request) behind the scenes. The features supported by `request` are exposed/supported by Request entity.
 
 **SYNOPSIS**
 
