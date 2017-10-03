@@ -2,13 +2,13 @@ const dataPoint = require('../').create()
 
 dataPoint.addEntities({
   'entry:getReposWithAllTags': {
-    value: 'source:repositories'
+    value: 'request:repositories'
   },
-  'source:githubBase': {
+  'request:githubBase': {
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
-  'source:repositories -> source:githubBase': {
-    // options object is provided by source:githubBase
+  'request:repositories -> request:githubBase': {
+    // options object is provided by request:githubBase
     url: 'https://api.github.com/orgs/{locals.orgName}/repos'
   }
 })

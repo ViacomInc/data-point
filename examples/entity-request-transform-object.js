@@ -1,7 +1,7 @@
 const dataPoint = require('../').create()
 
 dataPoint.addEntities({
-  'source:searchPeople': {
+  'request:searchPeople': {
     url: 'https://swapi.co/api/people/?search=r2',
     options: {
       qs: {
@@ -17,7 +17,7 @@ dataPoint.addEntities({
 
 // second parameter to transform is the initial acc value
 dataPoint
-  .transform('source:searchPeople', {
+  .transform('request:searchPeople', {
     search: 'r2'
   })
   .then(acc => {

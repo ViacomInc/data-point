@@ -1,7 +1,7 @@
 const dataPoint = require('../').create()
 
 dataPoint.addEntities({
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value}',
     options: {
       headers: {
@@ -10,7 +10,7 @@ dataPoint.addEntities({
     }
   },
 
-  'source:getOrgInfoFromObject': {
+  'request:getOrgInfoFromObject': {
     // notice here dot notation to get the value of name
     url: 'https://api.github.com/orgs/{value.org.name}',
     options: {
@@ -20,7 +20,7 @@ dataPoint.addEntities({
     }
   },
 
-  'source:getOrgInfoFromLocals': {
+  'request:getOrgInfoFromLocals': {
     // notice here dot notation to get the value of name from locals
     url: 'https://api.github.com/orgs/{locals.name}',
     options: {
@@ -31,14 +31,14 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getOrgInfo', 'nodejs').then(acc => {
+dataPoint.transform('request:getOrgInfo', 'nodejs').then(acc => {
   console.log(acc.value)
   // entire result from https://api.github.com/orgs/nodejs
 })
 
 // here we pass an Object as the input value
 dataPoint
-  .transform('source:getOrgInfoFromObject', { org: { name: 'nodejs' } })
+  .transform('request:getOrgInfoFromObject', { org: { name: 'nodejs' } })
   .then(acc => {
     console.log(acc.value)
     // entire result from https://api.github.com/orgs/nodejs
@@ -49,7 +49,7 @@ const options = {
 }
 
 // here we pass options (thrid argument to transform)
-dataPoint.transform('source:getOrgInfoFromLocals', true, options).then(acc => {
+dataPoint.transform('request:getOrgInfoFromLocals', true, options).then(acc => {
   console.log(acc.value)
   // entire result from https://api.github.com/orgs/nodejs
 })

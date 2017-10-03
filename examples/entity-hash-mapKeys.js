@@ -1,7 +1,7 @@
 const dataPoint = require('../').create()
 
 dataPoint.addEntities({
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/nodejs',
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
@@ -16,7 +16,7 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getOrgInfo | hash:OrgInfo').then(acc => {
+dataPoint.transform('request:getOrgInfo | hash:OrgInfo').then(acc => {
   console.log(acc.value)
   // {
   //  reposUrl: 'https://api.github.com/orgs/nodejs/repos',

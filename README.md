@@ -36,7 +36,7 @@ npm install --save data-point
   - [Built-in entities](#built-in-entities)
     - [Transform](#transform-entity)
     - [Entry](#entry-entity)
-    - [Source](#source-entity)
+    - [Request](#request-entity)
     - [Hash](#hash-entity)
     - [Collection](#collection-entity)
     - [Control](#control-entity)
@@ -87,8 +87,8 @@ const dataPoint = require('data-point').create()
 
 // add entities to dataPoint instance
 dataPoint.addEntities({
-  // remote source
-  'source:Planet': {
+  // remote request
+  'request:Planet': {
     // {value.planetId} injects the value from the accumulator
     url: 'https://swapi.co/api/planets/{value.planetId}'
   },
@@ -108,8 +108,8 @@ dataPoint.addEntities({
   // hash entity to resolve a Resident
   'hash:Resident': {
     // initial value will be the resolution of
-    // source:Resident
-    value: 'source:Resident',
+    // request:Resident
+    value: 'request:Resident',
     // each key gets mapped
     mapKeys: {
       name: '$name',
@@ -118,9 +118,9 @@ dataPoint.addEntities({
     }
   },
 
-  // dynamic source entity, the value that 
+  // dynamic request entity, the value that 
   // was passed to this entity becomes the url
-  'source:Resident': {
+  'request:Resident': {
     url: '{value}'
   }
 })
@@ -129,7 +129,7 @@ const data = {
   planetId: 1
 }
 
-dataPoint.transform('source:Planet | hash:Planet', data).then((acc) => {
+dataPoint.transform('request:Planet | hash:Planet', data).then((acc) => {
   console.log(acc.value)
   /*
   { name: 'Tatooine',
@@ -669,7 +669,7 @@ DataPoint comes with the following built-in entities:
 
 - [Transform](#transform-entity)
 - [Entry](#entry-entity)
-- [Source](#source-entity)
+- [Request](#request-entity)
 - [Hash](#hash-entity)
 - [Collection](#collection-entity)
 - [Control](#control-entity)
@@ -1017,7 +1017,7 @@ dataPoint.transform('entry:foo', input)
 
 Example at: [examples/entity-entry-error-resolved.js](examples/entity-entry-error-resolved.js)
 
-For examples of entry entities, see the ones used in the [Examples](examples), on the unit tests: [Source Definitions](test/definitions/entry.js) and [Integration Examples](test/definitions/integrations.js)
+For examples of entry entities, see the ones used in the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/entry.js) and [Integration Examples](test/definitions/integrations.js)
 
 ##### <a name="entry-params">Entry.params</a>
 
@@ -1112,15 +1112,15 @@ dataPoint.transform('entry:foo', input).then((acc) => {
 
 Example at: [examples/entity-entry-error-handled.js](examples/entity-entry-error-handled.js)
 
-#### <a name="source-entity">Source Entity</a>
+#### <a name="request-entity">Request Entity</a>
 
-Requests a remote source, using [Request](https://github.com/request/request) behind the scenes. The features supported by Request are also exposed/supported by Source.
+Requests a remote source, using [request](https://github.com/request/request) behind the scenes. The features supported by `request` are exposed/supported by Request entity.
 
 **SYNOPSIS**
 
 ```js
 dataPoint.addEntities({
-  'source:<entityId>': {
+  'request:<entityId>': {
     before: TransformExpression,
     url: StringTemplate,
     options: TransformObject,
@@ -1144,7 +1144,7 @@ dataPoint.addEntities({
 | *error*   | [TransformExpression](#transform-expression) | Transform to be resolved in case of an error |
 | *params*    | `Object` | User defined Hash that will be passed to every transform within the context of the transform's execution |
 
-##### <a name="source-url">Source.url</a>
+##### <a name="request-url">Request.url</a>
 
 **GitHub API - list organization info**
 
@@ -1154,7 +1154,7 @@ Fetches an organization's information.
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/nodejs',
     options: {
       headers: {
@@ -1164,17 +1164,17 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getOrgInfo', {}).then((acc) => {
+dataPoint.transform('request:getOrgInfo', {}).then((acc) => {
   // entire result from https://api.github.com/orgs/nodejs
   console.log(acc.value) 
 })
 ```
 
-Example at: [examples/entity-source-basic.js](examples/entity-source-basic.js)
+Example at: [examples/entity-request-basic.js](examples/entity-request-basic.js)
 
 ##### <a name="string-template">StringTemplate</a>
 
-StringTemplate is a string that supports a **minimal** templating system. You may inject any value into the string by enclosing it within `{ObjectPath}` curly braces. **The context of the string is the Source's [Accumulator](#accumulator) Object**, meaning you have access to any property within it. 
+StringTemplate is a string that supports a **minimal** templating system. You may inject any value into the string by enclosing it within `{ObjectPath}` curly braces. **The context of the string is the Request's [Accumulator](#accumulator) Object**, meaning you have access to any property within it. 
 
 Using `acc.value` property to make the url dynamic.
 
@@ -1183,7 +1183,7 @@ dataPoint.addEntities({
   // dynamic search, which uses StringTemplate's simple 
   // templating system {value} to inject the search 
   // value into the URL string
-  'source:getNodeOrgInfo': {
+  'request:getNodeOrgInfo': {
     url: 'https://api.github.com/orgs/{value.organization}',
     // this object will be passed to request.js
     options: {
@@ -1210,7 +1210,7 @@ dataPoint.addEntities({
   // dynamic search, which uses StringTemplate's simple 
   // templating system {value} to inject the search 
   // value into the URL string
-  'source:getNodeOrgInfo': {
+  'request:getNodeOrgInfo': {
     url: 'https://api.github.com/orgs/{locals.organization}',
     // this object will be passed to request.js
     options: {
@@ -1233,7 +1233,7 @@ transform('entry:getNodeOrgInfo', null, {
 })
 ```
 
-Example at: [examples/entity-source-string-template.js](examples/entity-source-string-template.js)
+Example at: [examples/entity-request-string-template.js](examples/entity-request-string-template.js)
 
 ##### <a name="transform-object">TransformObject</a>
 
@@ -1243,7 +1243,7 @@ When a TransformObject is to be resolved, all TransformExpressions are resolved 
 
 ```js
 dataPoint.addEntities({
-  'source:searchPeople': {
+  'request:searchPeople': {
     url: 'https://swapi.co/api/people/?search=r2',
     options: {
       qs: {
@@ -1258,7 +1258,7 @@ dataPoint.addEntities({
 })
 
 // second parameter to transform is the initial acc value
-dataPoint.transform('source:searchPeople', {
+dataPoint.transform('request:searchPeople', {
   search: 'r2'
 }).then((acc) => {
   // R2-D2
@@ -1266,20 +1266,20 @@ dataPoint.transform('source:searchPeople', {
 })
 ```
 
-Example at: [examples/entity-source-transform-object.js](examples/entity-source-transform-object.js)
+Example at: [examples/entity-request-transform-object.js](examples/entity-request-transform-object.js)
 
-##### <a name="source-before-request">Source.beforeRequest</a>
+##### <a name="request-before-request">Request.beforeRequest</a>
 
-There are times where you may want to process the `source.options` object before passing it to send the request. 
+There are times where you may want to process the `request.options` object before passing it to send the request. 
 
-This example simply provides the header object through a reducer. One possible use case for source.beforeRequest would be to set up [OAuth Signing](https://www.npmjs.com/package/request#oauth-signing).
+This example simply provides the header object through a reducer. One possible use case for request.beforeRequest would be to set up [OAuth Signing](https://www.npmjs.com/package/request#oauth-signing).
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value}',
     beforeRequest: (acc, next) => {
-      // acc.value holds reference to source.options
+      // acc.value holds reference to request.options
       const options = _.assign({}, acc.value, {
         headers: {
           'User-Agent': 'DataPoint'
@@ -1291,15 +1291,15 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getOrgInfo', 'nodejs').then((acc) => {
+dataPoint.transform('request:getOrgInfo', 'nodejs').then((acc) => {
   console.log(acc.value)
   // entire result from https://api.github.com/orgs/nodejs
 })
 ```
 
-Example at: [examples/entity-source-before-request.js](examples/entity-source-before-request.js)
+Example at: [examples/entity-request-before-request.js](examples/entity-request-before-request.js)
 
-For more examples of source entities, see the [Examples](examples), the unit tests: [Source Definitions](test/definitions/sources.js), and [Integration Examples](test/definitions/integrations.js)
+For more examples of request entities, see the [Examples](examples), the unit tests: [Request Definitions](test/definitions/sources.js), and [Integration Examples](test/definitions/integrations.js)
 
 #### <a name="hash-entity">Hash Entity</a>
 
@@ -1394,11 +1394,11 @@ Example at: [examples/entity-hash-context.js](examples/entity-hash-context.js)
 
 Maps to a new set of key/value pairs through a [TransformMap](#transform-map), where each value accepts a [TransformExpression](#transform-expression).
 
-Going back to our GitHub API examples, let's map some keys from the result of a source:
+Going back to our GitHub API examples, let's map some keys from the result of a request:
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/nodejs',
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
@@ -1413,7 +1413,7 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getOrgInfo | hash:OrgInfo').then((acc) => {
+dataPoint.transform('request:getOrgInfo | hash:OrgInfo').then((acc) => {
   console.log(acc.value)
   // {
   //  reposUrl: 'https://api.github.com/orgs/nodejs/repos',
@@ -1450,9 +1450,9 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
 ```js
 dataPoint.addEntities({
   'entry:orgInfo': {
-    value: 'source:getOrgInfo | hash:OrgInfo | hash:OrgInfoCustom'
+    value: 'request:getOrgInfo | hash:OrgInfo | hash:OrgInfoCustom'
   },
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/nodejs',
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
@@ -1511,9 +1511,9 @@ The next example is similar to the previous example. However, instead of mapping
 ```js
 dataPoint.addEntities({
   'entry:orgInfo': {
-    value: 'source:getOrgInfo | hash:OrgInfo'
+    value: 'request:getOrgInfo | hash:OrgInfo'
   },
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value.org}',
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
@@ -1555,9 +1555,9 @@ This example will only **omit** some keys, and let the rest pass through:
 ```js
 dataPoint.addEntities({
   'entry:orgInfo': {
-    value: 'source:getOrgInfo | hash:OrgInfo'
+    value: 'request:getOrgInfo | hash:OrgInfo'
   },
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value.org}',
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
@@ -1659,9 +1659,9 @@ const toUpperCase = (acc, next) => {
 
 dataPoint.addEntities({
   'entry:orgInfo': {
-    value: 'source:getOrgInfo | hash:OrgInfo'
+    value: 'request:getOrgInfo | hash:OrgInfo'
   },
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value.org}',
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
@@ -1695,7 +1695,7 @@ dataPoint.transform('entry:orgInfo', { org: 'nodejs' }).then((acc) => {
 })
 ```
 
-For examples of hash entities, see the [Examples](examples), on the unit tests: [Source Definitions](test/definitions/hash.js), and [Integration Examples](test/definitions/integrations.js)
+For examples of hash entities, see the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/hash.js), and [Integration Examples](test/definitions/integrations.js)
 
 #### <a name="collection-entity">Collection Entity</a>
 
@@ -1755,7 +1755,7 @@ Now that we have the result of the fetch, let's now map each item, and then extr
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgRepositories': {
+  'request:getOrgRepositories': {
     url: 'https://api.github.com/orgs/nodejs/repos'
   },
   'collection:getRepositoryTagsUrl': {
@@ -1763,7 +1763,7 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getGist | collection:getRepositoryTagsUrl', {}).then((acc) => {
+dataPoint.transform('request:getGist | collection:getRepositoryTagsUrl', {}).then((acc) => {
   console.log(acc.value)
   /*
   [
@@ -1787,22 +1787,22 @@ _For the purpose of this example, let's imagine that GitHub does not provide the
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgRepositories': {
+  'request:getOrgRepositories': {
     url: 'https://api.github.com/orgs/nodejs/repos'
   },
-  'source:getLatestTag': {
+  'request:getLatestTag': {
     // here we are injecting the current acc.value 
-    // that was passed to the source
+    // that was passed to the request
     url: 'https://api.github.com/repos/nodejs/{value}/tags'
   },
   'collection:getRepositoryLatestTag': {
     // magic!! here we are telling it to map each 
-    // repository.name to a source:getLatestTag, and return the entire source
-    map: '$name | source:getLatestTag'
+    // repository.name to a request:getLatestTag, and return the entire source
+    map: '$name | request:getLatestTag'
   }
 })
 
-dataPoint.transform('source:getOrgRepositories | collection:getRepositoryLatestTag', {}).then((acc) => {
+dataPoint.transform('request:getOrgRepositories | collection:getRepositoryLatestTag', {}).then((acc) => {
   console.log(acc.value)
   /*
   [
@@ -1836,12 +1836,12 @@ To obtain the latest tag GitHub has on each repository:
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgRepositories': {
+  'request:getOrgRepositories': {
     url: 'https://api.github.com/orgs/nodejs/repos'
   },
-  'source:getLatestTag': {
+  'request:getLatestTag': {
     // here we are injecting the current acc.value 
-    // that was passed to the source
+    // that was passed to the request
     url: 'https://api.github.com/repos/nodejs/{value}/tags',
     options
   },
@@ -1850,11 +1850,11 @@ dataPoint.addEntities({
     // we add a third reducer at the end to get 
     // the first element of each tag result,
     // and the name of it
-    map: '$name | source:getLatestTag | $[0].name'
+    map: '$name | request:getLatestTag | $[0].name'
   }
 })
 
-dataPoint.transform('source:getOrgRepositories | collection:getRepositoryLatestTag', {}).then((acc) => {
+dataPoint.transform('request:getOrgRepositories | collection:getRepositoryLatestTag', {}).then((acc) => {
   console.log(acc.value)
   /*
   [
@@ -1878,7 +1878,7 @@ The following example filters the data to identify all the repos that have more 
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgRepositories': {
+  'request:getOrgRepositories': {
     url: 'https://api.github.com/orgs/nodejs/repos'
   },
   'collection:getRepositoryUrl': {
@@ -1888,7 +1888,7 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getGist', {}).then((acc) => {
+dataPoint.transform('request:getGist', {}).then((acc) => {
   console.log(acc.value)
   /*
   [
@@ -1910,7 +1910,7 @@ The following example gets all the repos that are actually forks. In this case, 
 
 ```js
 dataPoint.addEntities({
-  'source:getOrgRepositories': {
+  'request:getOrgRepositories': {
     url: 'https://api.github.com/orgs/nodejs/repos'
   },
   'collection:getRepositoryUrl': {
@@ -1918,7 +1918,7 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getGist', {}).then((acc) => {
+dataPoint.transform('request:getGist', {}).then((acc) => {
   console.log(acc.value)
   /*
   [
@@ -1949,7 +1949,7 @@ Returns the value of the first element in the array that satisfies the provided 
 
 ```js
 dataPoint.addEntities({
-  'source:repos': {
+  'request:repos': {
     url: 'https://api.github.com/orgs/nodejs/repos',
     options: {
       headers: {
@@ -1958,7 +1958,7 @@ dataPoint.addEntities({
     }
   },
   'collection:getNodeRepo': {
-    before: 'source:repos',
+    before: 'request:repos',
     find: (acc, next) => {
       // notice we are checking against the property -name- 
       next(null, acc.value.name === 'node')
@@ -1966,7 +1966,7 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:repos | collection:getNodeRepo', {}).then((acc) => {
+dataPoint.transform('request:repos | collection:getNodeRepo', {}).then((acc) => {
   console.log(acc.value)
   /*
   {
@@ -1998,7 +1998,7 @@ const isEqualTo = (match) => (acc, next) => {
 }
 
 dataPoint.addEntities({
-  'source:repos': {
+  'request:repos': {
     url: 'https://api.github.com/orgs/nodejs/repos',
     options: {
       headers: {
@@ -2007,7 +2007,7 @@ dataPoint.addEntities({
     }
   },
   'collection:getNodeRepo': {
-    before: 'source:repos',
+    before: 'request:repos',
     compose: [{
       // passing the value of property -name- to the
       // next reducer, which will compare to a given value 
@@ -2016,7 +2016,7 @@ dataPoint.addEntities({
   }
 };
 
-dataPoint.transform('source:repos | collection:getNodeRepo', {}).then((acc) => {
+dataPoint.transform('request:repos | collection:getNodeRepo', {}).then((acc) => {
   console.log(acc.value)
   /*
   {
@@ -2041,7 +2041,7 @@ const isEqualTo = (match) => (acc, next) => {
 }
 
 dataPoint.addEntities({
-  'source:repos': {
+  'request:repos': {
     url: 'https://api.github.com/orgs/nodejs/repos',
     options: {
       headers: {
@@ -2060,7 +2060,7 @@ dataPoint.addEntities({
   }
 };
 
-dataPoint.transform('source:repos | collection:forkedReposSummary', {}).then((acc) => {
+dataPoint.transform('request:repos | collection:forkedReposSummary', {}).then((acc) => {
   console.log(acc.value)
   /*
   [
@@ -2081,7 +2081,7 @@ dataPoint.transform('source:repos | collection:forkedReposSummary', {}).then((ac
 })
 ```
 
-For more examples of collection entities, see the [Examples](examples), on the unit tests: [Source Definitions](test/definitions/collection.js), and [Integration Examples](test/definitions/integrations.js)
+For more examples of collection entities, see the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/collection.js), and [Integration Examples](test/definitions/integrations.js)
 
 #### <a name="control-entity">Control Entity</a>
 
@@ -2254,13 +2254,13 @@ To reuse the options from an extension:
 ```js
 dataPoint.addEntities({
   'entry:getReposWithAllTags': {
-    value: 'source:repositories'
+    value: 'request:repositories'
   },
-  'source:githubBase': {
+  'request:githubBase': {
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
-  'source:repositories -> source:githubBase': {
-    // options object is provided by source:githubBase
+  'request:repositories -> request:githubBase': {
+    // options object is provided by request:githubBase
     url: 'https://api.github.com/orgs/{locals.orgName}/repos'
   }
 })
@@ -2331,7 +2331,7 @@ dataPoint.use(id, callback)
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *id* | `string` | middleware ID is a two part string in the form of `<EntityType>:<EventType>`, where `<EntityType>` may be `entry`, `model`, `source`, or any other registered entity type. `<EventType>` is either `before` or `after`. |
+| *id* | `string` | middleware ID is a two part string in the form of `<EntityType>:<EventType>`, where `<EntityType>` may be `entry`, `model`, `request`, or any other registered entity type. `<EventType>` is either `before` or `after`. |
 | *callback* | `Function` | This is the callback function that will be executed once an entity event is triggered. The callback has the form `(acc, next)`, where `acc` is the current middleware [Middleware Accumulator](#middleware-accumulator-object) object, and next is a function callback to be executed once the middleware is done executing. `next` callback uses the form of `(error)`. |
 
 ### <a name="middleware-accumulator-object">Middleware Accumulator object</a>

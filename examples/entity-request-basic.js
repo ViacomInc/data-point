@@ -1,7 +1,7 @@
 const dataPoint = require('../').create()
 
 dataPoint.addEntities({
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/nodejs',
     options: {
       headers: {
@@ -11,6 +11,6 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('source:getOrgInfo', {}).then(acc => {
+dataPoint.transform('request:getOrgInfo', {}).then(acc => {
   console.log(acc.value) // entire result from https://api.github.com/orgs/nodejs
 })

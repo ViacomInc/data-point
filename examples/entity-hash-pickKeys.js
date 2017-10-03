@@ -3,9 +3,9 @@ const assert = require('assert')
 
 dataPoint.addEntities({
   'entry:orgInfo': {
-    value: 'source:getOrgInfo | hash:OrgInfo'
+    value: 'request:getOrgInfo | hash:OrgInfo'
   },
-  'source:getOrgInfo': {
+  'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value.org}',
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
