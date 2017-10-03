@@ -12,67 +12,67 @@ module.exports = {
       leafs: '$children | hash:branchLeaf[]'
     }
   },
-  'entry:callSource': {
+  'entry:callRequest': {
     // entry:a1
-    value: 'source:hardcodedUrl1',
+    value: 'request:hardcodedUrl1',
     params: {
       ttl: '2d'
     }
   },
-  'source:hardcodedUrl1': {
+  'request:hardcodedUrl1': {
     url: 'http://remote.test/source1'
   },
-  'source:hardcodedUrl2': {
+  'request:hardcodedUrl2': {
     url: 'http://remote.test/source2'
   },
 
-  'entry:callDynamicSourceFromLocals': {
+  'entry:callDynamicRequestFromLocals': {
     // entry:a2
-    value: 'source:dynamicSourceFromLocals'
+    value: 'request:dynamicRequestFromLocals'
   },
-  'source:dynamicSourceFromLocals': {
+  'request:dynamicRequestFromLocals': {
     url: 'http://remote.test{locals.itemPath}'
   },
 
-  'entry:hashThatCallsSource': {
+  'entry:hashThatCallsRequest': {
     // entry:a3
-    value: 'hash:callHardCodedSource'
+    value: 'hash:callHardCodedRequest'
   },
-  'hash:callHardCodedSource': {
-    value: 'source:hardcodedUrl1'
+  'hash:callHardCodedRequest': {
+    value: 'request:hardcodedUrl1'
   },
 
-  'entry:callHashWithSourceAndExtendResult': {
+  'entry:callHashWithRequestAndExtendResult': {
     // entry:a4
-    value: 'hash:callSourceExtendResult'
+    value: 'hash:callRequestExtendResult'
   },
-  'hash:callSourceExtendResult': {
-    value: 'source:hardcodedUrl1',
+  'hash:callRequestExtendResult': {
+    value: 'request:hardcodedUrl1',
     addKeys: {
       newOk: ['$ok', reducers.addString('ok')]
     }
   },
 
-  'entry:callHashThatCallsMultipleSources': {
+  'entry:callHashThatCallsMultipleRequests': {
     // entry:a5
-    value: 'hash:callMultipleSources'
+    value: 'hash:callMultipleRequests'
   },
-  'hash:callMultipleSources': {
+  'hash:callMultipleRequests': {
     addKeys: {
-      s1: ['source:hardcodedUrl1', reducers.getKeyValue('source')],
-      s2: ['source:hardcodedUrl2', reducers.getKeyValue('source')]
+      s1: ['request:hardcodedUrl1', reducers.getKeyValue('source')],
+      s2: ['request:hardcodedUrl2', reducers.getKeyValue('source')]
     }
   },
 
-  'entry:nestedSources': {
-    value: 'collection:nestedSources'
+  'entry:nestedRequests': {
+    value: 'collection:nestedRequests'
   },
-  'collection:nestedSources': {
-    before: 'source:hardcodedUrl1',
+  'collection:nestedRequests': {
+    before: 'request:hardcodedUrl1',
     value: '$sources',
-    map: 'source:useContextPathData'
+    map: 'request:useContextPathData'
   },
-  'source:useContextPathData': {
+  'request:useContextPathData': {
     url: 'http://remote.test{initialValue.itemPath}'
   },
   'schema:checkHashSchemaInvalid': {

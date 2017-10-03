@@ -7,7 +7,7 @@ module.exports = Object.assign(
   require('./entry'),
   require('./hash'),
   require('./collection'),
-  require('./sources'),
+  require('./requests'),
   require('./control'),
   require('./integrations')
 )

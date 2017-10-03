@@ -1,7 +1,7 @@
 const reducers = require('../utils/reducers')
 
 module.exports = {
-  'source:a0.1': {
+  'request:a0.1': {
     url: 'http://some.path',
     options: {
       dataType: 'json',
@@ -16,22 +16,22 @@ module.exports = {
       }
     }
   },
-  'source:a1': {
+  'request:a1': {
     url: 'http://remote.test/source1'
   },
-  'source:a1.0': {
+  'request:a1.0': {
     url: '{values.server}/source1'
   },
-  'source:a1.1': {
+  'request:a1.1': {
     url: 'http://remote.test/source2'
   },
-  'source:a1.2': {
+  'request:a1.2': {
     url: 'http://remote.test/source3'
   },
-  'source:a1.3': {
+  'request:a1.3': {
     url: 'http://remote.test/source4'
   },
-  'source:a2': {
+  'request:a2': {
     url: 'http://remote.test',
     beforeRequest: (acc, done) => {
       const options = acc.value
@@ -39,7 +39,7 @@ module.exports = {
       done(null, options)
     }
   },
-  'source:a3': {
+  'request:a3': {
     url: 'http://remote.test',
     beforeRequest: (acc, done) => {
       const options = acc.value
@@ -47,19 +47,19 @@ module.exports = {
       done(null, options)
     }
   },
-  'source:a3.2': {
+  'request:a3.2': {
     url: 'http://remote.test{locals.itemPath}'
   },
-  'source:a3.3': {
+  'request:a3.3': {
     url: 'http://remote.test{initialValue.itemPath}'
   },
-  'source:a4': {
+  'request:a4': {
     url: 'source1',
     options: {
       baseUrl: 'http://remote.test'
     }
   },
-  'source:a5': {
+  'request:a5': {
     url: 'http://remote.test/a5',
     before: reducers.addQueryVar('varKey2', 'someValue2'),
     options: {
@@ -68,19 +68,19 @@ module.exports = {
       }
     }
   },
-  'source:a6': {
+  'request:a6': {
     url: 'http://remote.test/a6',
     after: reducers.addKeyValue('testKey', 'testValue')
   },
-  'source:a7.1': {
+  'request:a7.1': {
     url: 'http://remote.test/a7',
     error: reducers.sourceErrorDoNothing()
   },
-  'source:a7.2': {
+  'request:a7.2': {
     url: 'http://remote.test/a7',
     error: reducers.sourceErrorGraceful()
   },
-  'source:a8.1': {
+  'request:a8.1': {
     url: 'source1',
     options: {
       baseUrl: 'http://remote.test'

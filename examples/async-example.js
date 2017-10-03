@@ -1,12 +1,12 @@
 const dataPoint = require('../').create()
 
 dataPoint.addEntities({
-  'source:Planet': {
+  'request:Planet': {
     url: 'https://swapi.co/api/planets/{value.planetId}'
   },
 
   'hash:Planet': {
-    value: 'source:Planet',
+    value: 'request:Planet',
     mapKeys: {
       name: '$name',
       population: '$population',
@@ -14,12 +14,12 @@ dataPoint.addEntities({
     }
   },
 
-  'source:Resident': {
+  'request:Resident': {
     url: '{value}'
   },
 
   'hash:Resident': {
-    value: 'source:Resident',
+    value: 'request:Resident',
     mapKeys: {
       name: '$name',
       gender: '$gender',
