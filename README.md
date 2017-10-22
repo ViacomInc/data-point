@@ -405,16 +405,18 @@ Example at: [examples/reducer-path.js](examples/reducer-path.js)
 
 ### <a name="function-reducer">FunctionReducer</a>
 
-A FunctionReducer allows you to use a function do apply a transformation. There are a couple of ways you may write your Function:
+A FunctionReducer allows you to use a function to apply a transformation. There are a couple of ways you may write your FunctionReducer:
 
-- function that returns a value
-- function that returns a Promise
-- function with callback
-- async/await function **only if your environment supports it**
+- Synchronous `function` that returns new value
+- Asynchronous `function` that returns a `Promise`
+- Asynchronous `function` with callback parameter
+- Asynchronous through [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) `function` **only if your environment supports it**
 
-#### <a name="returns-a-value">returns a value</a>
+**IMPORTANT:** Be careful with the parameters passed to your reducer function, DataPoint relies on the number of arguments to detect the type of ReducerFunction it should expect. 
 
-If your function accepts one or no parameters DataPoint expects your function to return a value. The returned value will be used as the resolved transformation.
+#### <a name="function-reducer-sync">Returning a value (synchronous)</a>
+
+The returned value is used as the new value of the transformation.
 
 **SYNOPSIS**
 
@@ -428,12 +430,12 @@ const name = (acc:Accumulator) => {
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *acc* | [Accumulator](#accumulator) | Holds information regarding the current reducer's execution. The main property is `acc.value`, which is the current reducer's value. |
+| *acc* | [Accumulator](#accumulator) |  Current reducer's accumulator Object. The main property is `acc.value`, which is the current reducer's value. |
 
 **EXAMPLE:**
 
 ```js
-const reducer = (acc, next) => {
+const reducer = (acc) => {
   return acc.value + ' World'
 }
 
@@ -446,9 +448,9 @@ dataPoint
 
 Example at: [examples/reducer-function-sync.js](examples/reducer-function-sync.js)
 
-#### <a name="returns-a-promise">returns a Promise</a>
+#### <a name="function-reducer-returns-a-promise">Returning a Promise</a>
 
-You may return a Promise, the resolved value will be used as the new resolved transformation. 
+If you return a Promise its resolution will be used as the new value of the transformation. Use this pattern to resolve asynchronous logic inside your reducer.
 
 **SYNOPSIS**
 
@@ -462,12 +464,12 @@ const name = (acc:Accumulator) => {
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *acc* | [Accumulator](#accumulator) | Holds information regarding the current reducer's execution. The main property is `acc.value`, which is the current reducer's value. |
+| *acc* | [Accumulator](#accumulator) |  Current reducer's accumulator Object. The main property is `acc.value`, which is the current reducer's value. |
 
 **EXAMPLE:**
 
 ```js
-const reducer = (acc, next) => {
+const reducer = (acc) => {
   return Promise.resolve(acc.value + ' World')
 }
 
@@ -480,9 +482,9 @@ dataPoint
 
 Example at: [examples/reducer-function-promise.js](examples/reducer-function-promise.js)
 
-#### <a name="with-callback">with callback</a>
+#### <a name="function-reducer-with-callback">With a callback parameter</a>
 
-A FunctionReducer allows you to execute an asynchronous block of code. Its first parameter is an [Accumulator](#accumulator) object. The second is an error-first callback ([Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks)) that has the arguments `(error, value)`, where value will be the _value_ passed to the _next_ transform; that value will eventually be the value of the fully resolved transformation.
+Accepting a second parameter as a callback allows you to execute an asynchronous block of code. This callback is an error-first callback ([Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks)) that has the arguments `(error, value)`, where value will be the _value_ passed to the _next_ transform; this value becomes the new value of the transformation.
 
 **SYNOPSIS**
 
@@ -496,7 +498,7 @@ const name = (acc:Accumulator, next:function) => {
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *acc* | [Accumulator](#accumulator) | Holds information regarding the current reducer's execution. The main property is `acc.value`, which is the current reducer's value. |
+| *acc* | [Accumulator](#accumulator) |  Current reducer's accumulator Object. The main property is `acc.value`, which is the current reducer's value. |
 | *next* | `Function(error,value)` | [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks), where `value` is the value to be passed to the next reducer.
 
 **EXAMPLE:**
