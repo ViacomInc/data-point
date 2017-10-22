@@ -405,6 +405,83 @@ Example at: [examples/reducer-path.js](examples/reducer-path.js)
 
 ### <a name="function-reducer">FunctionReducer</a>
 
+A FunctionReducer allows you to use a function do apply a transformation. There are a couple of ways you may write your Function:
+
+- function that returns a value
+- function that returns a Promise
+- function with callback
+- async/await function **only if your environment supports it**
+
+#### <a name="returns-a-value">returns a value</a>
+
+If your function accepts one or no parameters DataPoint expects your function to return a value. The returned value will be used as the resolved transformation.
+
+**SYNOPSIS**
+
+```js
+const name = (acc:Accumulator) => {
+  return newValue
+}
+```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *acc* | [Accumulator](#accumulator) | Holds information regarding the current reducer's execution. The main property is `acc.value`, which is the current reducer's value. |
+
+**EXAMPLE:**
+
+```js
+const reducer = (acc, next) => {
+  return acc.value + ' World'
+}
+
+dataPoint
+  .transform(reducer, 'Hello')
+  .then((acc) => {
+    assert.equal(acc.value, 'Hello World')
+  })
+```
+
+Example at: [examples/reducer-function-sync.js](examples/reducer-function-sync.js)
+
+#### <a name="returns-a-promise">returns a Promise</a>
+
+You may return a Promise, the resolved value will be used as the new resolved transformation. 
+
+**SYNOPSIS**
+
+```js
+const name = (acc:Accumulator) => {
+  return Promise.resolve(newValue)
+}
+```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *acc* | [Accumulator](#accumulator) | Holds information regarding the current reducer's execution. The main property is `acc.value`, which is the current reducer's value. |
+
+**EXAMPLE:**
+
+```js
+const reducer = (acc, next) => {
+  return Promise.resolve(acc.value + ' World')
+}
+
+dataPoint
+  .transform(reducer, 'Hello')
+  .then((acc) => {
+    assert.equal(acc.value, 'Hello World')
+  })
+```
+
+Example at: [examples/reducer-function-promise.js](examples/reducer-function-promise.js)
+
+#### <a name="with-callback">with callback</a>
+
 A FunctionReducer allows you to execute an asynchronous block of code. Its first parameter is an [Accumulator](#accumulator) object. The second is an error-first callback ([Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks)) that has the arguments `(error, value)`, where value will be the _value_ passed to the _next_ transform; that value will eventually be the value of the fully resolved transformation.
 
 **SYNOPSIS**
@@ -429,13 +506,14 @@ const reducer = (acc, next) => {
   next(null, acc.value + ' World')
 }
 
-dataPoint.transform(reducer, 'Hello').then((acc) => {
-  assert.equal(acc.value, 'Hello World')
-  console.log(acc.value)
-})
+dataPoint
+  .transform(reducer, 'Hello')
+  .then((acc) => {
+    assert.equal(acc.value, 'Hello World')
+  })
 ```
 
-Example at: [examples/reducer-function.js](examples/reducer-function.js)
+Example at: [examples/reducer-function-with-callback.js](examples/reducer-function-with-callback.js)
 
 Throw an error from the reducer:
 
