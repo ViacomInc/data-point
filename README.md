@@ -1283,7 +1283,7 @@ dataPoint.addEntities({
 })
 
 // second parameter to transform is the initial value
-transform('entry:getNodeOrgInfo', {
+dataPoint.transform('request:getNodeOrgInfo', {
   organization: 'nodejs'
 }).then((acc) => {
   // outputs full result from the remote source
@@ -1311,7 +1311,7 @@ dataPoint.addEntities({
 
 // The third parameter of transform is the options object 
 // where we can pass the `locals` value
-transform('entry:getNodeOrgInfo', null, {
+dataPoint.transform('request:getNodeOrgInfo', {
   locals: {
     organization: 'nodejs'
   }
