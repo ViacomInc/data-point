@@ -65,8 +65,8 @@ const dataPoint = DataPoint.create()
 
 // reducer function that appends 'World' to the
 // value of the accumulator
-const reducer = (acc, next) => {
-  next(null, acc.value + ' World')
+const reducer = (acc) => {
+  return acc.value + ' World'
 }
 
 // applies reducer to input
@@ -268,7 +268,7 @@ dataPoint.transform(t, someInput).then((acc) => {
 **Single Function Reducer:**
 
 ```js
-const t = (acc, next) => { ... }
+const t = (acc) => { ... }
 ```
 
 **Array transform with mixed reducers:**
@@ -277,9 +277,9 @@ const t = (acc, next) => { ... }
 // just strings
 const t = ['$image[0]', 'model:Image']
 // string & Function reducers
-const t = ['$image[0].url', (acc, next) => { ... }]
+const t = ['$image[0].url', (acc) => { ... }]
 // piped strings & functions
-const t = ['$results[0].users | model:Users', (acc, next) => { ... }]
+const t = ['$results[0].users | model:Users', (acc) => { ... }]
 
 // which could be later used as:
 dataPoint.transform(t, someInput).then((acc) => {
@@ -539,6 +539,15 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 Higher Order Reducers are expected to be [Higher-order Functions](https://en.wikipedia.org/wiki/Higher-order_function). This means that a higher order reducer **MUST** return a [FunctionReducer](#function-reducer).
 
 ```js
+// sync
+const name = (param1, param2, ...) => (acc:Accumulator) => {
+  return newValue
+}
+// async via promise
+const name = (param1, param2, ...) => (acc:Accumulator) => {
+  return Promise.resolve(newValue)
+}
+// async via callback
 const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
   next(error:Error, newValue:*)
 }
@@ -547,8 +556,8 @@ const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
 **EXAMPLE**
 
 ```js
-const addStr = (value) => (acc, next) => {
-  next(null, acc.value + value)
+const addStr = (value) => (acc) => {
+  return acc.value + value
 }
 
 dataPoint.transform(addStr(' World!!'), 'Hello').then((acc) => {
@@ -570,8 +579,8 @@ const input = {
   }
 }
 
-const toUpperCase = (acc, next) => {
-  next(null, acc.value.toUpperCase())
+const toUpperCase = (acc) => {
+  return acc.value.toUpperCase()
 }
 
 dataPoint.transform(['$a.b', toUpperCase], input).then((acc) => {
@@ -584,18 +593,17 @@ Example at: [examples/reducer-array-mixed.js](examples/reducer-array-mixed.js)
 The following example extracts the array from the input object, gets its max value, and multiplies that value by a given number.
 
 ```js
-const multiplyBy = (factor) => (acc, next) => {
-  next(null, acc.value * factor)
+const multiplyBy = (factor) => (acc) => {
+  return acc.value * factor
 }
 
-const getMax = () => (acc, next) => {
+const getMax = () => (acc) => {
   const result = Math.max.apply(null, acc.value)
-  next(null, result)
+  return result
 }
 
 dataPoint.transform(['$a.b.c', getMax(), multiplyBy(10)], input).then((acc) => {
   assert.equal(acc.value, 30)
-  console.log(acc.value)
 })
 ```
 
@@ -632,8 +640,8 @@ const input = {
   }
 }
 
-const toUpperCase = (acc, next) => {
-  next(null, acc.value.toUpper())
+const toUpperCase = (acc) => {
+  return acc.value.toUpper()
 }
 
 dataPoint.addEntities({
@@ -664,8 +672,8 @@ const input = {
   ]
 }
 
-const toUpperCase = (acc, next) => {
-  next(null, acc.value.toUpper())
+const toUpperCase = (acc) => {
+  return acc.value.toUpper()
 }
 
 dataPoint.addEntities({
@@ -685,7 +693,7 @@ Reducer entity [Examples](test/definitions/integrations.js)
 **Best Practices (Recommendations) with reducers**
 
 ```js
-const badReducer = () => (acc, done) => {
+const badReducer = () => (acc) => {
   // this is BAD - dont be this person! 
   // never ever modify the value object.
   acc.value[1].username = 'foo'
@@ -696,18 +704,18 @@ const badReducer = () => (acc, done) => {
   image.username = 'foo'
 
   // pass value to next reducer
-  done(null, acc.value)
+  return acc.value
 }
 
 // this is better
 const fp = require('lodash/fp')
-const goodReducer = () => (acc, done) => {
+const goodReducer = () => (acc) => {
   // https://github.com/lodash/lodash/wiki/FP-Guide
   // this will cause no side effects
   const value = fp.set('[1].username', 'foo', acc.value)
 
   // pass value to next reducer
-  done(null, value)
+  return value
 }
 ```
 
@@ -811,14 +819,14 @@ const input = {
   }
 }
 
-const getMax = (acc, next) => {
+const getMax = (acc) => {
   const result = Math.max.apply(null, acc.value)
-  next(null, result)
+  return result
 }
 
-const multiplyBy = (number) => (acc, next) => {
+const multiplyBy = (number) => (acc) => {
   const newValue = acc.value * number
-  next(null, newValue)
+  return newValue
 }
 
 dataPoint.addEntities({
@@ -874,14 +882,14 @@ const input = {
   }
 }
 
-const getMax = (acc, next) => {
+const getMax = (acc) => {
   const result = Math.max.apply(null, acc.value)
-  next(null, result)
+  return result
 }
 
-const multiplyBy = (number) => (acc, next) => {
+const multiplyBy = (number) => (acc) => {
   const newValue = acc.value * number
-  next(null, newValue)
+  return newValue
 }
 
 dataPoint.addEntities({
@@ -993,7 +1001,7 @@ dataPoint.addEntities({
     // points to a NON Array value
     value: '$a',
     after: isArray(),
-    error: (acc, next) => {
+    error: (acc) => {
       // prints out the error message generated by
       // isArray function
       console.log(acc.value.message) 
@@ -1002,7 +1010,7 @@ dataPoint.addEntities({
 
       // passing a value as the second argument
       // will stop the propagation of the error
-      next(null, [])
+      return []
     }
   }
 })
@@ -1066,10 +1074,10 @@ Example at: [examples/entity-entry-error-rethrow.js](examples/entity-entry-error
 Let's resolve to a value, in order to prevent the transform from failing.
 
 ```js
-const resolveTo = (value) => (erracc, next) => {
+const resolveTo = (value) => (acc) => {
   // since we don't pass the error back
   // it will resolve to the new value
-  next(null, value)
+  return value
 }
 
 dataPoint.addEntities({
@@ -1106,8 +1114,8 @@ The params object is used to pass custom data to your entity. This Object is exp
 On a FunctionReducer:
 
 ```js
-const multiplyValue = (acc, next) => {
-  next(null, acc.value * acc.params.multiplier)
+const multiplyValue = (acc) => {
+  return acc.value * acc.params.multiplier
 }
 
 dataPoint.addEntities({
@@ -1329,8 +1337,8 @@ dataPoint.addEntities({
       qs: {
         // because the key starts with $
         // it will be treated as a TransformExpression
-        $search: (acc, next) => {
-          next(null, acc.value.search)
+        $search: (acc) => {
+          return acc.value.search
         }
       }
     }
@@ -1358,7 +1366,7 @@ This example simply provides the header object through a reducer. One possible u
 dataPoint.addEntities({
   'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value}',
-    beforeRequest: (acc, next) => {
+    beforeRequest: (acc) => {
       // acc.value holds reference to request.options
       const options = _.assign({}, acc.value, {
         headers: {
@@ -1366,7 +1374,7 @@ dataPoint.addEntities({
         }
       })
 
-      next(null, options)
+      return options
     }
   }
 })
@@ -1732,9 +1740,8 @@ dataPoint.transform('hash:addValues').then((acc) => {
 You can add multiple reducers to your Hash spec.
 
 ```js
-const toUpperCase = (acc, next) => {
-  const result = acc.value.toUpperCase()
-  next(null, result)
+const toUpperCase = (acc) => {
+  return acc.value.toUpperCase()
 }
 
 dataPoint.addEntities({
@@ -1962,8 +1969,8 @@ dataPoint.addEntities({
     url: 'https://api.github.com/orgs/nodejs/repos'
   },
   'collection:getRepositoryUrl': {
-    filter: (acc, next) => {
-      next(null, acc.value > 100)
+    filter: (acc) => {
+      return acc.value > 100
     }
   }
 })
@@ -2039,9 +2046,9 @@ dataPoint.addEntities({
   },
   'collection:getNodeRepo': {
     before: 'request:repos',
-    find: (acc, next) => {
+    find: (acc) => {
       // notice we are checking against the property -name- 
-      next(null, acc.value.name === 'node')
+      return acc.value.name === 'node'
     }
   }
 })
@@ -2073,8 +2080,8 @@ dataPoint.transform('request:repos | collection:getNodeRepo', {}).then((acc) => 
 Let's refactor the previous Collection.find example:
 
 ```js
-const isEqualTo = (match) => (acc, next) => {
-  next(null, acc.value === match)
+const isEqualTo = (match) => (acct) => {
+  return acc.value === match
 }
 
 dataPoint.addEntities({
@@ -2116,8 +2123,8 @@ dataPoint.transform('request:repos | collection:getNodeRepo', {}).then((acc) => 
 **Get all forks and map them to a Hash entity**
 
 ```js
-const isEqualTo = (match) => (acc, next) => {
-  next(null, acc.value === match)
+const isEqualTo = (match) => (acc) => {
+  return acc.value === match
 }
 
 dataPoint.addEntities({
@@ -2207,18 +2214,16 @@ If no case statement resolves to `truthy`, then the default statement will be us
 
 ```js
 
-case isEqual = (compareTo) => (acc, next) => {
-  next(null, acc.value === compareTo)
+case isEqual = (compareTo) => (acc) => {
+  return acc.value === compareTo
 }
 
-case resolveTo = (value) => (acc, next) => {
-  next(null, value)
+case resolveTo = (value) => (acc) => {
+  return value
 }
 
-case throwError = (message) => (acc, next) => {
-  // next uses Node.js callback style, where first 
-  // argument is error
-  next(new Error(message))
+case throwError = (message) => (acc) => {
+  throw new Error(message)
 }
 
 dataPoint.addEntities({
@@ -2368,7 +2373,7 @@ dataPoint.addEntities({
     }
   },
   'model:multiplyBy': {
-    value: (acc, next) => next(null, acc.value * acc.params.multiplicand),
+    value: (acc) => acc.value * acc.params.multiplicand,
     params: {
       multiplicand: 1
     }

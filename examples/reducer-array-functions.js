@@ -1,8 +1,8 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
 
-const addStr = word => (acc, next) => {
-  next(null, acc.value + word)
+const addStr = word => acc => {
+  return acc.value + word
 }
 
 const reducers = [addStr(' World'), addStr('!!')]

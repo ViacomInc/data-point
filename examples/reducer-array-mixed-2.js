@@ -9,13 +9,13 @@ const input = {
   }
 }
 
-const multiplyBy = factor => (acc, next) => {
-  next(null, acc.value * factor)
+const multiplyBy = factor => acc => {
+  return acc.value * factor
 }
 
-const getMax = () => (acc, next) => {
+const getMax = () => acc => {
   const result = Math.max.apply(null, acc.value)
-  next(null, result)
+  return result
 }
 
 dataPoint.transform(['$a.b.c', getMax(), multiplyBy(10)], input).then(acc => {

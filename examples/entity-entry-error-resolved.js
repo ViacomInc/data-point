@@ -6,7 +6,7 @@ const logError = () => (errCtx, next) => {
 
   // if we wish to bubble it up, then pass it to
   // the next() as the first parameter
-  next(errCtx)
+  next(errCtx.value)
 
   // if we wished not to bubble it, we could pass
   // an empty first param, and a second value to
@@ -14,15 +14,12 @@ const logError = () => (errCtx, next) => {
   // next(null, 30) <-- this is just an example
 }
 
-const isArray = () => (acc, next) => {
-  if (acc.value instanceof Array) {
-    // if the value is valid, then just pass it along
-    return next(null, acc.value)
+const isArray = () => acc => {
+  if (!(acc.value instanceof Array)) {
+    throw new Error(`${acc.value} should be an Array`)
   }
 
-  // notice how we pass this Error object as the FIRST parameter,
-  // this tells DataPoint there was an error, and treat it as such.
-  next(new Error(`${acc.value} should be an Array`))
+  return acc.value
 }
 
 dataPoint.addEntities({
@@ -40,6 +37,6 @@ const input = {
 }
 
 dataPoint.transform('entry:foo', input).catch(error => {
-  console.log('got ya!', error)
-  // got ya!, Error: [object Object] should be an Array
+  console.log('got ya!', error.toString())
+  // got ya! Error: [object Object] should be an Array
 })

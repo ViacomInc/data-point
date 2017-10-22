@@ -8,7 +8,7 @@ dataPoint.addEntities({
     }
   },
   'model:multiplyBy': {
-    value: (acc, next) => next(null, acc.value * acc.params.multiplicand),
+    value: acc => acc.value * acc.params.multiplicand,
     params: {
       multiplicand: 1
     }

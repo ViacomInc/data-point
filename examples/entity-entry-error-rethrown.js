@@ -1,21 +1,18 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
 
-const isArray = () => (acc, next) => {
-  if (acc.value instanceof Array) {
-    // if the value is valid, then just pass it along
-    return next(null, acc.value)
+const isArray = () => acc => {
+  if (!(acc.value instanceof Array)) {
+    throw new Error(`${acc.value} should be an Array`)
   }
 
-  // notice how we pass this Error object as the FIRST parameter,
-  // this tells DataPoint there was an error, and treat it as such.
-  next(new Error(`${acc.value} should be an Array`))
+  return acc.value
 }
 
-const resolveTo = value => (errCtx, next) => {
+const resolveTo = value => errCtx => {
   // since we dont pass the error back
   // it will resolve to the new value
-  next(null, value)
+  return value
 }
 
 dataPoint.addEntities({
