@@ -12,9 +12,9 @@ dataPoint.addEntities({
       },
       {
         addKeys: {
-          urls: (acc, next) => {
+          urls: acc => {
             const value = acc.value
-            next(null, [value.reposUrl, value.eventsUrl])
+            return [value.reposUrl, value.eventsUrl]
           }
         }
       },

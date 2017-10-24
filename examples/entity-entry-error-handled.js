@@ -1,14 +1,14 @@
 const dataPoint = require('../').create()
 
-const isArray = () => (acc, next) => {
+const isArray = () => acc => {
   if (acc.value instanceof Array) {
     // if the value is valid, then just pass it along
-    return next(null, acc.value)
+    return acc.value
   }
 
   // notice how we pass this Error object as the FIRST parameter,
   // this tells DataPoint there was an error, and treat it as such.
-  next(new Error(`${acc.value} should be an Array`))
+  throw new Error(`${acc.value} should be an Array`)
 }
 
 dataPoint.addEntities({
@@ -16,11 +16,11 @@ dataPoint.addEntities({
     // points to a NON Array value
     value: '$a',
     after: isArray(),
-    error: (acc, next) => {
+    error: acc => {
       console.log('Value is invalid, resolving to empty array')
       // passing a a value as the second argument
       // will stop the propagation of the error
-      next(null, [])
+      return []
     }
   }
 })

@@ -1,15 +1,13 @@
 const dataPoint = require('../').create()
 const _ = require('lodash')
 
-const isArray = () => (acc, next) => {
+const isArray = () => acc => {
   if (_.isArray(acc.value)) {
     // if the value is valid, then just pass it along
-    return next(null, acc.value)
+    return acc.value
   }
 
-  // notice how we pass this Error object as the FIRST parameter,
-  // this tells DataPoint there was an error, and treat it as such.
-  next(new Error(`${acc.value} should be an Array`))
+  throw new Error(`${acc.value} should be an Array`)
 }
 
 dataPoint.addEntities({

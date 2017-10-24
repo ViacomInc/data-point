@@ -7,8 +7,8 @@ dataPoint.addEntities({
       qs: {
         // because the key starts with $
         // it will be treated as a TransformExpression
-        $search: (acc, next) => {
-          next(null, acc.value.search)
+        $search: acc => {
+          return acc.value.search
         }
       }
     }

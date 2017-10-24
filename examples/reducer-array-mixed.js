@@ -7,8 +7,8 @@ const input = {
   }
 }
 
-const toUpperCase = (acc, next) => {
-  next(null, acc.value.toUpperCase())
+const toUpperCase = acc => {
+  return acc.value.toUpperCase()
 }
 
 dataPoint.transform(['$a.b', toUpperCase], input).then(acc => {
