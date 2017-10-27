@@ -2614,7 +2614,7 @@ app.get('/api/:entry', (req, res, next) =>{
       return
     }
     // respond with result from data-point
-    res.send(result.value))
+    res.send(result.value)
   }))
 })
 
