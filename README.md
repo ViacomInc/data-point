@@ -54,6 +54,8 @@ npm install --save data-point
 
 This section is meant to get you started with basic concepts of DataPoint's API, for detailed API Documentation you can jump into [DataPoint.create](#api-data-point-create) section and move from there.
 
+Additionally there is a [Hello World](https://www.youtube.com/watch?v=3VxP-FIWgF0) youtube tutorial that explains the data-point basics.
+
 ### Hello World Example
 
 Trivial example of transforming a given **input** with a [FunctionReducer](#function-reducer).
