@@ -65,16 +65,19 @@ const DataPoint = require('data-point')
 // create DataPoint instance
 const dataPoint = DataPoint.create()
 
-// reducer function that appends 'World' to the
-// value of the accumulator
+// reducer function that concatenates 
+// accumulator.value with 'World'
 const reducer = (acc) => {
   return acc.value + ' World'
 }
 
 // applies reducer to input
-dataPoint.transform(reducer, 'Hello').then((acc) => {
-  console.log(acc.value) // 'Hello World'
-})
+dataPoint
+  .transform(reducer, 'Hello')
+  .then((acc) => {
+    // 'Hello World'
+    console.log(acc.value) 
+  })
 ```
 
 Example at: [examples/hello-world.js](examples/hello-world.js)
@@ -84,75 +87,71 @@ Example at: [examples/hello-world.js](examples/hello-world.js)
 Using [swapi.co](https://swapi.co) amazing service, the script below will get information about a planet and the residents of that planet.
 
 ```js
-// create DataPoint Instance
-const dataPoint = require('data-point').create()
+const DataPoint = require('data-point')
+// create DataPoint instance
+const dataPoint = DataPoint.create()
 
 // add entities to dataPoint instance
 dataPoint.addEntities({
   // remote request
   'request:Planet': {
-    // {value.planetId} injects the value from the accumulator
+    // {value.planetId} injects the
+    // value from the accumulator
     url: 'https://swapi.co/api/planets/{value.planetId}'
   },
 
   // hash entity to resolve a Planet
   'hash:Planet': {
-    // each Key of the input gets mapped
+    // maps keys
     mapKeys: {
-      // simple Object notation to extract data
+      // map name key
       name: '$name',
-      // residents is an array or urls, each
-      // will get mapped to a hash:Resident
-      residents: '$residents | hash:Resident[]'
+      // residents is an array of urls
+      // where each url gets mapped
+      // to a request:Resident
+      // and then to a hash:Resident
+      // entity 
+      residents: '$residents | request:Resident[] | hash:Resident[]'
     }
   },
 
-  // hash entity to resolve a Resident
+  // requests url passed
+  'request:Resident': {
+    url: '{value}'
+  },
+
   'hash:Resident': {
-    // initial value will be the resolution of
-    // request:Resident
-    value: 'request:Resident',
-    // each key gets mapped
+    // map keys we want exposed
     mapKeys: {
       name: '$name',
       gender: '$gender',
       birthYear: '$birth_year'
     }
-  },
-
-  // dynamic request entity, the value that 
-  // was passed to this entity becomes the url
-  'request:Resident': {
-    url: '{value}'
   }
 })
 
-const data = {
+const input = {
   planetId: 1
 }
 
-dataPoint.transform('request:Planet | hash:Planet', data).then((acc) => {
-  console.log(acc.value)
-  /*
-  { name: 'Tatooine',
-  population: 200000,
-  residents:
-   [ { name: 'Luke Skywalker', gender: 'male', birthYear: '19BBY' },
-     { name: 'C-3PO', gender: 'n/a', birthYear: '112BBY' },
-     { name: 'Darth Vader', gender: 'male', birthYear: '41.9BBY' },
-     { name: 'Owen Lars', gender: 'male', birthYear: '52BBY' },
-     { name: 'Beru Whitesun lars',
-       gender: 'female',
-       birthYear: '47BBY' },
-     { name: 'R5-D4', gender: 'n/a', birthYear: 'unknown' },
-     { name: 'Biggs Darklighter', gender: 'male', birthYear: '24BBY' },
-     { name: 'Anakin Skywalker',
-       gender: 'male',
-       birthYear: '41.9BBY' },
-     { name: 'Shmi Skywalker', gender: 'female', birthYear: '72BBY' },
-     { name: 'Cliegg Lars', gender: 'male', birthYear: '82BBY' } ] }
-  */
-})
+dataPoint
+  .transform('request:Planet | hash:Planet', input)
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    { 
+      name: 'Tatooine',
+      population: 200000,
+      residents:
+      [ 
+        { name: 'Luke Skywalker', gender: 'male', birthYear: '19BBY' },
+        { name: 'C-3PO', gender: 'n/a', birthYear: '112BBY' },
+        { name: 'Darth Vader', gender: 'male', birthYear: '41.9BBY' },
+        ...
+      ] 
+    }
+    */
+  })
 ```
 
 Example at: [examples/async-example.js](examples/async-example.js)
@@ -201,10 +200,17 @@ Create the DataPoint object and set options argument:
 
 ```js
 const DataPoint = require('data-point')
-const dataPoint = DataPoint.create({
-  values: require('./values'),
-  entities: require('./entities')
-})
+const dataPoint = DataPoint
+  .create({
+    values: {
+      foo: 'bar'
+    },
+    entities: {
+      'transform:HelloWorld': (acc) => {
+        return `hello ${acc.value}!!`
+      }
+    }
+  })
 ```
 
 ## <a name="transforms">Transform</a>
@@ -248,47 +254,19 @@ The following table describes the properties of the `options` argument.
 
 **Description**
 
-A **Transform Expression** object consists of a chain containing one or more [Reducers](#reducers), where the result (transformed value) of one reducer gets passed as input value to the next reducer in the chain. All reducers are executed serially and **asynchronously**.
+A **TransformExpression** object consists of a chain containing one or more [Reducers](#reducers), where the result (transformed value) of one reducer gets passed as input value to the next reducer in the chain. All reducers are executed serially and **asynchronously**.
 
 Transform Expressions can be represented in different ways: 
 
-**String transform:**
-
-```js
-const t = '$.'
-const t = '$name'
-const t = '$results[0].users | app.validateUsers | model:User[]'
-const t = 'model:User[] | app.validateUsers | $[0]'
-
-// which could later be used as:
-dataPoint.transform(t, someInput).then((acc) => {
-  // resolved result
-  console.log(acc.value)
-})
-```
-
-**Single Function Reducer:**
-
-```js
-const t = (acc) => { ... }
-```
-
-**Array transform with mixed reducers:**
-
-```js
-// just strings
-const t = ['$image[0]', 'model:Image']
-// string & Function reducers
-const t = ['$image[0].url', (acc) => { ... }]
-// piped strings & functions
-const t = ['$results[0].users | model:Users', (acc) => { ... }]
-
-// which could be later used as:
-dataPoint.transform(t, someInput).then((acc) => {
-  // resolved result
-  console.log(acc.value)
-})
-```
+| TransformExpression | Description |
+|:---|:---|
+| `'$.'` | Get **root** value of *acc.value* |
+| ``'$name'` | Get property `name` from *acc.value* |
+| `'$results[0].users` | Get path `results[0].users` from *acc.value* |
+| `'$results[0].users \| hash:User[]'` | Get path `results[0].users` from *acc.value* and **map** each user to a `hash:User` entity |
+| `(acc) => { ... }` | Call function reducer, returned value gets passed to next reducer |
+| `['$a.b', (acc) => { ... }]` | Get path `a.b`, pipe value to function reducer |
+| `['$a.b', (acc) => { ... }, 'hash:Foo']` | Get path `a.b`, pipe value to function reducer, pipe result to `hash:Foo` |
 
 ## <a name="reducers">Reducer</a>
 
@@ -344,7 +322,8 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 Gets the entire value
 
 ```js
-const dataPoint = require('data-point').create()
+const DataPoint = require('data-point')
+const dataPoint = DataPoint.create()
 
 const input = {
   a: {
@@ -354,9 +333,11 @@ const input = {
   }
 }
 
-dataPoint.transform('$.', input).then((acc) => {
-  assert.equal(acc.value, input)
-})
+dataPoint
+  .transform('$.', input)
+  .then((acc) => {
+    assert.equal(acc.value, input)
+  })
 ```
 
 #### <a name="accumulator-reference">Access accumulator reference $..</a>
@@ -366,7 +347,8 @@ dataPoint.transform('$.', input).then((acc) => {
 Access the reference of the accumulator.
 
 ```js
-const dataPoint = require('data-point').create()
+const DataPoint = require('data-point')
+const dataPoint = DataPoint.create()
 
 const input = {
   a: {
@@ -376,9 +358,11 @@ const input = {
   }
 }
 
-dataPoint.transform('$..value', input).then((acc) => {
-  assert.equal(acc.value, input)
-})
+dataPoint
+  .transform('$..value', input)
+  .then((acc) => {
+    assert.equal(acc.value, input)
+  })
 ```
 
 #### <a name="object-path">Object Path</a>
@@ -388,7 +372,8 @@ dataPoint.transform('$..value', input).then((acc) => {
 Traverse an object's structure
 
 ```js
-const dataPoint = require('data-point').create()
+const DataPoint = require('data-point')
+const dataPoint = DataPoint.create()
 
 const input = {
   a: {
@@ -398,9 +383,11 @@ const input = {
   }
 }
 
-dataPoint.transform('$a.b[0]', input).then((acc) => {
-  assert.equal(acc.value, 'Hello World')
-})
+dataPoint
+  .transform('$a.b[0]', input)
+  .then((acc) => {
+    assert.equal(acc.value, 'Hello World')
+  })
 ```
 
 Example at: [examples/reducer-path.js](examples/reducer-path.js)
@@ -432,12 +419,12 @@ const name = (acc:Accumulator) => {
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *acc* | [Accumulator](#accumulator) |  Current reducer's accumulator Object. The main property is `acc.value`, which is the current reducer's value. |
+| *acc* | [Accumulator](#accumulator) | Current reducer's accumulator Object. The main property is `acc.value`, which is the current reducer's value. |
 
 **EXAMPLE:**
 
 ```js
-const reducer = (acc) => {
+ const reducer = (acc) => {
   return acc.value + ' World'
 }
 
@@ -528,10 +515,12 @@ const throwError = (acc, next) => {
   next(new Error('oh noes!!'))
 }
 
-dataPoint.transform(throwError, 'Hello').catch((error) => {
-  console.assert(error instanceof Error)
-  console.log(error.toString()) // 'Error: oh noes!!'
-})
+dataPoint
+  .transform(throwError, 'Hello')
+  .catch((error) => {
+    console.assert(error instanceof Error)
+    console.log(error.toString()) // 'Error: oh noes!!'
+  })
 ```
 
 Example at: [examples/reducer-function-error.js](examples/reducer-function-error.js)
@@ -562,10 +551,11 @@ const addStr = (value) => (acc) => {
   return acc.value + value
 }
 
-dataPoint.transform(addStr(' World!!'), 'Hello').then((acc) => {
-  assert.equal(acc.value, 'Hello World!!')
-  console.log(acc.value)
-})
+dataPoint
+  .transform(addStr(' World!!'), 'Hello')
+  .then((acc) => {
+    assert.equal(acc.value, 'Hello World!!')
+  })
 ```
 
 Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
@@ -585,9 +575,11 @@ const toUpperCase = (acc) => {
   return acc.value.toUpperCase()
 }
 
-dataPoint.transform(['$a.b', toUpperCase], input).then((acc) => {
-  assert.equal(acc.value, 'HELLO WORLD')
-})
+dataPoint
+  .transform(['$a.b', toUpperCase], input)
+  .then((acc) => {
+    assert.equal(acc.value, 'HELLO WORLD')
+  })
 ```
 
 Example at: [examples/reducer-array-mixed.js](examples/reducer-array-mixed.js)
@@ -604,9 +596,11 @@ const getMax = () => (acc) => {
   return result
 }
 
-dataPoint.transform(['$a.b.c', getMax(), multiplyBy(10)], input).then((acc) => {
-  assert.equal(acc.value, 30)
-})
+dataPoint
+  .transform(['$a.b.c', getMax(), multiplyBy(10)], input)
+  .then((acc) => {
+    assert.equal(acc.value, 30)
+  })
 ```
 
 Example at: [examples/reducer-array-mixed-2.js](examples/reducer-array-mixed-2.js)
@@ -651,11 +645,13 @@ dataPoint.addEntities({
   'transform:toUpperCase': toUpperCase,
 })
 
-// once resolved the EntityReducer `transform:getGreeting`,
-// the value new value will be passed to `transform:toUpperCase`
-dataPoint.transform(['transform:getGreeting | transform:toUpperCase'], input).then((acc) => {
-  assert.equal(acc.value, 'HELLO WORLD')
-})
+// resolve `transform:getGreeting`,
+// pipe value to `transform:toUpperCase`
+dataPoint
+  .transform(['transform:getGreeting | transform:toUpperCase'], input)
+  .then((acc) => {
+    assert.equal(acc.value, 'HELLO WORLD')
+  })
 ```
 
 ### <a name="reducer-collection-mapping">Collection Mapping</a>
@@ -682,12 +678,14 @@ dataPoint.addEntities({
   'transform:toUpperCase': toUpperCase
 })
 
-dataPoint.transform(['$a | transform:toUpperCase[]'], input).then((acc) => {
-  assert.equal(acc.value[0], 'HELLO WORLD')
-  assert.equal(acc.value[1], 'HELLO LAIA')
-  assert.equal(acc.value[2], 'HELLO DAREK')
-  assert.equal(acc.value[3], 'HELLO ITALY')
-})
+dataPoint
+  .transform(['$a | transform:toUpperCase[]'], input)
+  .then((acc) => {
+    assert.equal(acc.value[0], 'HELLO WORLD')
+    assert.equal(acc.value[1], 'HELLO LAIA')
+    assert.equal(acc.value[2], 'HELLO DAREK')
+    assert.equal(acc.value[3], 'HELLO ITALY')
+  })
 ```
 
 Reducer entity [Examples](test/definitions/integrations.js)
@@ -696,12 +694,12 @@ Reducer entity [Examples](test/definitions/integrations.js)
 
 ```js
 const badReducer = () => (acc) => {
-  // this is BAD - dont be this person! 
   // never ever modify the value object.
   acc.value[1].username = 'foo'
 
   // keep in mind JS is by reference
-  // so this means this is also BAD
+  // so this means this is also
+  // modifying the value object
   const image = acc.value[1]
   image.username = 'foo'
 
@@ -822,23 +820,22 @@ const input = {
 }
 
 const getMax = (acc) => {
-  const result = Math.max.apply(null, acc.value)
-  return result
+  return Math.max.apply(null, acc.value)
 }
 
 const multiplyBy = (number) => (acc) => {
-  const newValue = acc.value * number
-  return newValue
+  return acc.value * number
 }
 
 dataPoint.addEntities({
   'transform:foo': ['$a.b.c', getMax, multiplyBy(10)]
 })
 
-dataPoint.transform('transform:foo', input).then((acc) => {
-  assert.equal(acc.value, 30)
-  console.log('result:', acc.value)
-})
+dataPoint
+  .transform('transform:foo', input)
+  .then((acc) => {
+    assert.equal(acc.value, 30)
+  })
 ```
 
 #### <a name="entry-entity">Entry Entity</a>
@@ -885,13 +882,11 @@ const input = {
 }
 
 const getMax = (acc) => {
-  const result = Math.max.apply(null, acc.value)
-  return result
+  return Math.max.apply(null, acc.value)
 }
 
 const multiplyBy = (number) => (acc) => {
-  const newValue = acc.value * number
-  return newValue
+  return acc.value * number
 }
 
 dataPoint.addEntities({
@@ -900,10 +895,11 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('entry:foo', input).then((acc) => {
-  assert.equal(acc.value, 30)
-  console.log('result:', acc.value)
-})
+dataPoint
+  .transform('entry:foo', input)
+  .then((acc) => {
+    assert.equal(acc.value, 30)
+  })
 ```
 
 Example at: [examples/entity-entry-basic.js](examples/entity-entry-basic.js)
@@ -931,10 +927,11 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('entry:foo', [3, 15, 6, 3, 8]).then((acc) => {
-  console.log(acc.value)
-  // [ 3, 15, 6, 3, 8 ]
-})
+dataPoint
+  .transform('entry:foo', [3, 15])
+  .then((acc) => {
+    assert.deepEqual(acc.value, [3, 15])
+  })
 ```
 
 Example at: [examples/entity-entry-before.js](examples/entity-entry-before.js)
@@ -964,14 +961,15 @@ dataPoint.addEntities({
 
 const input = {
   a: {
-    b: [3, 15, 6, 3, 8]
+    b: [3, 15]
   }
 }
 
-dataPoint.transform('entry:foo', input).then((acc) => {
-  console.log(acc.value)
-  // [ 3, 15, 6, 3, 8 ]
-})
+dataPoint
+  .transform('entry:foo', input)
+  .then((acc) => {
+    assert.deepEqual(acc.value, [3, 15])
+  })
 ```
 
 Example at: [examples/entity-entry-after.js](examples/entity-entry-after.js)
@@ -1004,14 +1002,16 @@ dataPoint.addEntities({
     value: '$a',
     after: isArray(),
     error: (acc) => {
-      // prints out the error message generated by
+      // prints out the error 
+      // message generated by
       // isArray function
       console.log(acc.value.message) 
 
       console.log('Value is invalid, resolving to empty array')
 
-      // passing a value as the second argument
-      // will stop the propagation of the error
+      // passing a value as the 
+      // second argument will stop
+      // the propagation of the error
       return []
     }
   }
@@ -1019,15 +1019,15 @@ dataPoint.addEntities({
 
 const input = {
   a: {
-    b: [3, 15, 6, 3, 8]
+    b: [3, 15]
   }
 }
 
-dataPoint.transform('entry:foo', input).then((acc) => {
-  console.log(acc.value)
-  // Value is invalid, resolving to empty array
-  // []
-})
+dataPoint
+  .transform('entry:foo', input)
+  .then((acc) => {
+    assert.deepEqual(acc.value, [])
+  })
 ```
 
 Example at: [examples/entity-entry-error-handled.js](examples/entity-entry-error-handled.js)
@@ -1060,14 +1060,16 @@ dataPoint.addEntities({
 
 const input = {
   a: {
-    b: [3, 15, 6, 3, 8]
+    b: [3, 15]
   }
 }
 
-dataPoint.transform('entry:foo', input)
+dataPoint
+  .transform('entry:foo', input)
   .catch((error) => {
     console.log(error.toString())
-    // Error: [object Object] should be an Array
+    // Error: [object Object] 
+    // should be an Array
   })
 ```
 
@@ -1077,8 +1079,9 @@ Let's resolve to a value, in order to prevent the transform from failing.
 
 ```js
 const resolveTo = (value) => (acc) => {
-  // since we don't pass the error back
-  // it will resolve to the new value
+  // since we don't pass the error
+  // back it will resolve to the
+  // new value
   return value
 }
 
@@ -1086,7 +1089,8 @@ dataPoint.addEntities({
   'entry:foo': {
     value: '$a',
     after: isArray(),
-    // resolving the value to empty array
+    // in case of error resolve
+    // the value to an empty array
     error: resolveTo([])
   }
 })
@@ -1097,11 +1101,10 @@ const input = {
   }
 }
 
-dataPoint.transform('entry:foo', input)
+dataPoint
+  .transform('entry:foo', input)
   .then((acc) => {
     assert.deepEqual(acc.value, [])
-    console.log(acc.value)
-    // []
   })
 ```
 
@@ -1129,10 +1132,10 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('entry:multiply', 200)
+dataPoint
+  .transform('entry:multiply', 200)
   .then((acc) => {
     assert.deepEqual(acc.value, 20000)
-    console.log(acc.value)
   })
 ```
 
@@ -1151,7 +1154,6 @@ dataPoint.addEntities({
 dataPoint.transform('entry:getParam')
   .then((acc) => {
     assert.deepEqual(acc.value, 100)
-    console.log(acc.value)
   })
 ```
 
@@ -1164,12 +1166,16 @@ Let's resolve to a NON array value and see how this would be handled.
 ```js
 const isArray = () => (acc, next) => {
   if (acc.value instanceof Array) {
-    // if the value is valid, then just pass it along
+    // if the value is valid, then
+    // just pass it along
     return next(null, acc.value)
   }
 
-  // Notice how we pass this error object as the FIRST parameter.
-  // This tells DataPoint that there was an error, and to treat it as such.
+  // Notice how we pass this error
+  // object as the FIRST parameter.
+  // This tells DataPoint that
+  // there was an error, and to
+  // treat it as such.
   next(new Error(`${acc.value} should be an Array`))
 }
 
@@ -1180,8 +1186,10 @@ dataPoint.addEntities({
     after: isArray(),
     error: (acc, next) => {
       console.log('Value is invalid, resolving to empty array')
-      // passing a a value as the second argument
-      // will stop the propagation of the error
+      // passing a a value as the
+      // second argument
+      // will stop the propagation
+      // of the error
       next(null, [])
     }
   }
@@ -1193,11 +1201,11 @@ const input = {
   }
 }
 
-dataPoint.transform('entry:foo', input).then((acc) => {
-  console.log(acc.value)
-  // Value is invalid, resolving to empty array
-  // []
-})
+dataPoint
+  .transform('entry:foo', input)
+  .then((acc) => {
+    assert.deepEqual(acc.value, [])
+  })
 ```
 
 Example at: [examples/entity-entry-error-handled.js](examples/entity-entry-error-handled.js)
@@ -1254,10 +1262,12 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getOrgInfo', {}).then((acc) => {
-  // entire result from https://api.github.com/orgs/nodejs
-  console.log(acc.value) 
-})
+dataPoint
+  .transform('request:getOrgInfo', {})
+  .then((acc) => {
+    // entire result from https://api.github.com/orgs/nodejs
+    console.log(acc.value) 
+  })
 ```
 
 Example at: [examples/entity-request-basic.js](examples/entity-request-basic.js)
@@ -1270,12 +1280,15 @@ Using `acc.value` property to make the url dynamic.
 
 ```js
 dataPoint.addEntities({
-  // dynamic search, which uses StringTemplate's simple 
-  // templating system {value} to inject the search 
+  // dynamic search, which uses 
+  // StringTemplate's simple 
+  // templating system {value} to
+  // inject the search 
   // value into the URL string
   'request:getNodeOrgInfo': {
     url: 'https://api.github.com/orgs/{value.organization}',
-    // this object will be passed to request.js
+    // this object will be passed 
+    // to request.js
     options: {
       headers: {
         'User-Agent': 'DataPoint'
@@ -1284,25 +1297,32 @@ dataPoint.addEntities({
   }
 })
 
-// second parameter to transform is the initial value
-dataPoint.transform('request:getNodeOrgInfo', {
-  organization: 'nodejs'
-}).then((acc) => {
-  // outputs full result from the remote source
-  console.log(acc.value) 
-})
+// second parameter to transform is
+// the initial value
+dataPoint
+  .transform('request:getNodeOrgInfo', {
+    organization: 'nodejs'
+  })
+  .then((acc) => {
+    // outputs full result from the
+    // remote source
+    console.log(acc.value) 
+  })
 ```
 
 <a name="acc-locals-example" ></a> Using `acc.locals` property to make the url dynamic:
 
 ```js
 dataPoint.addEntities({
-  // dynamic search, which uses StringTemplate's simple 
-  // templating system {value} to inject the search 
+  // dynamic search, which uses
+  // StringTemplate's simple 
+  // templating system {value} to
+  // inject the search 
   // value into the URL string
   'request:getNodeOrgInfo': {
     url: 'https://api.github.com/orgs/{locals.organization}',
-    // this object will be passed to request.js
+    // this object will be passed
+    // to request.js
     options: {
       headers: {
         'User-Agent': 'request'
@@ -1311,16 +1331,20 @@ dataPoint.addEntities({
   }
 })
 
-// The third parameter of transform is the options object 
-// where we can pass the `locals` value
-dataPoint.transform('request:getNodeOrgInfo', {
-  locals: {
-    organization: 'nodejs'
-  }
-}).then((acc) => {
-  // outputs full result from the remote source
-  console.log(acc.value) 
-})
+// The third parameter of transform
+// is the options object where we 
+// can pass the `locals` value
+dataPoint
+  .transform('request:getNodeOrgInfo', { 
+    locals: {
+      organization: 'nodejs'
+    }
+  })
+  .then((acc) => {
+    // outputs full result from the
+    // remote source
+    console.log(acc.value) 
+  })
 ```
 
 Example at: [examples/entity-request-string-template.js](examples/entity-request-string-template.js)
@@ -1334,26 +1358,27 @@ When a TransformObject is to be resolved, all TransformExpressions are resolved 
 ```js
 dataPoint.addEntities({
   'request:searchPeople': {
-    url: 'https://swapi.co/api/people/?search=r2',
+    url: 'https://swapi.co/api/people',
     options: {
+      // this request will be sent as:
+      // https://swapi.co/api/people/?search=r2
       qs: {
-        // because the key starts with $
-        // it will be treated as a TransformExpression
-        $search: (acc) => {
-          return acc.value.search
-        }
+        // because the key starts
+        // with $ it will be treated
+        // as a TransformExpression
+        $search: '$query'
       }
     }
   }
 })
 
-// second parameter to transform is the initial acc value
-dataPoint.transform('request:searchPeople', {
-  search: 'r2'
-}).then((acc) => {
-  // R2-D2
-  console.log(acc.value.results[0].name)
-})
+// second parameter to transform is
+// the initial acc.value
+dataPoint
+  .transform('request:searchPeople | $results[0].name', { query: 'r2'})
+  .then((acc) => {
+    assert.equal(acc.value, 'R2-D2')
+  })
 ```
 
 Example at: [examples/entity-request-transform-object.js](examples/entity-request-transform-object.js)
@@ -1369,7 +1394,8 @@ dataPoint.addEntities({
   'request:getOrgInfo': {
     url: 'https://api.github.com/orgs/{value}',
     beforeRequest: (acc) => {
-      // acc.value holds reference to request.options
+      // acc.value holds reference
+      // to request.options
       const options = _.assign({}, acc.value, {
         headers: {
           'User-Agent': 'DataPoint'
@@ -1381,10 +1407,12 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getOrgInfo', 'nodejs').then((acc) => {
-  console.log(acc.value)
-  // entire result from https://api.github.com/orgs/nodejs
-})
+dataPoint
+  .transform('request:getOrgInfo', 'nodejs')
+  .then((acc) => {
+    console.log(acc.value)
+    // entire result from https://api.github.com/orgs/nodejs
+  })
 ```
 
 Example at: [examples/entity-request-before-request.js](examples/entity-request-before-request.js)
@@ -1468,14 +1496,14 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('hash:helloWorld', input).then((acc) => {
-  assert.deepEqual(acc.value, {
-    c: 'Hello',
-    d: ' World!!'
+dataPoint
+  .transform('hash:helloWorld', input)
+  .then((acc) => {
+    assert.deepEqual(acc.value, {
+      c: 'Hello',
+      d: ' World!!'
+    })
   })
-  console.log('result:', acc.value)
-  // result: { c: 'Hello', d: ' World!!' }
-})
 ```
 
 Example at: [examples/entity-hash-context.js](examples/entity-hash-context.js)
@@ -1503,16 +1531,18 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getOrgInfo | hash:OrgInfo').then((acc) => {
-  console.log(acc.value)
-  // {
-  //  reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-  //  eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-  //  avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-  //  orgName: 'Node.js Foundation',
-  //  blogUrl: 'https://nodejs.org/foundation/'
-  // }
-})
+dataPoint
+  .transform('request:getOrgInfo | hash:OrgInfo')
+  .then((acc) => {
+    console.log(acc.value)
+    // {
+    //  reposUrl: 'https://api.github.com/orgs/nodejs/repos',
+    //  eventsUrl: 'https://api.github.com/orgs/nodejs/events',
+    //  avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
+    //  orgName: 'Node.js Foundation',
+    //  blogUrl: 'https://nodejs.org/foundation/'
+    // }
+  })
 ```
 
 Example at: [examples/entity-hash-mapKeys.js](examples/entity-hash-mapKeys.js)
@@ -1574,20 +1604,22 @@ const expectedResult = {
   avatarUrlDuplicate: 'https://avatars0.githubusercontent.com/u/9950313?v=3'
 }
 
-dataPoint.transform('entry:orgInfo', { org: 'nodejs' }).then((acc) => {
-  assert.deepEqual(acc.value, expectedResult)
-  console.log(acc.value)
-  /*
-  {
-    reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-    eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-    avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-    orgName: 'Node.js Foundation',
-    blogUrl: 'https://nodejs.org/foundation/',
-    avatarUrlDuplicate: 'https://avatars0.githubusercontent.com/u/9950313?v=3'
-  }
-  */
-})
+dataPoint
+  .transform('entry:orgInfo', { org: 'nodejs' })
+  .then((acc) => {
+    assert.deepEqual(acc.value, expectedResult)
+    console.log(acc.value)
+    /*
+    {
+      reposUrl: 'https://api.github.com/orgs/nodejs/repos',
+      eventsUrl: 'https://api.github.com/orgs/nodejs/events',
+      avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
+      orgName: 'Node.js Foundation',
+      blogUrl: 'https://nodejs.org/foundation/',
+      avatarUrlDuplicate: 'https://avatars0.githubusercontent.com/u/9950313?v=3'
+    }
+    */
+  })
 ```
 
 Example at: [examples/entity-hash-addKeys.js](examples/entity-hash-addKeys.js)
@@ -1622,16 +1654,18 @@ const expectedResult = {
   blog: 'https://nodejs.org/foundation/'
 }
 
-dataPoint.transform('entry:orgInfo', { org: 'nodejs' }).then((acc) => {
-  console.log(acc.value)
-  assert.deepEqual(acc.value, expectedResult)
-  /*
-  {
-    name: 'Node.js Foundation',
-    blog: 'https://nodejs.org/foundation/'
-  }
-  */
-})
+dataPoint
+  .transform('entry:orgInfo', { org: 'nodejs' })
+  .then((acc) => {
+    console.log(acc.value)
+    assert.deepEqual(acc.value, expectedResult)
+    /*
+    {
+      name: 'Node.js Foundation',
+      blog: 'https://nodejs.org/foundation/'
+    }
+    */
+  })
 ```
 
 Example at: [examples/entity-hash-pickKeys.js](examples/entity-hash-pickKeys.js)
@@ -1688,17 +1722,18 @@ const expectedResult = {
   url: 'https://api.github.com/orgs/nodejs'
 }
 
-dataPoint.transform('entry:orgInfo', { org: 'nodejs' }).then((acc) => {
-  console.log(acc.value)
-  assert.deepEqual(acc.value, expectedResult)
-  /*
-  {
-    login: 'nodejs',
-    id: 9950313,
-    url: 'https://api.github.com/orgs/nodejs'
-  }
-  */
-})
+dataPoint
+  .transform('entry:orgInfo', { org: 'nodejs' })
+  .then((acc) => {
+    assert.deepEqual(acc.value, expectedResult)
+    /*
+    {
+      login: 'nodejs',
+      id: 9950313,
+      url: 'https://api.github.com/orgs/nodejs'
+    }
+    */
+  })
 ```
 
 Example at: [examples/entity-hash-omitKeys.js](examples/entity-hash-omitKeys.js)
@@ -1732,9 +1767,11 @@ const expectedResult = {
 }
 
 
-dataPoint.transform('hash:addValues').then((acc) => {
-  expect(acc.value).toEqual(expectedResult)
-})
+dataPoint
+  .transform('hash:addValues')
+  .then((acc) => {
+    assert.deepEqual(acc.value, expectedResult)
+  })
 ```
 
 ##### Hash - adding multiple reducers
@@ -1779,9 +1816,11 @@ const expectedResult = {
   info: 'This is a test'
 }
 
-dataPoint.transform('entry:orgInfo', { org: 'nodejs' }).then((acc) => {
-  expect(acc.value).toEqual(expectedResult)
-})
+dataPoint
+  .transform('entry:orgInfo', { org: 'nodejs' })
+  .then((acc) => {
+    assert.deepEqual(acc.value, expectedResult)
+  })
 ```
 
 For examples of hash entities, see the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/hash.js), and [Integration Examples](test/definitions/integrations.js)
@@ -1852,20 +1891,22 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getGist | collection:getRepositoryTagsUrl', {}).then((acc) => {
-  console.log(acc.value)
-  /*
-  [
-    https://api.github.com/repos/nodejs/http-parser/tags,
-    https://api.github.com/repos/nodejs/node-v0.x-archive/tags,
-    https://api.github.com/repos/nodejs/node-gyp/tags,
-    https://api.github.com/repos/nodejs/readable-stream/tags,
-    https://api.github.com/repos/nodejs/node-addon-examples/tags,
-    https://api.github.com/repos/nodejs/nan/tags,
-    ...
-  ]
-  */
-})
+dataPoint
+  .transform('request:getGist | collection:getRepositoryTagsUrl', {})
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    [
+      https://api.github.com/repos/nodejs/http-parser/tags,
+      https://api.github.com/repos/nodejs/node-v0.x-archive/tags,
+      https://api.github.com/repos/nodejs/node-gyp/tags,
+      https://api.github.com/repos/nodejs/readable-stream/tags,
+      https://api.github.com/repos/nodejs/node-addon-examples/tags,
+      https://api.github.com/repos/nodejs/nan/tags,
+      ...
+    ]
+    */
+  })
 ```
 
 The above example is fairly simple. The following example hits each of these urls, and gets information from them. 
@@ -1943,20 +1984,22 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getOrgRepositories | collection:getRepositoryLatestTag', {}).then((acc) => {
-  console.log(acc.value)
-  /*
-  [
-    "v2.7.1",
-    "works",
-    "v3.6.0",
-    "v2.2.9",
-    null,
-    "v2.6.2",
-    ...
-  ]
-  */
-})
+dataPoint
+  .transform('request:getOrgRepositories | collection:getRepositoryLatestTag')
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    [
+      "v2.7.1",
+      "works",
+      "v3.6.0",
+      "v2.2.9",
+      null,
+      "v2.6.2",
+      ...
+    ]
+    */
+  })
 ```
 
 ##### <a name="collection-filter">Collection.filter</a>
@@ -1977,20 +2020,22 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getGist', {}).then((acc) => {
-  console.log(acc.value)
-  /*
-  [
-    https://api.github.com/repos/nodejs/http-parser,
-    https://api.github.com/repos/nodejs/node-v0.x-archive,
-    https://api.github.com/repos/nodejs/node-gyp,
-    https://api.github.com/repos/nodejs/readable-stream,
-    https://api.github.com/repos/nodejs/node-addon-examples,
-    https://api.github.com/repos/nodejs/nan,
-    ...
-  ]
-  */
-})
+dataPoint
+  .transform('request:getGist')
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    [
+      https://api.github.com/repos/nodejs/http-parser,
+      https://api.github.com/repos/nodejs/node-v0.x-archive,
+      https://api.github.com/repos/nodejs/node-gyp,
+      https://api.github.com/repos/nodejs/readable-stream,
+      https://api.github.com/repos/nodejs/node-addon-examples,
+      https://api.github.com/repos/nodejs/nan,
+      ...
+    ]
+    */
+  })
 ```
 
 Because `filter` accepts a transformExpression, you could use it to check whether a property evaluates to a [Truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value. 
@@ -2007,27 +2052,29 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getGist', {}).then((acc) => {
-  console.log(acc.value)
-  /*
-  [
-    {
-      "id": 28619960,
-      "name": "build-container-sync",
-      "full_name": "nodejs/build-container-sync",
-      ...
-      "fork": true
-    }, 
-    {
-      "id": 30464379,
-      "name": "nodejs-es",
-      "full_name": "nodejs/nodejs-es",
-      ...
-      "fork": true
-    }
-  ]
-  */
-})
+dataPoint
+  .transform('request:getGist')
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    [
+      {
+        "id": 28619960,
+        "name": "build-container-sync",
+        "full_name": "nodejs/build-container-sync",
+        ...
+        "fork": true
+      }, 
+      {
+        "id": 30464379,
+        "name": "nodejs-es",
+        "full_name": "nodejs/nodejs-es",
+        ...
+        "fork": true
+      }
+    ]
+    */
+  })
 ```
 
 ##### <a name="collection-find">Collection.find</a>
@@ -2055,21 +2102,23 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:repos | collection:getNodeRepo', {}).then((acc) => {
-  console.log(acc.value)
-  /*
-  {
-    "id": 27193779,
-    "name": "node",
-    "full_name": "nodejs/node",
-    "owner": { ... },
-    "private": false,
-    "html_url": https://github.com/nodejs/node,
-    "description": "Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:",
-    ...
-  }
-  */
-})
+dataPoint
+  .transform('request:repos | collection:getNodeRepo')
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    {
+      "id": 27193779,
+      "name": "node",
+      "full_name": "nodejs/node",
+      "owner": { ... },
+      "private": false,
+      "html_url": https://github.com/nodejs/node,
+      "description": "Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:",
+      ...
+    }
+    */
+  })
 ```
 
 ##### <a name="collection-compose">Collection.compose</a>
@@ -2105,21 +2154,23 @@ dataPoint.addEntities({
   }
 };
 
-dataPoint.transform('request:repos | collection:getNodeRepo', {}).then((acc) => {
-  console.log(acc.value)
-  /*
-  {
-    "id": 27193779,
-    "name": "node",
-    "full_name": "nodejs/node",
-    "owner": { ... },
-    "private": false,
-    "html_url": https://github.com/nodejs/node,
-    "description": "Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:",
-    ...
-  }
-  */
-})
+dataPoint
+  .transform('request:repos | collection:getNodeRepo')
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    {
+      "id": 27193779,
+      "name": "node",
+      "full_name": "nodejs/node",
+      "owner": { ... },
+      "private": false,
+      "html_url": https://github.com/nodejs/node,
+      "description": "Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:",
+      ...
+    }
+    */
+  })
 ```
 
 **Get all forks and map them to a Hash entity**
@@ -2149,25 +2200,27 @@ dataPoint.addEntities({
   }
 };
 
-dataPoint.transform('request:repos | collection:forkedReposSummary', {}).then((acc) => {
-  console.log(acc.value)
-  /*
-  [
-    {
-      "id": 28619960,
-      "name": "build-container-sync",
-      "homepage": null,
-      "description": null
-    },
-    {
-      "id": 30464379,
-      "name": "nodejs-es",
-      "homepage": "",
-      "description": "Localización y traducción de io.js a Español"
-    }
-  ]
-  */
-})
+dataPoint
+  .transform('request:repos | collection:forkedReposSummary')
+  .then((acc) => {
+    console.log(acc.value)
+    /*
+    [
+      {
+        "id": 28619960,
+        "name": "build-container-sync",
+        "homepage": null,
+        "description": null
+      },
+      {
+        "id": 30464379,
+        "name": "nodejs-es",
+        "homepage": "",
+        "description": "Localización y traducción de io.js a Español"
+      }
+    ]
+    */
+  })
 ```
 
 For more examples of collection entities, see the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/collection.js), and [Integration Examples](test/definitions/integrations.js)
@@ -2347,7 +2400,8 @@ dataPoint.addEntities({
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
   'request:repositories -> request:githubBase': {
-    // options object is provided by request:githubBase
+    // options object is provided 
+    // by request:githubBase
     url: 'https://api.github.com/orgs/{locals.orgName}/repos'
   }
 })
@@ -2359,7 +2413,9 @@ const options = {
 }
 
 dataPoint.transform('entry:getReposWithAllTags', null, options).then((acc) => {
-  console.log(acc.value) // returns all the repos for nodejs org
+  // returns all the repos
+  // for nodejs org
+  console.log(acc.value) 
 })
 ```
 
@@ -2381,8 +2437,9 @@ dataPoint.addEntities({
     }
   },
   'model:multiplyBy20 -> model:multiplyBy': {
-    // through the params property we can
-    // parameterize the base entity
+    // through the params property
+    // we can parameterize the 
+    // base entity
     params: {
       multiplicand: 20
     }
@@ -2584,9 +2641,11 @@ const data = {
   }
 }
 
-dataPoint.transform('render:HelloWorld', data).then((acc) => {
-  console.log(acc.value) // '<h1>Hello World!!</h1>'
-})
+dataPoint
+  .transform('render:HelloWorld', data)
+  .then((acc) => {
+    assert.equal(acc.value, '<h1>Hello World!!</h1>')
+  })
 ```
 
 Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
