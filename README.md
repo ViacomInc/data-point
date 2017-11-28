@@ -261,8 +261,8 @@ Transform Expressions can be represented in different ways:
 | TransformExpression | Description |
 |:---|:---|
 | `'$.'` | Get **root** value of *acc.value* |
-| ``'$name'` | Get property `name` from *acc.value* |
-| `'$results[0].users` | Get path `results[0].users` from *acc.value* |
+| `'$name'` | Get property `name` from *acc.value* |
+| `'$results[0].users'` | Get path `results[0].users` from *acc.value* |
 | `'$results[0].users \| hash:User[]'` | Get path `results[0].users` from *acc.value* and **map** each user to a `hash:User` entity |
 | `(acc) => { ... }` | Call function reducer, returned value gets passed to next reducer |
 | `['$a.b', (acc) => { ... }]` | Get path `a.b`, pipe value to function reducer |
@@ -293,7 +293,7 @@ The `Accumulator.value` property is the data source from which you want to apply
 | *value*  | `Object` | Value to be transformed. |
 | *initialValue*  | `Object` | Initial value passed to the an entity. You can use this value as a reference to the initial value passed to your Entity before any reducer was applied. |
 | *values*  | `Object` | Access to the values stored via [dataPoint.addValue](#api-data-point-add-value). |
-| *params*  | `Object` | Value of the current Entity's params property. |
+| *params*  | `Object` | Value of the current Entity's params property. (for all entites except transform) |
 | *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#api-data-point-transform). |
 | *reducer*  | `Object` | Information relative to the current [Reducer](#reducers) being executed. |
 
@@ -1159,7 +1159,7 @@ dataPoint.transform('entry:getParam')
 
 **Error handling**
 
-Passing a a value as the second argument will stop the propagation of the error.
+Passing a value as the second argument will stop the propagation of the error.
 
 Let's resolve to a NON array value and see how this would be handled. 
 
@@ -1186,7 +1186,7 @@ dataPoint.addEntities({
     after: isArray(),
     error: (acc, next) => {
       console.log('Value is invalid, resolving to empty array')
-      // passing a a value as the
+      // passing a value as the
       // second argument
       // will stop the propagation
       // of the error
@@ -1884,7 +1884,12 @@ Now that we have the result of the fetch, let's now map each item, and then extr
 ```js
 dataPoint.addEntities({
   'request:getOrgRepositories': {
-    url: 'https://api.github.com/orgs/nodejs/repos'
+    url: 'https://api.github.com/orgs/nodejs/repos',
+    options: {
+      headers: {
+        'User-Agent': 'request'
+      }
+    }
   },
   'collection:getRepositoryTagsUrl': {
     map: '$tags_url'
@@ -1892,7 +1897,7 @@ dataPoint.addEntities({
 })
 
 dataPoint
-  .transform('request:getGist | collection:getRepositoryTagsUrl', {})
+  .transform('request:getOrgRepositories | collection:getRepositoryTagsUrl', {})
   .then((acc) => {
     console.log(acc.value)
     /*
@@ -2011,17 +2016,23 @@ The following example filters the data to identify all the repos that have more 
 ```js
 dataPoint.addEntities({
   'request:getOrgRepositories': {
-    url: 'https://api.github.com/orgs/nodejs/repos'
+    url: 'https://api.github.com/orgs/nodejs/repos',
+    options: {
+      headers: {
+        'User-Agent': 'request'
+      }
+    }
   },
   'collection:getRepositoryUrl': {
+    map: '$url',
     filter: (acc) => {
-      return acc.value > 100
+      return acc.value.stargazers_count > 100
     }
   }
 })
 
 dataPoint
-  .transform('request:getGist')
+  .transform(['request:getOrgRepositories', 'collection:getRepositoryUrl'])
   .then((acc) => {
     console.log(acc.value)
     /*
@@ -2045,7 +2056,12 @@ The following example gets all the repos that are actually forks. In this case, 
 ```js
 dataPoint.addEntities({
   'request:getOrgRepositories': {
-    url: 'https://api.github.com/orgs/nodejs/repos'
+    url: 'https://api.github.com/orgs/nodejs/repos',
+    options: {
+      headers: {
+        'User-Agent': 'request'
+      }
+    }
   },
   'collection:getRepositoryUrl': {
     filter: '$fork'
@@ -2053,7 +2069,7 @@ dataPoint.addEntities({
 })
 
 dataPoint
-  .transform('request:getGist')
+  .transform(['request:getOrgRepositories', 'collection:getRepositoryUrl'])
   .then((acc) => {
     console.log(acc.value)
     /*
