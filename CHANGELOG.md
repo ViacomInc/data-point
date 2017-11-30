@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/ViacomInc/data-point/compare/v1.2.0...v1.3.0) (2017-11-30)
+
+
+### Bug Fixes
+
+* **utils:** placed back 'use strict' ([3e30357](https://github.com/ViacomInc/data-point/commit/3e30357)), closes [#26](https://github.com/ViacomInc/data-point/issues/26)
+
+
+### Features
+
+* **entity-request:** ability to inspect a request before making the call ([0c80c07](https://github.com/ViacomInc/data-point/commit/0c80c07)), closes [#25](https://github.com/ViacomInc/data-point/issues/25)
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/ViacomInc/data-point/compare/v1.1.0...v1.2.0) (2017-11-25)
 
