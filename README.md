@@ -42,6 +42,7 @@ npm install --save data-point
     - [Control](#control-entity)
     - [Schema](#schema-entity)
   - [Entity ComposeReducer](#entity-compose-reducer)
+  - [Inspecting Entities](#inspecting-entities)
   - [Extending Entities](#extending-entities)
 - [dataPoint.use](#api-data-point-use)
 - [dataPoint.addValue](#api-data-point-add-value)
@@ -1418,6 +1419,29 @@ dataPoint
 Example at: [examples/entity-request-before-request.js](examples/entity-request-before-request.js)
 
 For more examples of request entities, see the [Examples](examples), the unit tests: [Request Definitions](test/definitions/sources.js), and [Integration Examples](test/definitions/integrations.js)
+
+### <a name="request-inspect">Inspecting Request</a>
+
+You may inspect a Request entity through the `params.inspect` property.
+
+**note:** At the moment this feature is only available on Request entity, PRs are welcome.
+
+**SYNOPSIS**
+
+```js
+dataPoint.addEntities({
+  'request:<entityId>': {
+    params: {
+      inspect: Boolean|Function
+    }
+  }
+})
+```
+
+If `params.inspect` is `true` it will output the entity's information to the console.
+
+If `params.inspect` is a `function`, you may execute custom debugging code to be executed before the actual request gets made. The function receives the current accumulator value as its only parameter.
+
 
 #### <a name="hash-entity">Hash Entity</a>
 
