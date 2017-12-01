@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+  <head>
+    <title>DataPoint Entity Inspector</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css"/>
+    <style>
+        /* http://meyerweb.com/eric/tools/css/reset/
+          v2.0 | 20110126
+          License: none (public domain)
+        */
+
+        html, body, div, span, applet, object, iframe,
+        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        a, abbr, acronym, address, big, cite, code,
+        del, dfn, em, img, ins, kbd, q, s, samp,
+        small, strike, strong, sub, sup, tt, var,
+        b, u, i, center,
+        dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend,
+        table, caption, tbody, tfoot, thead, tr, th, td,
+        article, aside, canvas, details, embed,
+        figure, figcaption, footer, header, hgroup,
+        menu, nav, output, ruby, section, summary,
+        time, mark, audio, video {
+          margin: 0;
+          padding: 0;
+          border: 0;
+          font-size: 100%;
+          font: inherit;
+          vertical-align: baseline;
+        }
+        /* HTML5 display-role reset for older browsers */
+        article, aside, details, figcaption, figure,
+        footer, header, hgroup, menu, nav, section {
+          display: block;
+        }
+        body {
+          line-height: 1;
+        }
+        ol, ul {
+          list-style: none;
+        }
+        blockquote, q {
+          quotes: none;
+        }
+        blockquote:before, blockquote:after,
+        q:before, q:after {
+          content: '';
+          content: none;
+        }
+        table {
+          border-collapse: collapse;
+          border-spacing: 0;
+        }
+      </style>
+      <style>
+          body {
+            font-family: 'Roboto', sans-serif;
+          }
+
+          label {
+            display: block;
+            font-size: 13px;
+            color: #888;
+            padding: 10px 0 4px;
+          }
+
+          button {
+            margin-top: 4px;
+            padding: 4px 9px 6px;
+            border-radius: 5px;
+          }
+
+          input {
+            padding: 4px 5px;
+          }
+
+          .inspector {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+          }
+
+          .initial-data {
+            flex: 0 0 300px;
+            flex-shrink: 1;
+            padding: 5px 10px;
+            border-right: 1px solid #e2e2e2;
+            background: #f7f7f7;
+          }
+
+          .result {
+            flex: 1;
+            padding: 10px;
+          }
+
+          .parse-as-list label {
+            display: inline;
+          }
+
+          #editor-value {
+            border: 1px solid #b7b7b7;
+          }
+
+          #inspect-url {
+            width: 283px;
+          }
+
+          .inspect-param-id {
+            width: 74px;
+          }
+
+          .inspect-param-value {
+            width: 125px;
+          }
+
+          #editor-value > .CodeMirror {
+            height: 150px;
+          }
+
+          .param-value {
+            padding: 3px 0px;
+          }
+
+          .param-values {
+            margin: 0px 0px 7px;
+          }
+
+          #inspector-result {
+            width: 100%;
+            height: 100%;
+          }
+
+          #inspect {
+            margin: 19px 0px;
+            padding: 7px 13px 6px;
+            border: 1px solid black;
+            font-weight: 500;
+          }
+
+          .has-errors {
+            border: 1px solid #e8a8a8;
+            background: #fff3f3;
+            color: #de6d6d;
+            padding: 10px;
+            margin-top: 10px;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="inspector">
+      <div class="initial-data">
+        <form>
+          <fieldset>
+            <label>Inspect url</label>
+            <input id="inspect-url" style="width:260px"></input>
+          </fieldset>
+        <fieldset>
+          <label>Entity Id</label>
+          <select id="inspect-entity">
+          </select>
+        </fieldset>
+        <fieldset>
+          <label>Url Parameters (
+            <code>acc.locals.params</code>,
+            <code>acc.locals.query</code>)
+          </label>
+          <div id="param-values">
+            <div class="param-value">
+              <select class="inspect-param-type">
+                <option>param</option>
+                <option>query</option>
+              </select>
+              <input class="inspect-param-id" placeholder="id"></input>
+              <input class="inspect-param-value" placeholder="value"></input>
+            </div>
+          </div>
+          <button id="add-param" type="button">+ add</button>
+        </fieldset>
+        <fieldset>
+          <label>
+            Accumulator value (<code>acc.value</code>)
+          </label>
+          <div>
+            <div id="editor-value"></div>
+            <fieldset>
+              <label>Parse as:</label>
+              <div class="parse-as-list">
+                <input type="radio" name="parse-as" value="object" id="parse-as-object" checked>
+                <label for="parse-as-object">Object/Array</label>
+                <input type="radio" name="parse-as" value="string" id="parse-as-string">
+                <label for="parse-as-string">String</label>
+                <input type="radio" name="parse-as" value="number" id="parse-as-number">
+                <label for="parse-as-number">Number</label>
+                <input type="radio" name="parse-as" value="boolean" id="parse-as-boolean">
+                <label for="parse-as-boolean">Boolean</label>
+              </div>
+            </fieldset>
+          </div>
+        </fieldset>
+        <button type="button" id="inspect">SEND</button>
+        <div id="has-errors">
+
+        </div>
+        </form>
+      </div>
+      <div class="result">
+        <pre id="inspector-result"></pre>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+  <script type="text/javascript">
+    var checked = function(){ return this.checked; }
+    var selected = function(){ return this.selected; }
+    let valueEditor
+
+    function getValue() {
+      let value
+      const valueType = $('[name="parse-as"]').filter(checked).val()
+      const rawValue = valueEditor.getValue()
+      switch(valueType) {
+        case 'object':
+        value = rawValue ? JSON.parse(rawValue) : undefined
+        break;
+        case 'string':
+        value = rawValue
+        break;
+        case 'number':
+        value = Number(rawValue)
+        break;
+        case 'boolean':
+        value = rawValue === 'true' ? true : 'false'
+        break;
+      }
+
+      return value
+    }
+
+    function gatherData() {
+      const url = $('#inspect-url').val()
+
+      const inspectParamType = $('#inspect-entity')[0]
+      const entityId = inspectParamType.options[inspectParamType.selectedIndex].value
+
+      const paramValues = []
+      $('.param-value').each(function (paramValue) {
+        const $paramValue = $(this)
+        const inspectParamType = $paramValue.find('.inspect-param-type')[0]
+        paramValues.push({
+          type: inspectParamType.options[inspectParamType.selectedIndex].value,
+          id: $paramValue.find('.inspect-param-id').val(),
+          value: $paramValue.find('.inspect-param-value').val()
+        })
+      })
+
+      const queryParams = paramValues.reduce((acc, item) => {
+        const paramType = acc[item.type] || {}
+        if(item.id && item.value) {
+          paramType[item.id] = item.value
+          acc[item.type] = paramType
+        }
+        return acc
+      }, {})
+
+      const value = attempt(getValue)
+
+      if(value instanceof Error) {
+        $('#editor-value').addClass('has-errors')
+        throw value
+      }
+
+      const body = {
+        url,
+        entityId,
+        value,
+        query: queryParams.query,
+        params: queryParams.param
+      }
+
+      return body
+    }
+
+    function attempt(fn, args) {
+      try {
+        return fn.apply(null, args)
+      } catch(error) {
+        return error
+      }
+    }
+
+    function getServiceUrl(path){
+      const pathname = window.location.pathname
+      const separator = pathname.endsWith('/')
+        ? ''
+        : '/'
+      return pathname + separator + path
+    }
+
+    function getEntities() {
+      fetch(getServiceUrl('entities'))
+        .then(res => {
+          return res.json()
+        })
+        .then(entityKeys => {
+          var keys = entityKeys.map(key =>
+            `<option>${key}</option>`
+          )
+          $('#inspect-entity').append(keys)
+        })
+    }
+
+    $(()=> {
+
+      getEntities()
+
+      const editorValue = document.getElementById('editor-value')
+      valueEditor = CodeMirror(editorValue, {
+        lineNumbers: true,
+        tabSize: 2,
+      });
+
+
+      $('#inspect-url').val(window.location.origin + window.location.pathname)
+
+      $('#add-param').on('click', () => {
+        const template = $('#param-field-template').html()
+        $('#param-values').append(template)
+      })
+
+      $('#inspect').on('click', () => {
+        $('.has-errors').removeClass('has-errors')
+        $('#inspector-result').text('')
+        const data = attempt(gatherData)
+        $('#has-errors').text('')
+        if(data instanceof Error) {
+          $('#has-errors')
+            .addClass('has-errors')
+            .text(data.toString())
+          return
+        }
+
+        fetch(data.url, {
+              method: "POST",
+              body: JSON.stringify(data),
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+          })
+          .then(res => {
+            const contentType = res.headers.get("content-type")
+            return contentType.includes('text')
+              ? res.text()
+              : res.json()
+          })
+          .then(data => {
+            $('#inspector-result').text(JSON.stringify(data, null, '  '))
+          })
+          .catch(error => {
+            $('#has-errors')
+              .addClass('has-errors')
+              .text(error.toString())
+          })
+      })
+    })
+  </script>
+  <template id="param-field-template">
+      <div class="param-value">
+        <select class="inspect-param-type">
+          <option>param</option>
+          <option>query</option>
+        </select>
+        <input class="inspect-param-id" placeholder="id"></input>
+        <input class="inspect-param-value" placeholder="value"></input>
+      </div>
+    </template>
+</html>

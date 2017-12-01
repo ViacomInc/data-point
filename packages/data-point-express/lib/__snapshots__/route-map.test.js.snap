@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`verifyMiddlewareFormat should not be empty 1`] = `"Route Foo - middleware property must not be empty"`;
+
+exports[`verifyMiddlewareFormat throw error if entityId is not the last middleware 1`] = `"Route Foo - entityId middleware may only be at the end of the chain"`;
+
+exports[`verifyMiddlewareFormat throw error if more than one entityId 1`] = `"Route Foo - middleware should only map to 1 entityId, found: entityId1,entityId2"`;
