@@ -1,17 +1,12 @@
-# DataPoint tools
+# DataPoint
 
-> Collection of tools for working with DataPoint
+[![Build Status](https://travis-ci.org/ViacomInc/data-point.svg?branch=ci)](https://travis-ci.org/ViacomInc/data-point) [![Coverage Status](https://coveralls.io/repos/github/ViacomInc/data-point/badge.svg?branch=ci)](https://coveralls.io/github/ViacomInc/data-point?branch=ci)
 
-## Requirements
-
-- Node 6+
-- [yarn](https://yarnpkg.com)
+> JavaScript Utility for collecting, processing and transforming data.
 
 ## Packages
 
-This repository is a collection of tools made for working with [DataPoint](https://github.com/ViacomInc/data-point). The project itself uses [yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/).
-
-- **[data-point](packages/data-point)**
+- **[data-point](packages/data-point)** (core)
 - [data-point-express](packages/data-point-express)
 - [data-point-service](packages/data-point-service)
 - [data-point-cache](packages/data-point-cache)

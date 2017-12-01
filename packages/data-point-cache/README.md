@@ -1,5 +1,7 @@
 # data-point-cache
 
+[![Build Status](https://travis-ci.org/ViacomInc/data-point.svg?branch=ci)](https://travis-ci.org/ViacomInc/data-point) [![Coverage Status](https://coveralls.io/repos/github/ViacomInc/data-point/badge.svg?branch=ci)](https://coveralls.io/github/ViacomInc/data-point?branch=ci)
+
 > DataPoint cache layer
 
 Factory method to create a simple cache API that you can use for data persistence. 
