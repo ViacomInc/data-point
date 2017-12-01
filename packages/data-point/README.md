@@ -8,7 +8,7 @@ DataPoint helps you reason with and streamline your data processing layer. With 
 
 **Prerequisites**
 
-Node v4 LTS or higher
+Node v6 LTS or higher
 
 **Installing**
 
