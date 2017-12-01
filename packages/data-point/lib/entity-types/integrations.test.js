@@ -1,0 +1,270 @@
+/* eslint-env jest */
+'use strict'
+
+const _ = require('lodash')
+const nock = require('nock')
+const FixtureStore = require('../../test/utils/fixture-store')
+const TestData = require('../../test/data.json')
+
+let dataPoint
+
+beforeAll(() => {
+  dataPoint = FixtureStore.create()
+})
+
+beforeEach(() => {
+  dataPoint.middleware.clear()
+})
+
+test('Entry#resolve - branch/leaf nesting', () => {
+  return dataPoint
+    .transform('hash:branchLeafNesting', TestData)
+    .then(result => {
+      expect(result.value).toEqual({
+        label: '1',
+        leafs: [
+          {
+            label: '1.0',
+            leafs: []
+          },
+          {
+            label: '1.1',
+            leafs: [
+              {
+                label: '1.1.0',
+                leafs: []
+              },
+              {
+                label: '1.1.1',
+                leafs: []
+              }
+            ]
+          }
+        ]
+      })
+    })
+})
+
+test('Entry#resolve - resolve request', () => {
+  const expected = {
+    ok: true
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, expected)
+
+  return dataPoint.transform('entry:callRequest', {}).then(result => {
+    expect(result.value).toEqual(expected)
+  })
+})
+
+test('Entry#resolve - request uses locals object', () => {
+  const expected = {
+    ok: true
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, expected)
+
+  const options = {
+    locals: {
+      itemPath: '/source1'
+    }
+  }
+  return dataPoint
+    .transform('entry:callDynamicRequestFromLocals', {}, options)
+    .then(result => {
+      expect(result.value).toEqual(expected)
+    })
+})
+
+test('Entry#resolve - resolve hash with request', () => {
+  const expected = {
+    ok: true
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, expected)
+
+  return dataPoint.transform('entry:hashThatCallsRequest').then(result => {
+    expect(result.value).toEqual(expected)
+  })
+})
+
+test('Entry#resolve - resolve hash with request and hash reducers', () => {
+  const expected = {
+    newOk: 'trueok',
+    ok: true
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, {
+      ok: true
+    })
+
+  return dataPoint
+    .transform('entry:callHashWithRequestAndExtendResult')
+    .then(result => {
+      expect(result.value).toEqual(expected)
+    })
+})
+
+test('Entry#resolve - resolve model with multiple sources', () => {
+  const expected = {
+    s1: 'source1',
+    s2: 'source2'
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, {
+      source: 'source1'
+    })
+
+  nock('http://remote.test')
+    .get('/source2')
+    .reply(200, {
+      source: 'source2'
+    })
+
+  return dataPoint
+    .transform('entry:callHashThatCallsMultipleRequests')
+    .then(result => {
+      expect(result.value).toEqual(expected)
+    })
+})
+
+test('Entry#resolve - resolve model with dynamic sources collection', () => {
+  const expected = [
+    {
+      result: 'source2'
+    },
+    {
+      result: 'source3'
+    }
+  ]
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, {
+      sources: [
+        {
+          itemPath: '/source2'
+        },
+        {
+          itemPath: '/source3'
+        }
+      ]
+    })
+
+  nock('http://remote.test')
+    .get('/source2')
+    .reply(200, {
+      result: 'source2'
+    })
+
+  nock('http://remote.test')
+    .get('/source3')
+    .reply(200, {
+      result: 'source3'
+    })
+
+  return dataPoint
+    .transform('entry:nestedRequests')
+    .then(result => expect(result.value).toEqual(expected))
+})
+
+test('Entry#resolve:middleware(entry:after) - gets called', () => {
+  const expected = {
+    ok: true
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, expected)
+
+  dataPoint.middleware.clear()
+
+  dataPoint.middleware.use('entry:after', (acc, next) => {
+    expect(acc.context.id).toBe('entry:callRequest')
+    next(null)
+  })
+
+  return dataPoint.transform('entry:callRequest', {}).then(result => {
+    expect(result.value).toEqual(expected)
+  })
+})
+
+test('Entry#resolve - run schema, fail if invalid', () => {
+  return dataPoint
+    .transform('schema:checkHashSchemaInvalid', TestData)
+    .catch(err => err)
+    .then(result => expect(result).toBeInstanceOf(Error))
+})
+
+test('Entry#resolve - run schema, pass value if valid', () => {
+  return dataPoint
+    .transform('schema:checkHashSchemaValid', TestData)
+    .then(result => expect(result.value).toBeTruthy())
+})
+
+describe('trace feature', () => {
+  test('trace via options parameter', () => {
+    const consoleTime = console.time
+    const consoleTimeEnd = console.timeEnd
+
+    const timeIds = []
+    console.time = id => {
+      timeIds.push({
+        type: 'time',
+        id: id
+      })
+    }
+    console.timeEnd = id => {
+      timeIds.push({
+        type: 'timeEnd',
+        id: id
+      })
+    }
+    return dataPoint
+      .transform('model:tracedViaOptions', TestData, {
+        trace: true
+      })
+      .then(result => {
+        console.time = consoleTime
+        console.timeEnd = consoleTimeEnd
+        const ids = _.map(timeIds, 'id')
+        expect(ids[0]).toContain('⧖ model:tracedViaOptions(')
+      })
+  })
+  test('trace via entity params', () => {
+    const consoleTime = console.time
+    const consoleTimeEnd = console.timeEnd
+
+    const timeIds = []
+    console.time = id => {
+      timeIds.push({
+        type: 'time',
+        id: id
+      })
+    }
+    console.timeEnd = id => {
+      timeIds.push({
+        type: 'timeEnd',
+        id: id
+      })
+    }
+    return dataPoint
+      .transform('model:tracedViaParams', TestData)
+      .then(result => {
+        console.time = consoleTime
+        console.timeEnd = consoleTimeEnd
+        const ids = _.map(timeIds, 'id')
+        expect(ids[0]).toContain('⧖ model:tracedViaParams(')
+      })
+  })
+})
