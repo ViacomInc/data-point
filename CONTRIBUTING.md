@@ -9,22 +9,26 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 ## Setup
 
+Make sure you [install Yarn](https://yarnpkg.com/en/docs/install) so you can run the project locally. This project uses [Yarn Workspaces](https://yarnpkg.com/lang/en/docs/workspaces/).
+
 ```bash
 git clone git@github.com:ViacomInc/data-point.git
 cd data-point
-npm install
+yarn install
 ```
+
+Once you are setup, you may run any of the npm scripts available.
 
 ## Running Tests
 
-Once you are setup, you may run any of the npm tests scripts available:  
+To run the unit tests you may run any of the following commands:
 
 ```bash
 # runs all unit tests with test coverage
-npm run test 
+yarn run test 
 
 # runs all unit tests with test coverage and with watch mode
-npm run watch:test
+yarn run watch
 ```
 
 ## Code Standards
@@ -41,9 +45,13 @@ If you are new to Functional programming there is a lot of good documentation ou
 
 **Javascript API restrictions**
 
-We want DataPoint to be accessible to users from Node 4.x and above, because of this we would like to stick to Node 4.x full compatibility without the use of any transpilers.
+We want DataPoint to be accessible to users from Node 6.x and above, because of this we would like to stick to Node 6 LTS full compatibility without the use of any transpilers.
 
 That said, for asynchronous code please rely on using BlueBird's promise api.
+
+## Supported Node Versions
+
+We will only be supporting node 6 and above, please make sure the code you use is supported by this version.
 
 ## Pull Request Process
 
@@ -51,8 +59,8 @@ That said, for asynchronous code please rely on using BlueBird's promise api.
 2. Create your feature branch `git checkout -b feature/my-new-feature`
 3. Commit your changes through `npm run commit`
 4. Push to the branch `git push origin feature/my-new-feature`
-5. Create a new [Pull Request](https://github.com/ViacomInc/data-path/compare)
+5. Create a new [Pull Request](https://github.com/ViacomInc/data-point/compare)
 
-Please update the [README.md](README.md) with details of changes to the interface.
+Please update the respective README.md files with details of changes to the interface.
 
-**Note on commit messages**: All commit messages **must** use [commitizen](http://commitizen.github.io/cz-cli/) format to be accepted, to ensure you use this format, only commit through `npm run commit`.
+**Note on commit messages**: All commit messages **must** use [commitizen](http://commitizen.github.io/cz-cli/) format to be accepted, to ensure you use this format, only commit through `yarn run commit`.

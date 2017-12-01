@@ -23,7 +23,9 @@ function getAncestors (spec, specs) {
   while (parent) {
     if (parent.id === spec.id || ancestors.indexOf(parent.id) >= 0) {
       throw new Error(
-        `Could not extend ${spec.id}, parent chain creates a circle reference with ${parent.id}`
+        `Could not extend ${
+          spec.id
+        }, parent chain creates a circle reference with ${parent.id}`
       )
     }
     ancestors.push(parent.id)

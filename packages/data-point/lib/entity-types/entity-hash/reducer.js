@@ -58,11 +58,9 @@ function resolveAddKeys (accumulator, modelExtend, resolveTransform) {
     return Promise.resolve(accumulator)
   }
 
-  return resolveMapKeys(
-    accumulator,
-    modelExtend,
-    resolveTransform
-  ).then(result => resolveAddValues(accumulator, result.value))
+  return resolveMapKeys(accumulator, modelExtend, resolveTransform).then(
+    result => resolveAddValues(accumulator, result.value)
+  )
 }
 
 module.exports.resolveAddKeys = resolveAddKeys
@@ -94,14 +92,14 @@ function validateAsObject (acc) {
   const entity = acc.reducer.spec
   return !_.isPlainObject(acc.value)
     ? Promise.reject(
-        new Error(
-          `"${entity.id}" received acc.value = ${JSON.stringify(
-            acc.value
-          ).substr(0, 15)} of type ${utils.typeOf(
-            acc.value
-          )} this entity only process plain Objects. More info https://github.com/ViacomInc/data-point#hash-entity`
-        )
+      new Error(
+        `"${entity.id}" received acc.value = ${JSON.stringify(
+          acc.value
+        ).substr(0, 15)} of type ${utils.typeOf(
+          acc.value
+        )} this entity only process plain Objects. More info https://github.com/ViacomInc/data-point#hash-entity`
       )
+    )
     : acc
 }
 

@@ -68,16 +68,13 @@ test('Entry#resolve - request uses locals object', () => {
     .get('/source1')
     .reply(200, expected)
 
-  return dataPoint
-    .transform(
-      'entry:callDynamicRequestFromLocals',
-      {},
-    {
-      locals: {
-        itemPath: '/source1'
-      }
+  const options = {
+    locals: {
+      itemPath: '/source1'
     }
-    )
+  }
+  return dataPoint
+    .transform('entry:callDynamicRequestFromLocals', {}, options)
     .then(result => {
       expect(result.value).toEqual(expected)
     })

@@ -43,17 +43,15 @@ function resolve (acc, resolveTransform) {
   const caseStatements = selectControl.cases
   const defaultTransfrom = selectControl.default
 
-  return getMatchingCaseStatement(
-    caseStatements,
-    acc,
-    resolveTransform
-  ).then(caseStatement => {
-    if (caseStatement) {
-      return resolveTransform(acc, caseStatement.do)
-    }
+  return getMatchingCaseStatement(caseStatements, acc, resolveTransform).then(
+    caseStatement => {
+      if (caseStatement) {
+        return resolveTransform(acc, caseStatement.do)
+      }
 
-    return resolveTransform(acc, defaultTransfrom)
-  })
+      return resolveTransform(acc, defaultTransfrom)
+    }
+  )
 }
 
 module.exports.resolve = resolve

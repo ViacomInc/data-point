@@ -13,9 +13,9 @@ function parseModifierSpec (modifierSpec) {
   const keys = Object.keys(modifierSpec)
   if (keys.length !== 1) {
     throw new Error(
-      `Compose Modifiers may only contain one key, found: ${keys.length}(${keys.join(
-        ', '
-      )})`
+      `Compose Modifiers may only contain one key, found: ${
+        keys.length
+      }(${keys.join(', ')})`
     )
   }
   const type = keys[0]

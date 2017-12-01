@@ -59,7 +59,9 @@ function resolve (filterStore, accumulator, reducerFunction) {
 
   if (callbackFunction.length > 2) {
     const e = new Error(
-      `ReducerFunction '${reducerFunction.name}' must have at most an arity of 2`
+      `ReducerFunction '${
+        reducerFunction.name
+      }' must have at most an arity of 2`
     )
     e.name = 'InvalidArity'
     return Promise.reject(e)

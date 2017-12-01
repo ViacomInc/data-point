@@ -7,3 +7,4 @@ test/
 benchmark/
 .tern-project
 jsconfig.json
+__snapshots__

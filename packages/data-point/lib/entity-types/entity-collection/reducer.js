@@ -33,8 +33,9 @@ function resolveFilterTransform (accumulator, transform, resolveTransform) {
   })
     .then(result => utils.set(accumulator, 'value', result))
     .catch(err => {
-      err.message = `Entity: ${accumulator.reducer.spec
-        .id}.filter ${err.message}`
+      err.message = `Entity: ${accumulator.reducer.spec.id}.filter ${
+        err.message
+      }`
       throw err
     })
 }
@@ -94,8 +95,8 @@ function validateAsArray (acc) {
   return acc.value instanceof Array
     ? acc
     : Promise.reject(
-        new Error(`Entity ${entity.id}.value resolved to a non Array value`)
-      )
+      new Error(`Entity ${entity.id}.value resolved to a non Array value`)
+    )
 }
 
 function resolve (accumulator, resolveTransform) {

@@ -11,7 +11,9 @@ const utils = require('../../utils')
 function create (entitySpec, id) {
   if (!_.isFunction(entitySpec.create)) {
     throw new Error(
-      `Entity Module '${id}' should expose a 'create' method, instead got: ${Object.keys(
+      `Entity Module '${
+        id
+      }' should expose a 'create' method, instead got: ${Object.keys(
         entitySpec
       )}`
     )
@@ -19,7 +21,9 @@ function create (entitySpec, id) {
 
   if (!_.isFunction(entitySpec.resolve)) {
     throw new Error(
-      `Entity Module '${id}' should expose a 'resolve' method, instead got: ${Object.keys(
+      `Entity Module '${
+        id
+      }' should expose a 'resolve' method, instead got: ${Object.keys(
         entitySpec
       )}`
     )
@@ -27,8 +31,11 @@ function create (entitySpec, id) {
 
   if (entitySpec.resolve.length !== 2) {
     throw new Error(
-      `Entity Module '${id}' 'resolve' method should have an arity of 2, instead got: ${entitySpec
-        .resolve.length}`
+      `Entity Module '${
+        id
+      }' 'resolve' method should have an arity of 2, instead got: ${
+        entitySpec.resolve.length
+      }`
     )
   }
 

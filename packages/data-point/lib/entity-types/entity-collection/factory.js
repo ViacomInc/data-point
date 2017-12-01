@@ -30,7 +30,11 @@ function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
 
   if (spec.compose && !(spec.compose instanceof Array)) {
     throw new Error(
-      `Entity ${spec.id} Hash.compose property is expected to be of instance of Array and found ${spec.compose}`
+      `Entity ${
+        spec.id
+      } Hash.compose property is expected to be of instance of Array and found ${
+        spec.compose
+      }`
     )
   }
 
@@ -38,7 +42,9 @@ function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
   const intersection = _.intersection(invalidInlinesKeys, specKeys)
   if (intersection.length !== 0) {
     throw new Error(
-      `Entity ${spec.id} Spec is invalid, when 'compose' is defined the key(s): '${intersection.join(
+      `Entity ${
+        spec.id
+      } Spec is invalid, when 'compose' is defined the key(s): '${intersection.join(
         ', '
       )}' should be inside compose.`
     )
