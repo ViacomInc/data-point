@@ -377,7 +377,7 @@ const reducer = (acc) => {
 
 ## <a name="contributing">Contributing</a>
 
-Please read [CONTRIBUTING.md](../../CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/ViacomInc/data-point/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## <a name="license">License</a>
 
