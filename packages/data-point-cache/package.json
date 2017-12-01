@@ -1,6 +1,6 @@
 {
   "name": "data-point-cache",
-  "version": "1.3.0",
+  "version": "1.5.0",
   "description": "DataPoint Cache Layer",
   "main": "lib/index.js",
   "engines": {
