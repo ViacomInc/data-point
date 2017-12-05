@@ -19,7 +19,10 @@ function ReducerEntity () {
 module.exports.ReducerEntity = ReducerEntity
 
 function isEntity (source) {
-  return source.match(/^[^$]([\w.]+):?([\w.]+)(\[])?/) !== null
+  return (
+    typeof source === 'string' &&
+    source.match(/^[^$]([\w.]+):?([\w.]+)(\[])?/) !== null
+  )
 }
 
 module.exports.isEntity = isEntity

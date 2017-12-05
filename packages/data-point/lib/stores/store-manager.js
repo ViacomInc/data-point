@@ -59,7 +59,17 @@ function add (manager, errorInfoCb, factory, id, spec) {
   }
 
   const objSpec = utils.set(spec, 'id', id)
-  const item = factory(objSpec, id)
+  const item = _.attempt(factory, objSpec, id)
+
+  if (item instanceof Error) {
+    item.entityId = id
+    item.message = `${item.message}\nEntity "${id}": ${JSON.stringify(
+      spec,
+      null,
+      2
+    )}`
+    throw item
+  }
 
   manager.store.set(id, item)
 
