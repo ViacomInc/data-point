@@ -1,5 +1,5 @@
 'use strict'
-
+const _ = require('lodash')
 const REDUCER_ENTITY = (module.exports.type = 'ReducerEntity')
 
 /**
@@ -20,8 +20,7 @@ module.exports.ReducerEntity = ReducerEntity
 
 function isEntity (source) {
   return (
-    typeof source === 'string' &&
-    source.match(/^[^$]([\w.]+):?([\w.]+)(\[])?/) !== null
+    _.isString(source) && source.match(/^[^$]([\w.]+):?([\w.]+)(\[])?/) !== null
   )
 }
 
