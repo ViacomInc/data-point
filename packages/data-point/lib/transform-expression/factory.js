@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const reducerFactory = require('../reducer/factory')
+const util = require('util')
 
 /**
  * Describes the transform parts used to reduce a context
@@ -47,22 +48,41 @@ function parse (src) {
     source = [src]
   }
 
-  if (_.isArray(source)) {
-    return parseFromArray(source)
-  }
-
-  throw new Error(
-    `Transform ${source.toString()} is not valid type (Array|String|Function)`
-  )
+  return parseFromArray(source)
 }
+
 module.exports.parse = parse
+
+function isValid (source) {
+  const type = typeof source
+  return type === 'string' || type === 'function' || source instanceof Array
+}
+
+module.exports.isValid = isValid
+
+function validate (source) {
+  const isValidTransform = isValid(source)
+  if (isValidTransform) {
+    return true
+  }
+  const message = [
+    `Could not parse a TransformExpression. The TransformExpression:\n `,
+    _.attempt(util.inspect, source),
+    '\nis not using a valid type, try using an Array, String or a Function.',
+    '\nMore info: https://github.com/ViacomInc/data-point/tree/master/packages/data-point#transform-expression\n'
+  ].join('')
+  throw new Error(message)
+}
+
+module.exports.validate = validate
 
 /**
  * parses a raw transform
  * @param  {string} transformRaw raw value path to be parsed
  * @return {Transform}
  */
-function create (source) {
+function create (source = []) {
+  validate(source)
   const tokens = parse(source)
 
   const transformBase = new TransformExpression()
