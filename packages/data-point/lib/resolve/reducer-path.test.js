@@ -63,6 +63,40 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
     expect(result).toEqual([1, 2, 3])
   })
 
+  test('resolve invalid collection path key to array of undefined', () => {
+    const acc = {
+      value: {
+        a: {
+          b: [
+            {
+              c: 1
+            },
+            {
+              c: 2
+            },
+            {
+              c: 3
+            }
+          ]
+        }
+      }
+    }
+    const result = reducerPath.resolveObjectPath(acc, 'a.b.d[]')
+    expect(result).toEqual([undefined, undefined, undefined])
+  })
+
+  test('resolve invalid collection path to null', () => {
+    const acc = {
+      value: {
+        a: {
+          b: 'c'
+        }
+      }
+    }
+    const result = reducerPath.resolveObjectPath(acc, 'a.b.c[]')
+    expect(result).toBe(null)
+  })
+
   test('resolve prefixe ".." with valid jsonpath to resolved value', () => {
     const acc = {
       value: {

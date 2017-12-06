@@ -24,8 +24,9 @@ function resolveObjectPath (acc, jsonPath) {
     // $a.b.c[] => `$a.b` and `c`
     const pathArray = jsonPath.split('.')
     const valueKey = pathArray.pop().replace('[]', '')
+    const valueArray = _.get(acc.value, pathArray)
 
-    return (_.get(acc.value, pathArray)).map(i => i[valueKey])
+    return Array.isArray(valueArray) ? (valueArray).map(i => i[valueKey]) : null
   }
 
   return _.get(acc.value, jsonPath)
