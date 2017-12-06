@@ -315,6 +315,7 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 | *$.* | Reference to current `accumulator.value`. |
 | *$..* | Gives you full access to current `accumulator`. |
 | *$path* | Simple Object path notation to extract a path from current `accumulator.value`. |
+| *$path[]* | Object path notation with trailing `[]` to extract a value from an array of objects at the `accumulator.value` for each. |
 
 #### <a name="root-path">Root path $.</a>
 
@@ -392,6 +393,35 @@ dataPoint
 ```
 
 Example at: [examples/reducer-path.js](examples/reducer-path.js)
+
+#### <a name="object-map">Object Map</a>
+
+**Example:**
+
+Map an array by traverising object structures
+
+```js
+const DataPoint = require('data-point')
+const dataPoint = DataPoint.create()
+
+const input = [
+  a: {
+    b: 'Hello World'
+  },
+  a: {
+    b: 'Hello Solar System'
+  },
+  a: {
+    b: 'Hello Universe'
+  }
+]
+
+dataPoint
+  .transform('$a.b[]', input)
+  .then((acc) => {
+    assert.equal(acc.value, ['Hello World', 'Hello Solar System', 'Hello Universe'])
+  })
+```
 
 ### <a name="function-reducer">FunctionReducer</a>
 
