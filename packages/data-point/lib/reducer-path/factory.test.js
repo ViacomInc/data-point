@@ -30,7 +30,7 @@ describe('reducer/reducer-path#create', () => {
 
   it('path with asCollection', () => {
     const reducer = factory.create('$foo.bar[]')
-    expect(reducer.name).toBe('foo.bar[]')
+    expect(reducer.name).toBe('foo.bar')
     expect(reducer.castAs).toBe('*')
     expect(reducer.asCollection).toBe(true)
   })

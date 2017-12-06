@@ -35,8 +35,8 @@ function create (source) {
 
   const parts = source.split(':')
 
-  reducer.name = _.defaultTo(parts[0].substr(1), '.')
   reducer.asCollection = source.slice(-2) === '[]'
+  reducer.name = _.defaultTo(parts[0].substr(1), '.').replace(/\[]$/, '')
   reducer.castAs = _.defaultTo(parts[1], '*')
   reducer.params = parts.slice(2)
 

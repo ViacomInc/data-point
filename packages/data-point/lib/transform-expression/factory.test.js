@@ -28,7 +28,7 @@ describe('TransformFactory#create', () => {
 
     const reducer = _.first(result.reducers)
     expect(reducer.type).toBe('ReducerPath')
-    expect(reducer.name).toBe('foo.bar[]')
+    expect(reducer.name).toBe('foo.bar')
     expect(reducer.asCollection).toBe(true)
   })
 
