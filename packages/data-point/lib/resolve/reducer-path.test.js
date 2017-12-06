@@ -43,21 +43,29 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
 
   test('resolve valid collection path to resolved value', () => {
     const acc = {
-      value: {
-        a: {
-          b: [
-            {
+      value: [
+        {
+          a: {
+            b: {
               c: 1
-            },
-            {
+            }
+          }
+        },
+        {
+          a: {
+            b: {
               c: 2
-            },
-            {
+            }
+          }
+        },
+        {
+          a: {
+            b: {
               c: 3
             }
-          ]
+          }
         }
-      }
+      ]
     }
     const result = reducerPath.resolveObjectPath(acc, 'a.b.c[]')
     expect(result).toEqual([1, 2, 3])
@@ -65,21 +73,29 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
 
   test('resolve invalid collection path key to array of undefined', () => {
     const acc = {
-      value: {
-        a: {
-          b: [
-            {
+      value: [
+        {
+          a: {
+            b: {
               c: 1
-            },
-            {
+            }
+          }
+        },
+        {
+          a: {
+            b: {
               c: 2
-            },
-            {
+            }
+          }
+        },
+        {
+          a: {
+            b: {
               c: 3
             }
-          ]
+          }
         }
-      }
+      ]
     }
     const result = reducerPath.resolveObjectPath(acc, 'a.b.d[]')
     expect(result).toEqual([undefined, undefined, undefined])
