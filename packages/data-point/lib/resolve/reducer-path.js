@@ -10,8 +10,13 @@ const utils = require('../utils')
  * @param {string} jsonPath
  * @returns
  */
-function resolveObjectPath (acc, jsonPath, reducerPath = {}) {
-  const { type, asCollection } = reducerPath
+function resolveObjectPath (acc, jsonPath, reducerPath) {
+  if (typeof reducerPath === 'undefined') {
+    reducerPath = {}
+  }
+
+  const type = reducerPath.type || ''
+  const asCollection = reducerPath.asCollection || false
 
   if (jsonPath === '.' || _.isEmpty(jsonPath)) {
     return acc.value
