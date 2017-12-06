@@ -19,6 +19,15 @@ function resolveObjectPath (acc, jsonPath) {
     return _.get(acc, jsonPath.slice(2))
   }
 
+  if (jsonPath.slice(-2) === '[]') {
+    // take last entry in json path without []
+    // $a.b.c[] => `$a.b` and `c`
+    const pathArray = jsonPath.split('.')
+    const valueKey = pathArray.pop().replace('[]', '')
+
+    return (_.get(acc.value, pathArray)).map(i => i[valueKey])
+  }
+
   return _.get(acc.value, jsonPath)
 }
 

@@ -41,6 +41,28 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
     expect(result).toBe('test')
   })
 
+  test('resolve valid collection path to resolved value', () => {
+    const acc = {
+      value: {
+        a: {
+          b: [
+            {
+              c: 1
+            },
+            {
+              c: 2
+            },
+            {
+              c: 3
+            }
+          ]
+        }
+      }
+    }
+    const result = reducerPath.resolveObjectPath(acc, 'a.b.c[]')
+    expect(result).toEqual([1, 2, 3])
+  })
+
   test('resolve prefixe ".." with valid jsonpath to resolved value', () => {
     const acc = {
       value: {
