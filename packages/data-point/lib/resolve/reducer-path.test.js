@@ -3,6 +3,7 @@
 
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
+const reducerPathFactory = require('../reducer-path/factory')
 const reducerPath = require('./reducer-path')
 const resolveReducer = require('./reducer')
 
@@ -67,7 +68,11 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
         }
       ]
     }
-    const result = reducerPath.resolveObjectPath(acc, 'a.b.c[]')
+    const result = reducerPath.resolveObjectPath(
+      acc,
+      'a.b.c[]',
+      reducerPathFactory.create('a.b.c[]')
+    )
     expect(result).toEqual([1, 2, 3])
   })
 
@@ -97,7 +102,11 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
         }
       ]
     }
-    const result = reducerPath.resolveObjectPath(acc, 'a.b.d[]')
+    const result = reducerPath.resolveObjectPath(
+      acc,
+      'a.b.d[]',
+      reducerPathFactory.create('a.b.d[]')
+    )
     expect(result).toEqual([undefined, undefined, undefined])
   })
 
@@ -109,7 +118,11 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
         }
       }
     }
-    const result = reducerPath.resolveObjectPath(acc, 'a.b.c[]')
+    const result = reducerPath.resolveObjectPath(
+      acc,
+      'a.b.c[]',
+      reducerPathFactory.create('a.b.c[]')
+    )
     expect(result).toBe(null)
   })
 

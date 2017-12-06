@@ -10,7 +10,9 @@ const utils = require('../utils')
  * @param {string} jsonPath
  * @returns
  */
-function resolveObjectPath (acc, jsonPath) {
+function resolveObjectPath (acc, jsonPath, reducerPath = {}) {
+  const { type, asCollection } = reducerPath
+
   if (jsonPath === '.' || _.isEmpty(jsonPath)) {
     return acc.value
   }
@@ -19,7 +21,7 @@ function resolveObjectPath (acc, jsonPath) {
     return _.get(acc, jsonPath.slice(2))
   }
 
-  if (jsonPath.slice(-2) === '[]') {
+  if (type === 'ReducerPath' && asCollection) {
     if (!Array.isArray(acc.value)) {
       return null
     }
@@ -42,7 +44,7 @@ module.exports.resolveObjectPath = resolveObjectPath
  * @returns {Promise<Accumulator>}
  */
 function resolve (store, resolveReducer, accumulator, reducerPath) {
-  const value = resolveObjectPath(accumulator, reducerPath.name)
+  const value = resolveObjectPath(accumulator, reducerPath.name, reducerPath)
   return Promise.resolve(utils.set(accumulator, 'value', value))
 }
 
