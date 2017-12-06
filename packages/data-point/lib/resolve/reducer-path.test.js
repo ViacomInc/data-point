@@ -68,10 +68,11 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
         }
       ]
     }
+    const reducerPathInstance = reducerPathFactory.create('$a.b.c[]')
     const result = reducerPath.resolveObjectPath(
       acc,
-      'a.b.c[]',
-      reducerPathFactory.create('a.b.c[]')
+      reducerPathInstance.name,
+      reducerPathInstance
     )
     expect(result).toEqual([1, 2, 3])
   })
@@ -102,10 +103,11 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
         }
       ]
     }
+    const reducerPathInstance = reducerPathFactory.create('$a.b.d[]')
     const result = reducerPath.resolveObjectPath(
       acc,
-      'a.b.d[]',
-      reducerPathFactory.create('a.b.d[]')
+      reducerPathInstance.name,
+      reducerPathInstance
     )
     expect(result).toEqual([undefined, undefined, undefined])
   })
@@ -118,10 +120,11 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
         }
       }
     }
+    const reducerPathInstance = reducerPathFactory.create('$a.b.c[]')
     const result = reducerPath.resolveObjectPath(
       acc,
-      'a.b.c[]',
-      reducerPathFactory.create('a.b.c[]')
+      reducerPathInstance.name,
+      reducerPathInstance
     )
     expect(result).toBe(null)
   })

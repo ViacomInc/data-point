@@ -26,7 +26,7 @@ function resolveObjectPath (acc, jsonPath, reducerPath = {}) {
       return null
     }
 
-    return acc.value.map(i => _.get(i, jsonPath.replace('[]', '')))
+    return _.map(acc.value, jsonPath)
   }
 
   return _.get(acc.value, jsonPath)
