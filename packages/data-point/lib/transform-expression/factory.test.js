@@ -22,6 +22,16 @@ describe('TransformFactory#create', () => {
     expect(reducer.name).toBe('foo.bar')
   })
 
+  test('TransformFactory#create path as collection', () => {
+    const result = TransformFactory.create('$foo.bar[]')
+    expect(result.reducers).toHaveLength(1)
+
+    const reducer = _.first(result.reducers)
+    expect(reducer.type).toBe('ReducerPath')
+    expect(reducer.name).toBe('foo.bar[]')
+    expect(reducer.asCollection).toBe(true)
+  })
+
   test('TransformFactory#create context with reducers', () => {
     const result = TransformFactory.create(
       '$foo.bar | reducer:add | reducer.add(true,foo.bar)'
