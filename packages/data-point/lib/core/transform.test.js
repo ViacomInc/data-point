@@ -25,7 +25,7 @@ beforeAll(() => {
 
 test('transform - throw error in invalid id(promise)', () => {
   return transform(dataPoint, 'INVALID', TestData, {}).catch(res => {
-    expect(res.name).toBe('InvalidId')
+    expect(res).toBeInstanceOf(Error)
   })
 })
 
