@@ -11,6 +11,7 @@ test('reducer/reducer-entity#isEntity', () => {
   expect(factory.isEntity('ab:')).toBe(false)
   expect(factory.isEntity(':ab')).toBe(false)
   expect(factory.isEntity('$a:abc')).toBe(false)
+  expect(factory.isEntity('a-bc:abc')).toBe(false)
   expect(factory.isEntity('a:abc')).toBe(true)
   expect(factory.isEntity('abc:a')).toBe(true)
   expect(factory.isEntity('abc:abc')).toBe(true)
