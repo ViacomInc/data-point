@@ -30,7 +30,10 @@ function isValidFunction (source) {
 module.exports.isValidFunction = isValidFunction
 
 function isFunction (source) {
-  return isValidFunction(source) || source.match(/^(\w[\w.]*)\((.*)\)/) !== null
+  return (
+    isValidFunction(source) ||
+    (_.isString(source) && source.match(/^(\w[\w.]*)\((.*)\)/) !== null)
+  )
 }
 
 module.exports.isFunction = isFunction

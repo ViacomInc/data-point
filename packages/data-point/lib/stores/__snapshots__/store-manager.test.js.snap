@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`add It should throw error with information if item already exist 1`] = `[Foo: Bar]`;
+
+exports[`add It should throw error with information if item already exist 2`] = `
+[Error: factory error
+Entity "id1": {
+  "spec": "mySpec"
+}]
+`;

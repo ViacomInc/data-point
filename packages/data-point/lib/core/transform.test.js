@@ -24,9 +24,12 @@ beforeAll(() => {
 })
 
 test('transform - throw error in invalid id(promise)', () => {
-  return transform(dataPoint, 'INVALID', TestData, {}).catch(res => {
-    expect(res.name).toBe('InvalidId')
-  })
+  return transform(dataPoint, 'INVALID', TestData, {})
+    .catch(err => err)
+    .then(res => {
+      expect(res).toBeInstanceOf(Error)
+      expect(res).toMatchSnapshot()
+    })
 })
 
 test('transform - single reducer', () => {

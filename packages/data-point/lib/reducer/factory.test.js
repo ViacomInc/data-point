@@ -30,7 +30,8 @@ describe('reducer#create', () => {
   })
 
   test(' detect invalid', () => {
-    const reducer = Factory.create('a')
-    expect(reducer).toBeInstanceOf(Error)
+    expect(() => {
+      Factory.create('a')
+    }).toThrowErrorMatchingSnapshot()
   })
 })
