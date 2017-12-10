@@ -127,18 +127,19 @@ describe('resolve#filter.resolve', () => {
       })
   })
 
-  test('resolves early if encountering resolveWith', () => {
+  test('resolves early if encountering resolveTransformWith', () => {
     const accumulator = AccumulatorFactory.create({
       value: 'test'
     })
 
     const reducer = reducerFactory.create(acc => {
-      return acc.resolveWith('test')
+      return acc.resolveTransformWith('test')
     })
 
     return resolveFunction
       .resolve(store.filters, accumulator, reducer)
       .then(result => {
+        expect(result.resolvedValue).toBe('test')
         expect(result.value).toBe('test')
       })
   })

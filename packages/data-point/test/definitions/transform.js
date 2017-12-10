@@ -6,14 +6,14 @@ module.exports = {
   ],
   'transform:a2': [
     'transform:a0',
-    acc => acc.resolveWith('resolved value'),
+    acc => acc.resolveTransformWith('resolved value'),
     (acc, next) => next(null, 'never returned value')
   ],
   'transform:a3': [
     'transform:a0',
-    acc => acc.resolveWith('resolved value'),
+    acc => acc.resolveTransformWith('resolved value'),
     acc => 'some other value',
-    acc => acc.resolveWith('never resolved value'),
+    acc => acc.resolveTransformWith('never resolved value'),
     (acc, next) => next(null, 'never returned value')
   ]
 }

@@ -14,7 +14,7 @@ function Accumulator () {
   this.reducer = undefined
   this.trace = false
   this.context = undefined
-  this.resolveWith = function (value) {
+  this.resolveTransformWith = function (value) {
     if (this.resolvedValue) {
       value = this.resolvedValue
     }

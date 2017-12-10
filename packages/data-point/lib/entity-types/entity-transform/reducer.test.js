@@ -43,6 +43,7 @@ describe('entity.transform.value', () => {
       message: 'hello world'
     }).then(acc => {
       expect(acc.value).toEqual('HELLO WORLD')
+      expect(acc.resolvedValue).toBe(null)
     })
   })
 
@@ -50,6 +51,7 @@ describe('entity.transform.value', () => {
     return transform('transform:a2', {
       message: 'hello world'
     }).then(acc => {
+      expect(acc.resolvedValue).toBe('resolved value')
       expect(acc.value).toBe('resolved value')
     })
   })
@@ -58,6 +60,7 @@ describe('entity.transform.value', () => {
     return transform('transform:a3', {
       message: 'hello world'
     }).then(acc => {
+      expect(acc.resolvedValue).toBe('resolved value')
       expect(acc.value).toBe('resolved value')
     })
   })
