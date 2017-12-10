@@ -126,4 +126,20 @@ describe('resolve#filter.resolve', () => {
         expect(err).toHaveProperty('message', 'Test')
       })
   })
+
+  test('resolves early if encountering resolveWith', () => {
+    const accumulator = AccumulatorFactory.create({
+      value: 'test'
+    })
+
+    const reducer = reducerFactory.create(acc => {
+      return acc.resolveWith('test')
+    })
+
+    return resolveFunction
+      .resolve(store.filters, accumulator, reducer)
+      .then(result => {
+        expect(result.value).toBe('test')
+      })
+  })
 })

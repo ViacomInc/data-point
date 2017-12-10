@@ -45,4 +45,20 @@ describe('entity.transform.value', () => {
       expect(acc.value).toEqual('HELLO WORLD')
     })
   })
+
+  test('should resolve early if it encounters accumulator.resolve', () => {
+    return transform('transform:a2', {
+      message: 'hello world'
+    }).then(acc => {
+      expect(acc.value).toBe('resolved value')
+    })
+  })
+
+  test('should not change the resolved value if it reaches another accumulator.resolve', () => {
+    return transform('transform:a3', {
+      message: 'hello world'
+    }).then(acc => {
+      expect(acc.value).toBe('resolved value')
+    })
+  })
 })
