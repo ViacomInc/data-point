@@ -15,7 +15,10 @@ function Accumulator () {
   this.trace = false
   this.context = undefined
   this.resolveTransformWith = function (value) {
-    return { value: this.resolvedValue || value, isResolved: true }
+    return {
+      value: this.resolvedValue || value,
+      isResolved: true
+    }
   }
 }
 
