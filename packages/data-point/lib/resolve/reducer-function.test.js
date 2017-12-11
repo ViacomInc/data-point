@@ -133,14 +133,14 @@ describe('resolve#filter.resolve', () => {
     })
 
     const reducer = reducerFactory.create(acc => {
-      return acc.resolveTransformWith('test')
+      return acc.resolveTransformWith('resolved value')
     })
 
     return resolveFunction
       .resolve(store.filters, accumulator, reducer)
       .then(result => {
-        expect(result.resolvedValue).toBe('test')
-        expect(result.value).toBe('test')
+        expect(result.resolvedValue).toBe('resolved value')
+        expect(result.value).toBe('resolved value')
       })
   })
 })

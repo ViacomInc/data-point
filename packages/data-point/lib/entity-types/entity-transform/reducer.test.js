@@ -42,8 +42,8 @@ describe('entity.transform.value', () => {
     return transform('transform:a1', {
       message: 'hello world'
     }).then(acc => {
-      expect(acc.value).toEqual('HELLO WORLD')
       expect(acc.resolvedValue).toBe(null)
+      expect(acc.value).toEqual('HELLO WORLD')
     })
   })
 
