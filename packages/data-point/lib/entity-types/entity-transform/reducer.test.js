@@ -42,7 +42,7 @@ describe('entity.transform.value', () => {
     return transform('transform:a1', {
       message: 'hello world'
     }).then(acc => {
-      expect(acc.resolvedValue).toBe(null)
+      expect(acc.isResolved).toBe(false)
       expect(acc.value).toEqual('HELLO WORLD')
     })
   })
@@ -51,7 +51,7 @@ describe('entity.transform.value', () => {
     return transform('transform:a2', {
       message: 'hello world'
     }).then(acc => {
-      expect(acc.resolvedValue).toBe('resolved value')
+      expect(acc.isResolved).toBe(true)
       expect(acc.value).toBe('resolved value')
     })
   })
@@ -60,8 +60,32 @@ describe('entity.transform.value', () => {
     return transform('transform:a3', {
       message: 'hello world'
     }).then(acc => {
-      expect(acc.resolvedValue).toBe('resolved value')
+      expect(acc.isResolved).toBe(true)
       expect(acc.value).toBe('resolved value')
+    })
+  })
+  test('should resolve with false', () => {
+    return transform('transform:a4', {
+      message: 'hello world'
+    }).then(acc => {
+      expect(acc.isResolved).toBe(true)
+      expect(acc.value).toBe(false)
+    })
+  })
+  test('should resolve with undefined', () => {
+    return transform('transform:a5', {
+      message: 'hello world'
+    }).then(acc => {
+      expect(acc.isResolved).toBe(true)
+      expect(acc.value).toBe(undefined)
+    })
+  })
+  test('should resolve with null', () => {
+    return transform('transform:a6', {
+      message: 'hello world'
+    }).then(acc => {
+      expect(acc.isResolved).toBe(true)
+      expect(acc.value).toBe(null)
     })
   })
 })

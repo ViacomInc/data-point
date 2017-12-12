@@ -8,7 +8,7 @@ const LocalsFactory = require('../locals/factory')
  */
 function Accumulator () {
   this.value = undefined
-  this.resolvedValue = null
+  this.isResolved = false
   this.locals = undefined
   this.values = undefined
   this.reducer = undefined
@@ -16,7 +16,7 @@ function Accumulator () {
   this.context = undefined
   this.resolveTransformWith = function (value) {
     return {
-      value: this.resolvedValue || value,
+      value: this.isResolved ? this.value : value,
       isResolved: true
     }
   }

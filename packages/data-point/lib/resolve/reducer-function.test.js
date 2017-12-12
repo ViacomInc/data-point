@@ -139,7 +139,7 @@ describe('resolve#filter.resolve', () => {
     return resolveFunction
       .resolve(store.filters, accumulator, reducer)
       .then(result => {
-        expect(result.resolvedValue).toBe('resolved value')
+        expect(result.isResolved).toBe(true)
         expect(result.value).toBe('resolved value')
       })
   })

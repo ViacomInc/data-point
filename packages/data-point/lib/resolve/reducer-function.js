@@ -46,7 +46,7 @@ module.exports.getCallbackFunction = getCallbackFunction
  */
 function resolve (filterStore, accumulator, reducerFunction) {
   // if the accumulator already as a resolvedValue, return the accumulator without updating
-  if (accumulator.resolvedValue) {
+  if (accumulator.isResolved) {
     return accumulator
   }
 
@@ -89,10 +89,7 @@ function resolve (filterStore, accumulator, reducerFunction) {
 
         // if the result is a resolved value then return the accumulator with that value and a resolvedValue
         if (value.isResolved) {
-          return utils.assign(currentAccumulator, {
-            value: value.value,
-            resolvedValue: value.value
-          })
+          return utils.assign(currentAccumulator, value)
         }
 
         resolve(utils.set(currentAccumulator, 'value', value))
@@ -106,10 +103,7 @@ function resolve (filterStore, accumulator, reducerFunction) {
     .then(result => {
       // if the result is a resolved value then return the accumulator with that value and a resolvedValue
       if (result.isResolved) {
-        return utils.assign(currentAccumulator, {
-          value: result.value,
-          resolvedValue: result.value
-        })
+        return utils.assign(currentAccumulator, result)
       }
 
       return utils.set(currentAccumulator, 'value', result)
