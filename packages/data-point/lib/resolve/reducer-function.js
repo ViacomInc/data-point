@@ -89,7 +89,7 @@ function resolve (filterStore, accumulator, reducerFunction) {
 
         // if the result is a resolved value then return the accumulator with that value and a resolvedValue
         if (value.isResolved) {
-          return utils.assign(currentAccumulator, value)
+          resolve(utils.assign(currentAccumulator, value))
         }
 
         resolve(utils.set(currentAccumulator, 'value', value))
