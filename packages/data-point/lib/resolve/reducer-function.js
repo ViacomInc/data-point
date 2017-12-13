@@ -45,6 +45,11 @@ module.exports.getCallbackFunction = getCallbackFunction
  * @returns {Promise<Accumulator>}
  */
 function resolve (filterStore, accumulator, reducerFunction) {
+  // if the accumulator already as a resolvedValue, return the accumulator without updating
+  if (accumulator.isResolved) {
+    return accumulator
+  }
+
   const callbackFunction = reducerFunction.isFunction
     ? reducerFunction.body
     : getCallbackFunction(filterStore, reducerFunction)
@@ -81,6 +86,12 @@ function resolve (filterStore, accumulator, reducerFunction) {
         if (err) {
           return reject(err)
         }
+
+        // if the result is a resolved value then return the accumulator with that value and a resolvedValue
+        if (value.isResolved) {
+          resolve(utils.assign(currentAccumulator, value))
+        }
+
         resolve(utils.set(currentAccumulator, 'value', value))
       })
     })
@@ -88,9 +99,18 @@ function resolve (filterStore, accumulator, reducerFunction) {
 
   // callbackFunction is assumed to be either sync
   // or Promise returned value
-  return Promise.try(callbackFunction.bind(null, accumulator)).then(result => {
-    return utils.set(currentAccumulator, 'value', result)
-  })
+  return Promise.try(callbackFunction.bind(null, accumulator))
+    .then(result => {
+      // if the result is a resolved value then return the accumulator with that value and a resolvedValue
+      if (result.isResolved) {
+        return utils.assign(currentAccumulator, result)
+      }
+
+      return utils.set(currentAccumulator, 'value', result)
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 module.exports.resolve = resolve

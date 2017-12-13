@@ -8,11 +8,18 @@ const LocalsFactory = require('../locals/factory')
  */
 function Accumulator () {
   this.value = undefined
+  this.isResolved = false
   this.locals = undefined
   this.values = undefined
   this.reducer = undefined
   this.trace = false
   this.context = undefined
+  this.resolveTransformWith = function (value) {
+    return {
+      value: this.isResolved ? this.value : value,
+      isResolved: true
+    }
+  }
 }
 
 module.exports.Accumulator = Accumulator

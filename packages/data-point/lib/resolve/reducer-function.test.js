@@ -126,4 +126,21 @@ describe('resolve#filter.resolve', () => {
         expect(err).toHaveProperty('message', 'Test')
       })
   })
+
+  test('resolves early if encountering resolveTransformWith', () => {
+    const accumulator = AccumulatorFactory.create({
+      value: 'test'
+    })
+
+    const reducer = reducerFactory.create(acc => {
+      return acc.resolveTransformWith('resolved value')
+    })
+
+    return resolveFunction
+      .resolve(store.filters, accumulator, reducer)
+      .then(result => {
+        expect(result.isResolved).toBe(true)
+        expect(result.value).toBe('resolved value')
+      })
+  })
 })
