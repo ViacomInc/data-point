@@ -1,7 +1,6 @@
 const _ = require('lodash')
 
 const DataPoint = require('../')
-const Helpers = DataPoint.helpers
 
 // Entity Class
 function RenderTemplate () {}
@@ -13,7 +12,7 @@ function RenderTemplate () {}
  */
 function create (spec) {
   // create an entity instance
-  const entity = Helpers.createEntity(RenderTemplate, spec)
+  const entity = DataPoint.createEntity(RenderTemplate, spec)
   // set/create template from spec.template value
   entity.template = _.template(_.defaultTo(spec.template, ''))
   return entity
@@ -36,7 +35,7 @@ function resolve (accumulator, resolveTransform) {
     const output = spec.template(acc.value)
     // set new accumulator.value
     // this method creates a new acc object
-    return Helpers.set(acc, 'value', output)
+    return DataPoint.set(acc, 'value', output)
   })
 }
 
