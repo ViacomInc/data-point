@@ -398,28 +398,34 @@ Example at: [examples/reducer-path.js](examples/reducer-path.js)
 
 **Example:**
 
-Map an array by traverising object structures
+Map an array by traversing object structures
 
 ```js
 const DataPoint = require('data-point')
 const dataPoint = DataPoint.create()
 
 const input = [
-  a: {
-    b: 'Hello World'
+  {
+    a: {
+      b: 'Hello World'
+    }
   },
-  a: {
-    b: 'Hello Solar System'
+  {
+    a: {
+      b: 'Hello Solar System'
+    }
   },
-  a: {
-    b: 'Hello Universe'
+  {
+    a: {
+      b: 'Hello Universe'
+    }
   }
 ]
 
 dataPoint
   .transform('$a.b[]', input)
   .then((acc) => {
-    assert.equal(acc.value, ['Hello World', 'Hello Solar System', 'Hello Universe'])
+    assert.deepEqual(acc.value, ['Hello World', 'Hello Solar System', 'Hello Universe'])
   })
 ```
 
@@ -618,6 +624,14 @@ Example at: [examples/reducer-array-mixed.js](examples/reducer-array-mixed.js)
 The following example extracts the array from the input object, gets its max value, and multiplies that value by a given number.
 
 ```js
+const input = {
+  a: {
+    b: {
+      c: [1, 2, 3]
+    }
+  }
+}
+
 const multiplyBy = (factor) => (acc) => {
   return acc.value * factor
 }
@@ -668,7 +682,7 @@ const input = {
 }
 
 const toUpperCase = (acc) => {
-  return acc.value.toUpper()
+  return acc.value.toUpperCase()
 }
 
 dataPoint.addEntities({
@@ -702,7 +716,7 @@ const input = {
 }
 
 const toUpperCase = (acc) => {
-  return acc.value.toUpper()
+  return acc.value.toUpperCase()
 }
 
 dataPoint.addEntities({
@@ -1156,7 +1170,7 @@ const multiplyValue = (acc) => {
 
 dataPoint.addEntities({
   'entry:multiply': {
-    value: multiplyValue
+    value: multiplyValue,
     params: {
       multiplier: 100
     }
@@ -1175,7 +1189,7 @@ On a PathReducer:
 ```js
 dataPoint.addEntities({
   'entry:getParam': {
-    value: '$..multiplier'
+    value: '$..params.multiplier',
     params: {
       multiplier: 100
     }
@@ -1427,7 +1441,7 @@ dataPoint.addEntities({
     beforeRequest: (acc) => {
       // acc.value holds reference
       // to request.options
-      const options = _.assign({}, acc.value, {
+      const options = Object.assign({}, acc.value, {
         headers: {
           'User-Agent': 'DataPoint'
         }
@@ -1482,7 +1496,7 @@ To prevent unexpected results, **Hash** can only process **Plain Objects**, whic
 Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these available reducers to a Hash entity. Keep in mind that those reducers will always be executed in a specific order:
 
 ```js
-mapKeys -> omitKeys -> pickKeys -> addKeys -> addValues
+omitKeys -> pickKeys -> mapKeys -> addValues -> addKeys
 ```
 
 If you want to have more control over the order of execution, you may use the [compose](#entity-compose-reducer) reducer.
@@ -1532,9 +1546,6 @@ dataPoint.addEntities({
 Resolve accumulator.value to a hash
 
 ```js
-const dataPoint = require('../').create()
-const assert = require('assert')
-
 const input = {
   a: {
     b: {
@@ -1846,26 +1857,22 @@ dataPoint.addEntities({
     options: { headers: { 'User-Agent': 'DataPoint' } }
   },
   'hash:OrgInfo': {
+    pickKeys: ['repos_url', 'name'],
     mapKeys: {
       reposUrl: '$repos_url',
-      eventsUrl: '$events_url',
-      avatarUrl: '$avatar_url',
       orgName: '$name',
-      blogUrl: '$blog',
     },
-    addKeys: {
-      upperCaseName: [`$name`, toUpperCase]
-    },
-    omitKeys: ['eventsUrl'],
-    pickKeys: ['reposUrl', 'upperCaseName'],
     addValues: {
       info: 'This is a test'
+    },
+    addKeys: {
+      orgName: [`$orgName`, toUpperCase]
     }
   }
 })
 
 const expectedResult = {
-  eventsUrl: 'https://api.github.com/orgs/nodejs/events',
+  reposUrl: 'https://api.github.com/orgs/nodejs/repos',
   orgName: 'NODE.JS FOUNDATION',
   info: 'This is a test'
 }
@@ -1977,12 +1984,14 @@ _For the purpose of this example, let's imagine that GitHub does not provide the
 ```js
 dataPoint.addEntities({
   'request:getOrgRepositories': {
-    url: 'https://api.github.com/orgs/nodejs/repos'
+    url: 'https://api.github.com/orgs/nodejs/repos',
+    options: { headers: { 'User-Agent': 'request' } }
   },
   'request:getLatestTag': {
     // here we are injecting the current acc.value 
     // that was passed to the request
-    url: 'https://api.github.com/repos/nodejs/{value}/tags'
+    url: 'https://api.github.com/repos/nodejs/{value}/tags',
+    options: { headers: { 'User-Agent': 'request' } }
   },
   'collection:getRepositoryLatestTag': {
     // magic!! here we are telling it to map each 
@@ -2339,25 +2348,25 @@ If no case statement resolves to `truthy`, then the default statement will be us
 
 ```js
 
-case isEqual = (compareTo) => (acc) => {
+const isEqual = (compareTo) => (acc) => {
   return acc.value === compareTo
 }
 
-case resolveTo = (value) => (acc) => {
+const resolveTo = (value) => (acc) => {
   return value
 }
 
-case throwError = (message) => (acc) => {
+const throwError = (message) => (acc) => {
   throw new Error(message)
 }
 
 dataPoint.addEntities({
   'control:fruitPrices': {
     select: [
-      { case: isEqual('oranges') do: resolveTo(0.59) },
-      { case: isEqual('apples') do: resolveTo(0.32) },
-      { case: isEqual('bananas') do: resolveTo(0.48) },
-      { case: isEqual('cherries') do: resolveTo(3.00) },
+      { case: isEqual('oranges'), do: resolveTo(0.59) },
+      { case: isEqual('apples'), do: resolveTo(0.32) },
+      { case: isEqual('bananas'), do: resolveTo(0.48) },
+      { case: isEqual('cherries'), do: resolveTo(3.00) },
       { default: throwError('Fruit was not found!! Maybe call the manager?') },
     ]
   }
@@ -2372,9 +2381,9 @@ dataPoint.transform('control:fruitPrices', 'cherries').then((acc) => {
 });
 
 dataPoint.transform('control:fruitPrices', 'plum')
-.catch((error) => {
-  console.log(error) // Fruit was not found!! Maybe call the manager?
-});
+  .catch((error) => {
+    console.log(error) // Fruit was not found!! Maybe call the manager?
+  });
 ```
 
 **EXAMPLES**
