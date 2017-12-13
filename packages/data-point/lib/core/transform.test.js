@@ -32,6 +32,94 @@ test('transform - throw error in invalid id(promise)', () => {
     })
 })
 
+describe('transform - should attach input value to accumulator', () => {
+  test('passing undefined', () => {
+    return transform(dataPoint, acc => {
+      expect(acc.value).toBe(undefined)
+    })
+  })
+
+  test('passing 0', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toBe(0)
+      },
+      0
+    )
+  })
+
+  test('passing 1', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toBe(1)
+      },
+      1
+    )
+  })
+
+  test('passing empty string', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toBe('')
+      },
+      ''
+    )
+  })
+
+  test('passing a string', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toBe('Hello World')
+      },
+      'Hello World'
+    )
+  })
+
+  test('passing false', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toBe(false)
+      },
+      false
+    )
+  })
+
+  test('passing true', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toBe(true)
+      },
+      true
+    )
+  })
+
+  test('passing an array', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toEqual(['Hello World'])
+      },
+      ['Hello World']
+    )
+  })
+
+  test('passing an object', () => {
+    return transform(
+      dataPoint,
+      acc => {
+        expect(acc.value).toEqual({ message: 'Hello World' })
+      },
+      { message: 'Hello World' }
+    )
+  })
+})
+
 test('transform - single reducer', () => {
   const reducer = (acc, next) => {
     next(null, acc.value + ' World')

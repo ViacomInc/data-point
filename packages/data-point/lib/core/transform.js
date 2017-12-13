@@ -14,15 +14,12 @@ function getOptions (spec) {
 }
 
 function resolve (manager, transformSource, value, options) {
-  const values = manager.values.getStore()
-
   const contextOptions = getOptions(options)
-
   const context = AccumulatorFactory.create({
-    value: _.defaults(value, {}),
+    value: value,
     locals: contextOptions.locals,
     trace: contextOptions.trace,
-    values
+    values: manager.values.getStore()
   })
 
   const transform = TransformExpression.create(transformSource)
