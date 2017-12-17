@@ -70,13 +70,13 @@ const modifierFunctionMap = {
   filter: resolveFilterTransform
 }
 
-function resolveCompose (accumulator, composeModifiers, resolveTransform) {
-  if (composeModifiers.length === 0) {
+function resolveCompose (accumulator, composeReducers, resolveTransform) {
+  if (composeReducers.length === 0) {
     return Promise.resolve(accumulator)
   }
 
   return Promise.reduce(
-    composeModifiers,
+    composeReducers,
     (resultContext, modifierSpec) => {
       const modifierFunction = modifierFunctionMap[modifierSpec.type]
       return modifierFunction(

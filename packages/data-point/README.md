@@ -1516,7 +1516,7 @@ dataPoint.addEntities({
     pickKeys: String[],
     addKeys: TransformMap,
     addValues: Object,
-    compose: ComposeModifier[],
+    compose: ComposeReducer[],
     
     after: TransformExpression,
     error: TransformExpression,
@@ -1905,7 +1905,7 @@ dataPoint.addEntities({
     filter: TransformExpression,
     map: TransformExpression,
     find: TransformExpression,
-    compose: ComposeModifier[],
+    compose: ComposeReducer[],
     
     after: TransformExpression,
     error: TransformExpression,
