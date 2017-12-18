@@ -65,9 +65,9 @@ function resolveFindTransform (accumulator, transform, resolveTransform) {
 }
 
 const modifierFunctionMap = {
+  filter: resolveFilterTransform,
   map: resolveMapTransform,
-  find: resolveFindTransform,
-  filter: resolveFilterTransform
+  find: resolveFindTransform
 }
 
 function resolveCompose (accumulator, composeReducers, resolveTransform) {
@@ -107,7 +107,7 @@ function resolve (accumulator, resolveTransform) {
     return Promise.resolve(accumulator)
   }
 
-  return resolveTransform(accumulator, entity.value, resolveTransform)
+  return resolveTransform(accumulator, entity.value)
     .then(acc => validateAsArray(acc))
     .then(acc => resolveCompose(acc, entity.compose, resolveTransform))
 }

@@ -38,8 +38,8 @@ describe('parse loose modifiers', () => {
 
     expect(result.compose).toBeInstanceOf(Array)
     expect(result.compose[0]).toHaveProperty('type', 'filter')
-    expect(result.compose[1]).toHaveProperty('type', 'find')
-    expect(result.compose[2]).toHaveProperty('type', 'map')
+    expect(result.compose[1]).toHaveProperty('type', 'map')
+    expect(result.compose[2]).toHaveProperty('type', 'find')
   })
 })
 
