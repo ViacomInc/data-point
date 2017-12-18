@@ -7,9 +7,9 @@ function expectModifier (result) {
   expect(result).toHaveProperty('spec')
 }
 
-describe('createComposeModifier', () => {
+describe('createComposeReducer', () => {
   test('creates ModifierObject', () => {
-    const result = parseCompose.createComposeModifier('map', '$a')
+    const result = parseCompose.createComposeReducer('map', '$a')
     expectModifier(result)
   })
 })
