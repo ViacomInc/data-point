@@ -1,13 +1,13 @@
 'use strict'
 
-function createComposeModifier (type, spec) {
+function createComposeReducer (type, spec) {
   return {
     type,
     spec
   }
 }
 
-module.exports.createComposeModifier = createComposeModifier
+module.exports.createComposeReducer = createComposeReducer
 
 function parseModifierSpec (modifierSpec) {
   const keys = Object.keys(modifierSpec)
@@ -19,7 +19,7 @@ function parseModifierSpec (modifierSpec) {
     )
   }
   const type = keys[0]
-  return createComposeModifier(keys[0], modifierSpec[type])
+  return createComposeReducer(keys[0], modifierSpec[type])
 }
 
 module.exports.parseModifierSpec = parseModifierSpec
@@ -35,7 +35,7 @@ function parseComposeFromEntitySpec (entitySpec, modifierKeys) {
     if (typeof entitySpec[modifierKey] === 'undefined') {
       return acc
     }
-    const modifier = createComposeModifier(modifierKey, entitySpec[modifierKey])
+    const modifier = createComposeReducer(modifierKey, entitySpec[modifierKey])
     acc.push(modifier)
     return acc
   }, [])
