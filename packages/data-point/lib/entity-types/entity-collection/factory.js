@@ -13,7 +13,7 @@ function Collection () {}
 
 module.exports.Collection = Collection
 
-const modifierKeys = ['filter', 'find', 'map']
+const modifierKeys = ['filter', 'map', 'find']
 
 function createCompose (composeParse) {
   return composeParse.map(modifier => {
@@ -28,11 +28,11 @@ function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
     return true
   }
 
-  if (spec.compose && !(spec.compose instanceof Array)) {
+  if (!(spec.compose instanceof Array)) {
     throw new Error(
       `Entity ${
         spec.id
-      } Hash.compose property is expected to be of instance of Array and found ${
+      } Hash.compose property is expected to be an instance of Array, but found ${
         spec.compose
       }`
     )
