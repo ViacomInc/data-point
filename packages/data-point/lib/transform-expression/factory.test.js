@@ -60,16 +60,28 @@ describe('TransformFactory#create', () => {
   })
 
   test('TransformFactory#create context with reducers', () => {
-    const result = TransformFactory.create(
-      '$foo.bar | reducer:add | reducer.add(true,foo.bar)'
-    )
+    const result = TransformFactory.create([
+      '$foo.bar | reducer:add',
+      () => true
+    ])
 
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
     expect(result.reducers[1].type).toBe('ReducerEntity')
     expect(result.reducers[2].type).toBe('ReducerFunction')
-    expect(result.reducers[2].parameters[0].type).toBe('boolean')
-    expect(result.reducers[2].parameters[1].type).toBe('reducer')
+  })
+
+  test('TransformFactory#create context with reducers', () => {
+    const result = TransformFactory.create([
+      '$foo.bar',
+      'reducer:add',
+      () => true
+    ])
+
+    expect(result.reducers).toHaveLength(3)
+    expect(result.reducers[0].type).toBe('ReducerPath')
+    expect(result.reducers[1].type).toBe('ReducerEntity')
+    expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 })
 
@@ -109,15 +121,14 @@ describe('TransformFactory#create', () => {
   test('TransformFactory#create transfrom from array', () => {
     const result = TransformFactory.create([
       '$foo.bar',
-      'reducer:add | reducer.add(true,foo.bar)',
+      'reducer:add | $foo.bar.zeta',
       (acc, done) => done(null, acc.value)
     ])
 
     expect(result.reducers).toHaveLength(4)
     expect(result.reducers[0].type).toBe('ReducerPath')
     expect(result.reducers[1].type).toBe('ReducerEntity')
-    expect(result.reducers[2].type).toBe('ReducerFunction')
-    expect(result.reducers[2].parameters[0].type).toBe('boolean')
-    expect(result.reducers[2].parameters[1].type).toBe('reducer')
+    expect(result.reducers[2].type).toBe('ReducerPath')
+    expect(result.reducers[3].type).toBe('ReducerFunction')
   })
 })

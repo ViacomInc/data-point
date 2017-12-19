@@ -3,7 +3,7 @@
 const _ = require('lodash')
 
 /**
- * get all added filters
+ * get the store
  * @return {Object}
  */
 function getStore (manager) {
@@ -13,7 +13,7 @@ function getStore (manager) {
 module.exports.getStore = getStore
 
 /**
- * clears all the filters
+ * clears the store
  * @return {Object}
  */
 function clear (manager) {

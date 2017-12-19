@@ -40,7 +40,7 @@ function createCurrentAccumulator (store, accumulator, reducer) {
     context: entity,
     reducer: currentReducer,
     initialValue: accumulator.value,
-    // shortcut to reducer.spec.params, mostly used by filters
+    // shortcut to reducer.spec.params
     params: entity.params
   })
 

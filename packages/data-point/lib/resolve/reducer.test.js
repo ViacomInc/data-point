@@ -4,6 +4,7 @@
 const nock = require('nock')
 
 const fixtureStore = require('../../test/utils/fixture-store')
+const reducers = require('../../test/utils/reducers')
 const testData = require('../../test/data.json')
 
 const AccumulatorFactory = require('../accumulator/factory')
@@ -43,7 +44,7 @@ test('resolve#reducer.resolveReducer', () => {
     value: testData.a.b.c
   })
 
-  const reducer = reducerFactory.create('test.addCollectionValues()')
+  const reducer = reducerFactory.create(reducers.addCollectionValues())
   return resolveReducer
     .resolveReducer(store, accumulator, reducer)
     .then(result => {
@@ -85,38 +86,6 @@ describe('resolve#reducer.resolve - reducer transform', () => {
     return resolveReducer
       .resolve(store, accumulator, transform)
       .then(result => expect(result.value).toBe(1))
-  })
-})
-
-describe('resolve#reducer.resolve - reducer filter', () => {
-  test('only transform', () => {
-    const accumulator = AccumulatorFactory.create({
-      value: 'hello '
-    })
-
-    const transform = TransformExpression.create('test.addString(world)')
-    return resolveReducer
-      .resolve(store, accumulator, transform)
-      .then(result => expect(result.value).toBe('hello world'))
-  })
-
-  test('multiple filters', () => {
-    const expectedResult = {
-      g1: 1,
-      g2: 2
-    }
-
-    const accumulator = AccumulatorFactory.create({
-      value: testData.a.g
-    })
-
-    const transform = TransformExpression.create(
-      'test.passThrough() | test.addKeyValue(g2,2)'
-    )
-
-    return resolveReducer
-      .resolve(store, accumulator, transform)
-      .then(result => expect(result.value).toEqual(expectedResult))
   })
 })
 

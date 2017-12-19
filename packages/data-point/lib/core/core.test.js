@@ -26,11 +26,9 @@ test('setup', () => {
   expect(instance.middleware.use).toBeTruthy()
   expect(_.isFunction(instance.use)).toBeTruthy()
   expect(instance.values.add).toBeTruthy()
-  expect(instance.filters.add).toBeTruthy()
   expect(instance.entities.add).toBeTruthy()
 
   expect(instance.values.store.v1).toEqual('v1')
-  expect(_.isFunction(instance.filters.store.test.passThrough)).toBeTruthy()
   expect(instance.entities.store.has('request:a0.1')).toBeTruthy()
   expect(instance.entities.store.has('entry:a0')).toBeTruthy()
 })

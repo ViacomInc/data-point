@@ -6,7 +6,6 @@ const normalizeEntities = require('./normalize-entities')
 const transform = require('./transform')
 
 const storeValues = require('../stores/values')
-const storeFilters = require('../stores/filters')
 const storeEntities = require('../stores/entities')
 const storeEntityTypes = require('../stores/entity-types')
 const storeMiddleware = require('../stores/middleware')
@@ -52,7 +51,6 @@ function create (spec) {
   const manager = {
     middleware: storeMiddleware.create(),
     values: storeValues.create(),
-    filters: storeFilters.create(),
     entities: storeEntities.create(entityTypes),
     entityTypes
   }
@@ -60,7 +58,6 @@ function create (spec) {
   manager.transform = _.partial(transform, manager)
 
   // add single item (singlular)
-  manager.addReducer = manager.filters.add
   manager.addValue = manager.values.add
   manager.addEntityTypes = manager.entityTypes.add
   manager.use = manager.middleware.use
@@ -84,7 +81,6 @@ function create (spec) {
   manager.addEntityTypes('schema', EntitySchema)
 
   addToStore(manager.values, options.values)
-  addToStore(manager.filters, options.reducers)
   addToStore(manager.entityTypes, options.entityTypes)
   manager.addEntities(options.entities)
 

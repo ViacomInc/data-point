@@ -6,9 +6,9 @@ const Factory = require('./factory')
 test('Factory#create', () => {
   const control = Factory.create({
     select: [
-      { case: 'a()', do: 'b()' },
-      { case: 'c()', do: 'd()' },
-      { default: 'e()' }
+      { case: '$a', do: '$b' },
+      { case: '$c', do: '$d' },
+      { default: '$e' }
     ]
   })
 
