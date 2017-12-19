@@ -107,14 +107,10 @@ function resolveEntity (
     console.time(timeId)
   }
   return Promise.resolve(accUid)
-    .then(acc => {
-      return resolveMiddleware(store, `before`, acc)
-    })
+    .then(acc => resolveMiddleware(store, `before`, acc))
     .then(acc => resolveMiddleware(store, `${reducer.entityType}:before`, acc))
     .then(acc => resolveTransform(acc, acc.reducer.spec.before))
-    .then(acc => {
-      return mainResolver(acc, resolveTransform)
-    })
+    .then(acc => mainResolver(acc, resolveTransform))
     .then(acc => resolveTransform(acc, acc.reducer.spec.after))
     .then(acc => middleware.resolve(store, `${reducer.entityType}:after`, acc))
     .then(acc => resolveMiddleware(store, `after`, acc))
@@ -143,10 +139,10 @@ module.exports.resolveEntity = resolveEntity
 
 function resolve (store, resolveReducer, accumulator, reducer, mainResolver) {
   const resolveTransform = _.partial(resolveReducer, store)
-  const shuouldMapCollection =
+  const shouldMapCollection =
     reducer.asCollection && accumulator.value instanceof Array
 
-  if (!shuouldMapCollection) {
+  if (!shouldMapCollection) {
     return resolveEntity(
       store,
       resolveTransform,
