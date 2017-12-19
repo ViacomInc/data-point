@@ -9,10 +9,9 @@ const ReducerEntity = require('../reducer-entity')
 
 describe('reducer#create', () => {
   test('create path', () => {
-    const reducer = Factory.create('$foo.bar[2]:int')
+    const reducer = Factory.create('$foo.bar[2]')
     expect(reducer.type).toBe(ReducerPath.type)
     expect(reducer.name).toBe('foo.bar[2]')
-    expect(reducer.castAs).toBe('int')
   })
 
   test('create function', () => {

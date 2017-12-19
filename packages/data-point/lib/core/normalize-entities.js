@@ -9,7 +9,7 @@ function getParentSpec (spec, specs) {
   const parentSpec = specs[parentId]
   if (!parentSpec) {
     throw new Error(
-      `Could not extend ${spec.id}, parent ${parentId} does not exists.`
+      `Could not extend ${spec.id}, parent ${parentId} does not exist.`
     )
   }
   return parentSpec
@@ -73,8 +73,8 @@ module.exports.normalizeSpec = normalizeSpec
 function normalizeEntitySpecs (source) {
   const specIds = Object.keys(source)
   return specIds.reduce((normSpecs, specItemId) => {
-    const nomralizedSpec = normalizeSpec(specItemId, source)
-    normSpecs[nomralizedSpec.id] = nomralizedSpec
+    const normalizedSpec = normalizeSpec(specItemId, source)
+    normSpecs[normalizedSpec.id] = normalizedSpec
     return normSpecs
   }, {})
 }
