@@ -52,8 +52,8 @@ module.exports.validateFunction = validateFunction
  * @return {reducer}
  */
 function create (source) {
-  const reducer = new ReducerFunction()
   validateFunction(source)
+  const reducer = new ReducerFunction()
   reducer.body = source
   return Object.freeze(reducer)
 }
