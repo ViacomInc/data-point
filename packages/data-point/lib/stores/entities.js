@@ -12,8 +12,8 @@ function createEntity (entityTypes, source, id) {
   const tokens = id.split(':')
   const entityType = tokens[0]
   const EntityType = entityTypes.get(entityType)
-  const entitiy = EntityType.create(source, id)
-  return entitiy
+  const entity = EntityType.create(source, id)
+  return entity
 }
 
 module.exports.createEntity = createEntity

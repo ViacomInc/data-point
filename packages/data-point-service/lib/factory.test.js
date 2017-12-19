@@ -24,7 +24,7 @@ describe('createServiceObject', () => {
       cache: null,
       cachePrefix: os.hostname(),
       dataPoint: null,
-      isCacheAvaiable: false,
+      isCacheAvailable: false,
       isCacheRequired: false,
       settings: {
         cache: {
@@ -46,7 +46,7 @@ describe('createServiceObject', () => {
       cache: null,
       cachePrefix: os.hostname(),
       dataPoint: null,
-      isCacheAvaiable: false,
+      isCacheAvailable: false,
       isCacheRequired: true,
       settings: {
         cache: {
@@ -104,19 +104,19 @@ describe('handleCacheError', () => {
     }).toThrowError('error')
   })
 
-  test('It should set isCacheAvaiable as false if not error not thrown', () => {
+  test('It should set isCacheAvailable as false if not error not thrown', () => {
     expect(
       Factory.handleCacheError(new Error(), {
         settings: {}
       })
-    ).toHaveProperty('isCacheAvaiable', false)
+    ).toHaveProperty('isCacheAvailable', false)
   })
 })
 
 describe('successCreateCache', () => {
   test('It should set flag and instance', () => {
     const result = Factory.successCreateCache(1, {})
-    expect(result).toHaveProperty('isCacheAvaiable', true)
+    expect(result).toHaveProperty('isCacheAvailable', true)
     expect(result).toHaveProperty('cache', 1)
   })
 })
@@ -131,7 +131,7 @@ describe('createCache', () => {
     return Factory.createCache(service)
       .catch(error => error)
       .then(result => {
-        expect(result).toHaveProperty('isCacheAvaiable', true)
+        expect(result).toHaveProperty('isCacheAvailable', true)
         expect(result).toHaveProperty('cache', 'cache')
       })
   })
@@ -146,16 +146,16 @@ describe('successDataPoint', () => {
 
 describe('bootstrapDataPoint', () => {
   saveRestoreLogs()
-  test('It should exit if isCacheAvaiable is false', () => {
-    const boostrapp = jest.fn()
-    Factory.bootstrapDataPoint(boostrapp, {})
-    expect(boostrapp).not.toBeCalled()
+  test('It should exit if isCacheAvailable is false', () => {
+    const bootstrap = jest.fn()
+    Factory.bootstrapDataPoint(bootstrap, {})
+    expect(bootstrap).not.toBeCalled()
   })
-  test('It should set bootstrap if isCacheAvaiable is true', () => {
-    const boostrapp = jest.fn()
-    const service = { isCacheAvaiable: true }
-    Factory.bootstrapDataPoint(boostrapp, { isCacheAvaiable: true })
-    expect(boostrapp).toBeCalledWith(service)
+  test('It should set bootstrap if isCacheAvailable is true', () => {
+    const bootstrap = jest.fn()
+    const service = { isCacheAvailable: true }
+    Factory.bootstrapDataPoint(bootstrap, { isCacheAvailable: true })
+    expect(bootstrap).toBeCalledWith(service)
   })
 })
 

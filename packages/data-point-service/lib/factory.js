@@ -29,7 +29,7 @@ function createServiceObject (options) {
     isCacheRequired,
     cachePrefix,
     settings,
-    isCacheAvaiable: false,
+    isCacheAvailable: false,
     cache: null,
     dataPoint: null
   }
@@ -46,12 +46,12 @@ function handleCacheError (err, Service) {
     )
   }
 
-  Service.isCacheAvaiable = false
+  Service.isCacheAvailable = false
   return Service
 }
 
 function successCreateCache (cache, service) {
-  service.isCacheAvaiable = true
+  service.isCacheAvailable = true
   service.cache = cache
   return service
 }
@@ -74,7 +74,7 @@ function createDataPoint (service) {
 }
 
 function bootstrapDataPoint (bootstrap, service) {
-  if (!service.isCacheAvaiable) {
+  if (!service.isCacheAvailable) {
     logger.warn(
       'REDIS is not availabe, there will be no cacheing mechanism for',
       'DataPoint - we wish you the best of luck in your adventure.'
