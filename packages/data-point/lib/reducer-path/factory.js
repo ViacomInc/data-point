@@ -42,7 +42,6 @@ const getFromAccValue = jsonPath => acc => _.get(acc.value, jsonPath)
 
 module.exports.getFromAccValue = getFromAccValue
 
-// TODO throw error here? or give a warning?
 const mapFromAccValue = jsonPath => acc => {
   if (Array.isArray(acc.value)) {
     return _.map(acc.value, jsonPath)
