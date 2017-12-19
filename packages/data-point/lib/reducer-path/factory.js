@@ -42,6 +42,7 @@ const getFromAccValue = jsonPath => acc => _.get(acc.value, jsonPath)
 
 module.exports.getFromAccValue = getFromAccValue
 
+// TODO throw error here? or give a warning?
 const mapFromAccValue = jsonPath => acc => {
   if (Array.isArray(acc.value)) {
     return _.map(acc.value, jsonPath)
@@ -85,10 +86,10 @@ function create (source) {
 
   const parts = source.split(':')
 
+  reducer.asCollection = source.slice(-2) === '[]'
   reducer.name = _.defaultTo(parts[0].substr(1), '.').replace(/\[]$/, '')
   reducer.body = getPathReducerFunction(reducer.name, reducer.asCollection)
   reducer.castAs = _.defaultTo(parts[1], '*')
-  reducer.asCollection = source.slice(-2) === '[]'
   reducer.params = parts.slice(2)
 
   return Object.freeze(reducer)
