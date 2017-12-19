@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const parameterParser = require('../parameter/parameter-expression')
 
 const REDUCER_FUNCTION = (module.exports.type = 'ReducerFunction')
 
@@ -15,62 +14,37 @@ const REDUCER_FUNCTION = (module.exports.type = 'ReducerFunction')
  */
 function ReducerFunction () {
   this.type = REDUCER_FUNCTION
-  this.name = ''
-  this.parameters = []
-  this.isFunction = false
   this.body = undefined
 }
 
 module.exports.ReducerFunction = ReducerFunction
 
-function isValidFunction (source) {
-  return _.isFunction(source) || source.length === 2
-}
-
-module.exports.isValidFunction = isValidFunction
-
+/**
+ * @param {*} source
+ * @returns {boolean}
+ */
 function isFunction (source) {
-  return (
-    isValidFunction(source) ||
-    (_.isString(source) && source.match(/^(\w[\w.]*)\((.*)\)/) !== null)
-  )
+  return _.isFunction(source)
 }
 
 module.exports.isFunction = isFunction
 
-function getFunctionName (source) {
-  return source.match(/.+?(?=\()/)[0]
-}
-
-module.exports.getFunctionName = getFunctionName
-
-function getParameters (source) {
-  return source.match(/.*?\(([^)]*)\)/)[1]
-}
-
-module.exports.getParameters = getParameters
-
-function splitParameters (source) {
-  return source.split(',').map(_.trim)
-}
-
-module.exports.splitParameters = splitParameters
-
 /**
- * Parse parameters from function source
- * @param {string} source function source
- * @returns
+ * @param {Function} fn
+ * @throws if fn has an arity greater than 2
+ * @returns {boolean}
  */
-function parseParameters (source) {
-  const args = getParameters(source)
-  let argsList = args.split(',').map(_.trim)
+function validateFunction (fn) {
+  if (fn.length > 2) {
+    const e = new Error(`Reducer functions must have an arity of 2 at most`)
+    e.name = 'InvalidArity'
+    throw e
+  }
 
-  argsList = _.compact(argsList)
-
-  return argsList.map(parameterParser.parse)
+  return true
 }
 
-module.exports.parseParameters = parseParameters
+module.exports.validateFunction = validateFunction
 
 /**
  * parse reducer
@@ -78,16 +52,9 @@ module.exports.parseParameters = parseParameters
  * @return {reducer}
  */
 function create (source) {
+  validateFunction(source)
   const reducer = new ReducerFunction()
-
-  if (_.isFunction(source)) {
-    reducer.isFunction = true
-    reducer.body = source
-  } else {
-    reducer.name = getFunctionName(source)
-    reducer.parameters = parseParameters(source)
-  }
-
+  reducer.body = source
   return Object.freeze(reducer)
 }
 

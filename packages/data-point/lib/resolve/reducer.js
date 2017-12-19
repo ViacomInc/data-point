@@ -22,7 +22,7 @@ function getReducerFunction (store, reducerType) {
       reducerResolver = resolveReducerPath.resolve
       break
     case 'ReducerFunction':
-      reducerResolver = _.partial(resolveReducerFunction.resolve, store.filters)
+      reducerResolver = resolveReducerFunction.resolve
       break
     case 'ReducerEntity':
       /* eslint no-use-before-define: "off" */

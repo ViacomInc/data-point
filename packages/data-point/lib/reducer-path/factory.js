@@ -14,7 +14,6 @@ function ReducerPath () {
   this.type = REDUCER_PATH
   this.name = ''
   this.body = undefined
-  this.castAs = []
   this.asCollection = false
 }
 
@@ -83,13 +82,9 @@ module.exports.getPathReducerFunction = getPathReducerFunction
 function create (source) {
   const reducer = new ReducerPath()
 
-  const parts = source.split(':')
-
   reducer.asCollection = source.slice(-2) === '[]'
-  reducer.name = _.defaultTo(parts[0].substr(1), '.').replace(/\[]$/, '')
+  reducer.name = _.defaultTo(source.substr(1), '.').replace(/\[]$/, '')
   reducer.body = getPathReducerFunction(reducer.name, reducer.asCollection)
-  reducer.castAs = _.defaultTo(parts[1], '*')
-  reducer.params = parts.slice(2)
 
   return Object.freeze(reducer)
 }

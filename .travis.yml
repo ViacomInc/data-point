@@ -4,11 +4,12 @@ node_js:
   - 8
 sudo: false
 cache:
+  yarn: true
   directories:
     - node_modules
 script:
   # Run test script
-  - "npm run lint"
-  - "npm test -- --maxWorkers=4"
+  - "yarn run lint"
+  - "yarn test -- --maxWorkers=4"
 after_script:
   - "test -e ./coverage/lcov.info && npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"

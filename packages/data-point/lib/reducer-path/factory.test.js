@@ -13,25 +13,23 @@ describe('reducer/reducer-path#create', () => {
     const reducer = factory.create('$a')
     expect(reducer.type).toBe('ReducerPath')
     expect(reducer.name).toBe('a')
-    expect(reducer.castAs).toBe('*')
   })
 
-  it('path with casting type', () => {
-    const reducer = factory.create('$a:boolean')
-    expect(reducer.name).toBe('a')
-    expect(reducer.castAs).toBe('boolean')
+  it('compound path', () => {
+    const reducer = factory.create('$foo.bar')
+    expect(reducer.name).toBe('foo.bar')
+    expect(reducer.asCollection).toBe(false)
   })
 
-  it('path with casting type', () => {
-    const reducer = factory.create('$a:foo.bar')
-    expect(reducer.name).toBe('a')
-    expect(reducer.castAs).toBe('foo.bar')
+  it('compound path', () => {
+    const reducer = factory.create('$foo.bar[0]')
+    expect(reducer.name).toBe('foo.bar[0]')
+    expect(reducer.asCollection).toBe(false)
   })
 
   it('path with asCollection', () => {
     const reducer = factory.create('$foo.bar[]')
     expect(reducer.name).toBe('foo.bar')
-    expect(reducer.castAs).toBe('*')
     expect(reducer.asCollection).toBe(true)
   })
 })
