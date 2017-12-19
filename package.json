@@ -7,7 +7,7 @@
   "scripts": {
     "precommit": "lint-staged",
     "commit": "git-cz",
-    "test": "jest",
+    "test": "jest --coverage",
     "lint": "standard --verbose | snazzy",
     "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
     "watch": "jest --watchAll --coverage"
