@@ -7,13 +7,9 @@ const util = require('util')
 /**
  * Describes the transform parts used to reduce a context
  * @class
- * @property {string} context - initial context that will be passed on to each
- *                             reducer
  * @property {Array} reducers - collection of reducers that will be applied
- *                              to the context.
  */
 function TransformExpression () {
-  this.context = undefined
   this.reducers = []
   this.typeOf = 'TransformExpression'
 }
