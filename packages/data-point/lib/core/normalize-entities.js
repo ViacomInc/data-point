@@ -37,6 +37,9 @@ function getAncestors (spec, specs) {
 module.exports.getAncestors = getAncestors
 
 function extendSpec (spec, ancestors, sources) {
+  if (ancestors.length === 0) {
+    return spec
+  }
   const ancestorSpecs = ancestors.map(parentId => {
     return sources[parentId].spec
   })
@@ -46,16 +49,6 @@ function extendSpec (spec, ancestors, sources) {
 
 module.exports.extendSpec = extendSpec
 
-function normalizeSpecSource (source) {
-  if (_.isPlainObject(source)) {
-    return source
-  }
-
-  return {
-    value: source
-  }
-}
-
 function normalizeSpec (specItemId, source) {
   const tokens = specItemId.split(' -> ')
   const id = tokens[0]
@@ -63,7 +56,7 @@ function normalizeSpec (specItemId, source) {
   return {
     id: id,
     parentId: parentId,
-    spec: normalizeSpecSource(source[specItemId]),
+    spec: source[specItemId],
     ancestors: []
   }
 }

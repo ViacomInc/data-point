@@ -37,10 +37,11 @@ module.exports.unsetTransformKeys = unsetTransformKeys
 /**
  * creates new Request based on spec
  * @param  {Object} spec - request spec
+ * @param {string} id - Entity id
  * @return {Request}
  */
-function create (spec) {
-  const entity = helpers.createEntity(Request, spec)
+function create (spec, id) {
+  const entity = helpers.createEntity(Request, spec, id)
   const options = _.defaultTo(spec.options, {})
   entity.url = _.defaultTo(spec.url, '')
   entity.beforeRequest = createTransform(spec.beforeRequest)

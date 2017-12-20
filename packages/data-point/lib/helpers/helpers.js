@@ -48,11 +48,12 @@ module.exports.resolveEntity = resolveEntity
 /**
  * @param {function} Factory - factory function to create the entity
  * @param {Object} spec - spec for the Entity
+ * @param {string} id - Entity's id
  */
-function createEntity (Factory, spec) {
+function createEntity (Factory, spec, id) {
   const entity = new Factory(spec)
 
-  entity.id = spec.id
+  entity.id = id
   entity.value = createTransform(spec.value)
   entity.before = createTransform(spec.before)
   entity.error = createTransform(spec.error)

@@ -11,12 +11,13 @@ function EntityEntry () {}
 module.exports.EntityEntry = EntityEntry
 
 /**
- * Creates new ControlEntity based on spec
- * @param  {Object} spec - control spec
- * @return {ControlEntity}
+ * Creates new Entity Object
+ * @param  {Object} spec - spec
+ * @param {string} id - Entity id
+ * @return {EntityEntry} Entity Object
  */
-function create (spec) {
-  const entity = helpers.createEntity(EntityEntry, spec)
+function create (spec, id) {
+  const entity = helpers.createEntity(EntityEntry, spec, id)
   return Object.freeze(entity)
 }
 

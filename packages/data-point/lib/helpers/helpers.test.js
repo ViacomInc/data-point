@@ -77,13 +77,16 @@ describe('helpers.mockReducer', () => {
 describe('helpers.createEntity', () => {
   test('It should create entity defaults', () => {
     function FooEntity () {}
-    const entity = helpers.createEntity(FooEntity, {
-      id: 'foo',
-      before: '$.',
-      value: '$.',
-      error: '$.',
-      after: '$.'
-    })
+    const entity = helpers.createEntity(
+      FooEntity,
+      {
+        before: '$.',
+        value: '$.',
+        error: '$.',
+        after: '$.'
+      },
+      'foo'
+    )
 
     expect(entity).toHaveProperty('id', 'foo')
     expect(entity).toHaveProperty('value.typeOf', 'TransformExpression')

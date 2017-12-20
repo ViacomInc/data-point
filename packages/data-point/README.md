@@ -845,6 +845,8 @@ A Transform entity is meant to be used as a 'snippet' entity that you can re-use
 
 The value of a Transform entity is a [TransformExpression](#transform-expression).
 
+IMPORTANT: Transform Entities **do not support** (extension)[#extending-entities].
+
 **SYNOPSIS**
 
 ```js
@@ -2656,11 +2658,12 @@ function RenderTemplate () {
 /**
  * Entity Factory
  * @param {*} spec - Entity Specification
+ * @param {string} id - Entity id
  * @return {RenderTemplate} RenderTemplate Instance
  */
-function create (spec) {
+function create (spec, id) {
   // create an entity instance
-  const entity = DataPoint.createEntity(RenderTemplate, spec)
+  const entity = DataPoint.createEntity(RenderTemplate, spec, id)
   // set/create template from spec.template value
   entity.template = _.template(_.defaultTo(spec.template, ''))
   return entity
