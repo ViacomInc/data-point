@@ -29,19 +29,44 @@ function isPath (source) {
 
 module.exports.isPath = isPath
 
-const getAccValue = acc => acc.value
+/**
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function getAccumulatorValue (acc) {
+  return acc.value
+}
 
-module.exports.getAccValue = getAccValue
+module.exports.getAccumulatorValue = getAccumulatorValue
 
-const getFromAcc = jsonPath => acc => _.get(acc, jsonPath)
+/**
+ * @param {string} jsonPath
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function getFromAccumulator (jsonPath, acc) {
+  return _.get(acc, jsonPath)
+}
 
-module.exports.getFromAcc = getFromAcc
+module.exports.getFromAccumulator = getFromAccumulator
 
-const getFromAccValue = jsonPath => acc => _.get(acc.value, jsonPath)
+/**
+ * @param {string} jsonPath
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function getFromAccumulatorValue (jsonPath, acc) {
+  return _.get(acc.value, jsonPath)
+}
 
-module.exports.getFromAccValue = getFromAccValue
+module.exports.getFromAccumulatorValue = getFromAccumulatorValue
 
-const mapFromAccValue = jsonPath => acc => {
+/**
+ * @param {string} jsonPath
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function mapFromAccumulatorValue (jsonPath, acc) {
   if (Array.isArray(acc.value)) {
     return _.map(acc.value, jsonPath)
   }
@@ -49,7 +74,7 @@ const mapFromAccValue = jsonPath => acc => {
   return null
 }
 
-module.exports.mapFromAccValue = mapFromAccValue
+module.exports.mapFromAccumulatorValue = mapFromAccumulatorValue
 
 /**
  * @param {string} jsonPath
@@ -58,18 +83,18 @@ module.exports.mapFromAccValue = mapFromAccValue
  */
 function getPathReducerFunction (jsonPath, asCollection) {
   if (jsonPath === '.' || _.isEmpty(jsonPath)) {
-    return getAccValue
+    return getAccumulatorValue
   }
 
   if (jsonPath.startsWith('..')) {
-    return getFromAcc(jsonPath.slice(2))
+    return getFromAccumulator.bind(null, jsonPath.slice(2))
   }
 
   if (asCollection) {
-    return mapFromAccValue(jsonPath)
+    return mapFromAccumulatorValue.bind(null, jsonPath)
   }
 
-  return getFromAccValue(jsonPath)
+  return getFromAccumulatorValue.bind(null, jsonPath)
 }
 
 module.exports.getPathReducerFunction = getPathReducerFunction
