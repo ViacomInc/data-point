@@ -70,12 +70,13 @@ function parseSwitch (spec) {
 module.exports.parseSwitch = parseSwitch
 
 /**
- * Creates new ControlEntity based on spec
- * @param  {Object} spec - control spec
- * @return {ControlEntity}
+ * Creates new Entity Object
+ * @param  {Object} spec - spec
+ * @param {string} id - Entity id
+ * @return {EntityControl} Entity Object
  */
-function create (spec) {
-  const entity = helpers.createEntity(EntityControl, spec)
+function create (spec, id) {
+  const entity = helpers.createEntity(EntityControl, spec, id)
   entity.select = parseSwitch(spec)
   return Object.freeze(entity)
 }

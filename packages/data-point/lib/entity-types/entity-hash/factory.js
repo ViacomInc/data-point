@@ -93,10 +93,16 @@ function validateCompose (entityId, compose, validKeys) {
   })
 }
 
-function create (spec) {
+/**
+ * Creates new Entity Object
+ * @param  {Object} spec - spec
+ * @param {string} id - Entity id
+ * @return {Object} Entity Object
+ */
+function create (spec, id) {
   validateComposeVsInlineModifiers(spec, modifierKeys)
 
-  const entity = helpers.createEntity(Hash, spec)
+  const entity = helpers.createEntity(Hash, spec, id)
 
   const compose = parseCompose.parse(spec, modifierKeys)
   validateCompose(entity.id, compose, modifierKeys)
