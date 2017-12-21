@@ -1,6 +1,6 @@
 # DataPoint
 
-[![Build Status](https://travis-ci.org/ViacomInc/data-point.svg?branch=ci)](https://travis-ci.org/ViacomInc/data-point) [![Coverage Status](https://coveralls.io/repos/github/ViacomInc/data-point/badge.svg?branch=ci)](https://coveralls.io/github/ViacomInc/data-point?branch=ci)
+[![Build Status](https://travis-ci.org/ViacomInc/data-point.svg?branch=master)](https://travis-ci.org/ViacomInc/data-point) [![Coverage Status](https://coveralls.io/repos/github/ViacomInc/data-point/badge.svg?branch=master)](https://coveralls.io/github/ViacomInc/data-point?branch=master)
 
 > JavaScript Utility for collecting, processing and transforming data.
 
