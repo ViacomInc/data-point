@@ -24,10 +24,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform.type).toBe('ReducerMap') // TODO add more tests for ReducerMap?
   })
   test('factory#addKeys', () => {
     const result = factory.create({
@@ -37,10 +34,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'addKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform.type).toBe('ReducerMap') // TODO add more tests for ReducerMap?
   })
   test('factory#omitKeys', () => {
     const result = factory.create({
@@ -97,23 +91,23 @@ describe('factory#parse composed modifiers', () => {
       factory.create(spec)
     }).toThrow()
   })
-  test('factory#one modifier', () => {
-    const result = factory.create({
-      compose: [
-        {
-          mapKeys: {
-            a: '$a'
-          }
-        }
-      ]
-    })
+  // test('factory#one modifier', () => {
+  //   const result = factory.create({
+  //     compose: [
+  //       {
+  //         mapKeys: {
+  //           a: '$a'
+  //         }
+  //       }
+  //     ]
+  //   })
 
-    expect(result.compose[0]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
-  })
+  //   expect(result.compose[0]).toHaveProperty('type', 'mapKeys')
+  //   expect(result.compose[0].transform.a).toHaveProperty(
+  //     'typeOf',
+  //     'TransformExpression'
+  //   )
+  // })
   test('factory#multiple modifiers', () => {
     const result = factory.create({
       compose: [
@@ -132,17 +126,13 @@ describe('factory#parse composed modifiers', () => {
         }
       ]
     })
-
+    // console.log(result.compose[0].transform.keyMap)
     expect(result.compose[0]).toHaveProperty('type', 'addKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerMap')
+    // expect(result.compose[0].transform.keyMap[0]).toHaveProperty('key', 'a')
     expect(result.compose[1]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[1].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[1].transform).toHaveProperty('type', 'ReducerMap')
+    // expect(result.compose[1].transform.keyMap[0]).toHaveProperty('key', 'a')
     expect(result.compose[2]).toHaveProperty('type', 'omitKeys')
     expect(result.compose[2].transform).toEqual(['a'])
   })

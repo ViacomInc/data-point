@@ -1,6 +1,10 @@
 'use strict'
+
 const _ = require('lodash')
-const REDUCER_ENTITY = (module.exports.type = 'ReducerEntity')
+
+const REDUCER_ENTITY = 'ReducerEntity'
+
+module.exports.type = REDUCER_ENTITY
 
 /**
  * Defines a entity reducer

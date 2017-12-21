@@ -3,6 +3,7 @@
 
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
+const createTransform = require('../transform-expression').create
 const reducerPathFactory = require('../reducer-path/factory')
 const reducerPath = require('./reducer-path')
 const resolveReducer = require('./reducer')
@@ -157,7 +158,7 @@ describe('resolve#transform.resolve', () => {
       store,
       resolveReducer.resolve,
       filtercontext,
-      reducerFactory.create(rawReducer)
+      reducerFactory.create(createTransform, rawReducer)
     )
   }
 

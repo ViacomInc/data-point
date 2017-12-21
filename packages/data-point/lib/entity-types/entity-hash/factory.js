@@ -2,12 +2,13 @@
 
 const _ = require('lodash')
 const createTransform = require('../../transform-expression').create
+const createReducerMap = require('../../reducer-map').create
 const deepFreeze = require('deep-freeze')
 const parseCompose = require('../parse-compose')
 const helpers = require('../../helpers')
 
 /**
- * Hash Type.
+ * Hash Type
  * @class
  */
 function Hash () {}
@@ -16,22 +17,10 @@ module.exports.Hash = Hash
 
 const modifierKeys = ['omitKeys', 'pickKeys', 'mapKeys', 'addValues', 'addKeys']
 
-function parseCollectionKeys (object, parseCallback) {
-  const result = {}
-
-  _.forOwn(object, (value, key) => {
-    result[key] = parseCallback(object[key])
-  })
-
-  return result
-}
-
-module.exports.parseCollectionKeys = parseCollectionKeys
-
 function createCompose (composeParse) {
   return composeParse.map(modifier => {
-    let transform
     let spec
+    let transform
     switch (modifier.type) {
       case 'addValues':
         spec = _.defaultTo(modifier.spec, {})
@@ -44,8 +33,7 @@ function createCompose (composeParse) {
         break
       case 'mapKeys':
       case 'addKeys':
-        spec = _.defaultTo(modifier.spec, {})
-        transform = parseCollectionKeys(spec, createTransform)
+        transform = createReducerMap(createTransform, modifier.spec)
     }
     return _.assign({}, modifier, {
       transform

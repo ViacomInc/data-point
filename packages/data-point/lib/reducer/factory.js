@@ -4,17 +4,18 @@ const _ = require('lodash')
 
 const ReducerPath = require('../reducer-path')
 const ReducerFunction = require('../reducer-function')
+const ReducerMap = require('../reducer-map')
 const ReducerEntity = require('../reducer-entity')
 const util = require('util')
 
-const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]
+const reducerTypes = [ReducerPath, ReducerFunction, ReducerMap, ReducerEntity]
 
 /**
  * parse reducer
  * @param  {string} source - reducer string representation
  * @return {reducer}
  */
-function create (source) {
+function create (createTransform, source) {
   const reducer = _.find(reducerTypes, r => r.isType(source))
 
   if (_.isUndefined(reducer)) {
@@ -27,6 +28,10 @@ function create (source) {
     ].join('')
 
     throw new Error(message)
+  }
+
+  if (reducer === ReducerMap) {
+    return reducer.create(createTransform, source)
   }
 
   return reducer.create(source)
