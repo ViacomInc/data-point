@@ -3,22 +3,21 @@
 const helpers = require('../../helpers')
 
 /**
- * Transform Type.
  * @class
  */
-function Transform () {}
+function EntityTransform () {}
 
-module.exports.Transform = Transform
+module.exports.EntityTransform = EntityTransform
 
 /**
  * Creates new Entity Object
  * @param  {*} spec - spec
  * @param {string} id - Entity id
- * @return {Transform} Entity Object
+ * @return {EntityTransform} Entity Object
  */
 function create (spec, id) {
   const entity = helpers.createEntity(
-    Transform,
+    EntityTransform,
     {
       value: spec
     },
