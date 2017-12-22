@@ -6,12 +6,11 @@ const parseCompose = require('../parse-compose')
 const helpers = require('../../helpers')
 
 /**
- * Collection Type.
  * @class
  */
-function Collection () {}
+function EntityCollection () {}
 
-module.exports.Collection = Collection
+module.exports.EntityCollection = EntityCollection
 
 const modifierKeys = ['filter', 'map', 'find']
 
@@ -55,12 +54,12 @@ function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
  * Creates new Entity Object
  * @param  {Object} spec - spec
  * @param {string} id - Entity id
- * @return {Collection} Entity Object
+ * @return {EntityCollection} Entity Object
  */
 function create (spec, id) {
   validateComposeVsInlineModifiers(spec, modifierKeys)
 
-  const entity = helpers.createEntity(Collection, spec, id)
+  const entity = helpers.createEntity(EntityCollection, spec, id)
 
   const compose = parseCompose.parse(spec, modifierKeys)
   entity.compose = createCompose(compose)

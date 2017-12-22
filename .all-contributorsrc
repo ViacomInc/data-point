@@ -1,0 +1,80 @@
+{
+  "projectName": "data-point",
+  "projectOwner": "ViacomInc",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "contributors": [
+    {
+      "login": "acatl",
+      "name": "acatl pacheco",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/235111?v=4",
+      "profile": "https://github.com/acatl",
+      "contributions": [
+        "code",
+        "doc",
+        "test",
+        "review",
+        "example",
+        "bug"
+      ]
+    },
+    {
+      "login": "raingerber",
+      "name": "raingerber",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/3729628?v=4",
+      "profile": "https://github.com/raingerber",
+      "contributions": [
+        "code",
+        "doc",
+        "test",
+        "review",
+        "example",
+        "bug"
+      ]
+    },
+    {
+      "login": "WendellAdriel",
+      "name": "Wendell Adriel",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/11641518?v=4",
+      "profile": "https://wendelladriel.com",
+      "contributions": [
+        "doc",
+        "tool"
+      ]
+    },
+    {
+      "login": "paulmolluzzo",
+      "name": "Paul Molluzzo",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/737065?v=4",
+      "profile": "https://paul.molluzzo.com",
+      "contributions": [
+        "code",
+        "doc",
+        "test",
+        "review",
+        "example"
+      ]
+    },
+    {
+      "login": "ozipi",
+      "name": "Oscar Valdez",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/153045?v=4",
+      "profile": "http://ozipi.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "abepeterkin",
+      "name": "Abe Peterkin",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/11486970?v=4",
+      "profile": "https://github.com/abepeterkin",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ]
+}
