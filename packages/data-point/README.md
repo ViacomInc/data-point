@@ -1,6 +1,6 @@
 # DataPoint
 
-[![Build Status](https://travis-ci.org/ViacomInc/data-point.svg?branch=ci)](https://travis-ci.org/ViacomInc/data-point) [![Coverage Status](https://coveralls.io/repos/github/ViacomInc/data-point/badge.svg?branch=ci)](https://coveralls.io/github/ViacomInc/data-point?branch=ci)
+[![Build Status](https://travis-ci.org/ViacomInc/data-point.svg?branch=master)](https://travis-ci.org/ViacomInc/data-point) [![Coverage Status](https://coveralls.io/repos/github/ViacomInc/data-point/badge.svg?branch=master)](https://coveralls.io/github/ViacomInc/data-point?branch=master)
 
 > JavaScript Utility for collecting, processing and transforming data.
 
@@ -844,6 +844,8 @@ All entities share a common API (except for [Transform](#transform-entity)).
 A Transform entity is meant to be used as a 'snippet' entity that you can re-use in other entities. It does not expose the common before/after/error/params API that other entities have.
 
 The value of a Transform entity is a [TransformExpression](#transform-expression).
+
+IMPORTANT: Transform Entities **do not support** (extension)[#extending-entities].
 
 **SYNOPSIS**
 
@@ -2656,11 +2658,12 @@ function RenderTemplate () {
 /**
  * Entity Factory
  * @param {*} spec - Entity Specification
+ * @param {string} id - Entity id
  * @return {RenderTemplate} RenderTemplate Instance
  */
-function create (spec) {
+function create (spec, id) {
   // create an entity instance
-  const entity = DataPoint.createEntity(RenderTemplate, spec)
+  const entity = DataPoint.createEntity(RenderTemplate, spec, id)
   // set/create template from spec.template value
   entity.template = _.template(_.defaultTo(spec.template, ''))
   return entity

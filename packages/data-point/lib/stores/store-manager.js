@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const utils = require('../utils')
 
 /**
  * get all added models
@@ -58,8 +57,7 @@ function add (manager, errorInfoCb, factory, id, spec) {
     throw e
   }
 
-  const objSpec = utils.set(spec, 'id', id)
-  const item = _.attempt(factory, objSpec, id)
+  const item = _.attempt(factory, spec, id)
 
   if (item instanceof Error) {
     item.entityId = id

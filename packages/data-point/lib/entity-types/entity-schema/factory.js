@@ -15,12 +15,13 @@ function EntitySchema () {
 module.exports.EntitySchema = EntitySchema
 
 /**
- * @param  {Object} spec - entity spec
- * @return {ControlEntity}
+ * Creates new Entity Object
+ * @param  {Object} spec - spec
+ * @param {string} id - Entity id
+ * @return {EntitySchema} Entity Object
  */
-
-function create (spec) {
-  const entity = helpers.createEntity(EntitySchema, spec)
+function create (spec, id) {
+  const entity = helpers.createEntity(EntitySchema, spec, id)
   entity.schema = deepFreeze(_.defaultTo(spec.schema, {}))
   entity.options = deepFreeze(_.defaultTo(spec.options, {}))
 
