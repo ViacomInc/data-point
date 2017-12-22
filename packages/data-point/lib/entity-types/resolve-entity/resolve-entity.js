@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const middleware = require('../../resolve/middleware')
+const middleware = require('../../middleware')
 
 const utils = require('../../utils')
 

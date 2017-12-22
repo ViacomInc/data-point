@@ -3,9 +3,9 @@
 
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
-const reducerPathFactory = require('../reducer-path/factory')
-const reducerPath = require('./reducer-path')
-const resolveReducer = require('./reducer')
+const reducerPathFactory = require('./factory')
+const reducerPath = require('./resolve')
+const ResolveTransform = require('../transform-expression/resolve')
 
 const fixtureStore = require('../../test/utils/fixture-store')
 
@@ -155,7 +155,7 @@ describe('resolve#transform.resolve', () => {
 
     return reducerPath.resolve(
       store,
-      resolveReducer.resolve,
+      ResolveTransform.resolve,
       filtercontext,
       reducerFactory.create(rawReducer)
     )

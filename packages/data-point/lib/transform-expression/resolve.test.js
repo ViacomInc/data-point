@@ -9,9 +9,9 @@ const testData = require('../../test/data.json')
 
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
-const TransformExpression = require('../transform-expression')
+const TransformExpression = require('./factory')
 
-const resolveReducer = require('./reducer')
+const resolveTransform = require('./resolve')
 
 let store
 
@@ -21,20 +21,23 @@ beforeAll(() => {
 
 describe('reducer.getReducerFunction', () => {
   test('resolve to ReducerPath', () => {
-    const resolver = resolveReducer.getReducerFunction(store, 'ReducerPath')
+    const resolver = resolveTransform.getReducerFunction(store, 'ReducerPath')
     expect(resolver).toBeInstanceOf(Function)
   })
   test('resolve to ReducerFunction', () => {
-    const resolver = resolveReducer.getReducerFunction(store, 'ReducerFunction')
+    const resolver = resolveTransform.getReducerFunction(
+      store,
+      'ReducerFunction'
+    )
     expect(resolver).toBeInstanceOf(Function)
   })
   test('resolve to ReducerEntity', () => {
-    const resolver = resolveReducer.getReducerFunction(store, 'ReducerEntity')
+    const resolver = resolveTransform.getReducerFunction(store, 'ReducerEntity')
     expect(resolver).toBeInstanceOf(Function)
   })
   test('resolve to ReducerEntity', () => {
     expect(() => {
-      resolveReducer.getReducerFunction(store, 'INVALID TYPE')
+      resolveTransform.getReducerFunction(store, 'INVALID TYPE')
     }).toThrow()
   })
 })
@@ -45,7 +48,7 @@ test('resolve#reducer.resolveReducer', () => {
   })
 
   const reducer = reducerFactory.create(reducers.addCollectionValues())
-  return resolveReducer
+  return resolveTransform
     .resolveReducer(store, accumulator, reducer)
     .then(result => {
       expect(result.value).toEqual(6)
@@ -59,7 +62,7 @@ test('resolve#reducer.resolve - reducer empty', () => {
 
   const transform = TransformExpression.create('')
 
-  return resolveReducer
+  return resolveTransform
     .resolve(store, accumulator, transform)
     .then(result => expect(result.value).toEqual(testData.a.g))
 })
@@ -71,7 +74,7 @@ describe('resolve#reducer.resolve - reducer transform', () => {
     })
 
     const transform = TransformExpression.create('$a.g')
-    return resolveReducer
+    return resolveTransform
       .resolve(store, accumulator, transform)
       .then(result => expect(result.value).toEqual(testData.a.g))
   })
@@ -83,7 +86,7 @@ describe('resolve#reducer.resolve - reducer transform', () => {
 
     const transform = TransformExpression.create('$a.g | $g1')
 
-    return resolveReducer
+    return resolveTransform
       .resolve(store, accumulator, transform)
       .then(result => expect(result.value).toBe(1))
   })
@@ -96,7 +99,7 @@ describe('resolve#reducer.resolve - reducer model', () => {
     })
 
     const transform = TransformExpression.create('hash:asIs')
-    return resolveReducer
+    return resolveTransform
       .resolve(store, accumulator, transform)
       .then(result => expect(result.value).toEqual(testData))
   })
@@ -108,7 +111,7 @@ describe('resolve#reducer.resolve - reducer model', () => {
 
     const transform = TransformExpression.create('hash:asIs | hash:a.1')
 
-    return resolveReducer
+    return resolveTransform
       .resolve(store, accumulator, transform)
       .then(result => expect(result.value).toEqual(testData.a.h))
   })
@@ -127,11 +130,13 @@ describe('resolve#reducer.resolve - reducer request', () => {
     })
 
     const transform = TransformExpression.create('request:a1')
-    return resolveReducer.resolve(store, accumulator, transform).then(result =>
-      expect(result.value).toEqual({
-        ok: true
-      })
-    )
+    return resolveTransform
+      .resolve(store, accumulator, transform)
+      .then(result =>
+        expect(result.value).toEqual({
+          ok: true
+        })
+      )
   })
 
   test('multiple models', () => {
@@ -153,10 +158,12 @@ describe('resolve#reducer.resolve - reducer request', () => {
 
     const transform = TransformExpression.create('request:a1 | request:a3')
 
-    return resolveReducer.resolve(store, accumulator, transform).then(result =>
-      expect(result.value).toEqual({
-        ok: true
-      })
-    )
+    return resolveTransform
+      .resolve(store, accumulator, transform)
+      .then(result =>
+        expect(result.value).toEqual({
+          ok: true
+        })
+      )
   })
 })
