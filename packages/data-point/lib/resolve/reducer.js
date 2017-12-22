@@ -4,7 +4,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const resolveReducerPath = require('./reducer-path')
 const resolveReducerFunction = require('./reducer-function')
-const resolveReducerMap = require('./reducer-map')
+const resolveReducerObject = require('./reducer-object')
 const resolveEntity = require('./reducer-entity')
 
 /**
@@ -29,8 +29,8 @@ function getReducerFunction (store, reducerType) {
     case 'ReducerFunction':
       reducerResolver = resolveReducerFunction.resolve
       break
-    case 'ReducerMap':
-      reducerResolver = _.partial(resolveReducerMap.resolve, store, resolve)
+    case 'ReducerObject':
+      reducerResolver = _.partial(resolveReducerObject.resolve, store, resolve)
       break
     case 'ReducerEntity':
       /* eslint no-use-before-define: "off" */

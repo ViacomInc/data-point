@@ -7,7 +7,8 @@ const ReducerPath = require('../reducer-path')
 const ReducerFunction = require('../reducer-function')
 const ReducerEntity = require('../reducer-entity')
 const createTransform = require('../transform-expression/factory').create
-// TODO add reducerMap test
+
+// TODO add reducerObject test
 describe('reducer#create', () => {
   test('create path', () => {
     const reducer = Factory.create(createTransform, '$foo.bar[2]')

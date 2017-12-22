@@ -1,20 +1,20 @@
 const isPlainObject = require('lodash/isPlainObject')
 
-const REDUCER_MAP = 'ReducerMap'
+const REDUCER_OBJECT = 'ReducerObject'
 
-module.exports.type = REDUCER_MAP
+module.exports.type = REDUCER_OBJECT
 
 /**
  * @class
  * @property {string} type - @see reducerType
  * @property {Array} props
  */
-function ReducerMap () {
-  this.type = REDUCER_MAP
+function ReducerObject () {
+  this.type = REDUCER_OBJECT
   this.props = undefined
 }
 
-module.exports.ReducerMap = ReducerMap
+module.exports.ReducerObject = ReducerObject
 
 /**
  * @param {*} source
@@ -64,7 +64,7 @@ module.exports.getReducerProps = getReducerProps
  * @returns {reducer}
  */
 function create (createTransform, source = {}) {
-  const reducer = new ReducerMap()
+  const reducer = new ReducerObject()
   reducer.props = getReducerProps(createTransform, source)
 
   return Object.freeze(reducer)

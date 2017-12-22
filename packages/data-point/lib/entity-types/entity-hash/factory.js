@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const createTransform = require('../../transform-expression').create
-const createReducerMap = require('../../reducer-map').create
+const createReducerObject = require('../../reducer-object').create
 const deepFreeze = require('deep-freeze')
 const parseCompose = require('../parse-compose')
 const helpers = require('../../helpers')
@@ -33,7 +33,7 @@ function createCompose (composeParse) {
         break
       case 'mapKeys':
       case 'addKeys':
-        transform = createReducerMap(createTransform, modifier.spec)
+        transform = createReducerObject(createTransform, modifier.spec)
     }
     return _.assign({}, modifier, {
       transform
