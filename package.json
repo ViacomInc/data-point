@@ -9,6 +9,7 @@
     "commit": "git-cz",
     "test": "jest --coverage",
     "lint": "standard --verbose | snazzy",
+    "contributors:add": "all-contributors add",
     "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
     "watch": "jest --watchAll --coverage"
   },
@@ -17,6 +18,7 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
+    "all-contributors-cli": "^4.10.1",
     "commitizen": "latest",
     "cz-conventional-changelog": "latest",
     "jest": "latest",
