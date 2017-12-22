@@ -3,7 +3,6 @@
 const helpers = require('../../helpers')
 
 /**
- * EntityEntry Constructor
  * @class
  */
 function EntityEntry () {}

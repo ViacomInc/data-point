@@ -9,13 +9,13 @@ const TransformKeys = require('./transform-keys')
 /**
  * @class
  */
-function Request () {
+function EntityRequest () {
   this.url = undefined
   this.options = {}
   this.beforeRequest = undefined
 }
 
-module.exports.Request = Request
+module.exports.EntityRequest = EntityRequest
 
 function getTransformKeys (options) {
   const transformKeys = TransformKeys.getTransformKeys(options)
@@ -38,10 +38,10 @@ module.exports.unsetTransformKeys = unsetTransformKeys
  * creates new Request based on spec
  * @param  {Object} spec - request spec
  * @param {string} id - Entity id
- * @return {Request}
+ * @return {EntityRequest} Entity Object
  */
 function create (spec, id) {
-  const entity = helpers.createEntity(Request, spec, id)
+  const entity = helpers.createEntity(EntityRequest, spec, id)
   const options = _.defaultTo(spec.options, {})
   entity.url = _.defaultTo(spec.url, '')
   entity.beforeRequest = createTransform(spec.beforeRequest)
