@@ -8,7 +8,7 @@ const ReducerMap = require('../reducer-map')
 const ReducerEntity = require('../reducer-entity')
 const util = require('util')
 
-const reducerTypes = [ReducerPath, ReducerFunction, ReducerMap, ReducerEntity]
+const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]
 
 /**
  * parse reducer
@@ -16,6 +16,12 @@ const reducerTypes = [ReducerPath, ReducerFunction, ReducerMap, ReducerEntity]
  * @return {reducer}
  */
 function create (createTransform, source) {
+  // ReducerMap requires an extra parameter, so
+  // it's not included in the reducerTypes array
+  if (ReducerMap.isType(source)) {
+    return ReducerMap.create(createTransform, source)
+  }
+
   const reducer = _.find(reducerTypes, r => r.isType(source))
 
   if (_.isUndefined(reducer)) {
@@ -28,10 +34,6 @@ function create (createTransform, source) {
     ].join('')
 
     throw new Error(message)
-  }
-
-  if (reducer === ReducerMap) {
-    return reducer.create(createTransform, source)
   }
 
   return reducer.create(source)

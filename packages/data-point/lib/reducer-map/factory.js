@@ -7,11 +7,11 @@ module.exports.type = REDUCER_MAP
 /**
  * @class
  * @property {string} type - @see reducerType
- * @property {Array} keyMap
+ * @property {Array} props
  */
 function ReducerMap () {
   this.type = REDUCER_MAP
-  this.keyMap = undefined
+  this.props = undefined
 }
 
 module.exports.ReducerMap = ReducerMap
@@ -28,31 +28,35 @@ module.exports.isMap = isMap
 
 /**
  * @param {Function} createTransform
- * @param {Object} data
+ * @param {Object} source
  * @param {Array} path
- * @param {Array} keyPaths
+ * @param {Array} reducerProps
  * @returns {Array}
  */
-function parseMapKeys (createTransform, data, path = [], keyPaths = []) {
-  for (let key of Object.keys(data)) {
-    const value = data[key]
-    const isTransform = !key.startsWith('$')
-    if (isTransform && isPlainObject(value)) {
-      parseMapKeys(data[key], path.concat(key), keyPaths)
+function getReducerProps (
+  createTransform,
+  source,
+  path = [],
+  reducerProps = []
+) {
+  for (let key of Object.keys(source)) {
+    const value = source[key]
+    const fullPath = path.concat(key)
+    if (isPlainObject(value)) {
+      getReducerProps(createTransform, value, fullPath, reducerProps)
       continue
     }
 
-    keyPaths.push({
-      value: isTransform ? createTransform(value) : value,
-      path: path.concat(key.replace(/^[$]/, '')),
-      isTransform: isTransform
+    reducerProps.push({
+      path: fullPath,
+      transform: createTransform(value)
     })
   }
 
-  return keyPaths
+  return reducerProps
 }
 
-module.exports.parseMapKeys = parseMapKeys
+module.exports.getReducerProps = getReducerProps
 
 /**
  * @param {Function} createTransform
@@ -61,7 +65,8 @@ module.exports.parseMapKeys = parseMapKeys
  */
 function create (createTransform, source = {}) {
   const reducer = new ReducerMap()
-  reducer.keyMap = parseMapKeys(createTransform, source)
+  reducer.props = getReducerProps(createTransform, source)
+
   return Object.freeze(reducer)
 }
 
