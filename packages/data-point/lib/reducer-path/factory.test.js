@@ -8,6 +8,60 @@ it('reducer/reducer-path#isPath', () => {
   expect(factory.isPath('$.')).toBeTruthy()
 })
 
+describe('ReducerPath getters', () => {
+  let acc
+  beforeEach(() => {
+    acc = {
+      params: {
+        a: [2, 4]
+      },
+      value: [
+        {
+          a: 2
+        },
+        {
+          a: 4
+        }
+      ]
+    }
+  })
+
+  it('reducer/reducer-path#getAccumulatorValue', () => {
+    expect(factory.getAccumulatorValue({ value: undefined })).toBeUndefined()
+    expect(factory.getAccumulatorValue(acc)).toEqual(acc.value)
+  })
+
+  it('reducer/reducer-path#getFromAccumulator', () => {
+    expect(factory.getFromAccumulator('', acc)).toBeUndefined()
+    expect(factory.getFromAccumulator('value', acc)).toEqual(acc.value)
+    expect(factory.getFromAccumulator('params', acc)).toEqual(acc.params)
+    expect(factory.getFromAccumulator('params.a', acc)).toEqual([2, 4])
+    expect(factory.getFromAccumulator('params.a[1]', acc)).toBe(4)
+  })
+
+  it('reducer/reducer-path#getFromAccumulatorValue', () => {
+    expect(factory.getFromAccumulatorValue('', acc)).toBeUndefined()
+    expect(factory.getFromAccumulatorValue('value', acc)).toBeUndefined()
+    expect(factory.getFromAccumulatorValue('[0]', acc)).toEqual(acc.value[0])
+  })
+
+  it('reducer/reducer-path#mapFromAccumulatorValue', () => {
+    expect(factory.mapFromAccumulatorValue('a', { value: {} })).toBeNull()
+    expect(factory.mapFromAccumulatorValue('a', acc)).toEqual([2, 4])
+  })
+})
+
+describe('reducer/reducer-path#getPathReducerFunction', () => {
+  it('should always return a function', () => {
+    expect(factory.getPathReducerFunction()).toBeInstanceOf(Function)
+    expect(factory.getPathReducerFunction('')).toBeInstanceOf(Function)
+    expect(factory.getPathReducerFunction('.')).toBeInstanceOf(Function)
+    expect(factory.getPathReducerFunction('..')).toBeInstanceOf(Function)
+    expect(factory.getPathReducerFunction('..', true)).toBeInstanceOf(Function)
+    expect(factory.getPathReducerFunction('a.b.c')).toBeInstanceOf(Function)
+  })
+})
+
 describe('reducer/reducer-path#create', () => {
   it('basic path', () => {
     const reducer = factory.create('$a')
