@@ -16,7 +16,10 @@ describe('resolve#transform.resolve', () => {
       locals
     })
 
-    return reducerPath.resolve(accumulator, reducerFactory.create(createTransform, rawReducer))
+    return reducerPath.resolve(
+      accumulator,
+      reducerFactory.create(createTransform, rawReducer)
+    )
   }
 
   test('resolve current value', () => {
