@@ -19,7 +19,7 @@ function getReducerFunction (store, reducerType) {
   /* eslint indent: ["error", 2, { "SwitchCase": 1 }] */
   switch (reducerType) {
     case 'ReducerPath':
-      reducerResolver = _.partial(resolveReducerPath, store.filters, resolve)
+      reducerResolver = resolveReducerPath
       break
     case 'ReducerFunction':
       reducerResolver = resolveReducerFunction
