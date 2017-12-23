@@ -3,7 +3,7 @@
 
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
-const reducerPath = require('./reducer-path')
+const reducerPath = require('../reducer-path')
 
 describe('resolve#transform.resolve', () => {
   function resolve (value, rawReducer) {

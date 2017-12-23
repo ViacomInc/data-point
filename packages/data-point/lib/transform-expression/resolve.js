@@ -2,9 +2,9 @@
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const resolveReducerPath = require('./reducer-path')
-const resolveReducerFunction = require('./reducer-function')
-const resolveEntity = require('./reducer-entity')
+const resolveReducerPath = require('../reducer-path').resolve
+const resolveReducerFunction = require('../reducer-function').resolve
+const resolveReducerEntity = require('../reducer-entity').resolve
 
 /**
  *
@@ -19,15 +19,15 @@ function getReducerFunction (store, reducerType) {
   /* eslint indent: ["error", 2, { "SwitchCase": 1 }] */
   switch (reducerType) {
     case 'ReducerPath':
-      reducerResolver = resolveReducerPath.resolve
+      reducerResolver = resolveReducerPath
       break
     case 'ReducerFunction':
-      reducerResolver = resolveReducerFunction.resolve
+      reducerResolver = resolveReducerFunction
       break
     case 'ReducerEntity':
       /* eslint no-use-before-define: "off" */
       // IMPORTANT: recursiveness here - watch out!
-      reducerResolver = _.partial(resolveEntity.resolve, store, resolve)
+      reducerResolver = _.partial(resolveReducerEntity, store, resolve)
       break
     default:
       throw new Error(`Reducer type '${reducerType}' was not recognized`)

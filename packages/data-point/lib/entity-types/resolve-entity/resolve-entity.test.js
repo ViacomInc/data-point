@@ -129,7 +129,7 @@ describe('ResolveEntity.resolveMiddleware', () => {
   })
 })
 
-const Resolve = require('../../resolve/reducer')
+const ResolveTransform = require('../../transform-expression/resolve')
 
 describe('ResolveEntity.resolveEntity', () => {
   const defaultResolver = (acc, resolveTransform) => Promise.resolve(acc)
@@ -206,7 +206,7 @@ describe('ResolveEntity.resolve', () => {
     const reducer = ReducerEntity.create(entityId)
     return ResolveEntity.resolve(
       dataPoint,
-      Resolve.resolve,
+      ResolveTransform.resolve,
       racc,
       reducer,
       resolver

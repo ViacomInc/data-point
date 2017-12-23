@@ -3,7 +3,7 @@
 
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
-const resolveFunction = require('./reducer-function')
+const resolveFunction = require('./resolve')
 
 describe('resolve#filter.resolve', () => {
   test('resolves node style callback', () => {
