@@ -583,16 +583,18 @@ const objectReducer = {
 }
 
 // output data:
-//
-// {
-//   y: {
-//     z: 2
-//   },
-//   zPlusOne: 3 
-// }
+
+{
+  y: {
+    z: 2
+  },
+  zPlusOne: 3 
+}
 
 dataPoint.transform(objectReducer, inputData)
 ```
+
+Example at: [examples/reducer-object-1.js](examples/reducer-object-1.js)
 
 Each of the TransformExpressions (including the nested ones) are resolved against the same data. This means that input objects can be rearranged at any level:
 
@@ -618,18 +620,20 @@ const objectReducer = {
 }
 
 // output data:
-//
-// {
-//   x: 'X',
-//   y: 'Y',
-//   z: {
-//     a: 'A',
-//     b: 'B'
-//   }
-// }
+
+{
+  x: 'X',
+  y: 'Y',
+  z: {
+    a: 'A',
+    b: 'B'
+  }
+}
 
 dataPoint.transform(objectReducer, inputData)
 ```
+
+Example at: [examples/reducer-object-2.js](examples/reducer-object-2.js)
 
 Each of the TransformExpressions might also contain more ObjectReducers (which might contain TransformExpressions, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
 
@@ -662,19 +666,21 @@ const objectReducer = {
 }
 
 // output data:
-//
-// {
-//   x: {
-//     a: 1
-//   },
-//   y: {
-//     a: 1,
-//     b: 2
-//   }
-// }
+
+{
+  x: {
+    a: 1
+  },
+  y: {
+    a: 1,
+    b: 2
+  }
+}
 
 dataPoint.transform(objectReducer, inputData)
 ```
+
+Example at: [examples/reducer-object-3.js](examples/reducer-object-3.js)
 
 ### <a name="higher-order-reducers">Higher Order Reducers</a>
 
