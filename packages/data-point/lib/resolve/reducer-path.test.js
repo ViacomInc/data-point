@@ -130,7 +130,7 @@ describe('resolve#reducer-path.resolveObjectPath', () => {
     expect(result).toBe(null)
   })
 
-  test('resolve prefixe ".." with valid jsonpath to resolved value', () => {
+  test('resolve prefix ".." with valid jsonpath to resolved value', () => {
     const acc = {
       value: {
         a: ['test']
