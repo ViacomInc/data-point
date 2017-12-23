@@ -568,34 +568,6 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 
 ObjectReducers are plain objects where the values are TransformExpressions. They're used to aggregate data or transform objects.
 
-**Combining multiple requests:**
-
-```js
-const dataPoint = require('data-point').create()
-
-dataPoint.addEntities({
-  'request:Planet': {
-    url: 'https://swapi.co/api/planets/{value}'
-  }
-})
-
-const objectReducer = {
-  tatooine: ['$tatooine', 'request:Planet'],
-  alderaan: ['$alderaan', 'request:Planet']
-}
-
-const planetIds = {
-  tatooine: 1,
-  alderaan: 2
-}
-
-dataPoint.transform(objectReducer, planetIds)
-  .then(acc => {
-    // do something with the aggregated planet data!
-  })
-
-```
-
 **Transforming an object:**
 
 ```js
@@ -624,7 +596,35 @@ const objectReducer = {
 dataPoint.transform(objectReducer, inputData)
 ```
 
-Each of the TransformExpressions (including the nested ones) are resolved against the same data. This means that input objects can be rearranged at any level:
+**Combining multiple requests:**
+
+```js
+const dataPoint = require('data-point').create()
+
+dataPoint.addEntities({
+  'request:Planet': {
+    url: 'https://swapi.co/api/planets/{value}'
+  }
+})
+
+const objectReducer = {
+  tatooine: ['$tatooine', 'request:Planet'],
+  alderaan: ['$alderaan', 'request:Planet']
+}
+
+const planetIds = {
+  tatooine: 1,
+  alderaan: 2
+}
+
+dataPoint.transform(objectReducer, planetIds)
+  .then(acc => {
+    // do something with the aggregated planet data!
+  })
+
+```
+
+Each of the TransformExpressions, including the nested ones, are resolved against the same accumulator value. This means that input objects can be rearranged at any level:
 
 ```js
 const inputData = {
