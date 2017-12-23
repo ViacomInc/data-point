@@ -13,11 +13,16 @@ const REDUCER_PATH = (module.exports.type = 'ReducerPath')
 function ReducerPath () {
   this.type = REDUCER_PATH
   this.name = ''
+  this.body = undefined
   this.asCollection = false
 }
 
 module.exports.ReducerPath = ReducerPath
 
+/**
+ * @param {*} source
+ * @returns {boolean}
+ */
 function isPath (source) {
   return _.isString(source) && source.charAt(0) === '$'
 }
@@ -25,8 +30,78 @@ function isPath (source) {
 module.exports.isPath = isPath
 
 /**
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function getAccumulatorValue (acc) {
+  return acc.value
+}
+
+module.exports.getAccumulatorValue = getAccumulatorValue
+
+/**
+ * @param {string} jsonPath
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function getFromAccumulator (jsonPath, acc) {
+  return _.get(acc, jsonPath)
+}
+
+module.exports.getFromAccumulator = getFromAccumulator
+
+/**
+ * @param {string} jsonPath
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function getFromAccumulatorValue (jsonPath, acc) {
+  return _.get(acc.value, jsonPath)
+}
+
+module.exports.getFromAccumulatorValue = getFromAccumulatorValue
+
+/**
+ * @param {string} jsonPath
+ * @param {Accumulator} acc
+ * @returns {*}
+ */
+function mapFromAccumulatorValue (jsonPath, acc) {
+  if (Array.isArray(acc.value)) {
+    return _.map(acc.value, jsonPath)
+  }
+
+  return null
+}
+
+module.exports.mapFromAccumulatorValue = mapFromAccumulatorValue
+
+/**
+ * @param {string} jsonPath
+ * @param {boolean} asCollection
+ * @returns {Function}
+ */
+function getPathReducerFunction (jsonPath, asCollection) {
+  if (jsonPath === '.' || _.isEmpty(jsonPath)) {
+    return getAccumulatorValue
+  }
+
+  if (jsonPath.startsWith('..')) {
+    return getFromAccumulator.bind(null, jsonPath.slice(2))
+  }
+
+  if (asCollection) {
+    return mapFromAccumulatorValue.bind(null, jsonPath)
+  }
+
+  return getFromAccumulatorValue.bind(null, jsonPath)
+}
+
+module.exports.getPathReducerFunction = getPathReducerFunction
+
+/**
  * parse reducer
- * @param  {string} reducerRaw raw reducer path
+ * @param {string} source - raw reducer path
  * @return {reducer}
  */
 function create (source) {
@@ -34,6 +109,7 @@ function create (source) {
 
   reducer.asCollection = source.slice(-2) === '[]'
   reducer.name = _.defaultTo(source.substr(1), '.').replace(/\[]$/, '')
+  reducer.body = getPathReducerFunction(reducer.name, reducer.asCollection)
 
   return Object.freeze(reducer)
 }
