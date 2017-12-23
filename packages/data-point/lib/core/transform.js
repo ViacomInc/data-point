@@ -5,7 +5,7 @@ const Promise = require('bluebird')
 
 const AccumulatorFactory = require('../accumulator/factory')
 const TransformExpression = require('../transform-expression')
-const reducer = require('../resolve/reducer')
+const resolveTransform = require('../transform-expression').resolve
 
 function getOptions (spec) {
   return _.defaults({}, spec, {
@@ -24,7 +24,7 @@ function resolve (manager, transformSource, value, options) {
 
   const transform = TransformExpression.create(transformSource)
 
-  return reducer.resolve(manager, context, transform)
+  return resolveTransform(manager, context, transform)
 }
 
 function transform (manager, transformSource, value, options, done) {

@@ -3,9 +3,9 @@
 
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
-const resolveObject = require('./reducer-object').resolve
+const resolveObject = require('./resolve').resolve
 const createTransform = require('../transform-expression').create
-const resolveTransform = require('./reducer').resolve
+const resolveTransform = require('../transform-expression').resolve
 const FixtureStore = require('../../test/utils/fixture-store')
 
 let dataPoint
@@ -14,7 +14,7 @@ beforeAll(() => {
   dataPoint = FixtureStore.create()
 })
 
-describe('resolve#filter.resolve', () => {
+describe('resolve#reducerObject.resolve', () => {
   it('should return the accumulator for an empty reducer object', () => {
     const reducer = reducerFactory.create(createTransform, {})
 

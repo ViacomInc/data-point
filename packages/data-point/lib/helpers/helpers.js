@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const resolve = require('../resolve/reducer').resolve
+const resolveTransform = require('../transform-expression').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 const deepFreeze = require('deep-freeze')
 
@@ -78,7 +78,7 @@ function createAccumulator (value, options) {
 module.exports.createAccumulator = createAccumulator
 
 function createResolveTransform (dataPoint) {
-  return resolve.bind(null, dataPoint)
+  return resolveTransform.bind(null, dataPoint)
 }
 module.exports.createResolveTransform = createResolveTransform
 

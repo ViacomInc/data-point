@@ -10,6 +10,7 @@ Array [
       "reducers": Array [
         ReducerPath {
           "asCollection": true,
+          "body": [Function],
           "name": "a",
           "type": "ReducerPath",
         },
@@ -26,6 +27,7 @@ Array [
       "reducers": Array [
         ReducerPath {
           "asCollection": false,
+          "body": [Function],
           "name": "a2",
           "type": "ReducerPath",
         },
@@ -70,6 +72,7 @@ Array [
                 "reducers": Array [
                   ReducerPath {
                     "asCollection": false,
+                    "body": [Function],
                     "name": "b1.b2.b3",
                     "type": "ReducerPath",
                   },
