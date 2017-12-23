@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const deepFreeze = require('deep-freeze')
-const helpers = require('../../helpers')
+const createBaseEntity = require('../base-entity').create
 
 /**
  * @class
@@ -21,7 +21,7 @@ module.exports.EntitySchema = EntitySchema
  * @return {EntitySchema} Entity Object
  */
 function create (spec, id) {
-  const entity = helpers.createEntity(EntitySchema, spec, id)
+  const entity = createBaseEntity(EntitySchema, spec, id)
   entity.schema = deepFreeze(_.defaultTo(spec.schema, {}))
   entity.options = deepFreeze(_.defaultTo(spec.options, {}))
 

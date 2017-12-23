@@ -9,7 +9,7 @@ const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer/factory')
 const LocalsFactory = require('../../locals/factory')
 
-const ResolveEntity = require('../resolve-entity')
+const ResolveEntity = require('../base-entity/resolve')
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 

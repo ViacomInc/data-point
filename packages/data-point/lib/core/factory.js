@@ -27,7 +27,7 @@ function addToStore (store, reducers) {
 /**
  * setup store
  */
-function addDefinitionsToStore (store, entities) {
+function addEntitiesToStore (store, entities) {
   const entitySpecs = _.defaultTo(entities, {})
   const specs = normalizeEntities.normalize(entitySpecs)
 
@@ -57,13 +57,13 @@ function create (spec) {
 
   manager.transform = _.partial(transform, manager)
 
-  // add single item (singlular)
+  // add single item (singular)
   manager.addValue = manager.values.add
   manager.addEntityTypes = manager.entityTypes.add
   manager.use = manager.middleware.use
 
   // add collection of items (plural)
-  manager.addEntities = _.partial(addDefinitionsToStore, manager.entities)
+  manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
 
   // using options to initialize dataPoint
 

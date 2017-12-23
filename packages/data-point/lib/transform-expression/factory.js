@@ -1,8 +1,8 @@
 'use strict'
 
 const _ = require('lodash')
-const reducerFactory = require('../reducer/factory')
 const util = require('util')
+const reducerFactory = require('../reducer/factory')
 
 /**
  * Describes the transform parts used to reduce a context

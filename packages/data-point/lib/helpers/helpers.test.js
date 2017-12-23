@@ -74,28 +74,6 @@ describe('helpers.mockReducer', () => {
   })
 })
 
-describe('helpers.createEntity', () => {
-  test('It should create entity defaults', () => {
-    function FooEntity () {}
-    const entity = helpers.createEntity(
-      FooEntity,
-      {
-        before: '$.',
-        value: '$.',
-        error: '$.',
-        after: '$.'
-      },
-      'foo'
-    )
-
-    expect(entity).toHaveProperty('id', 'foo')
-    expect(entity).toHaveProperty('value.typeOf', 'TransformExpression')
-    expect(entity).toHaveProperty('error.typeOf', 'TransformExpression')
-    expect(entity).toHaveProperty('after.typeOf', 'TransformExpression')
-    expect(entity).toHaveProperty('params', {})
-  })
-})
-
 describe('helpers.createAccumulator', () => {
   test('It should assign value', () => {
     const acc = helpers.createAccumulator('foo')
