@@ -4,11 +4,11 @@
 const nock = require('nock')
 
 const fixtureStore = require('../../test/utils/fixture-store')
-// const reducers = require('../../test/utils/reducers')
+const reducers = require('../../test/utils/reducers')
 const testData = require('../../test/data.json')
 
 const AccumulatorFactory = require('../accumulator/factory')
-// const reducerFactory = require('../reducer/factory')
+const reducerFactory = require('../reducer/factory')
 const TransformExpression = require('../transform-expression')
 
 const resolveReducer = require('./reducer')
@@ -39,18 +39,21 @@ describe('reducer.getReducerFunction', () => {
   })
 })
 
-// test('resolve#reducer.resolveReducer', () => {
-//   const accumulator = AccumulatorFactory.create({
-//     value: testData.a.b.c
-//   })
+test('resolve#reducer.resolveReducer', () => {
+  const accumulator = AccumulatorFactory.create({
+    value: testData.a.b.c
+  })
 
-//   const reducer = reducerFactory.create(reducers.addCollectionValues())
-//   return resolveReducer
-//     .resolveReducer(store, accumulator, reducer)
-//     .then(result => {
-//       expect(result.value).toEqual(6)
-//     })
-// })
+  const reducer = reducerFactory.create(
+    TransformExpression.create,
+    reducers.addCollectionValues()
+  )
+  return resolveReducer
+    .resolveReducer(store, accumulator, reducer)
+    .then(result => {
+      expect(result.value).toEqual(6)
+    })
+})
 
 test('resolve#reducer.resolve - reducer empty', () => {
   const accumulator = AccumulatorFactory.create({

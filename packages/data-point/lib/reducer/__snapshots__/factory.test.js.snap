@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`reducer#create  detect invalid 1`] = `
+exports[`reducer#create detect invalid 1`] = `
 "Invalid reducer type. Could not find a matching reducer type while parsing the value:
  'a'
 For a list of supported types visit:

@@ -5,10 +5,10 @@ const Factory = require('./factory')
 
 const ReducerPath = require('../reducer-path')
 const ReducerFunction = require('../reducer-function')
+const ReducerObject = require('../reducer-object')
 const ReducerEntity = require('../reducer-entity')
 const createTransform = require('../transform-expression/factory').create
 
-// TODO add reducerObject test
 describe('reducer#create', () => {
   test('create path', () => {
     const reducer = Factory.create(createTransform, '$foo.bar[2]')
@@ -19,7 +19,13 @@ describe('reducer#create', () => {
   test('create function', () => {
     const reducer = Factory.create(createTransform, () => true)
     expect(reducer.type).toBe(ReducerFunction.type)
-    expect(reducer.body.length).toBe(0)
+    expect(reducer.body).toHaveLength(0)
+  })
+
+  test('create object', () => {
+    const reducer = Factory.create(ReducerObject, {})
+    expect(reducer.type).toBe(ReducerObject.type)
+    expect(reducer.props).toHaveLength(0)
   })
 
   test('create entity', () => {
@@ -29,7 +35,7 @@ describe('reducer#create', () => {
     expect(reducer.entityType).toBe('fooEntity')
   })
 
-  test(' detect invalid', () => {
+  test('detect invalid', () => {
     expect(() => {
       Factory.create(createTransform, 'a')
     }).toThrowErrorMatchingSnapshot()

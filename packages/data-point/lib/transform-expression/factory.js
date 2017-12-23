@@ -83,7 +83,7 @@ function create (source = []) {
   const tokens = parse(source)
 
   const transformBase = new TransformExpression()
-  // transformBase.reducers = tokens.map(reducerFactory.create)
+
   transformBase.reducers = tokens.map(token => {
     return reducerFactory.create(create, token)
   })

@@ -5,8 +5,6 @@ const Promise = require('bluebird')
 const utils = require('../../utils')
 
 function resolveMapKeys (accumulator, reducer, resolveTransform) {
-  // console.log('reducerreducer:', reducer)
-  // console.log(resolveTransform.toString())
   const transform = { reducers: [reducer] }
   return resolveTransform(accumulator, transform).then(acc => {
     return utils.set(accumulator, 'value', acc.value)
