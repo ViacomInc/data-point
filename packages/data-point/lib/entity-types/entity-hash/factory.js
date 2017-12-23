@@ -8,12 +8,11 @@ const parseCompose = require('../parse-compose')
 const helpers = require('../../helpers')
 
 /**
- * Hash Type
  * @class
  */
-function Hash () {}
+function EntityHash () {}
 
-module.exports.Hash = Hash
+module.exports.EntityHash = EntityHash
 
 const modifierKeys = ['omitKeys', 'pickKeys', 'mapKeys', 'addValues', 'addKeys']
 
@@ -85,12 +84,12 @@ function validateCompose (entityId, compose, validKeys) {
  * Creates new Entity Object
  * @param  {Object} spec - spec
  * @param {string} id - Entity id
- * @return {Object} Entity Object
+ * @return {EntityHash} Entity Object
  */
 function create (spec, id) {
   validateComposeVsInlineModifiers(spec, modifierKeys)
 
-  const entity = helpers.createEntity(Hash, spec, id)
+  const entity = helpers.createEntity(EntityHash, spec, id)
 
   const compose = parseCompose.parse(spec, modifierKeys)
   validateCompose(entity.id, compose, modifierKeys)

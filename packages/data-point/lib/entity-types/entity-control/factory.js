@@ -6,7 +6,6 @@ const createTransform = require('../../transform-expression').create
 const helpers = require('../../helpers')
 
 /**
- * EntityControl Constructor
  * @class
  */
 function EntityControl () {
