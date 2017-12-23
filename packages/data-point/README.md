@@ -86,7 +86,7 @@ Example at: [examples/hello-world.js](examples/hello-world.js)
 
 ## Async example
 
-Using [swapi.co](https://swapi.co) amazing service, the script below will get information about a planet and the residents of that planet.
+Using the amazing [swapi.co](https://swapi.co) service, the script below gets information about a planet and the residents of that planet.
 
 ```js
 const DataPoint = require('data-point')
@@ -566,7 +566,37 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 
 ### <a name="object-reducer">ObjectReducer</a>
 
-ObjectReducers are plain objects where the values are TransformExpressions. They're used to process other objects:
+ObjectReducers are plain objects where the values are TransformExpressions. They're used to aggregate data or transform objects.
+
+**Combining multiple requests:**
+
+```js
+const dataPoint = require('data-point').create()
+
+dataPoint.addEntities({
+  'request:Planet': {
+    url: 'https://swapi.co/api/planets/{value}'
+  }
+})
+
+const objectReducer = {
+  tatooine: ['$tatooine', 'request:Planet'],
+  alderaan: ['$alderaan', 'request:Planet']
+}
+
+const planetIds = {
+  tatooine: 1,
+  alderaan: 2
+}
+
+dataPoint.transform(objectReducer, planetIds)
+  .then(acc => {
+    // do something with the aggregated planet data!
+  })
+
+```
+
+**Transforming an object:**
 
 ```js
 const inputData = {
@@ -593,8 +623,6 @@ const objectReducer = {
 
 dataPoint.transform(objectReducer, inputData)
 ```
-
-Example at: [examples/reducer-object-1.js](examples/reducer-object-1.js)
 
 Each of the TransformExpressions (including the nested ones) are resolved against the same data. This means that input objects can be rearranged at any level:
 
@@ -633,8 +661,6 @@ const objectReducer = {
 dataPoint.transform(objectReducer, inputData)
 ```
 
-Example at: [examples/reducer-object-2.js](examples/reducer-object-2.js)
-
 Each of the TransformExpressions might also contain more ObjectReducers (which might contain TransformExpressions, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
 
 ```js
@@ -654,7 +680,6 @@ const objectReducer = {
       a: '$a'
     }
   ],
-
   y: [
     // this comes first, so it's resolved
     // against the main input to objectReducer
@@ -679,8 +704,6 @@ const objectReducer = {
 
 dataPoint.transform(objectReducer, inputData)
 ```
-
-Example at: [examples/reducer-object-3.js](examples/reducer-object-3.js)
 
 ### <a name="higher-order-reducers">Higher Order Reducers</a>
 
