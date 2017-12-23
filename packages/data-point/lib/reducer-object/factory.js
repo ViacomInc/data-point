@@ -20,11 +20,11 @@ module.exports.ReducerObject = ReducerObject
  * @param {*} source
  * @returns {boolean}
  */
-function isMap (source) {
+function isObject (source) {
   return isPlainObject(source)
 }
 
-module.exports.isMap = isMap
+module.exports.isObject = isObject
 
 /**
  * @param {Function} createTransform
