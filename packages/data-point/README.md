@@ -584,7 +584,7 @@ const objectReducer = {
   zPlusOne: ['$x.y.z', (acc) => acc.value + 1]
 }
 
-// output data:
+// output from dataPoint.transform(objectReducer, inputData):
 
 {
   y: {
@@ -592,8 +592,6 @@ const objectReducer = {
   },
   zPlusOne: 3 
 }
-
-dataPoint.transform(objectReducer, inputData)
 ```
 
 **Combining multiple requests:**
@@ -647,7 +645,7 @@ const objectReducer = {
   }
 }
 
-// output data:
+// output from dataPoint.transform(objectReducer, inputData):
 
 {
   x: 'X',
@@ -657,8 +655,6 @@ const objectReducer = {
     b: 'B'
   }
 }
-
-dataPoint.transform(objectReducer, inputData)
 ```
 
 Each of the TransformExpressions might also contain more ObjectReducers (which might contain TransformExpressions, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
@@ -690,7 +686,7 @@ const objectReducer = {
   ]
 }
 
-// output data:
+// output from dataPoint.transform(objectReducer, inputData):
 
 {
   x: {
@@ -701,8 +697,6 @@ const objectReducer = {
     b: 2
   }
 }
-
-dataPoint.transform(objectReducer, inputData)
 ```
 
 ### <a name="higher-order-reducers">Higher Order Reducers</a>
