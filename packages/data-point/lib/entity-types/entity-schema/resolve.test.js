@@ -1,7 +1,7 @@
 /* eslint-env jest */
 'use strict'
 
-const Reducer = require('./reducer')
+const resolveSchemaEntity = require('./resolve').resolve
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 
@@ -21,7 +21,7 @@ function transform (entityId, value, options) {
       options
     )
   )
-  return Reducer.resolve(accumulator, resolveTransform)
+  return resolveSchemaEntity(accumulator, resolveTransform)
 }
 
 beforeAll(() => {
