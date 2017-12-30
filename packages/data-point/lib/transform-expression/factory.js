@@ -85,6 +85,7 @@ function create (source = []) {
   const transformBase = new TransformExpression()
 
   transformBase.reducers = tokens.map(token => {
+    // NOTE: recursive call
     return reducerFactory.create(create, token)
   })
 

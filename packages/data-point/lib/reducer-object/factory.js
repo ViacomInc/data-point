@@ -43,6 +43,7 @@ function getReducerProps (
     const value = source[key]
     const fullPath = path.concat(key)
     if (isPlainObject(value)) {
+      // NOTE: recursive call
       getReducerProps(createTransform, value, fullPath, reducerProps)
       continue
     }
