@@ -3,19 +3,19 @@ const set = require('lodash/set')
 const utils = require('../utils')
 
 /**
- * @param {Object} store
+ * @param {Object} manager
  * @param {Function} resolveTransform
  * @param {Accumulator} accumulator
  * @param {ReducerObject} reducer
  * @returns {Promise<Accumulator>}
  */
-function resolve (store, resolveTransform, accumulator, reducer) {
+function resolve (manager, resolveTransform, accumulator, reducer) {
   if (reducer.props.length === 0) {
     return Promise.resolve(accumulator)
   }
 
   const props = Promise.map(reducer.props, ({ path, transform }) => {
-    return resolveTransform(store, accumulator, transform).then(
+    return resolveTransform(manager, accumulator, transform).then(
       ({ value }) => ({ path, value })
     )
   })
