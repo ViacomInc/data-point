@@ -12,7 +12,7 @@ const resolveReducerEntity = require('../reducer-entity').resolve
  * @param {any} reducerType
  * @returns
  */
-function getReducerFunction (store, reducerType) {
+function getReducerFunction (manager, reducerType) {
   let reducerResolver
 
   /* eslint indent: ["error", 2, { "SwitchCase": 1 }] */
@@ -24,12 +24,12 @@ function getReducerFunction (store, reducerType) {
       reducerResolver = resolveReducerFunction
       break
     case 'ReducerObject':
-      reducerResolver = _.partial(resolveReducerObject, store, resolve)
+      reducerResolver = _.partial(resolveReducerObject, manager, resolve)
       break
     case 'ReducerEntity':
       /* eslint no-use-before-define: "off" */
       // IMPORTANT: recursiveness here - watch out!
-      reducerResolver = _.partial(resolveReducerEntity, store, resolve)
+      reducerResolver = _.partial(resolveReducerEntity, manager, resolve)
       break
     default:
       throw new Error(`Reducer type '${reducerType}' was not recognized`)
@@ -43,21 +43,21 @@ module.exports.getReducerFunction = getReducerFunction
 /**
  * apply a Reducer to a accumulator
  *
- * @param {Object} store
+ * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
  * @returns {Promise<Accumulator>}
  */
-function resolveReducer (store, accumulator, reducer) {
-  const reducerFunction = getReducerFunction(store, reducer.type)
+function resolveReducer (manager, accumulator, reducer) {
+  const reducerFunction = getReducerFunction(manager, reducer.type)
   const result = reducerFunction(accumulator, reducer)
   return result
 }
 
 module.exports.resolveReducer = resolveReducer
 
-const reduceContext = store => (accumulator, reducer) => {
-  return resolveReducer(store, accumulator, reducer)
+const reduceContext = manager => (accumulator, reducer) => {
+  return resolveReducer(manager, accumulator, reducer)
 }
 
 module.exports.reduceContext = reduceContext
@@ -65,17 +65,17 @@ module.exports.reduceContext = reduceContext
 /**
  * resolves a given transform
  *
- * @param {Object} store
+ * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {any} transform
  * @returns {Promise<Accumulator>}
  */
-function resolve (store, accumulator, transform) {
+function resolve (manager, accumulator, transform) {
   if (transform.reducers.length === 0) {
     return Promise.resolve(accumulator)
   }
 
-  const reduceTransformReducer = reduceContext(store)
+  const reduceTransformReducer = reduceContext(manager)
   const result = Promise.reduce(
     transform.reducers,
     reduceTransformReducer,

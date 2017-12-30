@@ -21,9 +21,13 @@ function executeStack (stack, middlewareName, accumulator) {
 
 module.exports.executeStack = executeStack
 
-function resolve (store, middlewareName, accumulator) {
+function resolve (manager, middlewareName, accumulator) {
   const middlewareContext = middlewareContextFactory.create(accumulator)
-  return executeStack(store.middleware.stack, middlewareName, middlewareContext)
+  return executeStack(
+    manager.middleware.stack,
+    middlewareName,
+    middlewareContext
+  )
 }
 
 module.exports.resolve = resolve
