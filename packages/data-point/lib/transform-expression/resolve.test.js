@@ -47,7 +47,10 @@ test('resolve#reducer.resolveReducer', () => {
     value: testData.a.b.c
   })
 
-  const reducer = reducerFactory.create(reducers.addCollectionValues())
+  const reducer = reducerFactory.create(
+    TransformExpression.create,
+    reducers.addCollectionValues()
+  )
   return ResolveTransform.resolveReducer(store, accumulator, reducer).then(
     result => {
       expect(result.value).toEqual(6)

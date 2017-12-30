@@ -39,11 +39,7 @@ module.exports.parseFromArray = parseFromArray
 
 function parse (src) {
   let source = _.defaultTo(src, [])
-
-  if (_.isString(src) || _.isFunction(src)) {
-    source = [src]
-  }
-
+  source = _.castArray(source)
   return parseFromArray(source)
 }
 
@@ -51,7 +47,12 @@ module.exports.parse = parse
 
 function isValid (source) {
   const type = typeof source
-  return type === 'string' || type === 'function' || source instanceof Array
+  return (
+    type === 'string' ||
+    type === 'function' ||
+    source instanceof Array ||
+    _.isPlainObject(source)
+  )
 }
 
 module.exports.isValid = isValid
@@ -64,7 +65,7 @@ function validate (source) {
   const message = [
     `Could not parse a TransformExpression. The TransformExpression:\n `,
     _.attempt(util.inspect, source),
-    '\nis not using a valid type, try using an Array, String or a Function.',
+    '\nis not using a valid type, try using an Array, String, Object, or Function.',
     '\nMore info: https://github.com/ViacomInc/data-point/tree/master/packages/data-point#transform-expression\n'
   ].join('')
   throw new Error(message)
@@ -82,7 +83,11 @@ function create (source = []) {
   const tokens = parse(source)
 
   const transformBase = new TransformExpression()
-  transformBase.reducers = tokens.map(reducerFactory.create)
+
+  transformBase.reducers = tokens.map(token => {
+    // NOTE: recursive call
+    return reducerFactory.create(create, token)
+  })
 
   return Object.freeze(transformBase)
 }

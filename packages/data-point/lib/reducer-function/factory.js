@@ -2,7 +2,9 @@
 
 const _ = require('lodash')
 
-const REDUCER_FUNCTION = (module.exports.type = 'ReducerFunction')
+const REDUCER_FUNCTION = 'ReducerFunction'
+
+module.exports.type = REDUCER_FUNCTION
 
 /**
  * @class
