@@ -2,7 +2,9 @@
 
 const _ = require('lodash')
 
-const REDUCER_PATH = (module.exports.type = 'ReducerPath')
+const REDUCER_PATH = 'ReducerPath'
+
+module.exports.type = REDUCER_PATH
 
 /**
  * @class

@@ -24,10 +24,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
   })
   test('factory#addKeys', () => {
     const result = factory.create({
@@ -37,10 +34,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'addKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
   })
   test('factory#omitKeys', () => {
     const result = factory.create({
@@ -109,10 +103,7 @@ describe('factory#parse composed modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
   })
   test('factory#multiple modifiers', () => {
     const result = factory.create({
@@ -134,12 +125,16 @@ describe('factory#parse composed modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'addKeys')
-    expect(result.compose[0].transform.a).toHaveProperty(
+    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
+    expect(result.compose[0].transform.props[0].path).toEqual(['a'])
+    expect(result.compose[0].transform.props[0].transform).toHaveProperty(
       'typeOf',
       'TransformExpression'
     )
     expect(result.compose[1]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[1].transform.a).toHaveProperty(
+    expect(result.compose[1].transform).toHaveProperty('type', 'ReducerObject')
+    expect(result.compose[1].transform.props[0].path).toEqual(['a'])
+    expect(result.compose[1].transform.props[0].transform).toHaveProperty(
       'typeOf',
       'TransformExpression'
     )

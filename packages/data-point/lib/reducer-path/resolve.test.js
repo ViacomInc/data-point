@@ -4,18 +4,22 @@
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
 const reducerPath = require('../reducer-path')
+const createTransform = require('../transform-expression').create
 
 describe('resolve#transform.resolve', () => {
   function resolve (value, rawReducer) {
     const locals = {
       a: ['testA']
     }
-    const filtercontext = AccumulatorFactory.create({
+    const accumulator = AccumulatorFactory.create({
       value,
       locals
     })
 
-    return reducerPath.resolve(filtercontext, reducerFactory.create(rawReducer))
+    return reducerPath.resolve(
+      accumulator,
+      reducerFactory.create(createTransform, rawReducer)
+    )
   }
 
   test('resolve current value', () => {

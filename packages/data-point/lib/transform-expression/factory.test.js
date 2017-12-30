@@ -9,12 +9,12 @@ describe('isValid', () => {
     expect(TransformFactory.isValid('string')).toEqual(true)
     expect(TransformFactory.isValid(() => 1)).toEqual(true)
     expect(TransformFactory.isValid([])).toEqual(true)
+    expect(TransformFactory.isValid({})).toEqual(true)
   })
 
   test('should return false if invalid', () => {
     expect(TransformFactory.isValid(1)).toEqual(false)
     expect(TransformFactory.isValid(true)).toEqual(false)
-    expect(TransformFactory.isValid({})).toEqual(false)
   })
 })
 
