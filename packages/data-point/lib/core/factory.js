@@ -43,7 +43,7 @@ function create (spec) {
     values: {},
     reducers: {},
     entities: {},
-    entryPoints: {}
+    entityTypes: {}
   })
 
   const entityTypes = storeEntityTypes.create()
