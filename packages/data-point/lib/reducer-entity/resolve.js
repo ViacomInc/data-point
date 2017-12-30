@@ -1,6 +1,6 @@
 'use strict'
 
-const ResolveEntity = require('../entity-types/resolve-entity')
+const BaseEntity = require('../entity-types/base-entity/resolve')
 
 /**
  * Resolve an Entity Reducer, actual entity resolution is delegated
@@ -15,7 +15,7 @@ const ResolveEntity = require('../entity-types/resolve-entity')
 function resolve (store, resolveReducer, accumulator, reducerEntity) {
   const reducerEntityType = reducerEntity.entityType
   const EntityType = store.entityTypes.get(reducerEntityType)
-  return ResolveEntity.resolve(
+  return BaseEntity.resolve(
     store,
     resolveReducer,
     accumulator,

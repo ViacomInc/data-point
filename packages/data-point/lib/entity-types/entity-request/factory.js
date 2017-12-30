@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const fp = require('lodash/fp')
 const createTransform = require('../../transform-expression').create
-const helpers = require('../../helpers')
+const createBaseEntity = require('../base-entity').create
 const TransformKeys = require('./transform-keys')
 
 /**
@@ -41,7 +41,7 @@ module.exports.unsetTransformKeys = unsetTransformKeys
  * @return {EntityRequest} Entity Object
  */
 function create (spec, id) {
-  const entity = helpers.createEntity(EntityRequest, spec, id)
+  const entity = createBaseEntity(EntityRequest, spec, id)
   const options = _.defaultTo(spec.options, {})
   entity.url = _.defaultTo(spec.url, '')
   entity.beforeRequest = createTransform(spec.beforeRequest)

@@ -14,11 +14,13 @@ function set (target, key, value) {
   obj[key] = value
   return Object.assign({}, target, obj)
 }
+
 module.exports.set = set
 
 function assign (target, toMerge) {
   return Object.assign({}, target, toMerge)
 }
+
 module.exports.assign = assign
 
 let uid = 0
@@ -26,6 +28,7 @@ function getUID () {
   uid++
   return uid
 }
+
 module.exports.getUID = getUID
 
 /**
@@ -41,8 +44,13 @@ function typeOf (value) {
     .slice(0, -1)
     .toLowerCase()
 }
+
 module.exports.typeOf = typeOf
 
+/**
+ * @param {Accumulator} acc
+ * @param {Object} data
+ */
 function inspect (acc, data) {
   const log = []
   log.push('\n\x1b[33minspect\x1b[0m:', _.get(acc, 'reducer.spec.id'))
@@ -58,4 +66,5 @@ function inspect (acc, data) {
     _.attempt(acc.params.inspect, acc)
   }
 }
+
 module.exports.inspect = inspect

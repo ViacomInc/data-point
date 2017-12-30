@@ -5,7 +5,7 @@ const createTransform = require('../../transform-expression').create
 const createReducerObject = require('../../reducer-object').create
 const deepFreeze = require('deep-freeze')
 const parseCompose = require('../parse-compose')
-const helpers = require('../../helpers')
+const createBaseEntity = require('../base-entity').create
 
 /**
  * @class
@@ -89,7 +89,7 @@ function validateCompose (entityId, compose, validKeys) {
 function create (spec, id) {
   validateComposeVsInlineModifiers(spec, modifierKeys)
 
-  const entity = helpers.createEntity(EntityHash, spec, id)
+  const entity = createBaseEntity(EntityHash, spec, id)
 
   const compose = parseCompose.parse(spec, modifierKeys)
   validateCompose(entity.id, compose, modifierKeys)

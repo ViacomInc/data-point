@@ -1,6 +1,6 @@
 'use strict'
 
-const helpers = require('../../helpers')
+const createBaseEntity = require('../base-entity').create
 
 /**
  * @class
@@ -16,7 +16,7 @@ module.exports.EntityTransform = EntityTransform
  * @return {EntityTransform} Entity Object
  */
 function create (spec, id) {
-  const entity = helpers.createEntity(
+  const entity = createBaseEntity(
     EntityTransform,
     {
       value: spec

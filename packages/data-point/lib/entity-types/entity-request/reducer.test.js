@@ -10,7 +10,7 @@ const ReducerFactory = require('../../reducer/factory')
 const createTransform = require('../../transform-expression/factory').create
 const LocalsFactory = require('../../locals/factory')
 
-const ResolveEntity = require('../resolve-entity')
+const ResolveEntity = require('../base-entity/resolve')
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 

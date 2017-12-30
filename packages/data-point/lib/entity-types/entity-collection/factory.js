@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const createTransform = require('../../transform-expression').create
 const parseCompose = require('../parse-compose')
-const helpers = require('../../helpers')
+const createBaseEntity = require('../base-entity').create
 
 /**
  * @class
@@ -59,7 +59,7 @@ function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
 function create (spec, id) {
   validateComposeVsInlineModifiers(spec, modifierKeys)
 
-  const entity = helpers.createEntity(EntityCollection, spec, id)
+  const entity = createBaseEntity(EntityCollection, spec, id)
 
   const compose = parseCompose.parse(spec, modifierKeys)
   entity.compose = createCompose(compose)
