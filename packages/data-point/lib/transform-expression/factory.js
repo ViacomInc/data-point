@@ -82,14 +82,14 @@ function create (source = []) {
   validate(source)
   const tokens = parse(source)
 
-  const transformBase = new TransformExpression()
+  const transform = new TransformExpression()
 
-  transformBase.reducers = tokens.map(token => {
+  transform.reducers = tokens.map(token => {
     // NOTE: recursive call
     return reducerFactory.create(create, token)
   })
 
-  return Object.freeze(transformBase)
+  return Object.freeze(transform)
 }
 
 module.exports.create = create

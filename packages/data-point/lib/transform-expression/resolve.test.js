@@ -4,11 +4,9 @@
 const nock = require('nock')
 
 const fixtureStore = require('../../test/utils/fixture-store')
-const reducers = require('../../test/utils/reducers')
 const testData = require('../../test/data.json')
 
 const AccumulatorFactory = require('../accumulator/factory')
-const reducerFactory = require('../reducer/factory')
 const TransformExpression = require('./factory')
 
 const ResolveTransform = require('./resolve')
@@ -17,48 +15,6 @@ let manager
 
 beforeAll(() => {
   manager = fixtureStore.create()
-})
-
-describe('reducer.getReducerFunction', () => {
-  test('resolve to ReducerPath', () => {
-    const resolver = ResolveTransform.getReducerFunction(manager, 'ReducerPath')
-    expect(resolver).toBeInstanceOf(Function)
-  })
-  test('resolve to ReducerFunction', () => {
-    const resolver = ResolveTransform.getReducerFunction(
-      manager,
-      'ReducerFunction'
-    )
-    expect(resolver).toBeInstanceOf(Function)
-  })
-  test('resolve to ReducerEntity', () => {
-    const resolver = ResolveTransform.getReducerFunction(
-      manager,
-      'ReducerEntity'
-    )
-    expect(resolver).toBeInstanceOf(Function)
-  })
-  test('resolve to ReducerEntity', () => {
-    expect(() => {
-      ResolveTransform.getReducerFunction(manager, 'INVALID TYPE')
-    }).toThrow()
-  })
-})
-
-test('resolve#reducer.resolveReducer', () => {
-  const accumulator = AccumulatorFactory.create({
-    value: testData.a.b.c
-  })
-
-  const reducer = reducerFactory.create(
-    TransformExpression.create,
-    reducers.addCollectionValues()
-  )
-  return ResolveTransform.resolveReducer(manager, accumulator, reducer).then(
-    result => {
-      expect(result.value).toEqual(6)
-    }
-  )
 })
 
 test('resolve#reducer.resolve - reducer empty', () => {
