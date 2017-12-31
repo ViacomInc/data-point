@@ -149,4 +149,52 @@ describe('resolve#reducerObject.resolve', () => {
       })
     })
   })
+
+  it('should resolve a reducer object with placeholders', () => {
+    const reducer = reducerFactory.create(createTransform, {
+      a: {
+        x: true,
+        y: '$a.x',
+        z1: {
+          z2: {
+            z3: true
+          }
+        }
+      }
+    })
+
+    const accumulator = AccumulatorFactory.create({
+      value: {
+        a: {
+          x: 'X',
+          y: 'Y',
+          z1: {
+            z2: {
+              z3: 'Z'
+            }
+          }
+        },
+        b: 'B'
+      }
+    })
+
+    return resolveObject(
+      dataPoint,
+      resolveTransform,
+      accumulator,
+      reducer
+    ).then(result => {
+      expect(result.value).toEqual({
+        a: {
+          x: 'X',
+          y: 'X',
+          z1: {
+            z2: {
+              z3: 'Z'
+            }
+          }
+        }
+      })
+    })
+  })
 })

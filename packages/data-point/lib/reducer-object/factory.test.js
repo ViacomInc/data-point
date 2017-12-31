@@ -21,10 +21,12 @@ describe('reducer/reducer-function#getReducerProps', () => {
       a1: '$a[]',
       b1: {
         a2: ['$a2', () => false],
-        b2: [
+        b2: true,
+        c2: [
           {
             a3: 'transform:entity-name',
-            b3: '$b1.b2.b3'
+            b3: '$b1.b2.b3',
+            c4: true
           }
         ]
       }
