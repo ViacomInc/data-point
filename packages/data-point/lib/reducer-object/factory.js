@@ -4,6 +4,10 @@ const REDUCER_OBJECT = 'ReducerObject'
 
 module.exports.type = REDUCER_OBJECT
 
+const IDENTITY_PLACEHOLDER = true
+
+module.exports.IDENTITY_PLACEHOLDER = IDENTITY_PLACEHOLDER
+
 /**
  * @class
  * @property {string} type - @see reducerType
@@ -40,12 +44,16 @@ function getReducerProps (
   reducerProps = []
 ) {
   for (let key of Object.keys(source)) {
-    const value = source[key]
+    let value = source[key]
     const fullPath = path.concat(key)
     if (isPlainObject(value)) {
       // NOTE: recursive call
       getReducerProps(createTransform, value, fullPath, reducerProps)
       continue
+    }
+
+    if (value === IDENTITY_PLACEHOLDER) {
+      value = `$${fullPath.join('.')}`
     }
 
     reducerProps.push({

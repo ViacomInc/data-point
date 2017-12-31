@@ -571,7 +571,12 @@ ObjectReducers are plain objects where the values are TransformExpressions. They
 **Transforming an object:**
 
 ```js
-const inputData = {
+const objectReducer = {
+  y: '$x.y',
+  zPlusOne: ['$x.y.z', (acc) => acc.value + 1]
+}
+
+const input = {
   x: {
     y: {
       z: 2
@@ -579,12 +584,7 @@ const inputData = {
   }
 }
 
-const objectReducer = {
-  y: '$x.y',
-  zPlusOne: ['$x.y.z', (acc) => acc.value + 1]
-}
-
-// output from dataPoint.transform(objectReducer, inputData):
+// output from dataPoint.transform(objectReducer, input):
 
 {
   y: {
@@ -625,15 +625,6 @@ dataPoint.transform(objectReducer, planetIds)
 Each of the TransformExpressions, including the nested ones, are resolved against the same accumulator value. This means that input objects can be rearranged at any level:
 
 ```js
-const inputData = {
-  a: 'A',
-  b: 'B',
-  c: {
-    x: 'X',
-    y: 'Y'
-  }
-})
-
 // some data will move to a higher level of nesting,
 // but other data will move deeper into the object
 const objectReducer = {
@@ -645,7 +636,16 @@ const objectReducer = {
   }
 }
 
-// output from dataPoint.transform(objectReducer, inputData):
+const input = {
+  a: 'A',
+  b: 'B',
+  c: {
+    x: 'X',
+    y: 'Y'
+  }
+})
+
+// output from dataPoint.transform(objectReducer, input):
 
 {
   x: 'X',
@@ -660,13 +660,6 @@ const objectReducer = {
 Each of the TransformExpressions might also contain more ObjectReducers (which might contain TransformExpressions, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
 
 ```js
-const inputData = {
-  a: {
-    a: 1,
-    b: 2
-  }
-}
-
 const objectReducer = {
   x: [
     '$a',
@@ -686,7 +679,14 @@ const objectReducer = {
   ]
 }
 
-// output from dataPoint.transform(objectReducer, inputData):
+const input = {
+  a: {
+    a: 1,
+    b: 2
+  }
+}
+
+// output from dataPoint.transform(objectReducer, input):
 
 {
   x: {
@@ -695,6 +695,35 @@ const objectReducer = {
   y: {
     a: 1,
     b: 2
+  }
+}
+```
+
+**TransformExpression shorthand:**
+
+If a property's value is `true`, the value for that key is passed directly from the input to the output:
+
+```js
+const objectReducer = {
+  a: {
+    b: true, // in this case, true is shorthand for '$a.b'
+    c: '$a.b'
+  }
+}
+
+const input = {
+  a: {
+    b: 'B',
+    c: 'C'
+  }
+}
+
+// output from dataPoint.transform(objectReducer, input):
+
+{
+  a: {
+    b: 'B',
+    c: 'B'
   }
 }
 ```
