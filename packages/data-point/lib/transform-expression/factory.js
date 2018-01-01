@@ -36,7 +36,7 @@ function parseTokenExpression (source) {
 module.exports.parseTokenExpression = parseTokenExpression
 
 /**
- * @param {Array} src
+ * @param {Array} source
  * @returns {Array}
  */
 function parseFromArray (source) {
@@ -50,13 +50,11 @@ function parseFromArray (source) {
 module.exports.parseFromArray = parseFromArray
 
 /**
- * @param {*} src
+ * @param {*} source
  * @returns {Array}
  */
-function parse (src) {
-  let source = _.defaultTo(src, [])
-  source = _.castArray(source)
-  return parseFromArray(source)
+function parse (source) {
+  return parseFromArray(source ? _.castArray(source) : [])
 }
 
 module.exports.parse = parse
