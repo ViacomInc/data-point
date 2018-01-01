@@ -67,6 +67,14 @@ describe('reducer/reducer-path#create', () => {
     const reducer = factory.create('$a')
     expect(reducer.type).toBe('ReducerPath')
     expect(reducer.name).toBe('a')
+    expect(reducer.asCollection).toBe(false)
+  })
+
+  it('empty path', () => {
+    const reducer = factory.create('$')
+    expect(reducer.type).toBe('ReducerPath')
+    expect(reducer.name).toBe('.')
+    expect(reducer.asCollection).toBe(false)
   })
 
   it('compound path', () => {

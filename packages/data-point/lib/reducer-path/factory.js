@@ -110,7 +110,7 @@ function create (source) {
   const reducer = new ReducerPath()
 
   reducer.asCollection = source.slice(-2) === '[]'
-  reducer.name = _.defaultTo(source.substr(1), '.').replace(/\[]$/, '')
+  reducer.name = (source.substr(1) || '.').replace(/\[]$/, '')
   reducer.body = getPathReducerFunction(reducer.name, reducer.asCollection)
 
   return Object.freeze(reducer)
