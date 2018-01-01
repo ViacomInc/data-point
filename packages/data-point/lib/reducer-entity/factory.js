@@ -42,10 +42,8 @@ function create (source) {
   const tokens = source.split(':')
 
   reducer.entityType = tokens[0]
+  reducer.name = tokens[1].replace(/\[]$/, '')
   reducer.asCollection = source.slice(-2) === '[]'
-  reducer.name = reducer.asCollection
-    ? tokens[1].slice(0, -2) // if collection remove []
-    : tokens[1]
   reducer.id = `${reducer.entityType}:${reducer.name}`
 
   return Object.freeze(reducer)
