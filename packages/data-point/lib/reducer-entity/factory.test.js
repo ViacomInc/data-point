@@ -28,6 +28,7 @@ test('reducer/reducer-entity#create', () => {
   expect(reducer.type).toBe('ReducerEntity')
   expect(reducer.name).toBe('abc')
   expect(reducer.entityType).toBe('foo')
+  expect(reducer.id).toBe('foo:abc')
 })
 
 test('reducer/reducer-entity#create as collection of', () => {
@@ -36,4 +37,5 @@ test('reducer/reducer-entity#create as collection of', () => {
   expect(reducer.type).toBe('ReducerEntity')
   expect(reducer.name).toBe('abc')
   expect(reducer.entityType).toBe('foo')
+  expect(reducer.id).toBe('foo:abc')
 })

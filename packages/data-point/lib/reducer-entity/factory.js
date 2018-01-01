@@ -46,6 +46,7 @@ function create (source) {
   reducer.name = reducer.asCollection
     ? tokens[1].slice(0, -2) // if collection remove []
     : tokens[1]
+  reducer.id = `${reducer.entityType}:${reducer.name}`
 
   return Object.freeze(reducer)
 }

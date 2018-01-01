@@ -27,7 +27,7 @@ module.exports.resolveErrorReducers = resolveErrorReducers
 
 function createCurrentAccumulator (manager, accumulator, reducer) {
   // get defined source
-  const entity = manager.entities.get(`${reducer.entityType}:${reducer.name}`)
+  const entity = manager.entities.get(reducer.id)
 
   // set reducer's spec
   const currentReducer = utils.assign(reducer, {
