@@ -3,7 +3,7 @@
 const _ = require('lodash')
 
 const createTransform = require('../../transform-expression').create
-const helpers = require('../../helpers')
+const createBaseEntity = require('../base-entity').create
 
 /**
  * @class
@@ -75,7 +75,7 @@ module.exports.parseSwitch = parseSwitch
  * @return {EntityControl} Entity Object
  */
 function create (spec, id) {
-  const entity = helpers.createEntity(EntityControl, spec, id)
+  const entity = createBaseEntity(EntityControl, spec, id)
   entity.select = parseSwitch(spec)
   return Object.freeze(entity)
 }

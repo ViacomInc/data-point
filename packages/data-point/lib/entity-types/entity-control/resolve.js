@@ -41,7 +41,7 @@ module.exports.getMatchingCaseStatement = getMatchingCaseStatement
 function resolve (acc, resolveTransform) {
   const selectControl = acc.reducer.spec.select
   const caseStatements = selectControl.cases
-  const defaultTransfrom = selectControl.default
+  const defaultTransform = selectControl.default
 
   return getMatchingCaseStatement(caseStatements, acc, resolveTransform).then(
     caseStatement => {
@@ -49,7 +49,7 @@ function resolve (acc, resolveTransform) {
         return resolveTransform(acc, caseStatement.do)
       }
 
-      return resolveTransform(acc, defaultTransfrom)
+      return resolveTransform(acc, defaultTransform)
     }
   )
 }

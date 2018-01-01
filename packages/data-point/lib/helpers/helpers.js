@@ -4,7 +4,6 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const resolveTransform = require('../transform-expression').resolve
 const AccumulatorFactory = require('../accumulator/factory')
-const deepFreeze = require('deep-freeze')
 
 function reducify (method) {
   return function () {
@@ -40,30 +39,16 @@ function mockReducer (reducer, acc) {
 module.exports.mockReducer = mockReducer
 
 const createTransform = require('../transform-expression').create
+
 module.exports.createTransform = createTransform
 
-const resolveEntity = require('../entity-types/resolve-entity')
-module.exports.resolveEntity = resolveEntity
-
-/**
- * @param {function} Factory - factory function to create the entity
- * @param {Object} spec - spec for the Entity
- * @param {string} id - Entity's id
- */
-function createEntity (Factory, spec, id) {
-  const entity = new Factory(spec)
-
-  entity.id = id
-  entity.value = createTransform(spec.value)
-  entity.before = createTransform(spec.before)
-  entity.error = createTransform(spec.error)
-  entity.after = createTransform(spec.after)
-  entity.params = deepFreeze(_.defaultTo(spec.params, {}))
-
-  return entity
-}
+const createEntity = require('../entity-types/base-entity').create
 
 module.exports.createEntity = createEntity
+
+const resolveEntity = require('../entity-types/base-entity/resolve').resolve
+
+module.exports.resolveEntity = resolveEntity
 
 function createAccumulator (value, options) {
   return AccumulatorFactory.create(
@@ -75,11 +60,13 @@ function createAccumulator (value, options) {
     )
   )
 }
+
 module.exports.createAccumulator = createAccumulator
 
 function createResolveTransform (dataPoint) {
   return resolveTransform.bind(null, dataPoint)
 }
+
 module.exports.createResolveTransform = createResolveTransform
 
 function isTransform (transform) {
@@ -87,4 +74,5 @@ function isTransform (transform) {
     _.isArray(transform.reducers) && transform.typeOf === 'TransformExpression'
   )
 }
+
 module.exports.isTransform = isTransform

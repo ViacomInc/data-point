@@ -27,6 +27,7 @@ npm install --save data-point
   - [Accumulator](#accumulator)
   - [PathReducer](#path-reducer)
   - [FunctionReducer](#function-reducer)
+  - [ObjectReducer](#object-reducer)
   - [Higher Order Reducers](#higher-order-reducers)
   - [Chained Reducers](#chained-reducers)
   - [EntityReducer](#entity-reducer)
@@ -85,7 +86,7 @@ Example at: [examples/hello-world.js](examples/hello-world.js)
 
 ## Async example
 
-Using [swapi.co](https://swapi.co) amazing service, the script below will get information about a planet and the residents of that planet.
+Using the amazing [swapi.co](https://swapi.co) service, the script below gets information about a planet and the residents of that planet.
 
 ```js
 const DataPoint = require('data-point')
@@ -279,7 +280,8 @@ DataPoint supports the following reducer types:
 
 1. [PathReducer](#path-reducer)
 2. [FunctionReducer](#function-reducer)
-3. [EntityReducer](#entity-reducer)
+3. [ObjectReducer](#object-reducer)
+4. [EntityReducer](#entity-reducer)
 
 ### <a name="accumulator">Accumulator</a>
 
@@ -561,6 +563,141 @@ dataPoint
 ```
 
 Example at: [examples/reducer-function-error.js](examples/reducer-function-error.js)
+
+### <a name="object-reducer">ObjectReducer</a>
+
+ObjectReducers are plain objects where the values are TransformExpressions. They're used to aggregate data or transform objects.
+
+**Transforming an object:**
+
+```js
+const inputData = {
+  x: {
+    y: {
+      z: 2
+    }
+  }
+}
+
+const objectReducer = {
+  y: '$x.y',
+  zPlusOne: ['$x.y.z', (acc) => acc.value + 1]
+}
+
+// output from dataPoint.transform(objectReducer, inputData):
+
+{
+  y: {
+    z: 2
+  },
+  zPlusOne: 3 
+}
+```
+
+**Combining multiple requests:**
+
+```js
+const dataPoint = require('data-point').create()
+
+dataPoint.addEntities({
+  'request:Planet': {
+    url: 'https://swapi.co/api/planets/{value}'
+  }
+})
+
+const objectReducer = {
+  tatooine: ['$tatooine', 'request:Planet'],
+  alderaan: ['$alderaan', 'request:Planet']
+}
+
+const planetIds = {
+  tatooine: 1,
+  alderaan: 2
+}
+
+dataPoint.transform(objectReducer, planetIds)
+  .then(acc => {
+    // do something with the aggregated planet data!
+  })
+
+```
+
+Each of the TransformExpressions, including the nested ones, are resolved against the same accumulator value. This means that input objects can be rearranged at any level:
+
+```js
+const inputData = {
+  a: 'A',
+  b: 'B',
+  c: {
+    x: 'X',
+    y: 'Y'
+  }
+})
+
+// some data will move to a higher level of nesting,
+// but other data will move deeper into the object
+const objectReducer = {
+  x: '$c.x',
+  y: '$c.y',
+  z: {
+    a: '$a',
+    b: '$b'
+  }
+}
+
+// output from dataPoint.transform(objectReducer, inputData):
+
+{
+  x: 'X',
+  y: 'Y',
+  z: {
+    a: 'A',
+    b: 'B'
+  }
+}
+```
+
+Each of the TransformExpressions might also contain more ObjectReducers (which might contain TransformExpressions, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
+
+```js
+const inputData = {
+  a: {
+    a: 1,
+    b: 2
+  }
+}
+
+const objectReducer = {
+  x: [
+    '$a',
+    // this comes second, so it's resolved
+    // against the output from the '$a' transform
+    {
+      a: '$a'
+    }
+  ],
+  y: [
+    // this comes first, so it's resolved
+    // against the main input to objectReducer
+    {
+      a: '$a'
+    },
+    '$a'
+  ]
+}
+
+// output from dataPoint.transform(objectReducer, inputData):
+
+{
+  x: {
+    a: 1
+  },
+  y: {
+    a: 1,
+    b: 2
+  }
+}
+```
 
 ### <a name="higher-order-reducers">Higher Order Reducers</a>
 

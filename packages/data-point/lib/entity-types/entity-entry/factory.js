@@ -1,6 +1,6 @@
 'use strict'
 
-const helpers = require('../../helpers')
+const createBaseEntity = require('../base-entity').create
 
 /**
  * @class
@@ -16,7 +16,7 @@ module.exports.EntityEntry = EntityEntry
  * @return {EntityEntry} Entity Object
  */
 function create (spec, id) {
-  const entity = helpers.createEntity(EntityEntry, spec, id)
+  const entity = createBaseEntity(EntityEntry, spec, id)
   return Object.freeze(entity)
 }
 

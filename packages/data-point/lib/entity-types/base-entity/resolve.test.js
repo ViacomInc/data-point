@@ -1,7 +1,7 @@
 /* eslint-env jest */
 'use strict'
 
-const ResolveEntity = require('./resolve-entity')
+const ResolveEntity = require('./resolve')
 const ReducerEntity = require('../../reducer-entity')
 
 const FixtureStore = require('../../../test/utils/fixture-store')

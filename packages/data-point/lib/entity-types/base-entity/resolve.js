@@ -25,9 +25,9 @@ function resolveErrorReducers (error, accumulator, resolveReducer) {
 
 module.exports.resolveErrorReducers = resolveErrorReducers
 
-function createCurrentAccumulator (store, accumulator, reducer) {
+function createCurrentAccumulator (manager, accumulator, reducer) {
   // get defined source
-  const entity = store.entities.get(`${reducer.entityType}:${reducer.name}`)
+  const entity = manager.entities.get(`${reducer.entityType}:${reducer.name}`)
 
   // set reducer's spec
   const currentReducer = utils.assign(reducer, {
@@ -57,12 +57,12 @@ module.exports.createCurrentAccumulator = createCurrentAccumulator
  * If there is a better/faster more elegant way to do this
  * then pls let me know and send a PR
  *
- * @param {Object} store - dataPoint instance
+ * @param {Object} manager - dataPoint instance
  * @param {string} name - name of middleware to execute
  * @param {Accumulator} acc - current accumulator
  */
-function resolveMiddleware (store, name, acc) {
-  return middleware.resolve(store, name, acc).then(middlewareResult => {
+function resolveMiddleware (manager, name, acc) {
+  return middleware.resolve(manager, name, acc).then(middlewareResult => {
     const reqCtx = utils.assign(acc, {
       value: middlewareResult.value,
       locals: middlewareResult.locals
@@ -83,14 +83,14 @@ function resolveMiddleware (store, name, acc) {
 module.exports.resolveMiddleware = resolveMiddleware
 
 function resolveEntity (
-  store,
+  manager,
   resolveTransform,
   accumulator,
   reducer,
   mainResolver
 ) {
   const currentAccumulator = createCurrentAccumulator(
-    store,
+    manager,
     accumulator,
     reducer
   )
@@ -107,13 +107,17 @@ function resolveEntity (
     console.time(timeId)
   }
   return Promise.resolve(accUid)
-    .then(acc => resolveMiddleware(store, `before`, acc))
-    .then(acc => resolveMiddleware(store, `${reducer.entityType}:before`, acc))
+    .then(acc => resolveMiddleware(manager, `before`, acc))
+    .then(acc =>
+      resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
+    )
     .then(acc => resolveTransform(acc, acc.reducer.spec.before))
     .then(acc => mainResolver(acc, resolveTransform))
     .then(acc => resolveTransform(acc, acc.reducer.spec.after))
-    .then(acc => middleware.resolve(store, `${reducer.entityType}:after`, acc))
-    .then(acc => resolveMiddleware(store, `after`, acc))
+    .then(acc =>
+      middleware.resolve(manager, `${reducer.entityType}:after`, acc)
+    )
+    .then(acc => resolveMiddleware(manager, `after`, acc))
     .catch(error => {
       // checking if this is an error to bypass the `then` chain
       if (error.bypass === true) {
@@ -137,14 +141,14 @@ function resolveEntity (
 
 module.exports.resolveEntity = resolveEntity
 
-function resolve (store, resolveReducer, accumulator, reducer, mainResolver) {
-  const resolveTransform = _.partial(resolveReducer, store)
+function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
+  const resolveTransform = _.partial(resolveReducer, manager)
   const shouldMapCollection =
     reducer.asCollection && accumulator.value instanceof Array
 
   if (!shouldMapCollection) {
     return resolveEntity(
-      store,
+      manager,
       resolveTransform,
       accumulator,
       reducer,
@@ -155,7 +159,7 @@ function resolve (store, resolveReducer, accumulator, reducer, mainResolver) {
   return Promise.map(accumulator.value, itemValue => {
     const itemCtx = utils.set(accumulator, 'value', itemValue)
     return resolveEntity(
-      store,
+      manager,
       resolveTransform,
       itemCtx,
       reducer,

@@ -4,55 +4,17 @@
 const nock = require('nock')
 
 const fixtureStore = require('../../test/utils/fixture-store')
-const reducers = require('../../test/utils/reducers')
 const testData = require('../../test/data.json')
 
 const AccumulatorFactory = require('../accumulator/factory')
-const reducerFactory = require('../reducer/factory')
 const TransformExpression = require('./factory')
 
 const ResolveTransform = require('./resolve')
 
-let store
+let manager
 
 beforeAll(() => {
-  store = fixtureStore.create()
-})
-
-describe('reducer.getReducerFunction', () => {
-  test('resolve to ReducerPath', () => {
-    const resolver = ResolveTransform.getReducerFunction(store, 'ReducerPath')
-    expect(resolver).toBeInstanceOf(Function)
-  })
-  test('resolve to ReducerFunction', () => {
-    const resolver = ResolveTransform.getReducerFunction(
-      store,
-      'ReducerFunction'
-    )
-    expect(resolver).toBeInstanceOf(Function)
-  })
-  test('resolve to ReducerEntity', () => {
-    const resolver = ResolveTransform.getReducerFunction(store, 'ReducerEntity')
-    expect(resolver).toBeInstanceOf(Function)
-  })
-  test('resolve to ReducerEntity', () => {
-    expect(() => {
-      ResolveTransform.getReducerFunction(store, 'INVALID TYPE')
-    }).toThrow()
-  })
-})
-
-test('resolve#reducer.resolveReducer', () => {
-  const accumulator = AccumulatorFactory.create({
-    value: testData.a.b.c
-  })
-
-  const reducer = reducerFactory.create(reducers.addCollectionValues())
-  return ResolveTransform.resolveReducer(store, accumulator, reducer).then(
-    result => {
-      expect(result.value).toEqual(6)
-    }
-  )
+  manager = fixtureStore.create()
 })
 
 test('resolve#reducer.resolve - reducer empty', () => {
@@ -62,8 +24,8 @@ test('resolve#reducer.resolve - reducer empty', () => {
 
   const transform = TransformExpression.create('')
 
-  return ResolveTransform.resolve(store, accumulator, transform).then(result =>
-    expect(result.value).toEqual(testData.a.g)
+  return ResolveTransform.resolve(manager, accumulator, transform).then(
+    result => expect(result.value).toEqual(testData.a.g)
   )
 })
 
@@ -74,7 +36,7 @@ describe('resolve#reducer.resolve - reducer transform', () => {
     })
 
     const transform = TransformExpression.create('$a.g')
-    return ResolveTransform.resolve(store, accumulator, transform).then(
+    return ResolveTransform.resolve(manager, accumulator, transform).then(
       result => expect(result.value).toEqual(testData.a.g)
     )
   })
@@ -86,7 +48,7 @@ describe('resolve#reducer.resolve - reducer transform', () => {
 
     const transform = TransformExpression.create('$a.g | $g1')
 
-    return ResolveTransform.resolve(store, accumulator, transform).then(
+    return ResolveTransform.resolve(manager, accumulator, transform).then(
       result => expect(result.value).toBe(1)
     )
   })
@@ -99,7 +61,7 @@ describe('resolve#reducer.resolve - reducer model', () => {
     })
 
     const transform = TransformExpression.create('hash:asIs')
-    return ResolveTransform.resolve(store, accumulator, transform).then(
+    return ResolveTransform.resolve(manager, accumulator, transform).then(
       result => expect(result.value).toEqual(testData)
     )
   })
@@ -111,7 +73,7 @@ describe('resolve#reducer.resolve - reducer model', () => {
 
     const transform = TransformExpression.create('hash:asIs | hash:a.1')
 
-    return ResolveTransform.resolve(store, accumulator, transform).then(
+    return ResolveTransform.resolve(manager, accumulator, transform).then(
       result => expect(result.value).toEqual(testData.a.h)
     )
   })
@@ -130,7 +92,7 @@ describe('resolve#reducer.resolve - reducer request', () => {
     })
 
     const transform = TransformExpression.create('request:a1')
-    return ResolveTransform.resolve(store, accumulator, transform).then(
+    return ResolveTransform.resolve(manager, accumulator, transform).then(
       result =>
         expect(result.value).toEqual({
           ok: true
@@ -157,7 +119,7 @@ describe('resolve#reducer.resolve - reducer request', () => {
 
     const transform = TransformExpression.create('request:a1 | request:a3')
 
-    return ResolveTransform.resolve(store, accumulator, transform).then(
+    return ResolveTransform.resolve(manager, accumulator, transform).then(
       result =>
         expect(result.value).toEqual({
           ok: true
