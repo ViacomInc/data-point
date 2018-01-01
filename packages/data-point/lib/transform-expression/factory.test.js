@@ -4,32 +4,6 @@
 const _ = require('lodash')
 const TransformFactory = require('./factory')
 
-describe('isValid', () => {
-  test('It should return true if type is valid', () => {
-    expect(TransformFactory.isValid('string')).toEqual(true)
-    expect(TransformFactory.isValid(() => 1)).toEqual(true)
-    expect(TransformFactory.isValid([])).toEqual(true)
-    expect(TransformFactory.isValid({})).toEqual(true)
-  })
-
-  test('should return false if invalid', () => {
-    expect(TransformFactory.isValid(1)).toEqual(false)
-    expect(TransformFactory.isValid(true)).toEqual(false)
-  })
-})
-
-describe('validate', () => {
-  test('It should throw error if transform is invalid', () => {
-    expect(() => {
-      TransformFactory.validate(true)
-    }).toThrowErrorMatchingSnapshot()
-  })
-
-  test('it should return true if valid', () => {
-    expect(TransformFactory.validate('$.')).toEqual(true)
-  })
-})
-
 describe('TransformFactory#create', () => {
   test('TransformFactory#create default', () => {
     const result = TransformFactory.create()

@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`validate It should throw error if transform is invalid 1`] = `
-"Could not parse a TransformExpression. The TransformExpression:
- true
-is not using a valid type, try using an Array, String, Object, or Function.
-More info: https://github.com/ViacomInc/data-point/tree/master/packages/data-point#transform-expression
-"
-`;

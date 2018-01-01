@@ -12,12 +12,13 @@ const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]
 
 /**
  * parse reducer
- * @param  {string} source - reducer string representation
+ * @param {Function} createTransform
+ * @param {*} source
+ * @throws if source is not a valid type for creating a reducer
  * @return {reducer}
  */
 function create (createTransform, source) {
-  // ReducerObject requires an extra parameter, so
-  // it's not included in the reducerTypes array
+  // ReducerObject requires an extra parameter, so it's not included in the reducerTypes array
   if (ReducerObject.isType(source)) {
     return ReducerObject.create(createTransform, source)
   }
@@ -29,8 +30,8 @@ function create (createTransform, source) {
       'Invalid reducer type.',
       ' Could not find a matching reducer type while parsing the value:\n ',
       _.attempt(util.inspect, source),
-      '\nFor a list of supported types visit:\n',
-      'https://github.com/ViacomInc/data-point/tree/master/packages/data-point#reducers\n'
+      '\nTry using an Array, String, Object, or Function.\n',
+      'More info: https://github.com/ViacomInc/data-point/tree/master/packages/data-point#reducers\n'
     ].join('')
 
     throw new Error(message)

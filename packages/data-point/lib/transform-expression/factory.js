@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const util = require('util')
 const reducerFactory = require('../reducer/factory')
 
 /**
@@ -16,6 +15,10 @@ function TransformExpression () {
 
 module.exports.TransformExpression = TransformExpression
 
+/**
+ * @param {string} source
+ * @returns {Array}
+ */
 function parseFromString (source) {
   const transformSource = _.defaultTo(source, '')
   const tokens = _.compact(transformSource.split(' | '))
@@ -23,11 +26,19 @@ function parseFromString (source) {
 }
 module.exports.parseFromString = parseFromString
 
+/**
+ * @param {*} source
+ * @returns {*}
+ */
 function parseTokenExpression (source) {
   return _.isString(source) ? parseFromString(source) : source
 }
 module.exports.parseTokenExpression = parseTokenExpression
 
+/**
+ * @param {Array} src
+ * @returns {Array}
+ */
 function parseFromArray (source) {
   return _.chain(source)
     .compact()
@@ -35,8 +46,13 @@ function parseFromArray (source) {
     .flatten()
     .value()
 }
+
 module.exports.parseFromArray = parseFromArray
 
+/**
+ * @param {*} src
+ * @returns {Array}
+ */
 function parse (src) {
   let source = _.defaultTo(src, [])
   source = _.castArray(source)
@@ -45,41 +61,12 @@ function parse (src) {
 
 module.exports.parse = parse
 
-function isValid (source) {
-  const type = typeof source
-  return (
-    type === 'string' ||
-    type === 'function' ||
-    source instanceof Array ||
-    _.isPlainObject(source)
-  )
-}
-
-module.exports.isValid = isValid
-
-function validate (source) {
-  const isValidTransform = isValid(source)
-  if (isValidTransform) {
-    return true
-  }
-  const message = [
-    `Could not parse a TransformExpression. The TransformExpression:\n `,
-    _.attempt(util.inspect, source),
-    '\nis not using a valid type, try using an Array, String, Object, or Function.',
-    '\nMore info: https://github.com/ViacomInc/data-point/tree/master/packages/data-point#transform-expression\n'
-  ].join('')
-  throw new Error(message)
-}
-
-module.exports.validate = validate
-
 /**
  * parses a raw transform
- * @param  {string} transformRaw raw value path to be parsed
+ * @param {string} source
  * @return {Transform}
  */
 function create (source = []) {
-  validate(source)
   const tokens = parse(source)
 
   const transform = new TransformExpression()

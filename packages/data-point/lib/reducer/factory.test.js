@@ -39,5 +39,13 @@ describe('reducer#create', () => {
     expect(() => {
       Factory.create(createTransform, 'a')
     }).toThrowErrorMatchingSnapshot()
+
+    expect(() => {
+      Factory.create(createTransform, true)
+    }).toThrowErrorMatchingSnapshot()
+
+    expect(() => {
+      Factory.create(createTransform, 1)
+    }).toThrowErrorMatchingSnapshot()
   })
 })
