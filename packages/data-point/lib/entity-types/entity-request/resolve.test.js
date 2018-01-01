@@ -3,7 +3,7 @@
 
 const _ = require('lodash')
 const nock = require('nock')
-const Reducer = require('./reducer')
+const Resolve = require('./resolve')
 
 const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer/factory')
@@ -27,7 +27,7 @@ function transform (entityId, value, options) {
     values
   })
   const acc = Object.assign({}, accumulator, options)
-  return Reducer.resolve(acc, resolveTransform)
+  return Resolve.resolve(acc, resolveTransform)
 }
 
 let locals
@@ -68,7 +68,7 @@ describe('resolveUrlInjections', () => {
       'request:a1'
     )
 
-    const result = Reducer.resolveUrlInjections(
+    const result = Resolve.resolveUrlInjections(
       'http://{value.domain}/api',
       currentAccumulator
     )
@@ -79,7 +79,7 @@ describe('resolveUrlInjections', () => {
 
 describe('resolveUrl', () => {
   test('It should set acc.url value', () => {
-    const acc = Reducer.resolveUrl({
+    const acc = Resolve.resolveUrl({
       reducer: {
         spec: {
           url: 'http://foo'
@@ -90,7 +90,7 @@ describe('resolveUrl', () => {
   })
 
   test('It should do injections', () => {
-    const acc = Reducer.resolveUrl({
+    const acc = Resolve.resolveUrl({
       value: 'bar',
       reducer: {
         spec: {
@@ -110,7 +110,7 @@ describe('resolveOptions', () => {
       },
       transformOptionKeys: []
     })
-    return Reducer.resolveOptions(acc, resolveTransform).then(result => {
+    return Resolve.resolveOptions(acc, resolveTransform).then(result => {
       expect(result.options).toEqual({
         port: 80
       })
@@ -138,7 +138,7 @@ describe('resolveOptions', () => {
         }
       }
     }
-    return Reducer.resolveOptions(acc, resolveTransform).then(result => {
+    return Resolve.resolveOptions(acc, resolveTransform).then(result => {
       expect(result.options).toEqual({
         port: 80,
         qs: {
@@ -151,19 +151,19 @@ describe('resolveOptions', () => {
 
 describe('getRequestOptions', () => {
   test('set defaults', () => {
-    expect(Reducer.getRequestOptions({})).toEqual({
+    expect(Resolve.getRequestOptions({})).toEqual({
       method: 'GET',
       json: true
     })
 
     expect(
-      Reducer.getRequestOptions({
+      Resolve.getRequestOptions({
         json: false
       }).json
     ).toBe(false)
 
     expect(
-      Reducer.getRequestOptions({
+      Resolve.getRequestOptions({
         timeout: 100
       })
     ).toEqual({
@@ -189,7 +189,7 @@ describe('resolveRequest', () => {
       }
     }
 
-    return Reducer.resolveRequest(acc).then(result => {
+    return Resolve.resolveRequest(acc).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
@@ -215,19 +215,19 @@ describe('inspect', () => {
     console.info = jest.fn()
     const acc = getAcc()
     acc.params.inspect = undefined
-    Reducer.inspect(acc)
+    Resolve.inspect(acc)
     expect(console.info).not.toBeCalled()
   })
   test('It should not execute utils.inspect', () => {
     console.info = jest.fn()
-    Reducer.inspect(getAcc())
+    Resolve.inspect(getAcc())
     expect(console.info.mock.calls[0]).toContain('test:test')
   })
   test('It should output options', () => {
     console.info = jest.fn()
     const acc = getAcc()
     _.set(acc, 'options', { options: 1 })
-    Reducer.inspect(acc)
+    Resolve.inspect(acc)
     expect(console.info.mock.calls[0]).toContain('\noptions:')
   })
 })
