@@ -20,6 +20,6 @@ test('Factory#create', () => {
   expect(obj).toHaveProperty('options')
   expect(obj).not.toHaveProperty('before')
   expect(obj).not.toHaveProperty('after')
-  expect(obj).toHaveProperty('error')
+  expect(obj).not.toHaveProperty('error')
   expect(obj).toHaveProperty('params')
 })

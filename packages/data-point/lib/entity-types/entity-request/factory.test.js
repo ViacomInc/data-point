@@ -16,7 +16,7 @@ describe('create', () => {
     expect(request).toHaveProperty('id')
     expect(request).not.toHaveProperty('before')
     expect(request).not.toHaveProperty('after')
-    expect(request).toHaveProperty('error')
+    expect(request).not.toHaveProperty('error')
     expect(request).toHaveProperty('params')
   })
   test('It should have url', () => {

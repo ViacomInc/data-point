@@ -10,7 +10,7 @@ const utils = require('../../utils')
 function resolveErrorReducers (error, accumulator, resolveReducer) {
   const errorTransform = accumulator.reducer.spec.error
 
-  if (errorTransform.reducers.length === 0) {
+  if (!errorTransform || errorTransform.reducers.length === 0) {
     return Promise.reject(error)
   }
 
@@ -111,19 +111,9 @@ function resolveEntity (
     .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
-    .then(
-      acc =>
-        _.get(acc, 'reducer.spec.before')
-          ? resolveTransform(acc, acc.reducer.spec.before)
-          : acc
-    )
+    .then(acc => resolveTransform(acc, acc.reducer.spec.before))
     .then(acc => mainResolver(acc, resolveTransform))
-    .then(
-      acc =>
-        _.get(acc, 'reducer.spec.after')
-          ? resolveTransform(acc, acc.reducer.spec.after)
-          : acc
-    )
+    .then(acc => resolveTransform(acc, acc.reducer.spec.after))
     .then(acc =>
       middleware.resolve(manager, `${reducer.entityType}:after`, acc)
     )

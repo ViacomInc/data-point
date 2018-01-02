@@ -6,7 +6,7 @@ const factory = require('./factory')
 test('factory#create default', () => {
   const result = factory.create({})
 
-  expect(result.error).toHaveProperty('typeOf', 'TransformExpression')
+  expect(result).not.toHaveProperty('error')
   expect(result).not.toHaveProperty('before')
   expect(result).not.toHaveProperty('after')
   expect(result.value).toHaveProperty('typeOf', 'TransformExpression')

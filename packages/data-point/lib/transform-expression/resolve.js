@@ -13,7 +13,7 @@ const resolveReducer = require('../reducer').resolve
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, accumulator, transform) {
-  if (transform.reducers.length === 0) {
+  if (!transform || transform.reducers.length === 0) {
     return Promise.resolve(accumulator)
   }
 
