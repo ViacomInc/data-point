@@ -839,7 +839,7 @@ dataPoint
 
 ### <a name="reducer-conditional-operator">Conditionally execute an entity</a>
 
-Only execute an entity if the accumulator value is **not** equal to `false`, `null` or `undefined`. If the conditional is not meet, the entity will not be executed and the value will remain the same.
+Only execute an entity if the accumulator value is **not** equal to `false`, `null` or `undefined`. If the conditional is not met, the entity will not be executed and the value will remain the same.
 
 <details>
   <summary>Conditionally execute an entity</summary>
