@@ -806,7 +806,7 @@ For information about supported (built-in) entities, see the [Entities](#entitie
 
 | Option | Type | Description |
 |:---|:---|:---|
-| *?* | `String` | Only execute entity if `acc.value` is not empty. |
+| *?* | `String` | Only execute entity if `acc.value` is not equal to `false`, `null` or `undefined`. |
 | *EntityType* | `String` | Valid Entity type. |
 | *EntityID* | `String` | Valid Entity ID. Optionally, you may pass Closed brackets at the end `[]` to indicate collection mapping. |
 
@@ -841,7 +841,8 @@ dataPoint
 
 Only execute an entity if the accumulator value is **not** equal to `false`, `null` or `undefined`. If the conditional is not meet, the entity will not be executed and the value will remain the same.
 
-**Example:**
+<details>
+  <summary>Conditionally execute an entity</summary>
 
 ```js
 const people = [
@@ -883,6 +884,8 @@ dataPoint
     ])
   })
 ```
+
+</details>
 
 Example at: [examples/reducer-conditional-operator.js](examples/reducer-conditional-operator.js)
 
