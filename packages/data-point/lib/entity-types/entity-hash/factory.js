@@ -74,7 +74,7 @@ function validateCompose (entityId, compose, validKeys) {
       throw new Error(
         `Modifier '${modifier.type}' in ${
           entityId
-        } doest not match any of the registered Modifiers: ${validKeys}`
+        } doesn't match any of the registered Modifiers: ${validKeys}`
       )
     }
   })

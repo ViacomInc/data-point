@@ -1,10 +1,9 @@
 /* eslint-env jest */
 'use strict'
 
-const Reducer = require('./reducer')
+const resolveTransformEntity = require('./resolve').resolve
 
 const FixtureStore = require('../../../test/utils/fixture-store')
-const testData = require('../../../test/data.json')
 
 const helpers = require('../../helpers')
 
@@ -22,7 +21,7 @@ function transform (entityId, value, options) {
       options
     )
   )
-  return Reducer.resolve(accumulator, resolveTransform)
+  return resolveTransformEntity(accumulator, resolveTransform)
 }
 
 beforeAll(() => {
@@ -30,15 +29,20 @@ beforeAll(() => {
   resolveTransform = helpers.createResolveTransform(dataPoint)
 })
 
-describe('Entry.resolve', () => {
-  test('Entry#resolve - resolve empty', () => {
-    return transform('entry:a0').then(result => {
-      expect(result.value).toEqual({})
+describe('entity.transform.value', () => {
+  test('should resolve value Transform', () => {
+    return transform('transform:a0', {
+      message: 'hello world'
+    }).then(acc => {
+      expect(acc.value).toEqual('hello world')
     })
   })
-  test('Entry#resolve - resolve context', () => {
-    return transform('entry:a1', testData).then(result => {
-      expect(result.value).toEqual(1)
+
+  test('should resolve context Transform', () => {
+    return transform('transform:a1', {
+      message: 'hello world'
+    }).then(acc => {
+      expect(acc.value).toEqual('HELLO WORLD')
     })
   })
 })
