@@ -232,4 +232,13 @@ describe('ResolveEntity.resolve', () => {
       expect(acc).toHaveProperty('value', ['bar'])
     })
   })
+
+  test('It should return undefined if accumulator is not Array', () => {
+    const resolver = (acc, resolveTransform) => {
+      return Promise.resolve(acc)
+    }
+    return resolve(resolver)('hash:asIs[]', {}).then(acc => {
+      expect(acc.value).toBeUndefined()
+    })
+  })
 })

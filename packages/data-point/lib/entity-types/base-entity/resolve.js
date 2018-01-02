@@ -143,10 +143,8 @@ module.exports.resolveEntity = resolveEntity
 
 function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
   const resolveTransform = _.partial(resolveReducer, manager)
-  const shouldMapCollection =
-    reducer.asCollection && accumulator.value instanceof Array
 
-  if (!shouldMapCollection) {
+  if (!reducer.asCollection) {
     return resolveEntity(
       manager,
       resolveTransform,
@@ -154,6 +152,10 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
       reducer,
       mainResolver
     )
+  }
+
+  if (!Array.isArray(accumulator.value)) {
+    return Promise.resolve(utils.set(accumulator, 'value', undefined))
   }
 
   return Promise.map(accumulator.value, itemValue => {

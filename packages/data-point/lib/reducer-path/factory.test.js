@@ -46,7 +46,7 @@ describe('ReducerPath getters', () => {
   })
 
   it('reducer/reducer-path#mapFromAccumulatorValue', () => {
-    expect(factory.mapFromAccumulatorValue('a', { value: {} })).toBeNull()
+    expect(factory.mapFromAccumulatorValue('a', { value: {} })).toBeUndefined()
     expect(factory.mapFromAccumulatorValue('a', acc)).toEqual([2, 4])
   })
 })
@@ -205,6 +205,6 @@ describe('ReducerPath#body', () => {
       }
     }
     const result = factory.create('$a.b.c[]').body(acc)
-    expect(result).toBe(null)
+    expect(result).toBe(undefined)
   })
 })
