@@ -799,13 +799,14 @@ For information about supported (built-in) entities, see the [Entities](#entitie
 **SYNOPSIS**
 
 ```js
-'<EntityType>:<EntityId>[[]]'
+'[?]<EntityType>:<EntityId>[[]]'
 ```
 
 **OPTIONS**
 
 | Option | Type | Description |
 |:---|:---|:---|
+| *?* | `String` | Only execute entity if `acc.value` is not empty. |
 | *EntityType* | `String` | Valid Entity type. |
 | *EntityID* | `String` | Valid Entity ID. Optionally, you may pass Closed brackets at the end `[]` to indicate collection mapping. |
 
@@ -835,6 +836,55 @@ dataPoint
     assert.equal(acc.value, 'HELLO WORLD')
   })
 ```
+
+### <a name="reducer-conditional-operator">Conditionally execute an entity</a>
+
+Only execute an entity if the accumulator value is **not** equal to `false`, `null` or `undefined`. If the conditional is not meet, the entity will not be executed and the value will remain the same.
+
+**Example:**
+
+```js
+const people = [
+  {
+    name: 'Luke Skywalker',
+    swapiId: '1'
+  },
+  {
+    name: 'Yoda',
+    swapiId: null
+  }
+]
+
+dataPoint.addEntities({
+  'request:getPerson': {
+    url: 'https://swapi.co/api/people/{value}'
+  },
+  'transform:getPerson': {
+    name: '$name',
+    // request:getPerson will only
+    // be executed if swapiId is
+    // not false, null or undefined
+    birthYear: '$swapiId | ?request:getPerson | $birth_year'
+  }
+})
+
+dataPoint
+  .transform('transform:getPerson[]', people)
+  .then((acc) => {
+    assert.deepEqual(acc.value, [
+      {
+        name: 'Luke Skywalker',
+        birthYear: '19BBY'
+      },
+      {
+        name: 'Yoda',
+        birthYear: undefined
+      }
+    ])
+  })
+```
+
+Example at: [examples/reducer-conditional-operator.js](examples/reducer-conditional-operator.js)
 
 ### <a name="reducer-collection-mapping">Collection Mapping</a>
 
