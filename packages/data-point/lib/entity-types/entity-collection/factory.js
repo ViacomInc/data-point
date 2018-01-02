@@ -22,34 +22,6 @@ function createCompose (composeParse) {
   })
 }
 
-function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
-  if (!spec.compose) {
-    return true
-  }
-
-  if (!(spec.compose instanceof Array)) {
-    throw new Error(
-      `Entity ${
-        spec.id
-      } Hash.compose property is expected to be an instance of Array, but found ${
-        spec.compose
-      }`
-    )
-  }
-
-  const specKeys = Object.keys(spec)
-  const intersection = _.intersection(invalidInlinesKeys, specKeys)
-  if (intersection.length !== 0) {
-    throw new Error(
-      `Entity ${
-        spec.id
-      } Spec is invalid, when 'compose' is defined the key(s): '${intersection.join(
-        ', '
-      )}' should be inside compose.`
-    )
-  }
-}
-
 /**
  * Creates new Entity Object
  * @param  {Object} spec - spec
@@ -57,11 +29,12 @@ function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
  * @return {EntityCollection} Entity Object
  */
 function create (spec, id) {
-  validateComposeVsInlineModifiers(spec, modifierKeys)
+  parseCompose.validateComposeModifiers(spec, modifierKeys)
 
   const entity = createBaseEntity(EntityCollection, spec, id)
 
   const compose = parseCompose.parse(spec, modifierKeys)
+  parseCompose.validateCompose(entity.id, compose, modifierKeys)
   entity.compose = createCompose(compose)
 
   return Object.freeze(entity)
