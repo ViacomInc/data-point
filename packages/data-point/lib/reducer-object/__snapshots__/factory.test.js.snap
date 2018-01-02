@@ -57,6 +57,7 @@ Array [
                   ReducerEntity {
                     "asCollection": false,
                     "entityType": "transform",
+                    "id": "transform:entity-name",
                     "name": "entity-name",
                     "type": "ReducerEntity",
                   },
