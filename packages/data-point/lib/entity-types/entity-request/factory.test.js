@@ -14,8 +14,8 @@ describe('create', () => {
   })
   test('It should have defaults', () => {
     expect(request).toHaveProperty('id')
-    expect(request).toHaveProperty('before')
-    expect(request).toHaveProperty('after')
+    expect(request).not.toHaveProperty('before')
+    expect(request).not.toHaveProperty('after')
     expect(request).toHaveProperty('error')
     expect(request).toHaveProperty('params')
   })

@@ -111,9 +111,19 @@ function resolveEntity (
     .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
-    .then(acc => resolveTransform(acc, acc.reducer.spec.before))
+    .then(
+      acc =>
+        _.get(acc, 'reducer.spec.before')
+          ? resolveTransform(acc, acc.reducer.spec.before)
+          : acc
+    )
     .then(acc => mainResolver(acc, resolveTransform))
-    .then(acc => resolveTransform(acc, acc.reducer.spec.after))
+    .then(
+      acc =>
+        _.get(acc, 'reducer.spec.after')
+          ? resolveTransform(acc, acc.reducer.spec.after)
+          : acc
+    )
     .then(acc =>
       middleware.resolve(manager, `${reducer.entityType}:after`, acc)
     )

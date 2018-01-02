@@ -7,8 +7,8 @@ test('factory#create default', () => {
   const result = factory.create({})
 
   expect(result.error).toHaveProperty('typeOf', 'TransformExpression')
-  expect(result.before).toHaveProperty('typeOf', 'TransformExpression')
-  expect(result.after).toHaveProperty('typeOf', 'TransformExpression')
+  expect(result).not.toHaveProperty('before')
+  expect(result).not.toHaveProperty('after')
   expect(result.value).toHaveProperty('typeOf', 'TransformExpression')
   expect(result.params).toEqual({})
 

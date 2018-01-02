@@ -12,8 +12,8 @@ test('Factory#create', () => {
     ]
   })
 
-  expect(control).toHaveProperty('before')
-  expect(control).toHaveProperty('after')
+  expect(control).not.toHaveProperty('before')
+  expect(control).not.toHaveProperty('after')
   expect(control).toHaveProperty('error')
   expect(control).toHaveProperty('params')
   expect(control).toHaveProperty('select')

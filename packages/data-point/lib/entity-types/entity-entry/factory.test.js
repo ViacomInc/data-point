@@ -8,8 +8,8 @@ test('Factory#create', () => {
     value: ['$foo', (acc, done) => {}]
   })
 
-  expect(obj).toHaveProperty('before')
-  expect(obj).toHaveProperty('after')
+  expect(obj).not.toHaveProperty('before')
+  expect(obj).not.toHaveProperty('after')
   expect(obj).toHaveProperty('error')
   expect(obj).toHaveProperty('params')
   expect(obj).toHaveProperty('value')
