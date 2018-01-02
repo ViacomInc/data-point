@@ -29,7 +29,6 @@ npm install --save data-point
   - [FunctionReducer](#function-reducer)
   - [ObjectReducer](#object-reducer)
   - [Higher Order Reducers](#higher-order-reducers)
-  - [Chained Reducers](#chained-reducers)
   - [EntityReducer](#entity-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
 - [Entities](#entities)
@@ -733,62 +732,6 @@ dataPoint
 ```
 
 Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
-
-### <a name="chained-reducers">Chained Reducers</a>
-
-To execute multiple reducers serially, you may pass them wrapped in an array structure.
-
-```js
-const input = {
-  a: {
-    b: 'Hello World'
-  }
-}
-
-const toUpperCase = (acc) => {
-  return acc.value.toUpperCase()
-}
-
-dataPoint
-  .transform(['$a.b', toUpperCase], input)
-  .then((acc) => {
-    assert.equal(acc.value, 'HELLO WORLD')
-  })
-```
-
-Example at: [examples/reducer-array-mixed.js](examples/reducer-array-mixed.js)
-
-The following example extracts the array from the input object, gets its max value, and multiplies that value by a given number.
-
-```js
-const input = {
-  a: {
-    b: {
-      c: [1, 2, 3]
-    }
-  }
-}
-
-const multiplyBy = (factor) => (acc) => {
-  return acc.value * factor
-}
-
-const getMax = () => (acc) => {
-  const result = Math.max.apply(null, acc.value)
-  return result
-}
-
-dataPoint
-  .transform(['$a.b.c', getMax(), multiplyBy(10)], input)
-  .then((acc) => {
-    assert.equal(acc.value, 30)
-  })
-```
-
-Example at: [examples/reducer-array-mixed-2.js](examples/reducer-array-mixed-2.js)
-
-Examples of reducers that were used for the unit tests:
-[Unit Test Reducers](test/utils/reducers.js)
 
 ### <a name="entity-reducer">EntityReducer</a>
 
