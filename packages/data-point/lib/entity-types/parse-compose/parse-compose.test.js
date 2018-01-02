@@ -36,7 +36,7 @@ describe('parseComposeSpecProperty', () => {
   test('should throw error if does not contain keys', () => {
     expect(() => {
       parseCompose.parseComposeSpecProperty([{}])
-    }).toThrow(/found: 0/)
+    }).toThrow(/found 0/)
   })
   test('should throw error if contains more than 1 key', () => {
     expect(() => {
@@ -46,7 +46,7 @@ describe('parseComposeSpecProperty', () => {
           filter: '$a'
         }
       ])
-    }).toThrow(/found: 2/)
+    }).toThrow(/found 2/)
   })
 })
 

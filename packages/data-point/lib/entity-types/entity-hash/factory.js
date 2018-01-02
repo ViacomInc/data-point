@@ -34,49 +34,10 @@ function createCompose (composeParse) {
       case 'addKeys':
         transform = createReducerObject(createTransform, modifier.spec)
     }
-    return _.assign({}, modifier, {
+
+    return Object.assign({}, modifier, {
       transform
     })
-  })
-}
-
-function validateComposeVsInlineModifiers (spec, invalidInlinesKeys) {
-  if (!spec.compose) {
-    return true
-  }
-
-  if (spec.compose && !(spec.compose instanceof Array)) {
-    throw new Error(
-      `Entity ${
-        spec.id
-      } Hash.compose property is expected to be of instance of Array and found ${
-        spec.compose
-      }`
-    )
-  }
-
-  const specKeys = Object.keys(spec)
-  const intersection = _.intersection(invalidInlinesKeys, specKeys)
-  if (intersection.length !== 0) {
-    throw new Error(
-      `Entity ${
-        spec.id
-      } is invalid, when 'compose' is defined the key(s): '${intersection.join(
-        ', '
-      )}' should be inside compose.`
-    )
-  }
-}
-
-function validateCompose (entityId, compose, validKeys) {
-  compose.forEach(modifier => {
-    if (validKeys.indexOf(modifier.type) === -1) {
-      throw new Error(
-        `Modifier '${modifier.type}' in ${
-          entityId
-        } doesn't match any of the registered Modifiers: ${validKeys}`
-      )
-    }
   })
 }
 
@@ -87,12 +48,12 @@ function validateCompose (entityId, compose, validKeys) {
  * @return {EntityHash} Entity Object
  */
 function create (spec, id) {
-  validateComposeVsInlineModifiers(spec, modifierKeys)
+  parseCompose.validateComposeModifiers(spec, modifierKeys)
 
   const entity = createBaseEntity(EntityHash, spec, id)
 
   const compose = parseCompose.parse(spec, modifierKeys)
-  validateCompose(entity.id, compose, modifierKeys)
+  parseCompose.validateCompose(entity.id, compose, modifierKeys)
   entity.compose = createCompose(compose)
 
   return Object.freeze(entity)
