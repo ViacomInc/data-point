@@ -229,9 +229,9 @@ Execute a [Reducer](#reducers) against an input value.
 
 ```js
 // promise
-dataPoint.transform(transformExpression, value, options)
+dataPoint.transform(reducer, value, options)
 // nodejs callback function
-dataPoint.transform(transformExpression, value, options, done) 
+dataPoint.transform(reducer, value, options, done)
 ```
 
 This method will return a **Promise** if `done` is omitted.
@@ -567,7 +567,7 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 
 ### <a name="object-reducer">ObjectReducer</a>
 
-ObjectReducers are plain objects where the values are TransformExpressions. They're used to aggregate data or transform objects.
+ObjectReducers are plain objects where the values are reducers. They're used to aggregate data or transform objects.
 
 <details>
   <summary>Transforming an object</summary>
@@ -629,7 +629,7 @@ ObjectReducers are plain objects where the values are TransformExpressions. They
 </details>
 
 
-Each of the TransformExpressions, including the nested ones, are resolved against the same accumulator value. This means that input objects can be rearranged at any level:
+Each of the reducers, including the nested ones, are resolved against the same accumulator value. This means that input objects can be rearranged at any level:
 
 <details>
   <summary>Rearranging input data</summary>
@@ -669,7 +669,7 @@ Each of the TransformExpressions, including the nested ones, are resolved agains
 </details>
 
 
-Each of the TransformExpressions might also contain more ObjectReducers (which might contain TransformExpressions, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
+Each of the reducers might contain more ObjectReducers (which might contain reducers, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
 
 <details>
   <summary>Nested Transform Expressions</summary>
@@ -983,14 +983,14 @@ All entities share a common API (except for [Transform](#transform-entity)).
 ```js
 {
   // executes --before-- everything else
-  before: TransformExpression,
+  before: Reducer,
   
   // executes --after-- everything else
-  after: TransformExpression,
+  after: Reducer,
   
   // executes in case there is an error at any
   // point of the entire transformation
-  error: TransformExpression,
+  error: Reducer,
   
   // this object allows you to store and eventually
   // access it at any given time on any reducer
@@ -1559,7 +1559,7 @@ Example at: [examples/entity-request-string-template.js](examples/entity-request
 
 A TransformObject is a Object where any property (at any level), that its key starts with the character `$` is treated as a [Reducer](#reducers). Properties that do not start with a `$` character will be left untouched.
 
-When a TransformObject is to be resolved, all TransformExpressions are resolved in parallel, and their values will be injected in place of the TransformExpression. Also the `$` character will be removed from the resolved property.
+When a TransformObject is to be resolved, all reducers are resolved in parallel. The `$` character will also be removed from the resolved property.
 
 <details>
   <summary>TransformObject Example</summary>
@@ -1574,7 +1574,7 @@ When a TransformObject is to be resolved, all TransformExpressions are resolved 
         qs: {
           // because the key starts
           // with $ it will be treated
-          // as a TransformExpression
+          // as a reducer
           $search: '$query'
         }
       }
@@ -1679,9 +1679,9 @@ If you want to have more control over the order of execution, you may use the [c
 ```js
 dataPoint.addEntities({
   'hash:<entityId>': {
-    before: TransformExpression,
+    before: Reducer,
 
-    value: TransformExpression,
+    value: Reducer,
     mapKeys: TransformMap,
     omitKeys: String[],
     pickKeys: String[],
@@ -1689,8 +1689,8 @@ dataPoint.addEntities({
     addValues: Object,
     compose: ComposeReducer[],
     
-    after: TransformExpression,
-    error: TransformExpression,
+    after: Reducer,
+    error: Reducer,
     params: Object,
   }
 })
@@ -1799,8 +1799,8 @@ This structure allows you to map key/value pairs, where each value is a [Reducer
 
 ```js
 {
-  key1: TransformExpression,
-  key2: TransformExpression,
+  key1: Reducer,
+  key2: Reducer,
   ...
 }
 ```
@@ -2103,16 +2103,16 @@ Collection entities expose a set of reducers that you may apply to them: [map](#
 ```js
 dataPoint.addEntities({
   'collection:<entityId>': {
-    before: TransformExpression,
+    before: Reducer,
 
-    value: TransformExpression,
-    filter: TransformExpression,
-    map: TransformExpression,
-    find: TransformExpression,
+    value: Reducer,
+    filter: Reducer,
+    map: Reducer,
+    find: Reducer,
     compose: ComposeReducer[],
     
-    after: TransformExpression,
-    error: TransformExpression,
+    after: Reducer,
+    error: Reducer,
     params: Object,
   }
 })
@@ -2191,7 +2191,7 @@ The above example is fairly simple. The following example hits each of these url
 _For the purpose of this example, let's imagine that GitHub does not provide the url api to get the list of tags._
 
 <details>
-  <summary>Using a TransformExpression in a Collection.map</summary>
+  <summary>Using a reducer in a Collection.map</summary>
 
   ```js
   dataPoint.addEntities({
@@ -2331,7 +2331,7 @@ The following example filters the data to identify all the repos that have more 
 </details>
 
 
-Because `filter` accepts a transformExpression, you could use it to check whether a property evaluates to a [Truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value.
+Because `filter` accepts a reducer, you could use it to check whether a property evaluates to a [Truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value.
 
 The following example gets all the repos that are actually forks. In this case, because the `fork` property is a boolean, then you can do the following:
 
@@ -2546,13 +2546,13 @@ The Flow Control entity allows you to control the flow of your transformations.
 dataPoint.addEntities({
   'control:<entityId>': {
     select: [
-      { case: TransformExpression, do: Transform },
+      { case: Reducer, do: Transform },
       ...
       { default: Transform }
     ],
-    before: TransformExpression,
-    after: TransformExpression,
-    error: TransformExpression,
+    before: Reducer,
+    after: Reducer,
+    error: Reducer,
     params: Object,
   }
 })
@@ -2631,13 +2631,13 @@ For examples of control entities, see the ones used on the unit tests: [Control 
 ```js
 dataPoint.addEntities({
   'schema:<entityId>': {
-    value: TransformExpression,
+    value: Reducer,
     schema: JSONSchema,
     options: Object,
 
-    before: TransformExpression,
-    after: TransformExpression,
-    error: TransformExpression,
+    before: Reducer,
+    after: Reducer,
+    error: Reducer,
     params: Object
   }
 })
@@ -2916,15 +2916,12 @@ function resolve(acc:Accumulator, resolveTransform:function):Promise<Accumulator
   function resolve (accumulator, resolveTransform) {
     // get Entity Spec
     const spec = accumulator.reducer.spec
-    // resolve 'spec.value' TransformExpression
-    // against accumulator
+    // resolve 'spec.value' reducer against accumulator
     return resolveTransform(accumulator, spec.value)
       .then((acc) => {
-        // execute lodash template against
-        // accumulator value
+        // execute lodash template against accumulator value
         const output = spec.template(acc.value)
-        // set new accumulator.value
-        // this method creates a new acc object
+        // set new accumulator.value this method creates a new acc object
         return DataPoint.set(acc, 'value', output)
       })
   }
