@@ -18,8 +18,8 @@ test('Factory#create', () => {
 
   expect(obj).toHaveProperty('schema')
   expect(obj).toHaveProperty('options')
-  expect(obj).toHaveProperty('before')
-  expect(obj).toHaveProperty('after')
-  expect(obj).toHaveProperty('error')
+  expect(obj).not.toHaveProperty('before')
+  expect(obj).not.toHaveProperty('after')
+  expect(obj).not.toHaveProperty('error')
   expect(obj).toHaveProperty('params')
 })
