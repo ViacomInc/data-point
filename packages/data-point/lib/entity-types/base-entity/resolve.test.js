@@ -238,6 +238,7 @@ describe('ResolveEntity.resolve', () => {
     }
     return resolve(resolver)('hash:asIs[]', {}).then(acc => {
       expect(acc.value).toBeUndefined()
+    })
   })
   test('It should not execute resolver if flag hasEmptyConditional is true and value is empty', () => {
     const resolver = jest.fn()
