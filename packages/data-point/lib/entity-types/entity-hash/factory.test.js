@@ -5,11 +5,10 @@ const factory = require('./factory')
 
 test('factory#create default', () => {
   const result = factory.create({})
-
-  expect(result.error).toHaveProperty('typeOf', 'TransformExpression')
-  expect(result.before).toHaveProperty('typeOf', 'TransformExpression')
-  expect(result.after).toHaveProperty('typeOf', 'TransformExpression')
-  expect(result.value).toHaveProperty('typeOf', 'TransformExpression')
+  expect(result.error).toHaveProperty('type', 'ReducerList')
+  expect(result.before).toHaveProperty('type', 'ReducerList')
+  expect(result.after).toHaveProperty('type', 'ReducerList')
+  expect(result.value).toHaveProperty('type', 'ReducerList')
   expect(result.params).toEqual({})
 
   expect(result.compose).toBeInstanceOf(Array)
@@ -128,15 +127,15 @@ describe('factory#parse composed modifiers', () => {
     expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
     expect(result.compose[0].transform.props[0].path).toEqual(['a'])
     expect(result.compose[0].transform.props[0].transform).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
+      'type',
+      'ReducerPath'
     )
     expect(result.compose[1]).toHaveProperty('type', 'mapKeys')
     expect(result.compose[1].transform).toHaveProperty('type', 'ReducerObject')
     expect(result.compose[1].transform.props[0].path).toEqual(['a'])
     expect(result.compose[1].transform.props[0].transform).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
+      'type',
+      'ReducerPath'
     )
     expect(result.compose[2]).toHaveProperty('type', 'omitKeys')
     expect(result.compose[2].transform).toEqual(['a'])

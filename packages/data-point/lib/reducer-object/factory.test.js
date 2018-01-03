@@ -2,7 +2,7 @@
 'use strict'
 
 const factory = require('./factory')
-const createTransform = require('../transform-expression').create
+const createTransform = require('../reducer').create
 
 test('reducer/reducer-function#isObject', () => {
   expect(factory.isObject('$foo')).toBe(false)

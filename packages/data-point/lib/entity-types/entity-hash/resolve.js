@@ -5,8 +5,7 @@ const Promise = require('bluebird')
 const utils = require('../../utils')
 
 function resolveMapKeys (accumulator, reducer, resolveTransform) {
-  const transform = { reducers: [reducer] }
-  return resolveTransform(accumulator, transform).then(acc => {
+  return resolveTransform(accumulator, reducer).then(acc => {
     return utils.set(accumulator, 'value', acc.value)
   })
 }
@@ -14,8 +13,7 @@ function resolveMapKeys (accumulator, reducer, resolveTransform) {
 module.exports.resolveMapKeys = resolveMapKeys
 
 function resolveAddKeys (accumulator, reducer, resolveTransform) {
-  const transform = { reducers: [reducer] }
-  return resolveTransform(accumulator, transform).then(acc => {
+  return resolveTransform(accumulator, reducer).then(acc => {
     return resolveAddValues(accumulator, acc.value)
   })
 }
@@ -57,10 +55,11 @@ module.exports.resolvePickKeys = resolvePickKeys
 
 // NOTE: as expensive as this might be, this is to avoid 'surprises'
 function validateAsObject (acc) {
-  const entity = acc.reducer.spec
   if (_.isPlainObject(acc.value)) {
     return acc
   }
+
+  const entity = acc.reducer.spec
   return Promise.reject(
     new Error(
       `"${entity.id}" received acc.value = ${JSON.stringify(acc.value).substr(
@@ -103,7 +102,7 @@ function resolveCompose (accumulator, composeReducers, resolveTransform) {
 function resolve (acc, resolveTransform) {
   const entity = acc.reducer.spec
 
-  // if there is nothing to do, lets just move on
+  // if there is nothing to do, let's just move on
   if (typeof acc.value === 'undefined' || acc.value === null) {
     return Promise.resolve(acc)
   }

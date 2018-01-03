@@ -2,18 +2,20 @@
 'use strict'
 
 const ResolveEntity = require('./resolve')
-const ReducerEntity = require('../../reducer-entity')
+const createReducerEntity = require('../../reducer-entity').create
+const createTransform = require('../../reducer').create
+const resolveTransform = require('../../reducer').resolve
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
 const utils = require('../../utils')
 
 let dataPoint
-let resolveTransform
+let resolveTransformBound
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
-  resolveTransform = helpers.createResolveTransform(dataPoint)
+  resolveTransformBound = helpers.createResolveTransform(dataPoint)
 })
 
 afterEach(() => {
@@ -27,14 +29,14 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       {},
       {
         context: {
-          error: helpers.createTransform([])
+          error: createTransform([])
         }
       }
     )
     return ResolveEntity.resolveErrorReducers(
       err,
       accumulator,
-      resolveTransform
+      resolveTransformBound
     )
       .catch(reason => reason)
       .then(acc => {
@@ -49,14 +51,14 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       {},
       {
         context: {
-          error: helpers.createTransform((acc, next) => next(null, 'pass'))
+          error: createTransform((acc, next) => next(null, 'pass'))
         }
       }
     )
     return ResolveEntity.resolveErrorReducers(
       err,
       accumulator,
-      resolveTransform
+      resolveTransformBound
     ).then(acc => {
       expect(acc.value).toEqual('pass')
     })
@@ -66,7 +68,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
 describe('ResolveEntity.createCurrentAccumulator', () => {
   let acc
   beforeAll(() => {
-    const reducerEntity = ReducerEntity.create('hash:base')
+    const reducerEntity = createReducerEntity('hash:base')
     const accumulator = helpers.createAccumulator({
       foo: 'bar'
     })
@@ -101,11 +103,11 @@ describe('ResolveEntity.resolveMiddleware', () => {
       next(null)
     })
 
-    const racc = helpers.createAccumulator('foo')
+    const acc = helpers.createAccumulator('foo')
     return ResolveEntity.resolveMiddleware(
       dataPoint,
       'request:before',
-      racc
+      acc
     ).then(acc => {
       expect(acc.value).toEqual('bar')
     })
@@ -117,8 +119,8 @@ describe('ResolveEntity.resolveMiddleware', () => {
       next(null)
     })
 
-    const racc = helpers.createAccumulator('foo')
-    return ResolveEntity.resolveMiddleware(dataPoint, 'request:before', racc)
+    const acc = helpers.createAccumulator('foo')
+    return ResolveEntity.resolveMiddleware(dataPoint, 'request:before', acc)
       .catch(reason => reason)
       .then(reason => {
         expect(reason).toBeInstanceOf(Error)
@@ -129,18 +131,16 @@ describe('ResolveEntity.resolveMiddleware', () => {
   })
 })
 
-const ResolveTransform = require('../../transform-expression/resolve')
-
 describe('ResolveEntity.resolveEntity', () => {
   const defaultResolver = (acc, resolveTransform) => Promise.resolve(acc)
 
   const resolveEntity = (entityId, input, options, resolver) => {
-    const racc = helpers.createAccumulator.call(null, input, options)
-    const reducer = ReducerEntity.create(entityId)
+    const acc = helpers.createAccumulator(input, options)
+    const reducer = createReducerEntity(entityId)
     return ResolveEntity.resolveEntity(
       dataPoint,
       resolveTransform,
-      racc,
+      acc,
       reducer,
       resolver || defaultResolver
     )
@@ -202,12 +202,13 @@ describe('ResolveEntity.resolveEntity', () => {
 
 describe('ResolveEntity.resolve', () => {
   const resolve = resolver => (entityId, input, options) => {
-    const racc = helpers.createAccumulator.call(null, input, options)
-    const reducer = ReducerEntity.create(entityId)
+    const acc = helpers.createAccumulator(input, options)
+    const reducer = createReducerEntity(entityId)
+
     return ResolveEntity.resolve(
       dataPoint,
-      ResolveTransform.resolve,
-      racc,
+      resolveTransform,
+      acc,
       reducer,
       resolver
     )

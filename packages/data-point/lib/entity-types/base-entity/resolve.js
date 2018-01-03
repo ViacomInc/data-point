@@ -9,8 +9,7 @@ const utils = require('../../utils')
 
 function resolveErrorReducers (error, accumulator, resolveReducer) {
   const errorTransform = accumulator.reducer.spec.error
-
-  if (errorTransform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(errorTransform)) {
     return Promise.reject(error)
   }
 
@@ -99,6 +98,8 @@ function resolveEntity (
     currentAccumulator.trace === true ||
     currentAccumulator.reducer.spec.params.trace === true
 
+  const resolveTransformBound = _.partial(resolveTransform, manager)
+
   let accUid = currentAccumulator
   let timeId
   if (trace === true) {
@@ -111,9 +112,9 @@ function resolveEntity (
     .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
-    .then(acc => resolveTransform(acc, acc.reducer.spec.before))
-    .then(acc => mainResolver(acc, resolveTransform))
-    .then(acc => resolveTransform(acc, acc.reducer.spec.after))
+    .then(acc => resolveTransform(manager, acc, acc.reducer.spec.before))
+    .then(acc => mainResolver(acc, resolveTransformBound))
+    .then(acc => resolveTransform(manager, acc, acc.reducer.spec.after))
     .then(acc =>
       middleware.resolve(manager, `${reducer.entityType}:after`, acc)
     )
@@ -126,7 +127,11 @@ function resolveEntity (
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
-      return resolveErrorReducers(error, currentAccumulator, resolveTransform)
+      return resolveErrorReducers(
+        error,
+        currentAccumulator,
+        resolveTransformBound
+      )
     })
     .then(resultContext => {
       if (trace === true) {
@@ -141,8 +146,13 @@ function resolveEntity (
 
 module.exports.resolveEntity = resolveEntity
 
-function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
-  const resolveTransform = _.partial(resolveReducer, manager)
+function resolve (
+  manager,
+  resolveTransform,
+  accumulator,
+  reducer,
+  mainResolver
+) {
   const shouldMapCollection =
     reducer.asCollection && accumulator.value instanceof Array
 

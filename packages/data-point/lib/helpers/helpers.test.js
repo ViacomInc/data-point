@@ -94,9 +94,3 @@ describe('helpers.createResolveTransform', () => {
     expect(resolveTransform.length).toEqual(2)
   })
 })
-
-describe('isTransform', () => {
-  test('It should recognize as transform', () => {
-    expect(helpers.isTransform(helpers.createTransform([]))).toBe(true)
-  })
-})

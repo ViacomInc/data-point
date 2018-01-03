@@ -18,9 +18,9 @@ describe('factory.createBaseEntity', () => {
     )
 
     expect(entity).toHaveProperty('id', 'foo')
-    expect(entity).toHaveProperty('value.typeOf', 'TransformExpression')
-    expect(entity).toHaveProperty('error.typeOf', 'TransformExpression')
-    expect(entity).toHaveProperty('after.typeOf', 'TransformExpression')
+    expect(entity).toHaveProperty('value.type', 'ReducerPath')
+    expect(entity).toHaveProperty('error.type', 'ReducerPath')
+    expect(entity).toHaveProperty('after.type', 'ReducerPath')
     expect(entity).toHaveProperty('params', {})
   })
 })

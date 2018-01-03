@@ -1,11 +1,11 @@
 /* eslint global-require: 0 */
 
-const reducer = require('./factory')
+const factory = require('./factory')
 const resolve = require('./resolve').resolve
 
 module.exports = {
-  create: reducer.create,
-  type: reducer.type,
-  isType: reducer.isObject,
+  create: factory.create,
+  type: factory.type,
+  isType: factory.isObject,
   resolve: resolve
 }
