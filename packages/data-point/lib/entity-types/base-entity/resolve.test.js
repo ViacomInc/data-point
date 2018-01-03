@@ -11,11 +11,9 @@ const helpers = require('../../helpers')
 const utils = require('../../utils')
 
 let dataPoint
-let resolveTransformBound
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
-  resolveTransformBound = helpers.createResolveTransform(dataPoint)
 })
 
 afterEach(() => {
@@ -34,9 +32,10 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       }
     )
     return ResolveEntity.resolveErrorReducers(
-      err,
+      dataPoint,
+      resolveTransform,
       accumulator,
-      resolveTransformBound
+      err
     )
       .catch(reason => reason)
       .then(acc => {
@@ -56,9 +55,10 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       }
     )
     return ResolveEntity.resolveErrorReducers(
-      err,
+      dataPoint,
+      resolveTransform,
       accumulator,
-      resolveTransformBound
+      err
     ).then(acc => {
       expect(acc.value).toEqual('pass')
     })
