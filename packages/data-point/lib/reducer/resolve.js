@@ -50,6 +50,10 @@ module.exports.getReducerFunction = getReducerFunction
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, accumulator, reducer) {
+  if (!reducer) {
+    return Promise.resolve(accumulator)
+  }
+
   // NOTE: recursive call
   const reducerFunction = getReducerFunction(manager, resolve, reducer.type)
   const result = reducerFunction(accumulator, reducer)

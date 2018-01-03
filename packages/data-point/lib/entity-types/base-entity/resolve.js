@@ -153,10 +153,13 @@ function resolve (
   reducer,
   mainResolver
 ) {
-  const shouldMapCollection =
-    reducer.asCollection && accumulator.value instanceof Array
+  const hasEmptyConditional = reducer.hasEmptyConditional
 
-  if (!shouldMapCollection) {
+  if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
+    return Promise.resolve(accumulator)
+  }
+
+  if (!reducer.asCollection) {
     return resolveEntity(
       manager,
       resolveTransform,
@@ -166,8 +169,17 @@ function resolve (
     )
   }
 
+  if (!Array.isArray(accumulator.value)) {
+    return Promise.resolve(utils.set(accumulator, 'value', undefined))
+  }
+
   return Promise.map(accumulator.value, itemValue => {
     const itemCtx = utils.set(accumulator, 'value', itemValue)
+
+    if (hasEmptyConditional && utils.isFalsy(itemValue)) {
+      return Promise.resolve(itemCtx)
+    }
+
     return resolveEntity(
       manager,
       resolveTransform,

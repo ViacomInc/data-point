@@ -100,3 +100,15 @@ describe('inspect', () => {
     expect(console.info.mock.calls[2]).toContain('baz')
   })
 })
+
+describe('isEmpty', () => {
+  test('It should test for empty', () => {
+    expect(utils.isFalsy(null)).toEqual(true)
+    expect(utils.isFalsy(undefined)).toEqual(true)
+    expect(utils.isFalsy(false)).toEqual(true)
+    expect(utils.isFalsy([])).toEqual(false)
+    expect(utils.isFalsy('')).toEqual(false)
+    expect(utils.isFalsy(0)).toEqual(false)
+    expect(utils.isFalsy({})).toEqual(false)
+  })
+})

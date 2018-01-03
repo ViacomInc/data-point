@@ -5,10 +5,11 @@ const factory = require('./factory')
 
 test('factory#create default', () => {
   const result = factory.create({})
-  expect(result.error).toHaveProperty('type', 'ReducerList')
-  expect(result.before).toHaveProperty('type', 'ReducerList')
-  expect(result.after).toHaveProperty('type', 'ReducerList')
-  expect(result.value).toHaveProperty('type', 'ReducerList')
+
+  expect(result).not.toHaveProperty('before')
+  expect(result).not.toHaveProperty('value')
+  expect(result).not.toHaveProperty('after')
+  expect(result).not.toHaveProperty('error')
   expect(result.params).toEqual({})
 
   expect(result.compose).toBeInstanceOf(Array)

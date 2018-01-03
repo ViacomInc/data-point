@@ -13,10 +13,23 @@ function create (Factory, spec, id) {
   const entity = new Factory(spec)
 
   entity.id = id
-  entity.value = createTransform(spec.value)
-  entity.before = createTransform(spec.before)
-  entity.error = createTransform(spec.error)
-  entity.after = createTransform(spec.after)
+
+  if (spec.before) {
+    entity.before = createTransform(spec.before)
+  }
+
+  if (spec.value) {
+    entity.value = createTransform(spec.value)
+  }
+
+  if (spec.after) {
+    entity.after = createTransform(spec.after)
+  }
+
+  if (spec.error) {
+    entity.error = createTransform(spec.error)
+  }
+
   entity.params = deepFreeze(defaultTo(spec.params, {}))
 
   return entity

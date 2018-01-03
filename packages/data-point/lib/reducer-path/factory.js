@@ -73,7 +73,7 @@ function mapFromAccumulatorValue (jsonPath, acc) {
     return _.map(acc.value, jsonPath)
   }
 
-  return null
+  return undefined
 }
 
 module.exports.mapFromAccumulatorValue = mapFromAccumulatorValue

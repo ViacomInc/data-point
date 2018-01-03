@@ -78,3 +78,13 @@ function reducerIsEmpty (reducer) {
 }
 
 module.exports.reducerIsEmpty = reducerIsEmpty
+
+/**
+ * @param {*} val
+ * @returns {boolean}
+ */
+function isFalsy (val) {
+  return val === null || val === false || typeof val === 'undefined'
+}
+
+module.exports.isFalsy = isFalsy
