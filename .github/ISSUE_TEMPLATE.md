@@ -11,29 +11,29 @@ understand what's going on and fix the issue.
 - `node` version:
 - `npm` version:
 
-Any relevant code:
+**Any relevant code**:
 
 ```javascript
 
 ```
 
-What you did:
+**What you did**:
 
 
-What happened:
+**What happened**:
 
 <!-- Please provide the full error message/screenshots/anything -->
 
-Reproduction:
+**Reproduction**:
 
 <!--
-If you have a link or example that reproduces your issue please include it. A reproduction with as little code possible is better.
+If you have a link or example that reproduces your issue please include it. A reproduction with as little code as possible is better.
 -->
 
 -- paste your link here --
 
-Problem description:
+**Problem description**:
 
 
 
-Suggested solution:
+**Suggested solution**:
