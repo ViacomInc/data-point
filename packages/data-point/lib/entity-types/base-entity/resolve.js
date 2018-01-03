@@ -10,7 +10,7 @@ const utils = require('../../utils')
 function resolveErrorReducers (error, accumulator, resolveReducer) {
   const errorTransform = accumulator.reducer.spec.error
 
-  if (errorTransform.reducers.length === 0) {
+  if (!errorTransform || errorTransform.reducers.length === 0) {
     return Promise.reject(error)
   }
 
@@ -142,6 +142,12 @@ function resolveEntity (
 module.exports.resolveEntity = resolveEntity
 
 function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
+  const hasEmptyConditional = reducer.hasEmptyConditional
+
+  if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
+    return Promise.resolve(accumulator)
+  }
+
   const resolveTransform = _.partial(resolveReducer, manager)
 
   if (!reducer.asCollection) {
@@ -160,6 +166,11 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
 
   return Promise.map(accumulator.value, itemValue => {
     const itemCtx = utils.set(accumulator, 'value', itemValue)
+
+    if (hasEmptyConditional && utils.isFalsy(itemValue)) {
+      return Promise.resolve(itemCtx)
+    }
+
     return resolveEntity(
       manager,
       resolveTransform,

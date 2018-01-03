@@ -6,12 +6,12 @@ const modelFactory = require('./factory')
 test('modelFactory#create default', () => {
   const result = modelFactory.create({})
 
-  expect(result.error).toHaveProperty('typeOf', 'TransformExpression')
-  expect(result.before).toHaveProperty('typeOf', 'TransformExpression')
-  expect(result.after).toHaveProperty('typeOf', 'TransformExpression')
+  expect(result).not.toHaveProperty('error')
+  expect(result).not.toHaveProperty('before')
+  expect(result).not.toHaveProperty('after')
   expect(result.params).toEqual({})
 
-  expect(result.value).toHaveProperty('typeOf', 'TransformExpression')
+  expect(result).not.toHaveProperty('value')
   expect(result.compose).toBeInstanceOf(Array)
 })
 
