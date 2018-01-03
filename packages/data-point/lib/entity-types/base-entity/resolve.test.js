@@ -232,7 +232,14 @@ describe('ResolveEntity.resolve', () => {
       expect(acc).toHaveProperty('value', ['bar'])
     })
   })
-
+  test('It should return undefined if accumulator is not Array', () => {
+    const resolver = (acc, resolveTransform) => {
+      return Promise.resolve(acc)
+    }
+    return resolve(resolver)('hash:asIs[]', {}).then(acc => {
+      expect(acc.value).toBeUndefined()
+    })
+  })
   test('It should not execute resolver if flag hasEmptyConditional is true and value is empty', () => {
     const resolver = jest.fn()
     return resolve(resolver)('?hash:asIs', undefined).then(acc => {
