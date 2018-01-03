@@ -17,7 +17,9 @@ function create (Factory, spec, id) {
     entity.before = createTransform(spec.before)
   }
 
-  entity.value = createTransform(spec.value)
+  if (spec.value) {
+    entity.value = createTransform(spec.value)
+  }
 
   if (spec.after) {
     entity.after = createTransform(spec.after)

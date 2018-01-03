@@ -11,7 +11,7 @@ test('modelFactory#create default', () => {
   expect(result).not.toHaveProperty('after')
   expect(result.params).toEqual({})
 
-  expect(result.value).toHaveProperty('typeOf', 'TransformExpression')
+  expect(result).not.toHaveProperty('value')
   expect(result.compose).toBeInstanceOf(Array)
 })
 
