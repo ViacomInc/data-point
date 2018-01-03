@@ -57,9 +57,11 @@ Array [
                   ReducerEntity {
                     "asCollection": false,
                     "entityType": "transform",
+                    "hasEmptyConditional": false,
                     "id": "transform:entity-name",
                     "name": "entity-name",
                     "type": "ReducerEntity",
+                    "withEmptyConditional": false,
                   },
                 ],
                 "typeOf": "TransformExpression",
