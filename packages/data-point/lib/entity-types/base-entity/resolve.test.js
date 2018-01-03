@@ -232,4 +232,38 @@ describe('ResolveEntity.resolve', () => {
       expect(acc).toHaveProperty('value', ['bar'])
     })
   })
+
+  test('It should not execute resolver if flag hasEmptyConditional is true and value is empty', () => {
+    const resolver = jest.fn()
+    return resolve(resolver)('?hash:asIs', undefined).then(acc => {
+      expect(resolver).not.toHaveBeenCalled()
+    })
+  })
+
+  test('It should execute resolver if flag hasEmptyConditional is true and value is not empty', () => {
+    const resolver = (acc, resolveTransform) => {
+      const result = utils.set(acc, 'value', 'bar')
+      return Promise.resolve(result)
+    }
+    return resolve(resolver)('?hash:asIs', 'foo').then(acc => {
+      expect(acc).toHaveProperty('value', 'bar')
+    })
+  })
+
+  test('It should execute resolver only on non empty items of collection if hasEmptyConditional is set', () => {
+    let count = 0
+    const resolver = (acc, resolveTransform) => {
+      const result = utils.set(acc, 'value', count++)
+      return Promise.resolve(result)
+    }
+    return resolve(resolver)('?hash:asIs[]', [
+      'a',
+      undefined,
+      'b',
+      null,
+      'c'
+    ]).then(acc => {
+      expect(acc).toHaveProperty('value', [0, undefined, 1, null, 2])
+    })
+  })
 })

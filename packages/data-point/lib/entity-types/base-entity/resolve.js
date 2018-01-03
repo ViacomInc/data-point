@@ -142,7 +142,14 @@ function resolveEntity (
 module.exports.resolveEntity = resolveEntity
 
 function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
+  const hasEmptyConditional = reducer.hasEmptyConditional
+
+  if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
+    return Promise.resolve(accumulator)
+  }
+
   const resolveTransform = _.partial(resolveReducer, manager)
+
   const shouldMapCollection =
     reducer.asCollection && accumulator.value instanceof Array
 
@@ -158,6 +165,11 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
 
   return Promise.map(accumulator.value, itemValue => {
     const itemCtx = utils.set(accumulator, 'value', itemValue)
+
+    if (hasEmptyConditional && utils.isFalsy(itemValue)) {
+      return Promise.resolve(itemCtx)
+    }
+
     return resolveEntity(
       manager,
       resolveTransform,

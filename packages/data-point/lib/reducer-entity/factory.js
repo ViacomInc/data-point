@@ -18,6 +18,7 @@ function ReducerEntity () {
   this.name = ''
   this.entityType = null
   this.asCollection = false
+  this.withEmptyConditional = false
 }
 
 module.exports.ReducerEntity = ReducerEntity
@@ -38,12 +39,16 @@ module.exports.isEntity = isEntity
  */
 function create (source) {
   const reducer = new ReducerEntity()
-
   const tokens = source.split(':')
 
-  reducer.entityType = tokens[0]
-  reducer.name = tokens[1].replace(/\[]$/, '')
-  reducer.asCollection = source.slice(-2) === '[]'
+  let entityType = tokens[0]
+  reducer.hasEmptyConditional = entityType.indexOf('?') === 0
+  reducer.entityType = entityType.replace(/^\?/, '')
+
+  let name = tokens[1]
+  reducer.asCollection = name.slice(-2) === '[]'
+  reducer.name = name.replace(/\[]$/, '')
+
   reducer.id = `${reducer.entityType}:${reducer.name}`
 
   return Object.freeze(reducer)

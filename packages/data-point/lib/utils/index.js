@@ -68,3 +68,9 @@ function inspect (acc, data) {
 }
 
 module.exports.inspect = inspect
+
+function isFalsy (val) {
+  return val === null || val === false || typeof val === 'undefined'
+}
+
+module.exports.isFalsy = isFalsy
