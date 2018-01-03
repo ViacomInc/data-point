@@ -28,7 +28,6 @@ npm install --save data-point
   - [PathReducer](#path-reducer)
   - [FunctionReducer](#function-reducer)
   - [ObjectReducer](#object-reducer)
-  - [Higher Order Reducers](#higher-order-reducers)
   - [EntityReducer](#entity-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
 - [Entities](#entities)
@@ -736,45 +735,6 @@ Each of the TransformExpressions might also contain more ObjectReducers (which m
   }
   ```
 </details>
-
-
-### <a name="higher-order-reducers">Higher Order Reducers</a>
-
-Higher Order Reducers are expected to be [Higher-order Functions](https://en.wikipedia.org/wiki/Higher-order_function). This means that a higher order reducer **MUST** return a [FunctionReducer](#function-reducer).
-
-```js
-// sync
-const name = (param1, param2, ...) => (acc:Accumulator) => {
-  return newValue
-}
-// async via promise
-const name = (param1, param2, ...) => (acc:Accumulator) => {
-  return Promise.resolve(newValue)
-}
-// async via callback
-const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
-  next(error:Error, newValue:*)
-}
-```
-
-<details>
-  <summary>Higher Order Reducer Example</summary>
-  
-  ```js
-  const addStr = (value) => (acc) => {
-    return acc.value + value
-  }
-  
-  dataPoint
-    .transform(addStr(' World!!'), 'Hello')
-    .then((acc) => {
-      assert.equal(acc.value, 'Hello World!!')
-    })
-  ```
-</details>
-
-
-Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
 
 ### <a name="entity-reducer">EntityReducer</a>
 
