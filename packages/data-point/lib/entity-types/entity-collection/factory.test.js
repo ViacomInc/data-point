@@ -6,12 +6,12 @@ const modelFactory = require('./factory')
 test('modelFactory#create default', () => {
   const result = modelFactory.create({})
 
-  expect(result).not.toHaveProperty('error')
   expect(result).not.toHaveProperty('before')
+  expect(result).not.toHaveProperty('value')
   expect(result).not.toHaveProperty('after')
+  expect(result).not.toHaveProperty('error')
   expect(result.params).toEqual({})
 
-  expect(result).not.toHaveProperty('value')
   expect(result.compose).toBeInstanceOf(Array)
 })
 
@@ -24,8 +24,8 @@ describe('parse loose modifiers', () => {
     expect(result.compose).toBeInstanceOf(Array)
     expect(result.compose[0]).toHaveProperty('type', 'map')
     expect(result.compose[0].transform).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
+      'type',
+      'ReducerPath'
     )
   })
 
@@ -52,8 +52,8 @@ describe('parse compose modifier', () => {
     expect(result.compose).toBeInstanceOf(Array)
     expect(result.compose[0]).toHaveProperty('type', 'map')
     expect(result.compose[0].transform).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
+      'type',
+      'ReducerPath'
     )
   })
 

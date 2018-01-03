@@ -1,19 +1,32 @@
 'use strict'
 
 const _ = require('lodash')
-const reducerFactory = require('../reducer/factory')
+
+const REDUCER_LIST = 'ReducerList'
+
+module.exports.type = REDUCER_LIST
 
 /**
- * Describes the transform parts used to reduce a context
  * @class
- * @property {Array} reducers - collection of reducers that will be applied
+ * @property {string} type
+ * @property {Array<reducer>} reducers
  */
-function TransformExpression () {
+function ReducerList () {
+  this.type = REDUCER_LIST
   this.reducers = []
-  this.typeOf = 'TransformExpression'
 }
 
-module.exports.TransformExpression = TransformExpression
+module.exports.ReducerList = ReducerList
+
+/**
+ * @param {*} source
+ * @returns {boolean}
+ */
+function isType (source) {
+  return Array.isArray(source)
+}
+
+module.exports.isType = isType
 
 /**
  * @param {string} source
@@ -60,19 +73,16 @@ function parse (source) {
 module.exports.parse = parse
 
 /**
- * parses a raw transform
- * @param {string} source
+ * @param {Function} createTransform
+ * @param {Array} source
  * @return {Transform}
  */
-function create (source = []) {
+function create (createTransform, source = []) {
   const tokens = parse(source)
+  const reducers = tokens.map(token => createTransform(token))
 
-  const transform = new TransformExpression()
-
-  transform.reducers = tokens.map(token => {
-    // NOTE: recursive call
-    return reducerFactory.create(create, token)
-  })
+  const transform = new ReducerList()
+  transform.reducers = reducers
 
   return Object.freeze(transform)
 }

@@ -3,17 +3,27 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const Reducer = require('../reducer')
 const AccumulatorFactory = require('../accumulator/factory')
-const TransformExpression = require('../transform-expression')
-const resolveTransform = require('../transform-expression').resolve
 
+/**
+ * @param {Object} spec
+ * @returns {Object}
+ */
 function getOptions (spec) {
   return _.defaults({}, spec, {
     locals: {}
   })
 }
 
-function resolve (manager, transformSource, value, options) {
+/**
+ * @param {Object} manager
+ * @param {*} reducerSource
+ * @param {*} value
+ * @param {Object} options
+ * @returns {Promise}
+ */
+function resolve (manager, reducerSource, value, options) {
   const contextOptions = getOptions(options)
   const context = AccumulatorFactory.create({
     value: value,
@@ -22,14 +32,22 @@ function resolve (manager, transformSource, value, options) {
     values: manager.values.getStore()
   })
 
-  const transform = TransformExpression.create(transformSource)
+  const transform = Reducer.create(reducerSource)
 
-  return resolveTransform(manager, context, transform)
+  return Reducer.resolve(manager, context, transform)
 }
 
-function transform (manager, transformSource, value, options, done) {
+/**
+ * @param {Object} manager
+ * @param {*} reducerSource
+ * @param {*} value
+ * @param {Object} options
+ * @param {Function} done
+ * @returns {Promise}
+ */
+function transform (manager, reducerSource, value, options, done) {
   return Promise.resolve()
-    .then(() => resolve(manager, transformSource, value, options))
+    .then(() => resolve(manager, reducerSource, value, options))
     .asCallback(done)
 }
 

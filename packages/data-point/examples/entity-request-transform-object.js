@@ -5,8 +5,7 @@ dataPoint.addEntities({
     url: 'https://swapi.co/api/people/?search=r2',
     options: {
       qs: {
-        // because the key starts with $
-        // it will be treated as a TransformExpression
+        // because the key starts with $, it will be treated as a reducer
         $search: acc => {
           return acc.value.search
         }

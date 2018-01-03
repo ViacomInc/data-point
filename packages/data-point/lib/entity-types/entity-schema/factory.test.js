@@ -1,10 +1,10 @@
 /* eslint-env jest */
 'use strict'
 
-const Factory = require('./factory')
+const factory = require('./factory')
 
-test('Factory#create', () => {
-  const obj = Factory.create({
+test('factory#create', () => {
+  const obj = factory.create({
     schema: {
       properties: {
         foo: { type: 'number' },

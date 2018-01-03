@@ -7,7 +7,6 @@ const Resolve = require('./resolve')
 
 const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer/factory')
-const createTransform = require('../../transform-expression/factory').create
 const LocalsFactory = require('../../locals/factory')
 
 const ResolveEntity = require('../base-entity/resolve')
@@ -39,7 +38,7 @@ function helperMockContext (accumulatorData, reducerSource, requestName) {
     locals,
     values
   })
-  const reducer = ReducerFactory.create(createTransform, reducerSource)
+  const reducer = ReducerFactory.create(reducerSource)
   return ResolveEntity.createCurrentAccumulator(dataPoint, accumulator, reducer)
 }
 

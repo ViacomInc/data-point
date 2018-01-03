@@ -2,19 +2,20 @@
 'use strict'
 
 const _ = require('lodash')
-const TransformFactory = require('./factory')
+const factory = require('./factory')
+const createTransform = require('../reducer').create
 
-describe('TransformFactory#create', () => {
-  test('TransformFactory#create default', () => {
-    const result = TransformFactory.create()
+describe('factory#create', () => {
+  test('factory#create default', () => {
+    const result = factory.create(createTransform)
 
-    expect(result).toBeInstanceOf(TransformFactory.TransformExpression)
+    expect(result).toBeInstanceOf(factory.ReducerList)
     expect(result.context).toBeUndefined()
     expect(result.reducers).toHaveLength(0)
   })
 
-  test('TransformFactory#create only path', () => {
-    const result = TransformFactory.create('$foo.bar')
+  test('factory#create only path', () => {
+    const result = factory.create(createTransform, '$foo.bar')
     expect(result.reducers).toHaveLength(1)
 
     const reducer = _.first(result.reducers)
@@ -23,8 +24,8 @@ describe('TransformFactory#create', () => {
     expect(reducer.asCollection).toBe(false)
   })
 
-  test('TransformFactory#create path as collection', () => {
-    const result = TransformFactory.create('$foo.bar[]')
+  test('factory#create path as collection', () => {
+    const result = factory.create(createTransform, '$foo.bar[]')
     expect(result.reducers).toHaveLength(1)
 
     const reducer = _.first(result.reducers)
@@ -33,8 +34,8 @@ describe('TransformFactory#create', () => {
     expect(reducer.asCollection).toBe(true)
   })
 
-  test('TransformFactory#create context with reducers', () => {
-    const result = TransformFactory.create([
+  test('factory#create context with reducers', () => {
+    const result = factory.create(createTransform, [
       '$foo.bar | reducer:add',
       () => true
     ])
@@ -45,8 +46,8 @@ describe('TransformFactory#create', () => {
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 
-  test('TransformFactory#create context with reducers', () => {
-    const result = TransformFactory.create([
+  test('factory#create context with reducers', () => {
+    const result = factory.create(createTransform, [
       '$foo.bar',
       'reducer:add',
       () => true
@@ -59,41 +60,43 @@ describe('TransformFactory#create', () => {
   })
 })
 
-describe('TransformFactory#create', () => {
-  test('TransformFactory#create transfrom empty array', () => {
-    const result = TransformFactory.create([])
+describe('factory#create', () => {
+  test('factory#create transfrom empty array', () => {
+    const result = factory.create(createTransform, [])
     expect(result.reducers).toHaveLength(0)
   })
 
-  test('TransformFactory#create transfrom with single function', () => {
-    const result = TransformFactory.create((acc, done) => done(null, acc.value))
+  test('factory#create transfrom with single function', () => {
+    const result = factory.create(createTransform, (acc, done) =>
+      done(null, acc.value)
+    )
     expect(result.reducers).toHaveLength(1)
     expect(result.reducers[0].type).toBe('ReducerFunction')
   })
 
-  test('TransformFactory#create transfrom with string', () => {
-    const result = TransformFactory.create(['$foo', '$bar'])
+  test('factory#create transfrom with string', () => {
+    const result = factory.create(createTransform, ['$foo', '$bar'])
     expect(result.reducers).toHaveLength(2)
     expect(result.reducers[0].type).toBe('ReducerPath')
     expect(result.reducers[1].type).toBe('ReducerPath')
   })
 
-  test('TransformFactory#create transfrom with grouped reducers and single reducers', () => {
-    const result = TransformFactory.create(['$foo | $bar', '$baz'])
+  test('factory#create transfrom with grouped reducers and single reducers', () => {
+    const result = factory.create(createTransform, ['$foo | $bar', '$baz'])
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
     expect(result.reducers[1].type).toBe('ReducerPath')
     expect(result.reducers[2].type).toBe('ReducerPath')
   })
 
-  test('TransformFactory#create errors if invalid reducer type', () => {
-    const result = _.attempt(TransformFactory.create, 1)
+  test('factory#create errors if invalid reducer type', () => {
+    const result = _.attempt(factory.create, createTransform, 1)
 
     expect(result).toBeInstanceOf(Error)
   })
 
-  test('TransformFactory#create transfrom from array', () => {
-    const result = TransformFactory.create([
+  test('factory#create transfrom from array', () => {
+    const result = factory.create(createTransform, [
       '$foo.bar',
       'reducer:add | $foo.bar.zeta',
       (acc, done) => done(null, acc.value)

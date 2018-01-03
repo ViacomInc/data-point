@@ -5,9 +5,10 @@ const Promise = require('bluebird')
 const utils = require('../../utils')
 
 function resolveMapTransform (accumulator, transform, resolveTransform) {
-  if (transform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(transform)) {
     return Promise.resolve(accumulator)
   }
+
   return Promise.map(accumulator.value, itemValue => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
     return resolveTransform(itemContext, transform).then(res => {
@@ -22,9 +23,10 @@ function resolveMapTransform (accumulator, transform, resolveTransform) {
 }
 
 function resolveFilterTransform (accumulator, transform, resolveTransform) {
-  if (transform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(transform)) {
     return Promise.resolve(accumulator)
   }
+
   return Promise.filter(accumulator.value, itemValue => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
     return resolveTransform(itemContext, transform).then(res => {
@@ -41,9 +43,10 @@ function resolveFilterTransform (accumulator, transform, resolveTransform) {
 }
 
 function resolveFindTransform (accumulator, transform, resolveTransform) {
-  if (transform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(transform)) {
     return Promise.resolve(accumulator)
   }
+
   return Promise.reduce(
     accumulator.value,
     (result, itemValue) => {
@@ -102,7 +105,7 @@ function validateAsArray (acc) {
 function resolve (accumulator, resolveTransform) {
   const entity = accumulator.reducer.spec
 
-  // if there is nothing to do, lets just move on
+  // if there is nothing to do, let's just move on
   if (_.isEmpty(accumulator.value)) {
     return Promise.resolve(accumulator)
   }

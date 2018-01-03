@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const createTransform = require('../../transform-expression').create
+const createTransform = require('../../reducer').create
 const createReducerObject = require('../../reducer-object').create
 const deepFreeze = require('deep-freeze')
 const parseCompose = require('../parse-compose')

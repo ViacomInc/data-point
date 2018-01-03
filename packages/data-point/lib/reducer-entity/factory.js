@@ -23,6 +23,10 @@ function ReducerEntity () {
 
 module.exports.ReducerEntity = ReducerEntity
 
+/**
+ * @param {*} source
+ * @returns {boolean}
+ */
 function isEntity (source) {
   return (
     _.isString(source) &&

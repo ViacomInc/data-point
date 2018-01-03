@@ -1,22 +1,22 @@
 /* eslint-env jest */
 'use strict'
 
-const Factory = require('./factory')
+const factory = require('./factory')
 
 test('middleware-context.create', () => {
-  const result = Factory.create({})
+  const result = factory.create({})
   expect(result.resolve).toBeInstanceOf(Function)
 })
 
 describe('middleware-context.resolve', () => {
   test('assign value property', () => {
-    const result = Factory.create({})
+    const result = factory.create({})
     result.resolve('test')
     expect(result.value).toBe('test')
   })
 
   test('throw error if already resolved', () => {
-    const result = Factory.create({})
+    const result = factory.create({})
     expect(() => {
       result.___resolve = true
       result.resolve('test')
@@ -24,7 +24,7 @@ describe('middleware-context.resolve', () => {
   })
 
   test('throw error if done', () => {
-    const result = Factory.create({})
+    const result = factory.create({})
     expect(() => {
       result.___done = true
       result.resolve('test')
@@ -32,7 +32,7 @@ describe('middleware-context.resolve', () => {
   })
 
   test('resolve() with no arguments, should not have side effects', () => {
-    const result = Factory.create({})
+    const result = factory.create({})
     result.value = 'persist'
     result.resolve()
     expect(result.___resolve).toBe(false)

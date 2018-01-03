@@ -4,16 +4,17 @@ const Promise = require('bluebird')
 const partial = require('lodash/partial')
 
 const resolveReducer = require('../reducer').resolve
+const utils = require('../utils')
 
 /**
  * resolves a given transform
  * @param {Object} manager
  * @param {Accumulator} accumulator
- * @param {TransformExpression} transform
+ * @param {reducer} transform
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, accumulator, transform) {
-  if (!transform || transform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(transform)) {
     return Promise.resolve(accumulator)
   }
 

@@ -7,16 +7,26 @@ const middleware = require('../../middleware')
 
 const utils = require('../../utils')
 
-function resolveErrorReducers (error, accumulator, resolveReducer) {
+/**
+ * @param {Object} manager
+ * @param {Function} resolveTransform
+ * @param {Object} accumulator
+ * @param {Error} error
+ * @returns {Promise<Accumulator>}
+ */
+function resolveErrorReducers (manager, resolveTransform, accumulator, error) {
   const errorTransform = accumulator.reducer.spec.error
-
-  if (!errorTransform || errorTransform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(errorTransform)) {
     return Promise.reject(error)
   }
 
   const errorAccumulator = utils.set(accumulator, 'value', error)
 
-  const reducerResolved = resolveReducer(errorAccumulator, errorTransform)
+  const reducerResolved = resolveTransform(
+    manager,
+    errorAccumulator,
+    errorTransform
+  )
 
   return reducerResolved.then(result =>
     utils.set(accumulator, 'value', result.value)
@@ -25,6 +35,12 @@ function resolveErrorReducers (error, accumulator, resolveReducer) {
 
 module.exports.resolveErrorReducers = resolveErrorReducers
 
+/**
+ * @param {Object} manager
+ * @param {Accumulator} accumulator
+ * @param {reducer} reducer
+ * @returns {Accumulator}
+ */
 function createCurrentAccumulator (manager, accumulator, reducer) {
   // get defined source
   const entity = manager.entities.get(reducer.id)
@@ -60,6 +76,7 @@ module.exports.createCurrentAccumulator = createCurrentAccumulator
  * @param {Object} manager - dataPoint instance
  * @param {string} name - name of middleware to execute
  * @param {Accumulator} acc - current accumulator
+ * @returns {Promise}
  */
 function resolveMiddleware (manager, name, acc) {
   return middleware.resolve(manager, name, acc).then(middlewareResult => {
@@ -80,8 +97,17 @@ function resolveMiddleware (manager, name, acc) {
     return reqCtx
   })
 }
+
 module.exports.resolveMiddleware = resolveMiddleware
 
+/**
+ * @param {Object} manager
+ * @param {Function} resolveTransform
+ * @param {Accumulator} accumulator
+ * @param {reducer} reducer
+ * @param {Function} mainResolver
+ * @returns {Promise<Accumulator>}
+ */
 function resolveEntity (
   manager,
   resolveTransform,
@@ -111,9 +137,9 @@ function resolveEntity (
     .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
-    .then(acc => resolveTransform(acc, acc.reducer.spec.before))
-    .then(acc => mainResolver(acc, resolveTransform))
-    .then(acc => resolveTransform(acc, acc.reducer.spec.after))
+    .then(acc => resolveTransform(manager, acc, acc.reducer.spec.before))
+    .then(acc => mainResolver(acc, _.partial(resolveTransform, manager)))
+    .then(acc => resolveTransform(manager, acc, acc.reducer.spec.after))
     .then(acc =>
       middleware.resolve(manager, `${reducer.entityType}:after`, acc)
     )
@@ -126,7 +152,12 @@ function resolveEntity (
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
-      return resolveErrorReducers(error, currentAccumulator, resolveTransform)
+      return resolveErrorReducers(
+        manager,
+        resolveTransform,
+        currentAccumulator,
+        error
+      )
     })
     .then(resultContext => {
       if (trace === true) {
@@ -141,14 +172,26 @@ function resolveEntity (
 
 module.exports.resolveEntity = resolveEntity
 
-function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
+/**
+ * @param {Object} manager
+ * @param {Function} resolveTransform
+ * @param {Accumulator} accumulator
+ * @param {reducer} reducer
+ * @param {Function} mainResolver
+ * @returns {Promise<Accumulator>}
+ */
+function resolve (
+  manager,
+  resolveTransform,
+  accumulator,
+  reducer,
+  mainResolver
+) {
   const hasEmptyConditional = reducer.hasEmptyConditional
 
   if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
     return Promise.resolve(accumulator)
   }
-
-  const resolveTransform = _.partial(resolveReducer, manager)
 
   if (!reducer.asCollection) {
     return resolveEntity(

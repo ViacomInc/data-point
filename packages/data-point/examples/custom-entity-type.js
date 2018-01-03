@@ -28,7 +28,7 @@ function create (spec, id) {
 function resolve (accumulator, resolveTransform) {
   // get Entity Spec
   const spec = accumulator.reducer.spec
-  // resolve 'spec.value' TransformExpression
+  // resolve 'spec.value' reducer
   // against accumulator
   return resolveTransform(accumulator, spec.value).then(acc => {
     // execute lodash template against

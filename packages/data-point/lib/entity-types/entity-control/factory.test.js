@@ -1,10 +1,10 @@
 /* eslint-env jest */
 'use strict'
 
-const Factory = require('./factory')
+const factory = require('./factory')
 
-test('Factory#create', () => {
-  const control = Factory.create({
+test('factory#create', () => {
+  const control = factory.create({
     select: [
       { case: '$a', do: '$b' },
       { case: '$c', do: '$d' },
@@ -19,9 +19,9 @@ test('Factory#create', () => {
   expect(control).toHaveProperty('select')
 })
 
-test('Factory#create enforce default statement', () => {
+test('factory#create enforce default statement', () => {
   expect(() => {
-    Factory.create({
+    factory.create({
       select: [{ case: 'a()', do: 'b()' }, { case: 'c()', do: 'd()' }]
     })
   }).toThrow(/missing|default/)
