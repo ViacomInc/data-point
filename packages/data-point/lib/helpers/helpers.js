@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const resolveTransform = require('../reducer').resolve
+const resolveReducer = require('../reducer').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 
 const ReducerEntity = require('../reducer-entity/factory').ReducerEntity
@@ -10,6 +10,12 @@ const ReducerFunction = require('../reducer-function/factory').ReducerFunction
 const ReducerList = require('../reducer-list/factory').ReducerList
 const ReducerObject = require('../reducer-object/factory').ReducerObject
 const ReducerPath = require('../reducer-path/factory').ReducerPath
+
+module.exports.createReducer = require('../reducer').create
+
+module.exports.createEntity = require('../entity-types/base-entity').create
+
+module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
 
 function reducify (method) {
   return function () {
@@ -44,19 +50,6 @@ function mockReducer (reducer, acc) {
 
 module.exports.mockReducer = mockReducer
 
-const createReducer = require('../reducer').create
-
-// this is named createTransform for backwards compatibility
-module.exports.createTransform = createReducer
-
-const createEntity = require('../entity-types/base-entity').create
-
-module.exports.createEntity = createEntity
-
-const resolveEntity = require('../entity-types/base-entity/resolve').resolve
-
-module.exports.resolveEntity = resolveEntity
-
 function createAccumulator (value, options) {
   return AccumulatorFactory.create(
     Object.assign(
@@ -70,17 +63,17 @@ function createAccumulator (value, options) {
 
 module.exports.createAccumulator = createAccumulator
 
-function createResolveTransform (dataPoint) {
-  return resolveTransform.bind(null, dataPoint)
+function createReducerResolver (dataPoint) {
+  return resolveReducer.bind(null, dataPoint)
 }
 
-module.exports.createResolveTransform = createResolveTransform
+module.exports.createReducerResolver = createReducerResolver
 
 /**
  * @param {*} data
  * @returns {boolean}
  */
-function isTransform (data) {
+function isReducer (data) {
   return (
     data instanceof ReducerEntity ||
     data instanceof ReducerFunction ||
@@ -90,4 +83,4 @@ function isTransform (data) {
   )
 }
 
-module.exports.isTransform = isTransform
+module.exports.isReducer = isReducer

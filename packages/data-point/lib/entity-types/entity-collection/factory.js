@@ -17,7 +17,7 @@ const modifierKeys = ['filter', 'map', 'find']
 function createCompose (composeParse) {
   return composeParse.map(modifier => {
     return _.assign({}, modifier, {
-      transform: createReducer(modifier.spec)
+      reducer: createReducer(modifier.spec)
     })
   })
 }

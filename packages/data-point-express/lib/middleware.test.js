@@ -167,7 +167,7 @@ describe('createErrorMessage', () => {
   })
 })
 
-describe('resolveTransform', () => {
+describe('resolveReducer', () => {
   let dataPoint
   beforeAll(() => {
     dataPoint = DataPoint.create({
@@ -184,7 +184,7 @@ describe('resolveTransform', () => {
   test('it should resolve text response', done => {
     const app = new Express()
     app.get('/test', (req, res) => {
-      return Middleware.resolveTransform(dataPoint, 'transform:string', {}, res)
+      return Middleware.resolveReducer(dataPoint, 'transform:string', {}, res)
     })
     request(app)
       .get('/test')
@@ -199,7 +199,7 @@ describe('resolveTransform', () => {
   test('it should resolve object response', done => {
     const app = new Express()
     app.get('/test', (req, res) => {
-      return Middleware.resolveTransform(dataPoint, 'transform:object', {}, res)
+      return Middleware.resolveReducer(dataPoint, 'transform:object', {}, res)
     })
     request(app)
       .get('/test')
@@ -216,7 +216,7 @@ describe('resolveTransform', () => {
   test('it should resolve passing initial value', done => {
     const app = new Express()
     app.get('/test', (req, res) => {
-      return Middleware.resolveTransform(
+      return Middleware.resolveReducer(
         dataPoint,
         'transform:value',
         {},

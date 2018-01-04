@@ -8,7 +8,7 @@ const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
 
 let dataPoint
-let resolveTransform
+let resolveReducerBound
 
 function transform (entityId, value, options) {
   const reducer = dataPoint.entities.get(entityId)
@@ -21,12 +21,12 @@ function transform (entityId, value, options) {
       options
     )
   )
-  return resolveSchemaEntity(accumulator, resolveTransform)
+  return resolveSchemaEntity(accumulator, resolveReducerBound)
 }
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
-  resolveTransform = helpers.createResolveTransform(dataPoint)
+  resolveReducerBound = helpers.createReducerResolver(dataPoint)
 })
 
 describe('schema.resolve', function () {

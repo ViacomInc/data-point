@@ -21,9 +21,9 @@ function resolve (manager, reducerSource, value, options) {
     values: manager.values.getStore()
   })
 
-  const transform = Reducer.create(reducerSource)
+  const reducer = Reducer.create(reducerSource)
 
-  return Reducer.resolve(manager, context, transform)
+  return Reducer.resolve(manager, context, reducer)
 }
 
 function transform (manager, reducerSource, value, options, done) {

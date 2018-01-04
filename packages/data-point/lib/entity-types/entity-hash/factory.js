@@ -19,24 +19,24 @@ const modifierKeys = ['omitKeys', 'pickKeys', 'mapKeys', 'addValues', 'addKeys']
 function createCompose (composeParse) {
   return composeParse.map(modifier => {
     let spec
-    let transform
+    let reducer
     switch (modifier.type) {
       case 'addValues':
         spec = _.defaultTo(modifier.spec, {})
-        transform = deepFreeze(spec)
+        reducer = deepFreeze(spec)
         break
       case 'omitKeys':
       case 'pickKeys':
         spec = _.defaultTo(modifier.spec, [])
-        transform = Object.freeze(spec.slice(0))
+        reducer = Object.freeze(spec.slice(0))
         break
       case 'mapKeys':
       case 'addKeys':
-        transform = createReducerObject(createReducer, modifier.spec)
+        reducer = createReducerObject(createReducer, modifier.spec)
     }
 
     return Object.assign({}, modifier, {
-      transform
+      reducer
     })
   })
 }

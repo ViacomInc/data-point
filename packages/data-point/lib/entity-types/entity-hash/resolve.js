@@ -4,16 +4,16 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const utils = require('../../utils')
 
-function resolveMapKeys (accumulator, reducer, resolveTransform) {
-  return resolveTransform(accumulator, reducer).then(acc => {
+function resolveMapKeys (accumulator, reducer, resolveReducer) {
+  return resolveReducer(accumulator, reducer).then(acc => {
     return utils.set(accumulator, 'value', acc.value)
   })
 }
 
 module.exports.resolveMapKeys = resolveMapKeys
 
-function resolveAddKeys (accumulator, reducer, resolveTransform) {
-  return resolveTransform(accumulator, reducer).then(acc => {
+function resolveAddKeys (accumulator, reducer, resolveReducer) {
+  return resolveReducer(accumulator, reducer).then(acc => {
     return resolveAddValues(accumulator, acc.value)
   })
 }
@@ -79,7 +79,7 @@ const modifierFunctionMap = {
   addKeys: resolveAddKeys
 }
 
-function resolveCompose (accumulator, composeReducers, resolveTransform) {
+function resolveCompose (accumulator, composeReducers, resolveReducer) {
   if (composeReducers.length === 0) {
     return Promise.resolve(accumulator)
   }
@@ -90,15 +90,15 @@ function resolveCompose (accumulator, composeReducers, resolveTransform) {
       const modifierFunction = modifierFunctionMap[modifierSpec.type]
       return modifierFunction(
         resultContext,
-        modifierSpec.transform,
-        resolveTransform
+        modifierSpec.reducer,
+        resolveReducer
       )
     },
     accumulator
   )
 }
 
-function resolve (acc, resolveTransform) {
+function resolve (acc, resolveReducer) {
   const entity = acc.reducer.spec
 
   // if there is nothing to do, lets just move on
@@ -106,9 +106,9 @@ function resolve (acc, resolveTransform) {
     return Promise.resolve(acc)
   }
 
-  return resolveTransform(acc, entity.value)
+  return resolveReducer(acc, entity.value)
     .then(itemContext => validateAsObject(itemContext))
-    .then(acc => resolveCompose(acc, entity.compose, resolveTransform))
+    .then(acc => resolveCompose(acc, entity.compose, resolveReducer))
 }
 
 module.exports.resolve = resolve

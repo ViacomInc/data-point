@@ -30,26 +30,26 @@ module.exports.isObject = isObject
  * @param {Function} createReducer
  * @param {Object} source
  * @param {Array} path
- * @param {Array} reducerProps
+ * @param {Array} props
  * @returns {Array}
  */
-function getReducerProps (createReducer, source, path = [], reducerProps = []) {
+function getReducerProps (createReducer, source, path = [], props = []) {
   for (let key of Object.keys(source)) {
     const value = source[key]
     const fullPath = path.concat(key)
     if (isPlainObject(value)) {
       // NOTE: recursive call
-      getReducerProps(createReducer, value, fullPath, reducerProps)
+      getReducerProps(createReducer, value, fullPath, props)
       continue
     }
 
-    reducerProps.push({
+    props.push({
       path: fullPath,
-      transform: createReducer(value)
+      reducer: createReducer(value)
     })
   }
 
-  return reducerProps
+  return props
 }
 
 module.exports.getReducerProps = getReducerProps
