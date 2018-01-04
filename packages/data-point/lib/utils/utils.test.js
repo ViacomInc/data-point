@@ -101,6 +101,26 @@ describe('inspect', () => {
   })
 })
 
+describe('inspectProperties', () => {
+  test('It should inspect each property', () => {
+    const obj = {
+      a: 1,
+      b: { a: true, b: false }
+    }
+    expect(utils.inspectProperties(obj, ['a', 'b', 'c'])).toMatchSnapshot()
+  })
+
+  test('It should add indent to keys', () => {
+    const obj = {
+      a: 1,
+      b: true
+    }
+    expect(
+      utils.inspectProperties(obj, ['a', 'b', 'c'], '  ')
+    ).toMatchSnapshot()
+  })
+})
+
 describe('isEmpty', () => {
   test('It should test for empty', () => {
     expect(utils.isFalsy(null)).toEqual(true)
