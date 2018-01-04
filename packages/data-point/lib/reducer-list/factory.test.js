@@ -61,12 +61,12 @@ describe('factory#create', () => {
 })
 
 describe('factory#create', () => {
-  test('factory#create transfrom empty array', () => {
+  test('factory#create reducer from empty array', () => {
     const result = factory.create(createReducer, [])
     expect(result.reducers).toHaveLength(0)
   })
 
-  test('factory#create transfrom with single function', () => {
+  test('factory#create reducer from single function', () => {
     const result = factory.create(createReducer, (acc, done) =>
       done(null, acc.value)
     )
@@ -74,14 +74,14 @@ describe('factory#create', () => {
     expect(result.reducers[0].type).toBe('ReducerFunction')
   })
 
-  test('factory#create transfrom with string', () => {
+  test('factory#create reducer from string', () => {
     const result = factory.create(createReducer, ['$foo', '$bar'])
     expect(result.reducers).toHaveLength(2)
     expect(result.reducers[0].type).toBe('ReducerPath')
     expect(result.reducers[1].type).toBe('ReducerPath')
   })
 
-  test('factory#create transfrom with grouped reducers and single reducers', () => {
+  test('factory#create reducer from grouped reducers and single reducers', () => {
     const result = factory.create(createReducer, ['$foo | $bar', '$baz'])
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
@@ -95,7 +95,7 @@ describe('factory#create', () => {
     expect(result).toBeInstanceOf(Error)
   })
 
-  test('factory#create transfrom from array', () => {
+  test('factory#create reducer from array', () => {
     const result = factory.create(createReducer, [
       '$foo.bar',
       'reducer:add | $foo.bar.zeta',

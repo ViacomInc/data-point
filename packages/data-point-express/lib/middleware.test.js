@@ -28,7 +28,7 @@ function createReq () {
   return req
 }
 
-describe('buildTransfromOptions', () => {
+describe('buildTransformOptions', () => {
   const req = createReq()
 
   test('It should have locals object', () => {
