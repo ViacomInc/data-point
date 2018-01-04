@@ -5,8 +5,7 @@ const Promise = require('bluebird')
 const utils = require('../../utils')
 
 function resolveMapKeys (accumulator, reducer, resolveTransform) {
-  const transform = { reducers: [reducer] }
-  return resolveTransform(accumulator, transform).then(acc => {
+  return resolveTransform(accumulator, reducer).then(acc => {
     return utils.set(accumulator, 'value', acc.value)
   })
 }
@@ -14,8 +13,7 @@ function resolveMapKeys (accumulator, reducer, resolveTransform) {
 module.exports.resolveMapKeys = resolveMapKeys
 
 function resolveAddKeys (accumulator, reducer, resolveTransform) {
-  const transform = { reducers: [reducer] }
-  return resolveTransform(accumulator, transform).then(acc => {
+  return resolveTransform(accumulator, reducer).then(acc => {
     return resolveAddValues(accumulator, acc.value)
   })
 }

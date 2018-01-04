@@ -2,8 +2,8 @@
 
 const _ = require('lodash')
 const fp = require('lodash/fp')
-const createTransform = require('../../transform-expression').create
 const createBaseEntity = require('../base-entity').create
+const createReducer = require('../../reducer').create
 const TransformKeys = require('./transform-keys')
 
 /**
@@ -21,7 +21,7 @@ function getTransformKeys (options) {
   const transformKeys = TransformKeys.getTransformKeys(options)
   return transformKeys.map(key => {
     return Object.assign({}, key, {
-      transform: createTransform(key.value)
+      transform: createReducer(key.value)
     })
   })
 }
@@ -44,7 +44,7 @@ function create (spec, id) {
   const entity = createBaseEntity(EntityRequest, spec, id)
   const options = _.defaultTo(spec.options, {})
   entity.url = _.defaultTo(spec.url, '')
-  entity.beforeRequest = createTransform(spec.beforeRequest)
+  entity.beforeRequest = createReducer(spec.beforeRequest)
   entity.transformOptionKeys = getTransformKeys(options)
   entity.options = unsetTransformKeys(options, entity.transformOptionKeys)
 

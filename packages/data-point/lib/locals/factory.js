@@ -7,8 +7,7 @@ function Locals () {}
 module.exports.Locals = Locals
 
 /**
- * parses a raw transform
- * @param  {string} transformRaw raw value path to be parsed
+ * @param {Object} spec
  * @return {Locals}
  */
 function create (spec) {

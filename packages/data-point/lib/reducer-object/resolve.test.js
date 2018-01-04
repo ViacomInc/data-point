@@ -1,11 +1,11 @@
 /* eslint-env jest */
 'use strict'
 
+const createReducerObject = require('./index').create
+const resolveReducerObject = require('./index').resolve
+const createReducer = require('../reducer').create
+const resolveReducer = require('../reducer').resolve
 const AccumulatorFactory = require('../accumulator/factory')
-const reducerFactory = require('../reducer/factory')
-const resolveObject = require('./resolve').resolve
-const createTransform = require('../transform-expression').create
-const resolveTransform = require('../transform-expression').resolve
 const FixtureStore = require('../../test/utils/fixture-store')
 
 let dataPoint
@@ -16,7 +16,7 @@ beforeAll(() => {
 
 describe('resolve#reducerObject.resolve', () => {
   it('should return the accumulator for an empty reducer object', () => {
-    const reducer = reducerFactory.create(createTransform, {})
+    const reducer = createReducerObject(createReducer, {})
 
     const accumulator = AccumulatorFactory.create({
       value: {
@@ -28,9 +28,9 @@ describe('resolve#reducerObject.resolve', () => {
       }
     })
 
-    return resolveObject(
+    return resolveReducerObject(
       dataPoint,
-      resolveTransform,
+      resolveReducer,
       accumulator,
       reducer
     ).then(result => {
@@ -39,7 +39,7 @@ describe('resolve#reducerObject.resolve', () => {
   })
 
   it('should resolve a reducer object', () => {
-    const reducer = reducerFactory.create(createTransform, {
+    const reducer = createReducerObject(createReducer, {
       y: '$x.y',
       zPlusOne: ['$x.y.z', acc => acc.value + 1]
     })
@@ -54,9 +54,9 @@ describe('resolve#reducerObject.resolve', () => {
       }
     })
 
-    return resolveObject(
+    return resolveReducerObject(
       dataPoint,
-      resolveTransform,
+      resolveReducer,
       accumulator,
       reducer
     ).then(result => {
@@ -70,7 +70,7 @@ describe('resolve#reducerObject.resolve', () => {
   })
 
   it('should resolve a reducer object', () => {
-    const reducer = reducerFactory.create(createTransform, {
+    const reducer = createReducerObject(createReducer, {
       x: '$c.x',
       y: '$c.y',
       z: {
@@ -90,9 +90,9 @@ describe('resolve#reducerObject.resolve', () => {
       }
     })
 
-    return resolveObject(
+    return resolveReducerObject(
       dataPoint,
-      resolveTransform,
+      resolveReducer,
       accumulator,
       reducer
     ).then(result => {
@@ -108,7 +108,7 @@ describe('resolve#reducerObject.resolve', () => {
   })
 
   it('should resolve a reducer object', () => {
-    const reducer = reducerFactory.create(createTransform, {
+    const reducer = createReducerObject(createReducer, {
       x: [
         '$a',
         {
@@ -132,9 +132,9 @@ describe('resolve#reducerObject.resolve', () => {
       }
     })
 
-    return resolveObject(
+    return resolveReducerObject(
       dataPoint,
-      resolveTransform,
+      resolveReducer,
       accumulator,
       reducer
     ).then(result => {

@@ -4,7 +4,6 @@
 const requests = require('../../../test/definitions/requests')
 
 const requestFactory = require('./factory')
-const helpers = require('../../helpers')
 
 describe('create', () => {
   let request
@@ -41,7 +40,7 @@ describe('create', () => {
     request.transformOptionKeys.forEach(element => {
       expect(element).toHaveProperty('path')
       expect(element).toHaveProperty('transform')
-      expect(helpers.isTransform(element.transform)).toBe(true)
+      expect(element.transform).toHaveProperty('type', 'ReducerFunction')
     }, this)
   })
 })

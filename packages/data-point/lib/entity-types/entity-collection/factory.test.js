@@ -23,10 +23,7 @@ describe('parse loose modifiers', () => {
 
     expect(result.compose).toBeInstanceOf(Array)
     expect(result.compose[0]).toHaveProperty('type', 'map')
-    expect(result.compose[0].transform).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerPath')
   })
 
   test('modelFactory#create default', () => {
@@ -51,10 +48,7 @@ describe('parse compose modifier', () => {
 
     expect(result.compose).toBeInstanceOf(Array)
     expect(result.compose[0]).toHaveProperty('type', 'map')
-    expect(result.compose[0].transform).toHaveProperty(
-      'typeOf',
-      'TransformExpression'
-    )
+    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerPath')
   })
 
   test('throw error if compose is not an array', () => {

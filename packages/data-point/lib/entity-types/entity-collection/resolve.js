@@ -5,7 +5,7 @@ const Promise = require('bluebird')
 const utils = require('../../utils')
 
 function resolveMapTransform (accumulator, transform, resolveTransform) {
-  if (transform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(transform)) {
     return Promise.resolve(accumulator)
   }
   return Promise.map(accumulator.value, itemValue => {
@@ -22,7 +22,7 @@ function resolveMapTransform (accumulator, transform, resolveTransform) {
 }
 
 function resolveFilterTransform (accumulator, transform, resolveTransform) {
-  if (transform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(transform)) {
     return Promise.resolve(accumulator)
   }
   return Promise.filter(accumulator.value, itemValue => {
@@ -41,7 +41,7 @@ function resolveFilterTransform (accumulator, transform, resolveTransform) {
 }
 
 function resolveFindTransform (accumulator, transform, resolveTransform) {
-  if (transform.reducers.length === 0) {
+  if (utils.reducerIsEmpty(transform)) {
     return Promise.resolve(accumulator)
   }
   return Promise.reduce(

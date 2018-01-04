@@ -4,7 +4,6 @@
 const AccumulatorFactory = require('../accumulator/factory')
 const reducerFactory = require('../reducer/factory')
 const resolveFunction = require('./resolve')
-const createTransform = require('../transform-expression').create
 
 describe('resolve#filter.resolve', () => {
   test('resolves node style callback', () => {
@@ -12,7 +11,7 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create(createTransform, (acc, done) =>
+    const reducer = reducerFactory.create((acc, done) =>
       done(null, `${acc.value}node`)
     )
 
@@ -26,10 +25,7 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create(
-      createTransform,
-      acc => `${acc.value}sync`
-    )
+    const reducer = reducerFactory.create(acc => `${acc.value}sync`)
 
     return resolveFunction.resolve(accumulator, reducer).then(result => {
       expect(result.value).toBe('testsync')
@@ -41,7 +37,7 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create(createTransform, acc =>
+    const reducer = reducerFactory.create(acc =>
       Promise.resolve(`${acc.value}promise`)
     )
 
@@ -55,7 +51,7 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create(createTransform, (acc, done) => {
+    const reducer = reducerFactory.create((acc, done) => {
       return done(new Error('Test'))
     })
 

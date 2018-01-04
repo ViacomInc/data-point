@@ -1,8 +1,8 @@
 'use strict'
 
 const _ = require('lodash')
-const createTransform = require('../../transform-expression').create
 const parseCompose = require('../parse-compose')
+const createReducer = require('../../reducer').create
 const createBaseEntity = require('../base-entity').create
 
 /**
@@ -17,7 +17,7 @@ const modifierKeys = ['filter', 'map', 'find']
 function createCompose (composeParse) {
   return composeParse.map(modifier => {
     return _.assign({}, modifier, {
-      transform: createTransform(modifier.spec)
+      transform: createReducer(modifier.spec)
     })
   })
 }

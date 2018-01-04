@@ -8,15 +8,14 @@ const middleware = require('../../middleware')
 const utils = require('../../utils')
 
 function resolveErrorReducers (error, accumulator, resolveReducer) {
-  const errorTransform = accumulator.reducer.spec.error
-
-  if (!errorTransform || errorTransform.reducers.length === 0) {
+  const errorReducer = accumulator.reducer.spec.error
+  if (utils.reducerIsEmpty(errorReducer)) {
     return Promise.reject(error)
   }
 
   const errorAccumulator = utils.set(accumulator, 'value', error)
 
-  const reducerResolved = resolveReducer(errorAccumulator, errorTransform)
+  const reducerResolved = resolveReducer(errorAccumulator, errorReducer)
 
   return reducerResolved.then(result =>
     utils.set(accumulator, 'value', result.value)
@@ -84,7 +83,7 @@ module.exports.resolveMiddleware = resolveMiddleware
 
 function resolveEntity (
   manager,
-  resolveTransform,
+  resolveReducer,
   accumulator,
   reducer,
   mainResolver
@@ -106,14 +105,15 @@ function resolveEntity (
     timeId = `⧖ ${accUid.context.id}(${accUid.euid})`
     console.time(timeId)
   }
+
   return Promise.resolve(accUid)
     .then(acc => resolveMiddleware(manager, `before`, acc))
     .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
-    .then(acc => resolveTransform(acc, acc.reducer.spec.before))
-    .then(acc => mainResolver(acc, resolveTransform))
-    .then(acc => resolveTransform(acc, acc.reducer.spec.after))
+    .then(acc => resolveReducer(acc, acc.reducer.spec.before))
+    .then(acc => mainResolver(acc, resolveReducer))
+    .then(acc => resolveReducer(acc, acc.reducer.spec.after))
     .then(acc =>
       middleware.resolve(manager, `${reducer.entityType}:after`, acc)
     )
@@ -126,7 +126,7 @@ function resolveEntity (
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
-      return resolveErrorReducers(error, currentAccumulator, resolveTransform)
+      return resolveErrorReducers(error, currentAccumulator, resolveReducer)
     })
     .then(resultContext => {
       if (trace === true) {
@@ -148,12 +148,12 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
     return Promise.resolve(accumulator)
   }
 
-  const resolveTransform = _.partial(resolveReducer, manager)
+  const resolveReducerBound = _.partial(resolveReducer, manager)
 
   if (!reducer.asCollection) {
     return resolveEntity(
       manager,
-      resolveTransform,
+      resolveReducerBound,
       accumulator,
       reducer,
       mainResolver
@@ -173,7 +173,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
 
     return resolveEntity(
       manager,
-      resolveTransform,
+      resolveReducerBound,
       itemCtx,
       reducer,
       mainResolver
