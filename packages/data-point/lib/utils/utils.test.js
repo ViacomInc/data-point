@@ -105,7 +105,7 @@ describe('inspectProperties', () => {
   test('It should inspect each property', () => {
     const obj = {
       a: 1,
-      b: true
+      b: { a: true, b: false }
     }
     expect(utils.inspectProperties(obj, ['a', 'b', 'c'])).toMatchSnapshot()
   })

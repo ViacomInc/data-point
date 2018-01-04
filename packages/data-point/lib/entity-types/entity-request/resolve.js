@@ -111,7 +111,7 @@ function resolveRequest (acc, resolveTransform) {
     .catch(error => {
       const message = [
         'Entity info:',
-        '\n  Id: ',
+        '\n  - Id: ',
         _.get(acc, 'reducer.spec.id'),
         '\n',
         utils.inspectProperties(acc, ['options', 'params', 'value'], '  '),

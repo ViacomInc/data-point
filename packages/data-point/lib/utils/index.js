@@ -79,7 +79,9 @@ function inspectProperties (obj, props, indent = '') {
   return props.reduce((acc, key) => {
     const val = obj[key]
     if (typeof val !== 'undefined') {
-      return `${acc}${indent}- ${key}: ${util.inspect(obj[key])}\n`
+      return `${acc}${indent}- ${key}: ${util.inspect(obj[key], {
+        breakLength: 0
+      })}\n`
     }
     return acc
   }, '')

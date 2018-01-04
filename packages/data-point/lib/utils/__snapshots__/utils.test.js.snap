@@ -8,6 +8,7 @@ exports[`inspectProperties It should add indent to keys 1`] = `
 
 exports[`inspectProperties It should inspect each property 1`] = `
 "- a: 1
-- b: true
+- b: { a: true,
+  b: false }
 "
 `;

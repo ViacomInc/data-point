@@ -4,8 +4,9 @@ exports[`resolveRequest log errors when request fails 1`] = `
 "404 - \\"not found\\"
 
 Entity info:
-  Id: test:test
-  - options: { json: true, url: 'http://remote.test/source1' }
+  - Id: test:test
+  - options: { json: true,
+  url: 'http://remote.test/source1' }
   - value: 'foo'
 
   Request:
