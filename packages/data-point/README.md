@@ -29,6 +29,7 @@ npm install --save data-point
   - [ObjectReducer](#object-reducer)
   - [Higher Order Reducers](#higher-order-reducers)
   - [EntityReducer](#entity-reducer)
+  - [ListReducer](#list-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
