@@ -5,6 +5,12 @@ const Promise = require('bluebird')
 const resolveTransform = require('../reducer').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 
+const ReducerEntity = require('../reducer-entity/factory').ReducerEntity
+const ReducerFunction = require('../reducer-function/factory').ReducerFunction
+const ReducerList = require('../reducer-list/factory').ReducerList
+const ReducerObject = require('../reducer-object/factory').ReducerObject
+const ReducerPath = require('../reducer-path/factory').ReducerPath
+
 function reducify (method) {
   return function () {
     const partialArguments = Array.prototype.slice.call(arguments)
@@ -69,3 +75,19 @@ function createResolveTransform (dataPoint) {
 }
 
 module.exports.createResolveTransform = createResolveTransform
+
+/**
+ * @param {*} data
+ * @returns {boolean}
+ */
+function isTransform (data) {
+  return (
+    data instanceof ReducerEntity ||
+    data instanceof ReducerFunction ||
+    data instanceof ReducerList ||
+    data instanceof ReducerObject ||
+    data instanceof ReducerPath
+  )
+}
+
+module.exports.isTransform = isTransform
