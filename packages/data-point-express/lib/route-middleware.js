@@ -8,7 +8,7 @@ function dataPointEntityRoute (dataPoint, entityId, req, res, next) {
     routeRequestType: 'api',
     pathname
   })
-  Middleware.resolveTransform(dataPoint, entityId, transformOptions, res)
+  Middleware.resolveReducer(dataPoint, entityId, transformOptions, res)
 }
 
 function create (dataPoint, entityId) {

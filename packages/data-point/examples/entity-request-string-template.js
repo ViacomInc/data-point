@@ -48,7 +48,7 @@ const options = {
   locals: { name: 'nodejs' }
 }
 
-// here we pass options (thrid argument to transform)
+// here we pass options (third argument to transform)
 dataPoint.transform('request:getOrgInfoFromLocals', true, options).then(acc => {
   console.log(acc.value)
   // entire result from https://api.github.com/orgs/nodejs

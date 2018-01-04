@@ -4,18 +4,18 @@
 const ResolveEntity = require('./resolve')
 const createReducerEntity = require('../../reducer-entity').create
 const createReducer = require('../../reducer').create
-const resolveTransform = require('../../reducer').resolve
+const resolveReducer = require('../../reducer').resolve
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
 const utils = require('../../utils')
 
 let dataPoint
-let resolveTransformBound
+let resolveReducerBound
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
-  resolveTransformBound = helpers.createResolveTransform(dataPoint)
+  resolveReducerBound = helpers.createReducerResolver(dataPoint)
 })
 
 afterEach(() => {
@@ -36,7 +36,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
     return ResolveEntity.resolveErrorReducers(
       err,
       accumulator,
-      resolveTransformBound
+      resolveReducerBound
     )
       .catch(reason => reason)
       .then(acc => {
@@ -58,7 +58,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
     return ResolveEntity.resolveErrorReducers(
       err,
       accumulator,
-      resolveTransformBound
+      resolveReducerBound
     ).then(acc => {
       expect(acc.value).toEqual('pass')
     })
@@ -132,14 +132,14 @@ describe('ResolveEntity.resolveMiddleware', () => {
 })
 
 describe('ResolveEntity.resolveEntity', () => {
-  const defaultResolver = (acc, resolveTransform) => Promise.resolve(acc)
+  const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc)
 
   const resolveEntity = (entityId, input, options, resolver) => {
     const racc = helpers.createAccumulator.call(null, input, options)
     const reducer = createReducerEntity(entityId)
     return ResolveEntity.resolveEntity(
       dataPoint,
-      resolveTransformBound,
+      resolveReducerBound,
       racc,
       reducer,
       resolver || defaultResolver
@@ -206,7 +206,7 @@ describe('ResolveEntity.resolve', () => {
     const reducer = createReducerEntity(entityId)
     return ResolveEntity.resolve(
       dataPoint,
-      resolveTransform,
+      resolveReducer,
       racc,
       reducer,
       resolver
@@ -214,7 +214,7 @@ describe('ResolveEntity.resolve', () => {
   }
 
   test('It should resolve as single entity', () => {
-    const resolver = (acc, resolveTransform) => {
+    const resolver = (acc, resolveReducer) => {
       const result = utils.set(acc, 'value', 'bar')
       return Promise.resolve(result)
     }
@@ -224,7 +224,7 @@ describe('ResolveEntity.resolve', () => {
   })
 
   test('It should resolve as collection', () => {
-    const resolver = (acc, resolveTransform) => {
+    const resolver = (acc, resolveReducer) => {
       const result = utils.set(acc, 'value', 'bar')
       return Promise.resolve(result)
     }
@@ -233,7 +233,7 @@ describe('ResolveEntity.resolve', () => {
     })
   })
   test('It should return undefined if accumulator is not Array', () => {
-    const resolver = (acc, resolveTransform) => {
+    const resolver = (acc, resolveReducer) => {
       return Promise.resolve(acc)
     }
     return resolve(resolver)('hash:asIs[]', {}).then(acc => {
@@ -248,7 +248,7 @@ describe('ResolveEntity.resolve', () => {
   })
 
   test('It should execute resolver if flag hasEmptyConditional is true and value is not empty', () => {
-    const resolver = (acc, resolveTransform) => {
+    const resolver = (acc, resolveReducer) => {
       const result = utils.set(acc, 'value', 'bar')
       return Promise.resolve(result)
     }
@@ -259,7 +259,7 @@ describe('ResolveEntity.resolve', () => {
 
   test('It should execute resolver only on non empty items of collection if hasEmptyConditional is set', () => {
     let count = 0
-    const resolver = (acc, resolveTransform) => {
+    const resolver = (acc, resolveReducer) => {
       const result = utils.set(acc, 'value', count++)
       return Promise.resolve(result)
     }

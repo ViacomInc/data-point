@@ -7,11 +7,11 @@ const resolveReducerList = require('../reducer-list').resolve
 
 /**
  * @param {Object} manager
- * @param {Function} resolveTransform
+ * @param {Function} resolveReducer
  * @param {string} reducerType
  * @returns
  */
-function getReducerFunction (manager, resolveTransform, reducerType) {
+function getReducerFunction (manager, resolveReducer, reducerType) {
   let resolver
 
   /* eslint indent: ["error", 2, { "SwitchCase": 1 }] */
@@ -24,15 +24,15 @@ function getReducerFunction (manager, resolveTransform, reducerType) {
       break
     case 'ReducerObject':
       // NOTE: recursive call
-      resolver = partial(resolveReducerObject, manager, resolveTransform)
+      resolver = partial(resolveReducerObject, manager, resolveReducer)
       break
     case 'ReducerEntity':
       // NOTE: recursive call
-      resolver = partial(resolveReducerEntity, manager, resolveTransform)
+      resolver = partial(resolveReducerEntity, manager, resolveReducer)
       break
     case 'ReducerList':
       // NOTE: recursive call
-      resolver = partial(resolveReducerList, manager, resolveTransform)
+      resolver = partial(resolveReducerList, manager, resolveReducer)
       break
     default:
       throw new Error(`Reducer type '${reducerType}' was not recognized`)

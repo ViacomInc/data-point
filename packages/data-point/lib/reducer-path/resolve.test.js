@@ -4,8 +4,8 @@
 const reducerPath = require('./index')
 const AccumulatorFactory = require('../accumulator/factory')
 
-describe('resolve#transform.resolve', () => {
-  function resolve (value, rawReducer) {
+describe('ReducerPath#resolve', () => {
+  function resolve (value, reducerSource) {
     const locals = {
       a: ['testA']
     }
@@ -14,7 +14,7 @@ describe('resolve#transform.resolve', () => {
       locals
     })
 
-    return reducerPath.resolve(accumulator, reducerPath.create(rawReducer))
+    return reducerPath.resolve(accumulator, reducerPath.create(reducerSource))
   }
 
   test('resolve current value', () => {

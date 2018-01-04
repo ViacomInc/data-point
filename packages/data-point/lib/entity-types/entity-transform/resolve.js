@@ -1,8 +1,8 @@
 'use strict'
 
-function resolve (accumulator, resolveTransform) {
+function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec
-  return resolveTransform(accumulator, entity.value)
+  return resolveReducer(accumulator, entity.value)
 }
 
 module.exports.resolve = resolve
