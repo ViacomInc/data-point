@@ -4,20 +4,21 @@ const utils = require('../utils')
 
 /**
  * @param {Object} manager
- * @param {Function} resolveTransform
+ * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerObject} reducer
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveTransform, accumulator, reducer) {
+function resolve (manager, resolveReducer, accumulator, reducer) {
   if (reducer.props.length === 0) {
     return Promise.resolve(accumulator)
   }
 
-  const props = Promise.map(reducer.props, ({ path, transform }) => {
-    return resolveTransform(manager, accumulator, transform).then(
-      ({ value }) => ({ path, value })
-    )
+  const props = Promise.map(reducer.props, ({ path, reducer }) => {
+    return resolveReducer(manager, accumulator, reducer).then(({ value }) => ({
+      path,
+      value
+    }))
   })
 
   return props

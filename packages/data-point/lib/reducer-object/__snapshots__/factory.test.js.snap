@@ -6,7 +6,7 @@ Array [
     "path": Array [
       "a1",
     ],
-    "transform": ReducerPath {
+    "reducer": ReducerPath {
       "asCollection": true,
       "body": [Function],
       "name": "a",
@@ -18,7 +18,7 @@ Array [
       "b1",
       "a2",
     ],
-    "transform": ReducerList {
+    "reducer": ReducerList {
       "reducers": Array [
         ReducerPath {
           "asCollection": false,
@@ -39,13 +39,13 @@ Array [
       "b1",
       "b2",
     ],
-    "transform": ReducerObject {
+    "reducer": ReducerObject {
       "props": Array [
         Object {
           "path": Array [
             "a3",
           ],
-          "transform": ReducerEntity {
+          "reducer": ReducerEntity {
             "asCollection": false,
             "entityType": "transform",
             "hasEmptyConditional": false,
@@ -59,7 +59,7 @@ Array [
           "path": Array [
             "b3",
           ],
-          "transform": ReducerPath {
+          "reducer": ReducerPath {
             "asCollection": false,
             "body": [Function],
             "name": "b1.b2.b3",

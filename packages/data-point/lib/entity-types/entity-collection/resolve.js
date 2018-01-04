@@ -4,13 +4,13 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const utils = require('../../utils')
 
-function resolveMapTransform (accumulator, transform, resolveTransform) {
-  if (utils.reducerIsEmpty(transform)) {
+function resolveMapReducer (accumulator, reducer, resolveReducer) {
+  if (utils.reducerIsEmpty(reducer)) {
     return Promise.resolve(accumulator)
   }
   return Promise.map(accumulator.value, itemValue => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
-    return resolveTransform(itemContext, transform).then(res => {
+    return resolveReducer(itemContext, reducer).then(res => {
       return res.value
     })
   })
@@ -21,13 +21,13 @@ function resolveMapTransform (accumulator, transform, resolveTransform) {
     })
 }
 
-function resolveFilterTransform (accumulator, transform, resolveTransform) {
-  if (utils.reducerIsEmpty(transform)) {
+function resolveFilterReducer (accumulator, reducer, resolveReducer) {
+  if (utils.reducerIsEmpty(reducer)) {
     return Promise.resolve(accumulator)
   }
   return Promise.filter(accumulator.value, itemValue => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
-    return resolveTransform(itemContext, transform).then(res => {
+    return resolveReducer(itemContext, reducer).then(res => {
       return !!res.value
     })
   })
@@ -40,8 +40,8 @@ function resolveFilterTransform (accumulator, transform, resolveTransform) {
     })
 }
 
-function resolveFindTransform (accumulator, transform, resolveTransform) {
-  if (utils.reducerIsEmpty(transform)) {
+function resolveFindReducer (accumulator, reducer, resolveReducer) {
+  if (utils.reducerIsEmpty(reducer)) {
     return Promise.resolve(accumulator)
   }
   return Promise.reduce(
@@ -50,7 +50,7 @@ function resolveFindTransform (accumulator, transform, resolveTransform) {
       const itemContext = utils.set(accumulator, 'value', itemValue)
       return (
         result ||
-        resolveTransform(itemContext, transform).then(res => {
+        resolveReducer(itemContext, reducer).then(res => {
           return res.value ? itemValue : undefined
         })
       )
@@ -65,12 +65,12 @@ function resolveFindTransform (accumulator, transform, resolveTransform) {
 }
 
 const modifierFunctionMap = {
-  filter: resolveFilterTransform,
-  map: resolveMapTransform,
-  find: resolveFindTransform
+  filter: resolveFilterReducer,
+  map: resolveMapReducer,
+  find: resolveFindReducer
 }
 
-function resolveCompose (accumulator, composeReducers, resolveTransform) {
+function resolveCompose (accumulator, composeReducers, resolveReducer) {
   if (composeReducers.length === 0) {
     return Promise.resolve(accumulator)
   }
@@ -81,8 +81,8 @@ function resolveCompose (accumulator, composeReducers, resolveTransform) {
       const modifierFunction = modifierFunctionMap[modifierSpec.type]
       return modifierFunction(
         resultContext,
-        modifierSpec.transform,
-        resolveTransform
+        modifierSpec.reducer,
+        resolveReducer
       )
     },
     accumulator
@@ -99,7 +99,7 @@ function validateAsArray (acc) {
     )
 }
 
-function resolve (accumulator, resolveTransform) {
+function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec
 
   // if there is nothing to do, lets just move on
@@ -107,9 +107,9 @@ function resolve (accumulator, resolveTransform) {
     return Promise.resolve(accumulator)
   }
 
-  return resolveTransform(accumulator, entity.value)
+  return resolveReducer(accumulator, entity.value)
     .then(acc => validateAsArray(acc))
-    .then(acc => resolveCompose(acc, entity.compose, resolveTransform))
+    .then(acc => resolveCompose(acc, entity.compose, resolveReducer))
 }
 
 module.exports.resolve = resolve

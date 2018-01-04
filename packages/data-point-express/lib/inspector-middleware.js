@@ -25,7 +25,7 @@ function dataPointInspectRoute (dataPoint, req, res, next) {
     pathname
   })
 
-  Middleware.resolveTransform(dataPoint, entityId, transformOptions, res, value)
+  Middleware.resolveReducer(dataPoint, entityId, transformOptions, res, value)
 }
 
 function create (dataPoint) {

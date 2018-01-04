@@ -24,7 +24,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
+    expect(result.compose[0].reducer).toHaveProperty('type', 'ReducerObject')
   })
   test('factory#addKeys', () => {
     const result = factory.create({
@@ -34,7 +34,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'addKeys')
-    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
+    expect(result.compose[0].reducer).toHaveProperty('type', 'ReducerObject')
   })
   test('factory#omitKeys', () => {
     const result = factory.create({
@@ -42,7 +42,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'omitKeys')
-    expect(result.compose[0].transform).toEqual(['a'])
+    expect(result.compose[0].reducer).toEqual(['a'])
   })
   test('factory#pickKeys', () => {
     const result = factory.create({
@@ -50,7 +50,7 @@ describe('factory#parse loose modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'pickKeys')
-    expect(result.compose[0].transform).toEqual(['a'])
+    expect(result.compose[0].reducer).toEqual(['a'])
   })
 })
 
@@ -103,7 +103,7 @@ describe('factory#parse composed modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
+    expect(result.compose[0].reducer).toHaveProperty('type', 'ReducerObject')
   })
   test('factory#multiple modifiers', () => {
     const result = factory.create({
@@ -125,20 +125,20 @@ describe('factory#parse composed modifiers', () => {
     })
 
     expect(result.compose[0]).toHaveProperty('type', 'addKeys')
-    expect(result.compose[0].transform).toHaveProperty('type', 'ReducerObject')
-    expect(result.compose[0].transform.props[0].path).toEqual(['a'])
-    expect(result.compose[0].transform.props[0].transform).toHaveProperty(
+    expect(result.compose[0].reducer).toHaveProperty('type', 'ReducerObject')
+    expect(result.compose[0].reducer.props[0].path).toEqual(['a'])
+    expect(result.compose[0].reducer.props[0].reducer).toHaveProperty(
       'type',
       'ReducerPath'
     )
     expect(result.compose[1]).toHaveProperty('type', 'mapKeys')
-    expect(result.compose[1].transform).toHaveProperty('type', 'ReducerObject')
-    expect(result.compose[1].transform.props[0].path).toEqual(['a'])
-    expect(result.compose[1].transform.props[0].transform).toHaveProperty(
+    expect(result.compose[1].reducer).toHaveProperty('type', 'ReducerObject')
+    expect(result.compose[1].reducer.props[0].path).toEqual(['a'])
+    expect(result.compose[1].reducer.props[0].reducer).toHaveProperty(
       'type',
       'ReducerPath'
     )
     expect(result.compose[2]).toHaveProperty('type', 'omitKeys')
-    expect(result.compose[2].transform).toEqual(['a'])
+    expect(result.compose[2].reducer).toEqual(['a'])
   })
 })

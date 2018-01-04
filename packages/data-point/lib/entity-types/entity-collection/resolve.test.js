@@ -9,7 +9,7 @@ const testData = require('../../../test/data.json')
 const helpers = require('../../helpers')
 
 let dataPoint
-let resolveTransform
+let resolveReducerBound
 
 function transform (entityId, value, options) {
   const reducer = dataPoint.entities.get(entityId)
@@ -22,12 +22,12 @@ function transform (entityId, value, options) {
       options
     )
   )
-  return resolveCollectionEntity(accumulator, resolveTransform)
+  return resolveCollectionEntity(accumulator, resolveReducerBound)
 }
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
-  resolveTransform = helpers.createResolveTransform(dataPoint)
+  resolveReducerBound = helpers.createReducerResolver(dataPoint)
 })
 
 beforeEach(() => {

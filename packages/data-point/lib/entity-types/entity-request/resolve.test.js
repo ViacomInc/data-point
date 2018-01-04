@@ -16,7 +16,7 @@ const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
 
 let dataPoint
-let resolveTransform
+let resolveReducerBound
 
 function transform (entityId, value, options) {
   const reducer = dataPoint.entities.get(entityId)
@@ -26,7 +26,7 @@ function transform (entityId, value, options) {
     values
   })
   const acc = Object.assign({}, accumulator, options)
-  return Resolve.resolve(acc, resolveTransform)
+  return Resolve.resolve(acc, resolveReducerBound)
 }
 
 let locals
@@ -47,7 +47,7 @@ beforeAll(() => {
     itemPath: '/source1'
   })
   dataPoint = FixtureStore.create()
-  resolveTransform = helpers.createResolveTransform(dataPoint)
+  resolveReducerBound = helpers.createReducerResolver(dataPoint)
   values = dataPoint.values.getStore()
 })
 
@@ -109,7 +109,7 @@ describe('resolveOptions', () => {
       },
       transformOptionKeys: []
     })
-    return Resolve.resolveOptions(acc, resolveTransform).then(result => {
+    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
       expect(result.options).toEqual({
         port: 80
       })
@@ -137,7 +137,7 @@ describe('resolveOptions', () => {
         }
       }
     }
-    return Resolve.resolveOptions(acc, resolveTransform).then(result => {
+    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
       expect(result.options).toEqual({
         port: 80,
         qs: {

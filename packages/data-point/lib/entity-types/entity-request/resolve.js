@@ -51,16 +51,16 @@ module.exports.getRequestOptions = getRequestOptions
 /**
  * Resolve options object
  * @param {Accumulator} acc
- * @param {function} resolveTransform
+ * @param {function} resolveReducer
  */
-function resolveOptions (acc, resolveTransform) {
+function resolveOptions (acc, resolveReducer) {
   const options = acc.reducer.spec.options
   const transformOptionKeys = acc.reducer.spec.transformOptionKeys
   // iterate over each option transform key
   return Promise.reduce(
     transformOptionKeys,
     (newOptions, key) => {
-      return resolveTransform(acc, key.transform).then(res => {
+      return resolveReducer(acc, key.transform).then(res => {
         return fp.set(key.path, res.value, newOptions)
       })
     },
@@ -82,7 +82,7 @@ function inspect (acc) {
 }
 module.exports.inspect = inspect
 
-function resolveBeforeRequest (acc, resolveTransform) {
+function resolveBeforeRequest (acc, resolveReducer) {
   const entity = acc.reducer.spec
 
   let options = getRequestOptions(acc.options)
@@ -97,14 +97,14 @@ function resolveBeforeRequest (acc, resolveTransform) {
   }
 
   const beforeRequestAcc = utils.set(acc, 'value', options)
-  return resolveTransform(beforeRequestAcc, entity.beforeRequest).then(result =>
+  return resolveReducer(beforeRequestAcc, entity.beforeRequest).then(result =>
     utils.set(acc, 'options', result.value)
   )
 }
 
 module.exports.resolveBeforeRequest = resolveBeforeRequest
 
-function resolveRequest (acc, resolveTransform) {
+function resolveRequest (acc, resolveReducer) {
   inspect(acc)
   return rp(acc.options)
     .then(result => utils.set(acc, 'value', result))
@@ -135,14 +135,14 @@ function resolveRequest (acc, resolveTransform) {
 
 module.exports.resolveRequest = resolveRequest
 
-function resolve (acc, resolveTransform) {
+function resolve (acc, resolveReducer) {
   const entity = acc.reducer.spec
   return Promise.resolve(acc)
-    .then(itemContext => resolveTransform(itemContext, entity.value))
-    .then(itemContext => resolveOptions(itemContext, resolveTransform))
+    .then(itemContext => resolveReducer(itemContext, entity.value))
+    .then(itemContext => resolveOptions(itemContext, resolveReducer))
     .then(itemContext => resolveUrl(itemContext))
-    .then(itemContext => resolveBeforeRequest(itemContext, resolveTransform))
-    .then(itemContext => resolveRequest(itemContext, resolveTransform))
+    .then(itemContext => resolveBeforeRequest(itemContext, resolveReducer))
+    .then(itemContext => resolveRequest(itemContext, resolveReducer))
 }
 
 module.exports.resolve = resolve

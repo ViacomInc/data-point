@@ -2878,7 +2878,7 @@ function create(spec:Object):Object
 This is where your entity resolution logic is to be implemented. It follows the following syntax: 
 
 ```js
-function resolve(acc:Accumulator, resolveTransform:function):Promise<Accumulator>
+function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
 ```
 
 <details>
@@ -2910,14 +2910,14 @@ function resolve(acc:Accumulator, resolveTransform:function):Promise<Accumulator
   /**
   * Resolve entity
   * @param {Accumulator} accumulator
-  * @param {function} resolveTransform
+  * @param {function} resolveReducer
   * @return {Promise}
   */
-  function resolve (accumulator, resolveTransform) {
+  function resolve (accumulator, resolveReducer) {
     // get Entity Spec
     const spec = accumulator.reducer.spec
     // resolve 'spec.value' reducer against accumulator
-    return resolveTransform(accumulator, spec.value)
+    return resolveReducer(accumulator, spec.value)
       .then((acc) => {
         // execute lodash template against accumulator value
         const output = spec.template(acc.value)

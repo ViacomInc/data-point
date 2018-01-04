@@ -24,10 +24,10 @@ function validateContext (acc) {
 
 module.exports.validateContext = validateContext
 
-function resolve (acc, resolveTransform) {
+function resolve (acc, resolveReducer) {
   const value = acc.reducer.spec.value
 
-  return resolveTransform(acc, value).then(racc => {
+  return resolveReducer(acc, value).then(racc => {
     return validateContext(racc)
   })
 }

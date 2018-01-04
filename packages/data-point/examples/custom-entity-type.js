@@ -22,15 +22,15 @@ function create (spec, id) {
 /**
  * Resolve entity
  * @param {Accumulator} accumulator
- * @param {function} resolveTransform
+ * @param {Function} resolveReducer
  * @return {Promise}
  */
-function resolve (accumulator, resolveTransform) {
+function resolve (accumulator, resolveReducer) {
   // get Entity Spec
   const spec = accumulator.reducer.spec
   // resolve 'spec.value' reducer
   // against accumulator
-  return resolveTransform(accumulator, spec.value).then(acc => {
+  return resolveReducer(accumulator, spec.value).then(acc => {
     // execute lodash template against
     // accumulator value
     const output = spec.template(acc.value)

@@ -42,15 +42,9 @@ function createErrorMessage (err) {
   }
 }
 
-function resolveTransform (
-  dataPoint,
-  transform,
-  options,
-  res,
-  initialValue = {}
-) {
+function resolveReducer (dataPoint, reducer, options, res, initialValue = {}) {
   dataPoint
-    .transform(transform, initialValue, options)
+    .transform(reducer, initialValue, options)
     .then(acc => {
       if (typeof acc.value === 'string') {
         res.send(acc.value)
@@ -66,7 +60,7 @@ function resolveTransform (
 
 module.exports = {
   getErrorOwnKeys,
-  resolveTransform,
+  resolveReducer,
   createErrorMessage,
   buildTransformOptions
 }
