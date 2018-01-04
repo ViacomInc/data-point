@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const util = require('util')
 
 /**
  * sets key to value of a copy of target. target stays untouched, if key is
@@ -68,6 +69,25 @@ function inspect (acc, data) {
 }
 
 module.exports.inspect = inspect
+
+/**
+ * @param {*} obj - object to inspect
+ * @param {Array} props - properties to inspect
+ * @param {string} indent - indent to be used on each key
+ */
+function inspectProperties (obj, props, indent = '') {
+  return props.reduce((acc, key) => {
+    const val = obj[key]
+    if (typeof val !== 'undefined') {
+      return `${acc}${indent}- ${key}: ${util.inspect(obj[key], {
+        breakLength: 0
+      })}\n`
+    }
+    return acc
+  }, '')
+}
+
+module.exports.inspectProperties = inspectProperties
 
 /**
  * @param {reducer} reducer
