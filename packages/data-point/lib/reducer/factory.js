@@ -19,6 +19,7 @@ const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]
 function dealWithPipeOperators (source) {
   let result = ReducerList.parse(source)
   if (result.length === 1) {
+    // do not create a ReducerList that only contains a single reducer
     result = result[0]
   }
 

@@ -94,9 +94,19 @@ module.exports.inspectProperties = inspectProperties
  * @returns {boolean}
  */
 function reducerIsEmpty (reducer) {
-  return (
-    !reducer || (reducer.type === 'ReducerList' && _.isEmpty(reducer.reducers))
-  )
+  if (!reducer) {
+    return true
+  }
+
+  if (reducer.type === 'ReducerList') {
+    return _.isEmpty(reducer.reducers)
+  }
+
+  if (reducer.type === 'ReducerObject') {
+    return _.isEmpty(reducer.props)
+  }
+
+  return false
 }
 
 module.exports.reducerIsEmpty = reducerIsEmpty
