@@ -5,7 +5,7 @@ const Factory = require('./factory')
 const Resolve = require('./resolve')
 
 const reducers = require('../../test/utils/reducers')
-const resolveReducerList = require('../reducer-list').resolve
+const resolveReducerList = require('./reducer-list').resolve
 
 const fixtureStore = require('../../test/utils/fixture-store')
 const testData = require('../../test/data.json')

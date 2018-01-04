@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const Reducer = require('../reducer')
+const Reducer = require('../reducer-types')
 const AccumulatorFactory = require('../accumulator/factory')
 
 function getOptions (spec) {

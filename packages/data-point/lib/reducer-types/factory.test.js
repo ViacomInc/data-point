@@ -3,10 +3,10 @@
 
 const Factory = require('./factory')
 
-const ReducerPath = require('../reducer-path')
-const ReducerFunction = require('../reducer-function')
-const ReducerObject = require('../reducer-object')
-const ReducerEntity = require('../reducer-entity')
+const ReducerPath = require('./reducer-path')
+const ReducerFunction = require('./reducer-function')
+const ReducerObject = require('./reducer-object')
+const ReducerEntity = require('./reducer-entity')
 
 describe('reducer#create', () => {
   test('create path', () => {

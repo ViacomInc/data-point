@@ -6,7 +6,7 @@ const nock = require('nock')
 const Resolve = require('./resolve')
 
 const AccumulatorFactory = require('../../accumulator/factory')
-const ReducerFactory = require('../../reducer/factory')
+const ReducerFactory = require('../../reducer-types/factory')
 const LocalsFactory = require('../../locals/factory')
 
 const ResolveEntity = require('../base-entity/resolve')

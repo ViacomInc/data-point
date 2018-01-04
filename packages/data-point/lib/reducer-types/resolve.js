@@ -1,9 +1,9 @@
 const partial = require('lodash/partial')
-const resolveReducerPath = require('../reducer-path').resolve
-const resolveReducerFunction = require('../reducer-function').resolve
-const resolveReducerObject = require('../reducer-object').resolve
-const resolveReducerEntity = require('../reducer-entity').resolve
-const resolveReducerList = require('../reducer-list').resolve
+const resolveReducerPath = require('./reducer-path').resolve
+const resolveReducerFunction = require('./reducer-function').resolve
+const resolveReducerObject = require('./reducer-object').resolve
+const resolveReducerEntity = require('./reducer-entity').resolve
+const resolveReducerList = require('./reducer-list').resolve
 
 /**
  * @param {Object} manager

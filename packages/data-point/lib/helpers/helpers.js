@@ -2,16 +2,19 @@
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const resolveReducer = require('../reducer').resolve
+const resolveReducer = require('../reducer-types').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 
-const ReducerEntity = require('../reducer-entity/factory').ReducerEntity
-const ReducerFunction = require('../reducer-function/factory').ReducerFunction
-const ReducerList = require('../reducer-list/factory').ReducerList
-const ReducerObject = require('../reducer-object/factory').ReducerObject
-const ReducerPath = require('../reducer-path/factory').ReducerPath
+const ReducerEntity = require('../reducer-types/reducer-entity/factory')
+  .ReducerEntity
+const ReducerFunction = require('../reducer-types/reducer-function/factory')
+  .ReducerFunction
+const ReducerList = require('../reducer-types/reducer-list/factory').ReducerList
+const ReducerObject = require('../reducer-types/reducer-object/factory')
+  .ReducerObject
+const ReducerPath = require('../reducer-types/reducer-path/factory').ReducerPath
 
-module.exports.createReducer = require('../reducer').create
+module.exports.createReducer = require('../reducer-types').create
 
 module.exports.createEntity = require('../entity-types/base-entity').create
 

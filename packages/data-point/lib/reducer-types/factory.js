@@ -2,11 +2,11 @@
 
 const _ = require('lodash')
 
-const ReducerPath = require('../reducer-path')
-const ReducerFunction = require('../reducer-function')
-const ReducerObject = require('../reducer-object')
-const ReducerEntity = require('../reducer-entity')
-const ReducerList = require('../reducer-list')
+const ReducerPath = require('./reducer-path')
+const ReducerFunction = require('./reducer-function')
+const ReducerObject = require('./reducer-object')
+const ReducerEntity = require('./reducer-entity')
+const ReducerList = require('./reducer-list')
 const util = require('util')
 
 const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]

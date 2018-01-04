@@ -1,8 +1,8 @@
 /* eslint-env jest */
 'use strict'
 
-const AccumulatorFactory = require('../accumulator/factory')
-const reducerFactory = require('../reducer/factory')
+const AccumulatorFactory = require('../../accumulator/factory')
+const reducerFactory = require('../factory')
 const resolveFunction = require('./resolve')
 
 describe('resolve#filter.resolve', () => {

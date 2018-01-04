@@ -4,11 +4,14 @@
 const _ = require('lodash')
 const helpers = require('./helpers')
 
-const ReducerEntity = require('../reducer-entity/factory').ReducerEntity
-const ReducerFunction = require('../reducer-function/factory').ReducerFunction
-const ReducerList = require('../reducer-list/factory').ReducerList
-const ReducerObject = require('../reducer-object/factory').ReducerObject
-const ReducerPath = require('../reducer-path/factory').ReducerPath
+const ReducerEntity = require('../reducer-types/reducer-entity/factory')
+  .ReducerEntity
+const ReducerFunction = require('../reducer-types/reducer-function/factory')
+  .ReducerFunction
+const ReducerList = require('../reducer-types/reducer-list/factory').ReducerList
+const ReducerObject = require('../reducer-types/reducer-object/factory')
+  .ReducerObject
+const ReducerPath = require('../reducer-types/reducer-path/factory').ReducerPath
 
 describe('helpers.reducify', () => {
   test('pass simple', done => {

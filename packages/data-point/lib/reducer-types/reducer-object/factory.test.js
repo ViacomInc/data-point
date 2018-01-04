@@ -2,7 +2,7 @@
 'use strict'
 
 const factory = require('./factory')
-const createReducer = require('../reducer').create
+const createReducer = require('../index').create
 
 test('reducer/reducer-function#isObject', () => {
   expect(factory.isObject('$foo')).toBe(false)

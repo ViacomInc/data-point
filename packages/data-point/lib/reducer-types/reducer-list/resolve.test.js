@@ -5,12 +5,12 @@ const nock = require('nock')
 
 const createReducerList = require('./index').create
 const resolveReducerList = require('./index').resolve
-const createReducer = require('../reducer').create
-const resolveReducer = require('../reducer').resolve
-const AccumulatorFactory = require('../accumulator/factory')
+const createReducer = require('../index').create
+const resolveReducer = require('../index').resolve
+const AccumulatorFactory = require('../../accumulator/factory')
 
-const fixtureStore = require('../../test/utils/fixture-store')
-const testData = require('../../test/data.json')
+const fixtureStore = require('../../../test/utils/fixture-store')
+const testData = require('../../../test/data.json')
 
 let manager
 

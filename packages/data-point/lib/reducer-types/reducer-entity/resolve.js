@@ -1,6 +1,6 @@
 'use strict'
 
-const BaseEntity = require('../entity-types/base-entity/resolve')
+const BaseEntity = require('../../entity-types/base-entity/resolve')
 
 /**
  * Resolve an Entity Reducer, actual entity resolution is delegated

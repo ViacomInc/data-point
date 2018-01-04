@@ -1,7 +1,7 @@
 'use strict'
 
 const Promise = require('bluebird')
-const utils = require('../utils')
+const utils = require('../../utils')
 
 /**
  * Resolve a ReducerFunction

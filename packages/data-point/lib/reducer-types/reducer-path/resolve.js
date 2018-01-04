@@ -1,6 +1,6 @@
 'use strict'
 
-const utils = require('../utils')
+const utils = require('../../utils')
 
 /**
  * @param {Accumulator} accumulator - current accumulator

@@ -2,7 +2,7 @@
 'use strict'
 
 const reducerPath = require('./index')
-const AccumulatorFactory = require('../accumulator/factory')
+const AccumulatorFactory = require('../../accumulator/factory')
 
 describe('ReducerPath#resolve', () => {
   function resolve (value, reducerSource) {

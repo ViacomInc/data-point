@@ -3,7 +3,7 @@
 
 const _ = require('lodash')
 const factory = require('./factory')
-const createReducer = require('../reducer').create
+const createReducer = require('..').create
 
 describe('factory#create', () => {
   test('factory#create default', () => {
