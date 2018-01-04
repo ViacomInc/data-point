@@ -73,7 +73,7 @@ module.exports.createReducerResolver = createReducerResolver
  * @param {*} data
  * @returns {boolean}
  */
-function isTransform (data) {
+function isReducer (data) {
   return (
     data instanceof ReducerEntity ||
     data instanceof ReducerFunction ||
@@ -83,4 +83,4 @@ function isTransform (data) {
   )
 }
 
-module.exports.isTransform = isTransform
+module.exports.isReducer = isReducer

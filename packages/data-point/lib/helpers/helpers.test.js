@@ -101,16 +101,16 @@ describe('helpers.createReducerResolver', () => {
   })
 })
 
-describe('helpers.isTransform', () => {
+describe('helpers.isReducer', () => {
   test('It should return true for reducers', () => {
-    expect(helpers.isTransform()).toBe(false)
-    expect(helpers.isTransform({})).toBe(false)
-    expect(helpers.isTransform([])).toBe(false)
-    expect(helpers.isTransform({ type: 'ReducerPath' })).toBe(false)
-    expect(helpers.isTransform(new ReducerEntity())).toBe(true)
-    expect(helpers.isTransform(new ReducerFunction())).toBe(true)
-    expect(helpers.isTransform(new ReducerList())).toBe(true)
-    expect(helpers.isTransform(new ReducerObject())).toBe(true)
-    expect(helpers.isTransform(new ReducerPath())).toBe(true)
+    expect(helpers.isReducer()).toBe(false)
+    expect(helpers.isReducer({})).toBe(false)
+    expect(helpers.isReducer([])).toBe(false)
+    expect(helpers.isReducer({ type: 'ReducerPath' })).toBe(false)
+    expect(helpers.isReducer(new ReducerEntity())).toBe(true)
+    expect(helpers.isReducer(new ReducerFunction())).toBe(true)
+    expect(helpers.isReducer(new ReducerList())).toBe(true)
+    expect(helpers.isReducer(new ReducerObject())).toBe(true)
+    expect(helpers.isReducer(new ReducerPath())).toBe(true)
   })
 })
