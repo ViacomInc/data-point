@@ -101,6 +101,18 @@ describe('inspect', () => {
   })
 })
 
+describe('inspectProperties', () => {
+  test('It should inspect each property', () => {
+    const obj = {
+      a: 1,
+      b: true
+    }
+    expect(
+      utils.inspectProperties(obj, ['a', 'b', 'c'], '  ')
+    ).toMatchSnapshot()
+  })
+})
+
 describe('isEmpty', () => {
   test('It should test for empty', () => {
     expect(utils.isFalsy(null)).toEqual(true)

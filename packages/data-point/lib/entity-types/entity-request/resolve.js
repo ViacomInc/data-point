@@ -106,7 +106,31 @@ module.exports.resolveBeforeRequest = resolveBeforeRequest
 
 function resolveRequest (acc, resolveTransform) {
   inspect(acc)
-  return rp(acc.options).then(result => utils.set(acc, 'value', result))
+  return rp(acc.options)
+    .then(result => utils.set(acc, 'value', result))
+    .catch(error => {
+      const message = [
+        'Entity info:',
+        '\n  Id: ',
+        _.get(acc, 'reducer.spec.id'),
+        '\n',
+        utils.inspectProperties(acc, ['options', 'params', 'value'], '  '),
+        '\n  Request:\n',
+        utils.inspectProperties(
+          error,
+          ['error', 'message', 'statusCode', 'options', 'body'],
+          '  '
+        )
+      ].join('')
+
+      // this is useful in the case the error itself is not logged by the
+      // implementation
+      console.info(error.toString(), message)
+
+      // attaching to error so it can be exposed by a handler outside datapoint
+      error.message = `${error.message}\n\n${message}`
+      throw error
+    })
 }
 
 module.exports.resolveRequest = resolveRequest
