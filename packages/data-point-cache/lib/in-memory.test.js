@@ -39,63 +39,49 @@ describe('del', () => {
   })
 })
 
-describe('swipe', () => {
+describe('swipeTick', () => {
   let cache
   beforeEach(() => (cache = { entries: {} }))
-  test('it should remove keys - testing swipes', done => {
-    cache.entries['test1'] = { value: 'test1', ttl: 10, created: Date.now() }
-    cache.entries['test2'] = { value: 'test2', ttl: 60, created: Date.now() }
-
-    const timer = InMemory.swipe(cache, 10)
-
-    const swipes = []
-    setTimeout(() => {
-      swipes.push(Object.keys(cache.entries))
-    }, 5)
-
-    setTimeout(() => {
-      swipes.push(Object.keys(cache.entries))
-    }, 30)
-
-    setTimeout(() => {
-      swipes.push(Object.keys(cache.entries))
-    }, 80)
-
-    setTimeout(() => {
-      let error
-      try {
-        expect(swipes[0]).toHaveLength(2)
-        expect(swipes[1]).toHaveLength(1)
-        expect(swipes[2]).toHaveLength(0)
-      } catch (err) {
-        error = err
-      } finally {
-        clearInterval(timer)
-        done(error)
-      }
-    }, 500)
-  })
-  test('it should remove all keys if length is more than permited', done => {
+  test('it should remove all keys if length is more than permited', () => {
     const entry = { value: 'test1', ttl: 1000, created: Date.now() }
     for (var index = 0; index < 10001; index++) {
       cache.entries[`${index}key`] = entry
     }
 
-    const timer = InMemory.swipe(cache, 10)
     logger.warn = jest.fn()
-    setTimeout(() => {
-      let error
-      try {
-        const keys = Object.keys(cache.entries)
-        expect(keys).toHaveLength(0)
-        expect(logger.warn).toBeCalled()
-      } catch (err) {
-        error = err
-      } finally {
-        clearInterval(timer)
-        done(error)
-      }
-    }, 100)
+    InMemory.swipeTick(cache)
+    const keys = Object.keys(cache.entries)
+    expect(keys).toHaveLength(0)
+    expect(logger.warn).toBeCalled()
+  })
+
+  test('it should remove keys - on each tick', () => {
+    let now = 0
+
+    cache.entries['test1'] = { value: 'test1', ttl: 10, created: now }
+    cache.entries['test2'] = { value: 'test2', ttl: 20, created: now }
+
+    const originalDateNow = Date.now
+
+    const swipes = []
+
+    Date.now = () => 5
+    InMemory.swipeTick(cache)
+    swipes.push(Object.keys(cache.entries))
+
+    Date.now = () => 11
+    InMemory.swipeTick(cache)
+    swipes.push(Object.keys(cache.entries))
+
+    Date.now = () => 21
+    InMemory.swipeTick(cache)
+    swipes.push(Object.keys(cache.entries))
+
+    expect(swipes[0]).toHaveLength(2)
+    expect(swipes[1]).toHaveLength(1)
+    expect(swipes[2]).toHaveLength(0)
+
+    Date.now = originalDateNow
   })
 })
 

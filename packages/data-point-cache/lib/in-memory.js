@@ -20,27 +20,33 @@ function del (cache, key) {
   delete cache.entries[key]
 }
 
+/**
+ * NOTE: This method mutates the cache.entires array.
+ * @param {Object} cache - Object that holds a reference to list of cache entries
+ */
+function swipeTick (cache) {
+  const keys = Object.keys(cache.entries)
+  if (keys.length > 10000) {
+    cache.entries = {}
+    logger.warn(
+      'Cache inMemory reached max (10000) number of entries, all keys now being deleted.'
+    )
+    return
+  }
+
+  const now = Date.now()
+  for (let index = 0; index < keys.length; index++) {
+    let key = keys[index]
+    let entry = cache.entries[key]
+    if (now - entry.created > entry.ttl) {
+      delete cache.entries[key]
+    }
+  }
+}
+
 function swipe (cache, interval = 1000) {
   clearInterval(cache.swipeTimerId)
-  cache.swipeTimerId = setInterval(() => {
-    const keys = Object.keys(cache.entries)
-    if (keys.length > 10000) {
-      cache.entries = {}
-      logger.warn(
-        'inMemory reached max (1000) number of entries, all keys now being deleted.'
-      )
-      return
-    }
-    let entry
-    const now = Date.now()
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index]
-      entry = cache.entries[key]
-      if (now - entry.created > entry.ttl) {
-        delete cache.entries[key]
-      }
-    }
-  }, interval)
+  cache.swipeTimerId = setInterval(swipeTick, interval, cache)
   return cache.swipeTimerId
 }
 
@@ -68,6 +74,7 @@ module.exports = {
   set,
   get,
   del,
+  swipeTick,
   swipe,
   create,
   bootstrap
