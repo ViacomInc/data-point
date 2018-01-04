@@ -2097,7 +2097,7 @@ A Collection entity enables you to operate over an array. Its API provides basic
 
 Collection entities expose a set of reducers that you may apply to them: [map](#collection-map), [find](#collection-find), [filter](#collection-filter). These reducers are executed in a [specific order](#collection-reducers-order). If you want to have more control over the order of execution, use the [compose](#compose-reducer) reducer.
 
-To prevent unexpected results, a **Collection Entity** can only process **Arrays**, if Collection.value does not resolve to a an Array it will **throw** an error. 
+To prevent unexpected results, a **Collection Entity** can only process **Arrays**, if Collection.value does not resolve to an Array it will **throw** an error. 
 
 **IMPORTANT:** Keep in mind that in DataPoint, **all** operations are asynchronous. If your operations do NOT need to be asynchronous, iterating over a large array might result in slower execution. In such cases, consider using a reducer function where you can implement a synchronous solution.
 
