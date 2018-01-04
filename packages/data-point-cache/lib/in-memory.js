@@ -29,15 +29,15 @@ function swipeTick (cache) {
   if (keys.length > 10000) {
     cache.entries = {}
     logger.warn(
-      'Cache inMemory reached max (1000) number of entries, all keys now being deleted.'
+      'Cache inMemory reached max (10000) number of entries, all keys now being deleted.'
     )
     return
   }
-  let entry
+
   const now = Date.now()
   for (let index = 0; index < keys.length; index++) {
     let key = keys[index]
-    entry = cache.entries[key]
+    let entry = cache.entries[key]
     if (now - entry.created > entry.ttl) {
       delete cache.entries[key]
     }
