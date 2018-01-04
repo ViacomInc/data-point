@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const resolveTransform = require('../transform-expression').resolve
+const resolveTransform = require('../reducer').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 
 function reducify (method) {
@@ -38,9 +38,10 @@ function mockReducer (reducer, acc) {
 
 module.exports.mockReducer = mockReducer
 
-const createTransform = require('../transform-expression').create
+const createReducer = require('../reducer').create
 
-module.exports.createTransform = createTransform
+// this is named createTransform for backwards compatibility
+module.exports.createTransform = createReducer
 
 const createEntity = require('../entity-types/base-entity').create
 
@@ -68,11 +69,3 @@ function createResolveTransform (dataPoint) {
 }
 
 module.exports.createResolveTransform = createResolveTransform
-
-function isTransform (transform) {
-  return (
-    _.isArray(transform.reducers) && transform.typeOf === 'TransformExpression'
-  )
-}
-
-module.exports.isTransform = isTransform

@@ -6,16 +6,11 @@ Array [
     "path": Array [
       "a1",
     ],
-    "transform": TransformExpression {
-      "reducers": Array [
-        ReducerPath {
-          "asCollection": true,
-          "body": [Function],
-          "name": "a",
-          "type": "ReducerPath",
-        },
-      ],
-      "typeOf": "TransformExpression",
+    "transform": ReducerPath {
+      "asCollection": true,
+      "body": [Function],
+      "name": "a",
+      "type": "ReducerPath",
     },
   },
   Object {
@@ -23,7 +18,7 @@ Array [
       "b1",
       "a2",
     ],
-    "transform": TransformExpression {
+    "transform": ReducerList {
       "reducers": Array [
         ReducerPath {
           "asCollection": false,
@@ -36,7 +31,7 @@ Array [
           "type": "ReducerFunction",
         },
       ],
-      "typeOf": "TransformExpression",
+      "type": "ReducerList",
     },
   },
   Object {
@@ -44,50 +39,35 @@ Array [
       "b1",
       "b2",
     ],
-    "transform": TransformExpression {
-      "reducers": Array [
-        ReducerObject {
-          "props": Array [
-            Object {
-              "path": Array [
-                "a3",
-              ],
-              "transform": TransformExpression {
-                "reducers": Array [
-                  ReducerEntity {
-                    "asCollection": false,
-                    "entityType": "transform",
-                    "hasEmptyConditional": false,
-                    "id": "transform:entity-name",
-                    "name": "entity-name",
-                    "type": "ReducerEntity",
-                    "withEmptyConditional": false,
-                  },
-                ],
-                "typeOf": "TransformExpression",
-              },
-            },
-            Object {
-              "path": Array [
-                "b3",
-              ],
-              "transform": TransformExpression {
-                "reducers": Array [
-                  ReducerPath {
-                    "asCollection": false,
-                    "body": [Function],
-                    "name": "b1.b2.b3",
-                    "type": "ReducerPath",
-                  },
-                ],
-                "typeOf": "TransformExpression",
-              },
-            },
+    "transform": ReducerObject {
+      "props": Array [
+        Object {
+          "path": Array [
+            "a3",
           ],
-          "type": "ReducerObject",
+          "transform": ReducerEntity {
+            "asCollection": false,
+            "entityType": "transform",
+            "hasEmptyConditional": false,
+            "id": "transform:entity-name",
+            "name": "entity-name",
+            "type": "ReducerEntity",
+            "withEmptyConditional": false,
+          },
+        },
+        Object {
+          "path": Array [
+            "b3",
+          ],
+          "transform": ReducerPath {
+            "asCollection": false,
+            "body": [Function],
+            "name": "b1.b2.b3",
+            "type": "ReducerPath",
+          },
         },
       ],
-      "typeOf": "TransformExpression",
+      "type": "ReducerObject",
     },
   },
 ]

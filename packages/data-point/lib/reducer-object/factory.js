@@ -27,30 +27,25 @@ function isObject (source) {
 module.exports.isObject = isObject
 
 /**
- * @param {Function} createTransform
+ * @param {Function} createReducer
  * @param {Object} source
  * @param {Array} path
  * @param {Array} reducerProps
  * @returns {Array}
  */
-function getReducerProps (
-  createTransform,
-  source,
-  path = [],
-  reducerProps = []
-) {
+function getReducerProps (createReducer, source, path = [], reducerProps = []) {
   for (let key of Object.keys(source)) {
     const value = source[key]
     const fullPath = path.concat(key)
     if (isPlainObject(value)) {
       // NOTE: recursive call
-      getReducerProps(createTransform, value, fullPath, reducerProps)
+      getReducerProps(createReducer, value, fullPath, reducerProps)
       continue
     }
 
     reducerProps.push({
       path: fullPath,
-      transform: createTransform(value)
+      transform: createReducer(value)
     })
   }
 
@@ -60,13 +55,13 @@ function getReducerProps (
 module.exports.getReducerProps = getReducerProps
 
 /**
- * @param {Function} createTransform
+ * @param {Function} createReducer
  * @param {Object} source
  * @returns {reducer}
  */
-function create (createTransform, source = {}) {
+function create (createReducer, source = {}) {
   const reducer = new ReducerObject()
-  reducer.props = getReducerProps(createTransform, source)
+  reducer.props = getReducerProps(createReducer, source)
 
   return Object.freeze(reducer)
 }

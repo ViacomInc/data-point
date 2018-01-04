@@ -3,9 +3,8 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const Reducer = require('../reducer')
 const AccumulatorFactory = require('../accumulator/factory')
-const TransformExpression = require('../transform-expression')
-const resolveTransform = require('../transform-expression').resolve
 
 function getOptions (spec) {
   return _.defaults({}, spec, {
@@ -13,7 +12,7 @@ function getOptions (spec) {
   })
 }
 
-function resolve (manager, transformSource, value, options) {
+function resolve (manager, reducerSource, value, options) {
   const contextOptions = getOptions(options)
   const context = AccumulatorFactory.create({
     value: value,
@@ -22,14 +21,14 @@ function resolve (manager, transformSource, value, options) {
     values: manager.values.getStore()
   })
 
-  const transform = TransformExpression.create(transformSource)
+  const transform = Reducer.create(reducerSource)
 
-  return resolveTransform(manager, context, transform)
+  return Reducer.resolve(manager, context, transform)
 }
 
-function transform (manager, transformSource, value, options, done) {
+function transform (manager, reducerSource, value, options, done) {
   return Promise.resolve()
-    .then(() => resolve(manager, transformSource, value, options))
+    .then(() => resolve(manager, reducerSource, value, options))
     .asCallback(done)
 }
 

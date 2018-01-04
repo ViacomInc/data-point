@@ -2,7 +2,7 @@
 'use strict'
 
 const factory = require('./factory')
-const createTransform = require('../transform-expression').create
+const createReducer = require('../reducer').create
 
 test('reducer/reducer-function#isObject', () => {
   expect(factory.isObject('$foo')).toBe(false)
@@ -13,11 +13,11 @@ test('reducer/reducer-function#isObject', () => {
 
 describe('reducer/reducer-function#getReducerProps', () => {
   it('should accept an empty object', () => {
-    const reducer = factory.getReducerProps(createTransform, {})
+    const reducer = factory.getReducerProps(createReducer, {})
     expect(reducer).toEqual([])
   })
   it('should accept a non-empty object', () => {
-    const reducer = factory.getReducerProps(createTransform, {
+    const reducer = factory.getReducerProps(createReducer, {
       a1: '$a[]',
       b1: {
         a2: ['$a2', () => false],
@@ -35,17 +35,17 @@ describe('reducer/reducer-function#getReducerProps', () => {
 
 describe('reducer/reducer-path#create', () => {
   it('reducer object with no props argument', () => {
-    const reducer = factory.create(createTransform)
+    const reducer = factory.create(createReducer)
     expect(reducer.type).toBe('ReducerObject')
     expect(reducer.props).toBeInstanceOf(Array)
   })
   it('reducer object with empty props argument', () => {
-    const reducer = factory.create(createTransform, {})
+    const reducer = factory.create(createReducer, {})
     expect(reducer.type).toBe('ReducerObject')
     expect(reducer.props).toBeInstanceOf(Array)
   })
   it('reducer object with props argument', () => {
-    const reducer = factory.create(createTransform, {
+    const reducer = factory.create(createReducer, {
       a: '$a',
       b: '$b',
       c: '$c'

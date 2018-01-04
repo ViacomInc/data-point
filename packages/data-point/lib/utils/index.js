@@ -69,6 +69,18 @@ function inspect (acc, data) {
 
 module.exports.inspect = inspect
 
+/**
+ * @param {reducer} reducer
+ * @returns {boolean}
+ */
+function reducerIsEmpty (reducer) {
+  return (
+    !reducer || (reducer.type === 'ReducerList' && _.isEmpty(reducer.reducers))
+  )
+}
+
+module.exports.reducerIsEmpty = reducerIsEmpty
+
 function isFalsy (val) {
   return val === null || val === false || typeof val === 'undefined'
 }

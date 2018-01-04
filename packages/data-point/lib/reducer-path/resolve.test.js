@@ -1,10 +1,8 @@
 /* eslint-env jest */
 'use strict'
 
+const reducerPath = require('./index')
 const AccumulatorFactory = require('../accumulator/factory')
-const reducerFactory = require('../reducer/factory')
-const reducerPath = require('../reducer-path')
-const createTransform = require('../transform-expression').create
 
 describe('resolve#transform.resolve', () => {
   function resolve (value, rawReducer) {
@@ -16,10 +14,7 @@ describe('resolve#transform.resolve', () => {
       locals
     })
 
-    return reducerPath.resolve(
-      accumulator,
-      reducerFactory.create(createTransform, rawReducer)
-    )
+    return reducerPath.resolve(accumulator, reducerPath.create(rawReducer))
   }
 
   test('resolve current value', () => {

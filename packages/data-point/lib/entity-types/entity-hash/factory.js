@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const createTransform = require('../../transform-expression').create
+const createReducer = require('../../reducer').create
 const createReducerObject = require('../../reducer-object').create
 const deepFreeze = require('deep-freeze')
 const parseCompose = require('../parse-compose')
@@ -32,7 +32,7 @@ function createCompose (composeParse) {
         break
       case 'mapKeys':
       case 'addKeys':
-        transform = createReducerObject(createTransform, modifier.spec)
+        transform = createReducerObject(createReducer, modifier.spec)
     }
 
     return Object.assign({}, modifier, {

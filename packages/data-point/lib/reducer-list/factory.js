@@ -1,29 +1,43 @@
 'use strict'
 
 const _ = require('lodash')
-const reducerFactory = require('../reducer/factory')
+
+const REDUCER_LIST = 'ReducerList'
+
+module.exports.type = REDUCER_LIST
 
 /**
- * Describes the transform parts used to reduce a context
  * @class
- * @property {Array} reducers - collection of reducers that will be applied
+ * @property {string} type
+ * @property {Array<reducer>} reducers
  */
-function TransformExpression () {
+function ReducerList () {
+  this.type = 'ReducerList'
   this.reducers = []
-  this.typeOf = 'TransformExpression'
 }
 
-module.exports.TransformExpression = TransformExpression
+module.exports.ReducerList = ReducerList
+
+/**
+ * @param {*} source
+ * @returns {boolean}
+ */
+function isType (source) {
+  return Array.isArray(source)
+}
+
+module.exports.isType = isType
 
 /**
  * @param {string} source
  * @returns {Array}
  */
 function parseFromString (source) {
-  const transformSource = _.defaultTo(source, '')
-  const tokens = _.compact(transformSource.split(' | '))
+  const reducerSource = _.defaultTo(source, '')
+  const tokens = _.compact(reducerSource.split(' | '))
   return tokens
 }
+
 module.exports.parseFromString = parseFromString
 
 /**
@@ -33,6 +47,7 @@ module.exports.parseFromString = parseFromString
 function parseTokenExpression (source) {
   return _.isString(source) ? parseFromString(source) : source
 }
+
 module.exports.parseTokenExpression = parseTokenExpression
 
 /**
@@ -60,21 +75,19 @@ function parse (source) {
 module.exports.parse = parse
 
 /**
- * parses a raw transform
- * @param {string} source
- * @return {Transform}
+ * @param {Function} createReducer
+ * @param {Array} source
+ * @return {reducer}
  */
-function create (source = []) {
+function create (createReducer, source = []) {
   const tokens = parse(source)
 
-  const transform = new TransformExpression()
+  const reducers = tokens.map(token => createReducer(token))
 
-  transform.reducers = tokens.map(token => {
-    // NOTE: recursive call
-    return reducerFactory.create(create, token)
-  })
+  const reducer = new ReducerList()
+  reducer.reducers = reducers
 
-  return Object.freeze(transform)
+  return Object.freeze(reducer)
 }
 
 module.exports.create = create

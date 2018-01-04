@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 
-const createTransform = require('../../transform-expression').create
+const createReducer = require('../../reducer').create
 const createBaseEntity = require('../base-entity').create
 
 /**
@@ -15,20 +15,20 @@ function EntityControl () {
 module.exports.EntityControl = EntityControl
 
 /**
- * map each key from spec into a Transform object
+ * map each key from spec into a reducer
  *
- * @param {hash} spec - key/value where each value will be mapped into a Transform
+ * @param {hash} spec - key/value where each value will be mapped into a reducer
  * @returns
  */
 function parseCaseStatement (spec) {
-  return _.mapValues(spec, createTransform)
+  return _.mapValues(spec, createReducer)
 }
 module.exports.parseCaseStatement = parseCaseStatement
 
 /**
  * Parse only case statements
  *
- * @param {hash} spec - key/value where each value will be mapped into a Transform
+ * @param {hash} spec - key/value where each value will be mapped into a reducer
  * @returns
  */
 function parseCaseStatements (spec) {
@@ -53,7 +53,7 @@ function parseDefaultStatement (id, select) {
   return defaultCase.default
 }
 /**
- * parse spec into transform strucure
+ * parse spec
  *
  * @param {any} spec
  * @returns
@@ -63,7 +63,7 @@ function parseSwitch (spec) {
   const defaultStatement = parseDefaultStatement(spec.id, select)
   return {
     cases: parseCaseStatements(select),
-    default: createTransform(defaultStatement)
+    default: createReducer(defaultStatement)
   }
 }
 module.exports.parseSwitch = parseSwitch
