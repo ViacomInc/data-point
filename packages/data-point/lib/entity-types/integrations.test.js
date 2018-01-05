@@ -268,3 +268,39 @@ describe('trace feature', () => {
       })
   })
 })
+
+describe('handle undefined value', () => {
+  test('HashEntity - should throw error', () => {
+    return dataPoint
+      .transform('hash:noValue')
+      .catch(e => e)
+      .then(res => {
+        expect(res).toBeInstanceOf(Error)
+      })
+  })
+
+  test('CollectionEntity - should throw error', () => {
+    return dataPoint
+      .transform('collection:noValue')
+      .catch(e => e)
+      .then(res => {
+        expect(res).toBeInstanceOf(Error)
+      })
+  })
+
+  test('CollectionEntity - should ignore input', () => {
+    nock('http://remote.test')
+      .get('/source1')
+      .reply(200, {
+        ok: true
+      })
+    return dataPoint
+      .transform('request:a1')
+      .catch(e => e)
+      .then(res => {
+        expect(res.value).toEqual({
+          ok: true
+        })
+      })
+  })
+})
