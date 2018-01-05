@@ -1,92 +1,20 @@
 'use strict'
 
-const _ = require('lodash')
 const Promise = require('bluebird')
 const utils = require('../../utils')
+const isEmpty = require('lodash/isEmpty')
 
-function resolveMapReducer (accumulator, reducer, resolveReducer) {
-  if (utils.reducerIsEmpty(reducer)) {
-    return Promise.resolve(accumulator)
-  }
-  return Promise.map(accumulator.value, itemValue => {
-    const itemContext = utils.set(accumulator, 'value', itemValue)
-    return resolveReducer(itemContext, reducer).then(res => {
-      return res.value
-    })
-  })
-    .then(result => utils.set(accumulator, 'value', result))
-    .catch(err => {
-      err.message = `Entity: ${accumulator.reducer.spec.id}.map ${err.message}`
-      throw err
-    })
-}
-
-function resolveFilterReducer (accumulator, reducer, resolveReducer) {
-  if (utils.reducerIsEmpty(reducer)) {
-    return Promise.resolve(accumulator)
-  }
-  return Promise.filter(accumulator.value, itemValue => {
-    const itemContext = utils.set(accumulator, 'value', itemValue)
-    return resolveReducer(itemContext, reducer).then(res => {
-      return !!res.value
-    })
-  })
-    .then(result => utils.set(accumulator, 'value', result))
-    .catch(err => {
-      err.message = `Entity: ${accumulator.reducer.spec.id}.filter ${
-        err.message
-      }`
-      throw err
-    })
-}
-
-function resolveFindReducer (accumulator, reducer, resolveReducer) {
-  if (utils.reducerIsEmpty(reducer)) {
-    return Promise.resolve(accumulator)
-  }
-  return Promise.reduce(
-    accumulator.value,
-    (result, itemValue) => {
-      const itemContext = utils.set(accumulator, 'value', itemValue)
-      return (
-        result ||
-        resolveReducer(itemContext, reducer).then(res => {
-          return res.value ? itemValue : undefined
-        })
-      )
-    },
-    null
-  )
-    .then(result => utils.set(accumulator, 'value', result))
-    .catch(err => {
-      err.message = `Entity: ${accumulator.reducer.spec.id}.find ${err.message}`
-      throw err
-    })
-}
-
-const modifierFunctionMap = {
-  filter: resolveFilterReducer,
-  map: resolveMapReducer,
-  find: resolveFindReducer
-}
-
-function resolveCompose (accumulator, composeReducers, resolveReducer) {
-  if (composeReducers.length === 0) {
+/**
+ * @param {Accumulator} accumulator
+ * @param {reducer} composeReducer
+ * @param {Function} resolveReducer
+ */
+function resolveCompose (accumulator, composeReducer, resolveReducer) {
+  if (utils.reducerIsEmpty(composeReducer)) {
     return Promise.resolve(accumulator)
   }
 
-  return Promise.reduce(
-    composeReducers,
-    (resultContext, modifierSpec) => {
-      const modifierFunction = modifierFunctionMap[modifierSpec.type]
-      return modifierFunction(
-        resultContext,
-        modifierSpec.reducer,
-        resolveReducer
-      )
-    },
-    accumulator
-  )
+  return resolveReducer(accumulator, composeReducer)
 }
 
 // NOTE: as expensive as this might be, this is to avoid 'surprises'
@@ -99,11 +27,15 @@ function validateAsArray (acc) {
     )
 }
 
+/**
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ */
 function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec
 
   // if there is nothing to do, lets just move on
-  if (_.isEmpty(accumulator.value)) {
+  if (isEmpty(accumulator.value)) {
     return Promise.resolve(accumulator)
   }
 

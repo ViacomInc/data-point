@@ -31,6 +31,13 @@ npm install --save data-point
   - [EntityReducer](#entity-reducer)
   - [ListReducer](#list-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
+- [Reducers](#reducer-helpers)
+  - [Assign](#reducer-assign)
+  - [Map](#reducer-map)
+  - [Filter](#reducer-filter)
+  - [Find](#reducer-find)
+  - [Omit](#reducer-omit)
+  - [Pick](#reducer-pick)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
@@ -901,8 +908,130 @@ Adding `[]` at the end of an entity reducer will map the given entity to each re
   ```
 </details>
 
+## <a name="reducers">Reducer Helpers</a>
 
-Reducer entity [Examples](test/definitions/integrations.js)
+Reducer helpers are factory functions for creating reducers. They're exposed through `DataPoint.helpers`:
+
+```js
+const {
+  assign,
+  map,
+  filter,
+  find,
+  omit,
+  pick
+} = require('data-doint').helpers
+```
+
+### <a name="reducer-assign">Assign</a>
+
+`(Reducer) -> Object`
+
+**assign** merges the result of a reducer with the current accumulator value. It uses `Object.assign` internally.
+
+```js
+const value = {
+  a: 1,
+  b: {
+    c: 2
+  }
+}
+
+// resolves the $b reducer and merges
+// the result with accumulator.value
+const reducer = assign('$b')
+
+dataPoint.transform(reducer, value)
+
+// {
+//   a: 1,
+//   b: {
+//     c: 2
+//   },
+//   c: 2
+// }
+```
+
+### <a name="reducer-map">Map</a>
+
+`(Reducer) -> Array`
+
+**map** applies a reducer to each element of an input array.
+
+```js
+const value = [{ a: 1 }, { a: 2 }]
+
+// applies the $a reducer to each element in the array
+const reducer = map('$a')
+
+dataPoint.transform(reducer, value) // [1, 2]
+```
+
+This helper functions like a collection mapping:
+
+- `map('$a')` is equivalent to `'$a[]'`
+
+- `map('hash:example')` is equivalent to `'hash:example[]'`
+
+### <a name="reducer-filter">Filter</a>
+
+`(Reducer) -> Array`
+
+**filter** executes a reducer against each item in an array. If the reducer does not resolve to a truthy value, that item is filtered from the resulting array.
+
+```js
+const value = [{ a: 1 }, { a: 2 }]
+
+// filters array elements that are not
+// truthy for the given reducer list
+const reducer = filter(['$a', (acc) => acc.value > 1])
+
+dataPoint.transform(reducer, value) // [{ a: 2 }]
+```
+
+### <a name="reducer-find">Find</a>
+
+`(Reducer) -> *`
+
+**find** returns the first element of an array that resolves to a truthy when passed to a given reducer. It returns `undefined` if no match is found.
+
+```js
+const value = [{ a: 1 }, { b: 2 }]
+
+// the $b reducer is truthy for the
+// the second element in the array
+const reducer = find('$b')
+
+dataPoint.transform(reducer, value) // { b: 2 }
+```
+
+### <a name="reducer-omit">Omit</a>
+
+`(Array<string>) -> Object`
+
+**omit** applies lodash's `omit` function to an input object.
+
+```js
+const value = { a: 1, b: 2, c: 3 }
+
+const reducer = omit(['a', 'b'])
+
+dataPoint.transform(reducer, value) // { c: 3 }
+```
+
+### <a name="reducer-pick">Pick</a>
+
+`(Array<string>) -> Object`
+
+**pick** applies lodash's `pick` function to an input object.
+
+```js
+const value = { a: 1, b: 2, c: 3 }
+
+const reducer = pick(['a', 'w'])
+
+dataPoint.transform(reducer, value) // { a: 1 }
+```
 
 **Best Practices (Recommendations) with reducers**
 
@@ -1665,7 +1794,7 @@ A Hash entity transforms a _Hash_ like data structure. It enables you to manipul
 
 To prevent unexpected results, **Hash** can only process **Plain Objects**, which are objects created by the Object constructor. 
 
-Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these available reducers to a Hash entity. Keep in mind that those reducers will always be executed in a specific order:
+Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these reducers to a Hash entity. Keep in mind that those reducers will always be executed in a specific order:
 
 ```js
 omitKeys -> pickKeys -> mapKeys -> addValues -> addKeys
@@ -1689,7 +1818,7 @@ dataPoint.addEntities({
     addKeys: TransformMap,
     addValues: Object,
     compose: ComposeReducer[],
-    
+
     after: Reducer,
     error: Reducer,
     params: Object,
@@ -1702,11 +1831,11 @@ dataPoint.addEntities({
 | Key | Type | Description |
 |:---|:---|:---|
 | *value* | [Reducer](#reducers) | The value to which the Entity resolves |
-| *mapKeys* | [TransformMap](#transform-map) | Map to a new set of key/values. Each value accepts a transform |
-| *omitKeys* | `String[]` | Omits keys from acc.value (Array of strings) |
-| *pickKeys* | `String[]` | Picks keys from acc.value (Array of strings) |
-| *addKeys* | [TransformMap](#transform-map) | Add/Override key/values. Each value accepts a transform |
-| *addValues* | `Object` | Add/Override hard-coded key/values |
+| *mapKeys* | [ObjectReducer](#object-reducer) | Map to a new set of key/values. Each value accepts a reducer |
+| *omitKeys* | `String[]` | Omits keys from acc.value. Internally, this uses the [omit](#reducer-omit) reducer helper |
+| *pickKeys* | `String[]` | Picks keys from acc.value. Internally, this uses the [pick](#reducer-pick) reducer helper |
+| *addKeys* | [ObjectReducer](#object-reducer) | Add/Override key/values. Each value accepts a reducer. Internally, this uses the [assign](#reducer-assign) reducer helper |
+| *addValues* | `Object` | Add/Override hard-coded key/values. Internally, this uses the [assign](#reducer-assign) reducer helper |
 | *compose* | [ComposeReducer](#compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one operation gets passed to the next one|
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
@@ -1750,7 +1879,7 @@ Example at: [examples/entity-hash-context.js](examples/entity-hash-context.js)
 
 ##### <a name="hash-mapKeys">Hash.mapKeys</a>
 
-Maps to a new set of key/value pairs through a [TransformMap](#transform-map), where each value is a [Reducer](#reducers).
+Maps to a new set of key/value pairs through a [ObjectReducer](#object-reducer), where each value is a [Reducer](#reducers).
 
 Going back to our GitHub API examples, let's map some keys from the result of a request:
 
@@ -1791,20 +1920,6 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
 
 
 Example at: [examples/entity-hash-mapKeys.js](examples/entity-hash-mapKeys.js)
-
-###### <a name="transform-map">TransformMap</a>
-
-This structure allows you to map key/value pairs, where each value is a [Reducer](#reducers).
-
-**SYNOPSIS**
-
-```js
-{
-  key1: Reducer,
-  key2: Reducer,
-  ...
-}
-```
 
 ##### <a name="hash-addKeys">Hash.addKeys</a>
 
@@ -2111,7 +2226,7 @@ dataPoint.addEntities({
     map: Reducer,
     find: Reducer,
     compose: ComposeReducer[],
-    
+
     after: Reducer,
     error: Reducer,
     params: Object,
@@ -2125,9 +2240,9 @@ dataPoint.addEntities({
 |:---|:---|:---|
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value* | [Reducer](#reducers) | The value to which the Entity resolves |
-| *map* | [Reducer](#reducers) | Maps the items of an array. **NOTE**: this operation happens asynchronously, so be careful to use it only when async operation is needed; otherwise, use a synchronous equivalent (native array filter or third party solution) |
-| *find* | [Reducer](#reducers) | Find an item in the array. **NOTE**: this operation happens asynchronously, so be careful to use it only when async operation is needed; otherwise, use a synchronous equivalent (native array filter or third party solution) |
-| *filter* | [Reducer](#reducers) | Filters the items of an array. **NOTE**: this operation happens asynchronously, so be careful to use it only when async operation is needed; otherwise, use a synchronous equivalent (native array filter or third party solution) |
+| *map* | [Reducer](#reducers) | Maps the items of an array. Internally, this uses the [map](#reducer-map) reducer helper |
+| *find* | [Reducer](#reducers) | Find an item in the array. Internally, this uses the [find](#reducer-find) reducer helper |
+| *filter* | [Reducer](#reducers) | Filters the items of an array. Internally, this uses the [filter](#reducer-filter) reducer helper |
 | *compose* | [ComposeReducer](#compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one object gets passed to the next one |
 | *after* | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |

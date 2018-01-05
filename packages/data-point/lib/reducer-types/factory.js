@@ -3,6 +3,8 @@
 const _ = require('lodash')
 const util = require('util')
 
+const REDUCER_SYMBOL = require('./reducer-symbol')
+
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
 const ReducerList = require('./reducer-list')
@@ -10,6 +12,18 @@ const ReducerObject = require('./reducer-object')
 const ReducerPath = require('./reducer-path')
 
 const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]
+
+const ReducerHelpers = require('./reducer-helpers')
+
+/**
+ * @param {*} data
+ * @returns {boolean}
+ */
+function isReducer (item) {
+  return !!item && item[REDUCER_SYMBOL] === true
+}
+
+module.exports.isReducer = isReducer
 
 /**
  * this is here because ReducerLists can be arrays or | separated strings
@@ -34,6 +48,11 @@ function dealWithPipeOperators (source) {
  */
 function createReducer (source) {
   source = dealWithPipeOperators(source)
+
+  // TODO isStub?
+  if (ReducerHelpers.isType(source)) {
+    return ReducerHelpers.create(createReducer, source)
+  }
 
   if (ReducerObject.isType(source)) {
     return ReducerObject.create(createReducer, source)

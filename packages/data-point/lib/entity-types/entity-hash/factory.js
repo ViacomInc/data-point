@@ -1,9 +1,10 @@
 'use strict'
 
-const _ = require('lodash')
-const createReducer = require('../../reducer-types').create
-const createReducerObject = require('../../reducer-types/reducer-object').create
 const deepFreeze = require('deep-freeze')
+const constant = require('lodash/constant')
+const defaultTo = require('lodash/defaultTo')
+const createReducer = require('../../reducer-types').create
+const reducerHelpers = require('../../reducer-types/reducer-helpers')
 const parseCompose = require('../parse-compose')
 const createBaseEntity = require('../base-entity').create
 
@@ -16,29 +17,39 @@ module.exports.EntityHash = EntityHash
 
 const modifierKeys = ['omitKeys', 'pickKeys', 'mapKeys', 'addValues', 'addKeys']
 
+const modifiers = {
+  omit: reducerHelpers.stubFactories.omit,
+  pick: reducerHelpers.stubFactories.pick,
+  map: reducerHelpers.stubFactories.map,
+  assign: reducerHelpers.stubFactories.assign
+}
+
 function createCompose (composeParse) {
-  return composeParse.map(modifier => {
+  const specList = composeParse.map(modifier => {
     let spec
-    let reducer
     switch (modifier.type) {
-      case 'addValues':
-        spec = _.defaultTo(modifier.spec, {})
-        reducer = deepFreeze(spec)
-        break
       case 'omitKeys':
+        spec = modifiers.omit(modifier.spec)
+        break
       case 'pickKeys':
-        spec = _.defaultTo(modifier.spec, [])
-        reducer = Object.freeze(spec.slice(0))
+        spec = modifiers.pick(modifier.spec)
         break
       case 'mapKeys':
+        spec = modifier.spec
+        break
+      case 'addValues':
+        const values = deepFreeze(defaultTo(modifier.spec, {}))
+        spec = modifiers.assign(constant(values))
+        break
       case 'addKeys':
-        reducer = createReducerObject(createReducer, modifier.spec)
+        spec = modifiers.assign(modifier.spec)
+        break
     }
 
-    return Object.assign({}, modifier, {
-      reducer
-    })
+    return spec
   })
+
+  return createReducer(specList)
 }
 
 /**

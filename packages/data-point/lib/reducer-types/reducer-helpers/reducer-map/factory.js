@@ -1,0 +1,32 @@
+const REDUCER_SYMBOL = require('../../reducer-symbol')
+
+const REDUCER_MAP = 'ReducerMap'
+
+module.exports.type = REDUCER_MAP
+
+/**
+ * @class
+ * @property {string} type
+ * @property {reducer} reducer
+ */
+function ReducerMap () {
+  this[REDUCER_SYMBOL] = true
+  this.type = REDUCER_MAP
+  this.reducer = undefined
+  this.isReducer = true
+}
+
+module.exports.ReducerMap = ReducerMap
+
+/**
+ * @param {Function} createReducer
+ * @param {*} source - raw source for a reducer
+ * @return {ReducerMap}
+ */
+function create (createReducer, source) {
+  const reducer = new ReducerMap()
+  reducer.reducer = createReducer(source)
+  return reducer
+}
+
+module.exports.create = create

@@ -115,5 +115,6 @@ describe('helpers.isReducer', () => {
     expect(helpers.isReducer(new ReducerList())).toBe(true)
     expect(helpers.isReducer(new ReducerObject())).toBe(true)
     expect(helpers.isReducer(new ReducerPath())).toBe(true)
+    // TODO add tests for helper functions
   })
 })

@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`factory#parse composed modifiers throw error if compose and loose modifiers are mixed 1`] = `"Entity hash:invalid is invalid; when 'compose' is defined the keys: 'mapKeys' should be inside compose."`;
+
+exports[`factory#parse composed modifiers throw error if compose non array 1`] = `"Entity hash:invalid compose property is expected to be an instance of Array, but found [object Object]"`;
+
+exports[`factory#parse composed modifiers throw error if modifier is invalid 1`] = `"Modifier 'invalidKey' in undefined doesn't match any of the registered Modifiers: omitKeys,pickKeys,mapKeys,addValues,addKeys"`;
