@@ -1,17 +1,17 @@
+const ReducerHelpers = require('./reducer-helpers').resolvers
+
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
 const ReducerList = require('./reducer-list')
 const ReducerObject = require('./reducer-object')
 const ReducerPath = require('./reducer-path')
-const ReducerHelpers = require('./reducer-helpers').resolvers
 
 const resolveFunctions = Object.assign({}, ReducerHelpers, {
   [ReducerEntity.type]: ReducerEntity.resolve,
   [ReducerFunction.type]: ReducerFunction.resolve,
   [ReducerList.type]: ReducerList.resolve,
   [ReducerObject.type]: ReducerObject.resolve,
-  [ReducerPath.type]: ReducerPath.resolve,
-  [ReducerHelpers.type]: ReducerHelpers.resolve
+  [ReducerPath.type]: ReducerPath.resolve
 })
 
 /**

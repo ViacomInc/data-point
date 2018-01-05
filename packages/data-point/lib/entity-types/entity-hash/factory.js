@@ -1,9 +1,9 @@
 'use strict'
 
+const createReducer = require('../../reducer-types').create
 const deepFreeze = require('deep-freeze')
 const constant = require('lodash/constant')
 const defaultTo = require('lodash/defaultTo')
-const createReducer = require('../../reducer-types').create
 const reducerHelpers = require('../../reducer-types/reducer-helpers')
 const parseCompose = require('../parse-compose')
 const createBaseEntity = require('../base-entity').create
