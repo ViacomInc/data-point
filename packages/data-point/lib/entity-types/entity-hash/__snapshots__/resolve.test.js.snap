@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`entity.hash.resolve entity.hash - only process Plain Objects 1`] = `"hash:asIs received acc.value = [ { foo: 1, a: { b: [Object... of type array, this entity only resolves plain Objects. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#hash-entity"`;
+
+exports[`entity.hash.resolve entity.hash - throw error if value is not object 1`] = `[Error: hash:noValue received acc.value = 'invalid' of type string, this entity only resolves plain Objects. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#hash-entity]`;

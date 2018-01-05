@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const utils = require('../../utils')
+const Util = require('util')
 
 /**
  * @param {Accumulator} accumulator
@@ -25,12 +26,15 @@ function validateAsObject (acc) {
   }
   return Promise.reject(
     new Error(
-      `"${entity.id}" received acc.value = ${JSON.stringify(acc.value).substr(
-        0,
-        15
-      )} of type ${utils.typeOf(
-        acc.value
-      )} this entity only processes plain Objects. More info https://github.com/ViacomInc/data-point#hash-entity`
+      Util.format(
+        '%s received acc.value = %s of type %s,',
+        entity.id,
+        _.truncate(Util.inspect(acc.value, { breakLength: Infinity }), {
+          length: 30
+        }),
+        utils.typeOf(acc.value),
+        'this entity only resolves plain Objects. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#hash-entity'
+      )
     )
   )
 }
@@ -42,13 +46,8 @@ function validateAsObject (acc) {
 function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec
 
-  // if there is nothing to do, lets just move on
-  if (typeof accumulator.value === 'undefined' || accumulator.value === null) {
-    return Promise.resolve(accumulator)
-  }
-
   return resolveReducer(accumulator, entity.value)
-    .then(acc => validateAsObject(acc))
+    .then(itemContext => validateAsObject(itemContext))
     .then(acc => resolveCompose(acc, entity.compose, resolveReducer))
 }
 

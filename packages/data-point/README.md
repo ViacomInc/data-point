@@ -1792,7 +1792,7 @@ If `params.inspect` is a `function`, you may execute custom debugging code to be
 
 A Hash entity transforms a _Hash_ like data structure. It enables you to manipulate the keys within a Hash. 
 
-To prevent unexpected results, **Hash** can only process **Plain Objects**, which are objects created by the Object constructor. 
+To prevent unexpected results, **Hash** can only process **Plain Objects**, which are objects created by the Object constructor. If [Hash.value](#hash-value) does not resolve to a Plain Object it will **throw** an error. 
 
 Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these reducers to a Hash entity. Keep in mind that those reducers will always be executed in a specific order:
 
@@ -2211,6 +2211,8 @@ For examples of hash entities, see the [Examples](examples), on the unit tests: 
 A Collection entity enables you to operate over an array. Its API provides basic reducers to manipulate the elements in the array.
 
 Collection entities expose a set of reducers that you may apply to them: [map](#collection-map), [find](#collection-find), [filter](#collection-filter). These reducers are executed in a [specific order](#collection-reducers-order). If you want to have more control over the order of execution, use the [compose](#compose-reducer) reducer.
+
+To prevent unexpected results, a **Collection Entity** can only process **Arrays**, if Collection.value does not resolve to an Array it will **throw** an error. 
 
 **IMPORTANT:** Keep in mind that in DataPoint, **all** operations are asynchronous. If your operations do NOT need to be asynchronous, iterating over a large array might result in slower execution. In such cases, consider using a reducer function where you can implement a synchronous solution.
 

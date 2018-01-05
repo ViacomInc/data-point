@@ -32,21 +32,22 @@ beforeAll(() => {
 
 describe('entity.hash.resolve', () => {
   test('entity.hash - only process Plain Objects', () => {
-    return transform('hash:arraysNotAllowed', testData)
+    return transform('hash:asIs', [testData])
       .catch(result => {
         return result
       })
       .then(result => {
         expect(result).toBeInstanceOf(Error)
-        expect(result.message).toContain('[1,2,3] of type array')
-        expect(result.message).toContain('More info https://')
+        expect(result.message).toMatchSnapshot()
       })
   })
 
-  test('entity.hash - do nothing if empty', () => {
-    return transform('hash:noValue', null).then(result => {
-      expect(result.value).toEqual(null)
-    })
+  test('entity.hash - throw error if value is not object', () => {
+    return transform('hash:noValue', null)
+      .catch(e => e)
+      .then(result => {
+        expect(result).toMatchSnapshot()
+      })
   })
 })
 
