@@ -3,7 +3,7 @@
 
 const _ = require('lodash')
 const utils = require('./index')
-const createReducer = require('../reducer/factory').create
+const createReducer = require('../reducer-types/factory').create
 
 describe('utils.set', () => {
   const target = { b: 1 }

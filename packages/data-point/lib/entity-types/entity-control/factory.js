@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 
-const createReducer = require('../../reducer').create
+const createReducer = require('../../reducer-types').create
 const createBaseEntity = require('../base-entity').create
 
 /**

@@ -2,9 +2,9 @@
 'use strict'
 
 const ResolveEntity = require('./resolve')
-const createReducerEntity = require('../../reducer-entity').create
-const createReducer = require('../../reducer').create
-const resolveReducer = require('../../reducer').resolve
+const createReducerEntity = require('../../reducer-types/reducer-entity').create
+const createReducer = require('../../reducer-types').create
+const resolveReducer = require('../../reducer-types').resolve
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')

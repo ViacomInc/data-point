@@ -1,5 +1,5 @@
 // const AccumulatorFactory = require('../../lib/accumulator/factory')
-// const reducerFactory = require('../../lib/reducer/factory')
+// const reducerFactory = require('../../lib/reducer-types/factory')
 
 // const rs = require('./reducer-entity-request')
 // const resolveReducer = require('./reducer')

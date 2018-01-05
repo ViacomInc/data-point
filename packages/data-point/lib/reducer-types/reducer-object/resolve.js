@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const set = require('lodash/set')
-const utils = require('../utils')
+const utils = require('../../utils')
 
 /**
  * @param {Object} manager

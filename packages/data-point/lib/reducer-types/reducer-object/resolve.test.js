@@ -3,10 +3,10 @@
 
 const createReducerObject = require('./index').create
 const resolveReducerObject = require('./index').resolve
-const createReducer = require('../reducer').create
-const resolveReducer = require('../reducer').resolve
-const AccumulatorFactory = require('../accumulator/factory')
-const FixtureStore = require('../../test/utils/fixture-store')
+const createReducer = require('../index').create
+const resolveReducer = require('../index').resolve
+const AccumulatorFactory = require('../../accumulator/factory')
+const FixtureStore = require('../../../test/utils/fixture-store')
 
 let dataPoint
 

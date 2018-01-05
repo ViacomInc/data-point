@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const fp = require('lodash/fp')
 const createBaseEntity = require('../base-entity').create
-const createReducer = require('../../reducer').create
+const createReducer = require('../../reducer-types').create
 const TransformKeys = require('./transform-keys')
 
 /**
