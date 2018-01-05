@@ -31,7 +31,7 @@ npm install --save data-point
   - [EntityReducer](#entity-reducer)
   - [ListReducer](#list-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
-- [Reducers](#reducer-helpers)
+- [Reducer Helpers](#reducer-helpers)
   - [Assign](#reducer-assign)
   - [Map](#reducer-map)
   - [Filter](#reducer-filter)
