@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const utils = require('../../utils')
+const Util = require('util')
 
 function resolveMapReducer (accumulator, reducer, resolveReducer) {
   if (utils.reducerIsEmpty(reducer)) {
@@ -95,17 +96,22 @@ function validateAsArray (acc) {
   return acc.value instanceof Array
     ? acc
     : Promise.reject(
-      new Error(`Entity ${entity.id}.value resolved to a non Array value`)
+      new Error(
+        Util.format(
+          '%s received acc.value = %s of type %s,',
+          entity.id,
+          _.truncate(Util.inspect(acc.value, { breakLength: Infinity }), {
+            length: 30
+          }),
+          utils.typeOf(acc.value),
+          'this entity only resolves Array values. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#collection-entity'
+        )
+      )
     )
 }
 
 function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec
-
-  // if there is nothing to do, lets just move on
-  if (_.isEmpty(accumulator.value)) {
-    return Promise.resolve(accumulator)
-  }
 
   return resolveReducer(accumulator, entity.value)
     .then(acc => validateAsArray(acc))
