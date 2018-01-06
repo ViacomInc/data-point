@@ -2,6 +2,7 @@
 'use strict'
 
 const reducerPath = require('./index')
+const createReducer = require('../index').create
 const resolveReducer = require('../index').resolve
 const AccumulatorFactory = require('../../accumulator/factory')
 const FixtureStore = require('../../../test/utils/fixture-store')
@@ -22,7 +23,7 @@ describe('ReducerPath#resolve', () => {
       locals
     })
 
-    const reducer = reducerPath.create(reducerSource)
+    const reducer = reducerPath.create(createReducer, reducerSource)
     return reducerPath.resolve(dataPoint, resolveReducer, accumulator, reducer)
   }
 

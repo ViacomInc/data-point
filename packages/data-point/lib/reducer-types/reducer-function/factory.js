@@ -49,11 +49,11 @@ function validateFunction (fn) {
 module.exports.validateFunction = validateFunction
 
 /**
- * parse reducer
- * @param  {string} reducerRaw raw reducer path
+ * @param {Function} createReducer
+ * @param {Function} source
  * @return {reducer}
  */
-function create (source) {
+function create (createReducer, source) {
   validateFunction(source)
   const reducer = new ReducerFunction()
   reducer.body = source

@@ -2,6 +2,7 @@
 'use strict'
 
 const factory = require('./factory')
+const createReducer = require('../index').create
 
 test('reducer/reducer-entity#isType', () => {
   expect(factory.isType('a')).toBe(false)
@@ -26,7 +27,7 @@ test('reducer/reducer-entity#isType', () => {
 
 describe('create', function () {
   test('default create', () => {
-    const reducer = factory.create('foo:abc')
+    const reducer = factory.create(createReducer, 'foo:abc')
     expect(reducer.hasEmptyConditional).toBe(false)
     expect(reducer.asCollection).toBe(false)
     expect(reducer.type).toBe('ReducerEntity')
@@ -35,7 +36,7 @@ describe('create', function () {
   })
 
   test('as collection', () => {
-    const reducer = factory.create('foo:abc[]')
+    const reducer = factory.create(createReducer, 'foo:abc[]')
     expect(reducer.asCollection).toBe(true)
     expect(reducer.hasEmptyConditional).toBe(false)
     expect(reducer.type).toBe('ReducerEntity')
@@ -44,7 +45,7 @@ describe('create', function () {
   })
 
   test('with conditional', () => {
-    const reducer = factory.create('?foo:abc')
+    const reducer = factory.create(createReducer, '?foo:abc')
     expect(reducer.hasEmptyConditional).toBe(true)
     expect(reducer.asCollection).toBe(false)
     expect(reducer.type).toBe('ReducerEntity')
@@ -53,7 +54,7 @@ describe('create', function () {
   })
 
   test('with conditional and as collection', () => {
-    const reducer = factory.create('?foo:abc[]')
+    const reducer = factory.create(createReducer, '?foo:abc[]')
     expect(reducer.hasEmptyConditional).toBe(true)
     expect(reducer.asCollection).toBe(true)
     expect(reducer.type).toBe('ReducerEntity')
