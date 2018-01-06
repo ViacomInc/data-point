@@ -25,11 +25,11 @@ module.exports.ReducerPath = ReducerPath
  * @param {*} source
  * @returns {boolean}
  */
-function isPath (source) {
+function isType (source) {
   return _.isString(source) && source.charAt(0) === '$'
 }
 
-module.exports.isPath = isPath
+module.exports.isType = isType
 
 /**
  * @param {Accumulator} acc
