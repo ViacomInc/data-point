@@ -11,11 +11,9 @@ const helpers = require('../../helpers')
 const utils = require('../../utils')
 
 let dataPoint
-let resolveReducerBound
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
-  resolveReducerBound = helpers.createReducerResolver(dataPoint)
 })
 
 afterEach(() => {
@@ -34,9 +32,10 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       }
     )
     return ResolveEntity.resolveErrorReducers(
+      dataPoint,
       err,
       accumulator,
-      resolveReducerBound
+      resolveReducer
     )
       .catch(reason => reason)
       .then(acc => {
@@ -56,9 +55,10 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       }
     )
     return ResolveEntity.resolveErrorReducers(
+      dataPoint,
       err,
       accumulator,
-      resolveReducerBound
+      resolveReducer
     ).then(acc => {
       expect(acc.value).toEqual('pass')
     })
@@ -139,7 +139,7 @@ describe('ResolveEntity.resolveEntity', () => {
     const reducer = createReducerEntity(entityId)
     return ResolveEntity.resolveEntity(
       dataPoint,
-      resolveReducerBound,
+      resolveReducer,
       racc,
       reducer,
       resolver || defaultResolver
