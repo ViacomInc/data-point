@@ -4,6 +4,10 @@ const REDUCER_FILTER = 'ReducerFilter'
 
 module.exports.type = REDUCER_FILTER
 
+const HELPER_NAME = 'filter'
+
+module.exports.HELPER_NAME = HELPER_NAME
+
 /**
  * @class
  * @property {string} type

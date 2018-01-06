@@ -4,6 +4,10 @@ const REDUCER_MAP = 'ReducerMap'
 
 module.exports.type = REDUCER_MAP
 
+const HELPER_NAME = 'map'
+
+module.exports.HELPER_NAME = HELPER_NAME
+
 /**
  * @class
  * @property {string} type

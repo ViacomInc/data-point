@@ -4,6 +4,10 @@ const REDUCER_PICK = 'ReducerPick'
 
 module.exports.type = REDUCER_PICK
 
+const HELPER_NAME = 'pick'
+
+module.exports.HELPER_NAME = HELPER_NAME
+
 /**
  * @class
  * @property {string} type

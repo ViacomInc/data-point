@@ -4,6 +4,10 @@ const REDUCER_FIND = 'ReducerFind'
 
 module.exports.type = REDUCER_FIND
 
+const HELPER_NAME = 'find'
+
+module.exports.HELPER_NAME = HELPER_NAME
+
 /**
  * @class
  * @property {string} type

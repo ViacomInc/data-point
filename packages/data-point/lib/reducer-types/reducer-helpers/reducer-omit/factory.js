@@ -4,6 +4,10 @@ const REDUCER_OMIT = 'ReducerOmit'
 
 module.exports.type = REDUCER_OMIT
 
+const HELPER_NAME = 'omit'
+
+module.exports.HELPER_NAME = HELPER_NAME
+
 /**
  * @class
  * @property {string} type
