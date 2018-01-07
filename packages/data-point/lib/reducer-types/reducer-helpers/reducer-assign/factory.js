@@ -17,7 +17,6 @@ function ReducerAssign () {
   this[REDUCER_SYMBOL] = true
   this.type = REDUCER_ASSIGN
   this.reducer = undefined
-  this.isReducer = true
 }
 
 module.exports.ReducerAssign = ReducerAssign

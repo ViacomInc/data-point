@@ -17,7 +17,6 @@ function ReducerFilter () {
   this[REDUCER_SYMBOL] = true
   this.type = REDUCER_FILTER
   this.transform = undefined
-  this.isReducer = true
 }
 
 module.exports.ReducerFilter = ReducerFilter

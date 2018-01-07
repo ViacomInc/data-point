@@ -17,7 +17,6 @@ function ReducerPick () {
   this[REDUCER_SYMBOL] = true
   this.type = REDUCER_PICK
   this.keys = undefined
-  this.isReducer = true
 }
 
 module.exports.ReducerPick = ReducerPick

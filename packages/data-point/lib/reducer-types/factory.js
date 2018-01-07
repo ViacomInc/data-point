@@ -16,11 +16,11 @@ const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]
 const ReducerHelpers = require('./reducer-helpers')
 
 /**
- * @param {*} data
+ * @param {*} item
  * @returns {boolean}
  */
 function isReducer (item) {
-  return !!item && item[REDUCER_SYMBOL] === true
+  return !!(item && item[REDUCER_SYMBOL])
 }
 
 module.exports.isReducer = isReducer

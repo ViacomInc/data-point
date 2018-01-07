@@ -17,7 +17,6 @@ function ReducerFind () {
   this[REDUCER_SYMBOL] = true
   this.type = REDUCER_FIND
   this.reducer = undefined
-  this.isReducer = true
 }
 
 module.exports.ReducerFind = ReducerFind

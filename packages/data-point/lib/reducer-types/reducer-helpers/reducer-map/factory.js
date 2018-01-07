@@ -17,7 +17,6 @@ function ReducerMap () {
   this[REDUCER_SYMBOL] = true
   this.type = REDUCER_MAP
   this.reducer = undefined
-  this.isReducer = true
 }
 
 module.exports.ReducerMap = ReducerMap

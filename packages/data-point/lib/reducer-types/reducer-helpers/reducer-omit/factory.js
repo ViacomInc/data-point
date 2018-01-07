@@ -17,7 +17,6 @@ function ReducerOmit () {
   this[REDUCER_SYMBOL] = true
   this.type = REDUCER_OMIT
   this.keys = undefined
-  this.isReducer = true
 }
 
 module.exports.ReducerOmit = ReducerOmit

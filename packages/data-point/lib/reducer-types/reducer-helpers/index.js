@@ -9,27 +9,16 @@ const reducerPick = require('./reducer-pick')
 
 module.exports.isType = require('./reducer-stub').isType
 
-const factories = {
-  [reducerAssign.type]: reducerAssign.create,
-  [reducerFilter.type]: reducerFilter.create,
-  [reducerFind.type]: reducerFind.create,
-  [reducerMap.type]: reducerMap.create,
-  [reducerOmit.type]: reducerOmit.create,
-  [reducerPick.type]: reducerPick.create
+const reducers = {
+  [reducerAssign.type]: reducerAssign,
+  [reducerFilter.type]: reducerFilter,
+  [reducerFind.type]: reducerFind,
+  [reducerMap.type]: reducerMap,
+  [reducerOmit.type]: reducerOmit,
+  [reducerPick.type]: reducerPick
 }
 
-module.exports.factories = factories
-
-const resolvers = {
-  [reducerAssign.type]: reducerAssign.resolve,
-  [reducerFilter.type]: reducerFilter.resolve,
-  [reducerFind.type]: reducerFind.resolve,
-  [reducerMap.type]: reducerMap.resolve,
-  [reducerOmit.type]: reducerOmit.resolve,
-  [reducerPick.type]: reducerPick.resolve
-}
-
-module.exports.resolvers = resolvers
+module.exports.reducers = reducers
 
 function bindStubFunction (reducerType) {
   return createStub.bind(null, reducerType)
@@ -53,7 +42,7 @@ module.exports.stubFactories = stubFactories
  */
 function createFromStub (createReducer, stub) {
   const args = [createReducer].concat(stub.args)
-  return factories[stub.type].apply(null, args)
+  return reducers[stub.type].create.apply(null, args)
 }
 
 module.exports.create = createFromStub
