@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reducer#resolve It should throw error for invalid input 1`] = `"Reducer type 'INVALID TYPE' was not recognized"`;
