@@ -4,12 +4,13 @@ const Promise = require('bluebird')
 const utils = require('../../utils')
 
 /**
- * Resolve a ReducerFunction
+ * @param {Object} manager
+ * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
- * @param {ReducerFunction} reducer
+ * @param {ReducerObject} reducer
  * @returns {Promise<Accumulator>}
  */
-function resolve (accumulator, reducer) {
+function resolve (manager, resolveReducer, accumulator, reducer) {
   const callbackFunction = reducer.body
 
   if (callbackFunction.length === 2) {
