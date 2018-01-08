@@ -26,21 +26,25 @@ function ReducerEntity () {
 
 module.exports.ReducerEntity = ReducerEntity
 
-function isEntity (source) {
+/**
+ * @param {*} source
+ * @returns {boolean}
+ */
+function isType (source) {
   return (
     _.isString(source) &&
     source.match(/^([^$][\w.]*):([\w.-]+)(\[])?$/) !== null
   )
 }
 
-module.exports.isEntity = isEntity
+module.exports.isType = isType
 
 /**
- * parse reducer
- * @param  {string} reducerRaw raw reducer path
+ * @param {Function} createReducer
+ * @param {string} source
  * @return {reducer}
  */
-function create (source) {
+function create (createReducer, source) {
   const reducer = new ReducerEntity()
   const tokens = source.split(':')
 

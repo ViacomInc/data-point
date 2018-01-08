@@ -6,6 +6,6 @@ const resolve = require('./resolve').resolve
 module.exports = {
   create: reducer.create,
   type: reducer.type,
-  isType: reducer.isEntity,
+  isType: reducer.isType,
   resolve: resolve
 }

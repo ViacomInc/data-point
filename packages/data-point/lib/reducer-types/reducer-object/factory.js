@@ -23,11 +23,11 @@ module.exports.ReducerObject = ReducerObject
  * @param {*} source
  * @returns {boolean}
  */
-function isObject (source) {
+function isType (source) {
   return isPlainObject(source)
 }
 
-module.exports.isObject = isObject
+module.exports.isType = isType
 
 /**
  * @param {Function} createReducer

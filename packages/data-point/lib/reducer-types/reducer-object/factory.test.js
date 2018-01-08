@@ -4,11 +4,11 @@
 const factory = require('./factory')
 const createReducer = require('../index').create
 
-test('reducer/reducer-function#isObject', () => {
-  expect(factory.isObject('$foo')).toBe(false)
-  expect(factory.isObject(() => true)).toBe(false)
-  expect(factory.isObject([])).toBe(false)
-  expect(factory.isObject({})).toBe(true)
+test('reducer/reducer-function#isType', () => {
+  expect(factory.isType('$foo')).toBe(false)
+  expect(factory.isType(() => true)).toBe(false)
+  expect(factory.isType([])).toBe(false)
+  expect(factory.isType({})).toBe(true)
 })
 
 describe('reducer/reducer-function#getReducerProps', () => {

@@ -4,7 +4,7 @@ const defaultTo = require('lodash/defaultTo')
 const createReducer = require('../../reducer-types').create
 
 /**
- * @param {function} Factory - factory function to create the entity
+ * @param {Function} Factory - factory function to create the entity
  * @param {Object} spec - spec for the Entity
  * @param {string} id - Entity's id
  */

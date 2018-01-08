@@ -7,7 +7,14 @@ const middleware = require('../../middleware')
 
 const utils = require('../../utils')
 
-function resolveErrorReducers (error, accumulator, resolveReducer) {
+/**
+ * @param {Object} manager
+ * @param {Error} error
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @returns {Promise<Accumulator>}
+ */
+function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
   const errorReducer = accumulator.reducer.spec.error
   if (utils.reducerIsEmpty(errorReducer)) {
     return Promise.reject(error)
@@ -15,7 +22,11 @@ function resolveErrorReducers (error, accumulator, resolveReducer) {
 
   const errorAccumulator = utils.set(accumulator, 'value', error)
 
-  const reducerResolved = resolveReducer(errorAccumulator, errorReducer)
+  const reducerResolved = resolveReducer(
+    manager,
+    errorAccumulator,
+    errorReducer
+  )
 
   return reducerResolved.then(result =>
     utils.set(accumulator, 'value', result.value)
@@ -24,6 +35,12 @@ function resolveErrorReducers (error, accumulator, resolveReducer) {
 
 module.exports.resolveErrorReducers = resolveErrorReducers
 
+/**
+ * @param {Object} manager
+ * @param {Accumulator} accumulator
+ * @param {Function} reducer
+ * @returns {Accumulator}
+ */
 function createCurrentAccumulator (manager, accumulator, reducer) {
   // get defined source
   const entity = manager.entities.get(reducer.id)
@@ -79,8 +96,17 @@ function resolveMiddleware (manager, name, acc) {
     return reqCtx
   })
 }
+
 module.exports.resolveMiddleware = resolveMiddleware
 
+/**
+ * @param {Object} manager
+ * @param {Function} resolveReducer
+ * @param {Accumulator} accumulator
+ * @param {Function} reducer
+ * @param {Function} mainResolver
+ * @returns {Promise<Accumulator>}
+ */
 function resolveEntity (
   manager,
   resolveReducer,
@@ -106,14 +132,16 @@ function resolveEntity (
     console.time(timeId)
   }
 
+  const resolveReducerBound = _.partial(resolveReducer, manager)
+
   return Promise.resolve(accUid)
     .then(acc => resolveMiddleware(manager, `before`, acc))
     .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
-    .then(acc => resolveReducer(acc, acc.reducer.spec.before))
-    .then(acc => mainResolver(acc, resolveReducer))
-    .then(acc => resolveReducer(acc, acc.reducer.spec.after))
+    .then(acc => resolveReducer(manager, acc, acc.reducer.spec.before))
+    .then(acc => mainResolver(acc, resolveReducerBound))
+    .then(acc => resolveReducer(manager, acc, acc.reducer.spec.after))
     .then(acc =>
       middleware.resolve(manager, `${reducer.entityType}:after`, acc)
     )
@@ -126,7 +154,12 @@ function resolveEntity (
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
-      return resolveErrorReducers(error, currentAccumulator, resolveReducer)
+      return resolveErrorReducers(
+        manager,
+        error,
+        currentAccumulator,
+        resolveReducer
+      )
     })
     .then(resultContext => {
       if (trace === true) {
@@ -141,6 +174,14 @@ function resolveEntity (
 
 module.exports.resolveEntity = resolveEntity
 
+/**
+ * @param {Object} manager
+ * @param {Function} resolveReducer
+ * @param {Accumulator} accumulator
+ * @param {Function} reducer
+ * @param {Function} mainResolver
+ * @returns {Promise<Accumulator>}
+ */
 function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
   const hasEmptyConditional = reducer.hasEmptyConditional
 
@@ -148,12 +189,10 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
     return Promise.resolve(accumulator)
   }
 
-  const resolveReducerBound = _.partial(resolveReducer, manager)
-
   if (!reducer.asCollection) {
     return resolveEntity(
       manager,
-      resolveReducerBound,
+      resolveReducer,
       accumulator,
       reducer,
       mainResolver
@@ -173,7 +212,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
 
     return resolveEntity(
       manager,
-      resolveReducerBound,
+      resolveReducer,
       itemCtx,
       reducer,
       mainResolver

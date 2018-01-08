@@ -7,13 +7,19 @@ const REDUCER_SYMBOL = require('./reducer-symbol')
 
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
+const ReducerHelpers = require('./reducer-helpers')
 const ReducerList = require('./reducer-list')
 const ReducerObject = require('./reducer-object')
 const ReducerPath = require('./reducer-path')
 
-const reducerTypes = [ReducerPath, ReducerFunction, ReducerEntity]
-
-const ReducerHelpers = require('./reducer-helpers')
+const reducerTypes = [
+  ReducerEntity,
+  ReducerFunction,
+  ReducerHelpers,
+  ReducerList,
+  ReducerObject,
+  ReducerPath
+]
 
 /**
  * @param {*} item
@@ -48,20 +54,6 @@ function dealWithPipeOperators (source) {
  */
 function createReducer (source) {
   source = dealWithPipeOperators(source)
-
-  // TODO isStub?
-  if (ReducerHelpers.isType(source)) {
-    return ReducerHelpers.create(createReducer, source)
-  }
-
-  if (ReducerObject.isType(source)) {
-    return ReducerObject.create(createReducer, source)
-  }
-
-  if (ReducerList.isType(source)) {
-    return ReducerList.create(createReducer, source)
-  }
-
   const reducer = _.find(reducerTypes, r => r.isType(source))
 
   if (_.isUndefined(reducer)) {
@@ -76,7 +68,8 @@ function createReducer (source) {
     throw new Error(message)
   }
 
-  return reducer.create(source)
+  // NOTE: recursive call
+  return reducer.create(createReducer, source)
 }
 
 module.exports.create = createReducer

@@ -29,13 +29,13 @@ function resolve (manager, accumulator, reducer) {
     return Promise.resolve(accumulator)
   }
 
-  const resolveReducer = reducers[reducer.type]
-  if (!resolveReducer) {
+  const reducerType = reducers[reducer.type]
+  if (!reducerType) {
     throw new Error(`Reducer type '${reducer.type}' was not recognized`)
   }
 
   // NOTE: recursive call
-  return resolveReducer.resolve(manager, resolve, accumulator, reducer)
+  return reducerType.resolve(manager, resolve, accumulator, reducer)
 }
 
 module.exports.resolve = resolve
