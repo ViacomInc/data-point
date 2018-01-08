@@ -14,7 +14,6 @@ function resolve (manager, createReducer, accumulator, reducerMap) {
     return Promise.resolve(accumulator)
   }
 
-  // TODO use a sync map to extract the data?
   return Promise.map(accumulator.value, itemValue => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
     return createReducer(manager, itemContext, reducer).then(res => {

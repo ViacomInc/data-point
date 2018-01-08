@@ -25,12 +25,12 @@ function bindStubFunction (reducerType) {
 }
 
 const stubFactories = {
-  assign: bindStubFunction(reducerAssign.type),
-  filter: bindStubFunction(reducerFilter.type),
-  find: bindStubFunction(reducerFind.type),
-  map: bindStubFunction(reducerMap.type),
-  omit: bindStubFunction(reducerOmit.type),
-  pick: bindStubFunction(reducerPick.type)
+  [reducerAssign.name]: bindStubFunction(reducerAssign.type),
+  [reducerFilter.name]: bindStubFunction(reducerFilter.type),
+  [reducerFind.name]: bindStubFunction(reducerFind.type),
+  [reducerMap.name]: bindStubFunction(reducerMap.type),
+  [reducerOmit.name]: bindStubFunction(reducerOmit.type),
+  [reducerPick.name]: bindStubFunction(reducerPick.type)
 }
 
 module.exports.stubFactories = stubFactories
