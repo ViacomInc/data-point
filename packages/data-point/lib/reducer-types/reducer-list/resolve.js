@@ -1,7 +1,6 @@
 'use strict'
 
 const Promise = require('bluebird')
-const partial = require('lodash/partial')
 
 /**
  * @param {Object} manager
@@ -11,13 +10,16 @@ const partial = require('lodash/partial')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducerList) {
-  if (reducerList.reducers.length === 0) {
+  const reducers = reducerList.reducers
+  if (reducers.length === 0) {
     return Promise.resolve(accumulator)
   }
 
   const result = Promise.reduce(
-    reducerList.reducers,
-    partial(resolveReducer, manager),
+    reducers,
+    (accumulator, reducer) => {
+      return resolveReducer(manager, accumulator, reducer)
+    },
     accumulator
   )
 

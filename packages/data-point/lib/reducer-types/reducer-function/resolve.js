@@ -7,7 +7,7 @@ const utils = require('../../utils')
  * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
- * @param {ReducerObject} reducer
+ * @param {ReducerFunction} reducer
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
