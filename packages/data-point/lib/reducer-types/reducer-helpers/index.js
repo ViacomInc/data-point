@@ -7,6 +7,26 @@ const reducerMap = require('./reducer-map')
 const reducerOmit = require('./reducer-omit')
 const reducerPick = require('./reducer-pick')
 
+/*
+"Reducer helpers" are just functions that create reducers.
+
+They work by generating a temporary object called a
+ReducerStub that is later compiled into a reducer:
+
+// first, the user creates a ReducerStub
+
+const reducer = ReducerStub('filter', '$a.b')
+
+// when the stub is passed to transform, it will
+// be compiled into an actual reducer object
+
+dp.transform(reducer, data)
+
+The helpers exposed on DataPoint are just the
+ReducerStub function bound to a string identifier
+using bindStubFunction
+*/
+
 module.exports.isType = require('./reducer-stub').isType
 
 const reducers = {
