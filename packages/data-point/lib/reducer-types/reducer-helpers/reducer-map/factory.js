@@ -6,7 +6,7 @@ module.exports.type = REDUCER_MAP
 
 const HELPER_NAME = 'map'
 
-module.exports.HELPER_NAME = HELPER_NAME
+module.exports.name = HELPER_NAME
 
 /**
  * @class

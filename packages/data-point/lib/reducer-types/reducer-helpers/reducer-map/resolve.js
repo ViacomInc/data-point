@@ -21,10 +21,6 @@ function resolve (manager, createReducer, accumulator, reducerMap) {
       return res.value
     })
   }).then(result => utils.set(accumulator, 'value', result))
-  // .catch(err => {
-  //   err.message = `Entity: ${accumulator.reducer.spec.id}.map ${err.message}`
-  //   throw err
-  // })
 }
 
 module.exports.resolve = resolve

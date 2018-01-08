@@ -6,7 +6,7 @@ module.exports.type = REDUCER_FIND
 
 const HELPER_NAME = 'find'
 
-module.exports.HELPER_NAME = HELPER_NAME
+module.exports.name = HELPER_NAME
 
 /**
  * @class

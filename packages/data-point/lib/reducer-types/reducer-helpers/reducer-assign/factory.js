@@ -6,7 +6,7 @@ module.exports.type = REDUCER_ASSIGN
 
 const HELPER_NAME = 'assign'
 
-module.exports.HELPER_NAME = HELPER_NAME
+module.exports.name = HELPER_NAME
 
 /**
  * @class

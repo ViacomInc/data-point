@@ -6,7 +6,7 @@ module.exports.type = REDUCER_OMIT
 
 const HELPER_NAME = 'omit'
 
-module.exports.HELPER_NAME = HELPER_NAME
+module.exports.name = HELPER_NAME
 
 /**
  * @class

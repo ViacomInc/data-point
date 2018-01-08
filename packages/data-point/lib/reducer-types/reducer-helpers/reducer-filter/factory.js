@@ -6,7 +6,7 @@ module.exports.type = REDUCER_FILTER
 
 const HELPER_NAME = 'filter'
 
-module.exports.HELPER_NAME = HELPER_NAME
+module.exports.name = HELPER_NAME
 
 /**
  * @class

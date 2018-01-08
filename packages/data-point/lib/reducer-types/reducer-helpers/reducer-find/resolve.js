@@ -27,10 +27,6 @@ function resolve (manager, createReducer, accumulator, reducerFind) {
     },
     null
   ).then(result => utils.set(accumulator, 'value', result))
-  // .catch(err => {
-  //   err.message = `Entity: ${accumulator.reducer.spec.id}.find ${err.message}`
-  //   throw err
-  // })
 }
 
 module.exports.resolve = resolve
