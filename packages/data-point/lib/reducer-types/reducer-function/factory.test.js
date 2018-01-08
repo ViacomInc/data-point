@@ -1,27 +1,28 @@
 /* eslint-env jest */
 'use strict'
 
-const rf = require('./factory')
+const factory = require('./factory')
+const createReducer = require('../index').create
 
 test('reducer/reducer-function#isType', () => {
-  expect(rf.isType('$foo')).toBe(false)
-  expect(rf.isType('foo()')).toBe(false)
-  expect(rf.isType(() => true)).toBe(true)
+  expect(factory.isType('$foo')).toBe(false)
+  expect(factory.isType('foo()')).toBe(false)
+  expect(factory.isType(() => true)).toBe(true)
 })
 
 describe('reducer/reducer-function#validateFunction', () => {
-  expect(rf.validateFunction(() => true)).toBe(true)
-  expect(rf.validateFunction(a => true)).toBe(true)
-  expect(rf.validateFunction((a, b) => true)).toBe(true)
+  expect(factory.validateFunction(() => true)).toBe(true)
+  expect(factory.validateFunction(a => true)).toBe(true)
+  expect(factory.validateFunction((a, b) => true)).toBe(true)
   expect(() =>
-    rf.validateFunction((a, b, c) => true)
+    factory.validateFunction((a, b, c) => true)
   ).toThrowErrorMatchingSnapshot()
 })
 
 describe('reducer/reducer-function#create', () => {
   test('function body', () => {
     const reducerFunction = () => (acc, done) => done(null, acc.value * 2)
-    const reducer = rf.create(reducerFunction)
+    const reducer = factory.create(createReducer, reducerFunction)
     expect(reducer.body).toEqual(reducerFunction)
   })
 })

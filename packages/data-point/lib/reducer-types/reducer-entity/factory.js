@@ -37,11 +37,11 @@ function isType (source) {
 module.exports.isType = isType
 
 /**
- * parse reducer
- * @param  {string} reducerRaw raw reducer path
+ * @param {Function} createReducer
+ * @param {string} source
  * @return {reducer}
  */
-function create (source) {
+function create (createReducer, source) {
   const reducer = new ReducerEntity()
   const tokens = source.split(':')
 

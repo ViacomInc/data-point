@@ -2,6 +2,7 @@
 'use strict'
 
 const factory = require('./factory')
+const createReducer = require('../index').create
 
 it('reducer/reducer-path#isType', () => {
   expect(factory.isType('#a')).not.toBe('is not path')
@@ -64,33 +65,33 @@ describe('reducer/reducer-path#getPathReducerFunction', () => {
 
 describe('reducer/reducer-path#create', () => {
   it('basic path', () => {
-    const reducer = factory.create('$a')
+    const reducer = factory.create(createReducer, '$a')
     expect(reducer.type).toBe('ReducerPath')
     expect(reducer.name).toBe('a')
     expect(reducer.asCollection).toBe(false)
   })
 
   it('empty path', () => {
-    const reducer = factory.create('$')
+    const reducer = factory.create(createReducer, '$')
     expect(reducer.type).toBe('ReducerPath')
     expect(reducer.name).toBe('.')
     expect(reducer.asCollection).toBe(false)
   })
 
   it('compound path', () => {
-    const reducer = factory.create('$foo.bar')
+    const reducer = factory.create(createReducer, '$foo.bar')
     expect(reducer.name).toBe('foo.bar')
     expect(reducer.asCollection).toBe(false)
   })
 
   it('compound path', () => {
-    const reducer = factory.create('$foo.bar[0]')
+    const reducer = factory.create(createReducer, '$foo.bar[0]')
     expect(reducer.name).toBe('foo.bar[0]')
     expect(reducer.asCollection).toBe(false)
   })
 
   it('path with asCollection', () => {
-    const reducer = factory.create('$foo.bar[]')
+    const reducer = factory.create(createReducer, '$foo.bar[]')
     expect(reducer.name).toBe('foo.bar')
     expect(reducer.asCollection).toBe(true)
   })
@@ -101,7 +102,7 @@ describe('ReducerPath#body', () => {
     const acc = {
       value: 'test'
     }
-    const result = factory.create('$').body(acc)
+    const result = factory.create(createReducer, '$').body(acc)
     expect(result).toBe('test')
   })
 
@@ -109,7 +110,7 @@ describe('ReducerPath#body', () => {
     const acc = {
       value: 'test'
     }
-    const result = factory.create('$.').body(acc)
+    const result = factory.create(createReducer, '$.').body(acc)
     expect(result).toBe('test')
   })
 
@@ -120,9 +121,9 @@ describe('ReducerPath#body', () => {
       },
       locals: 'test2'
     }
-    let result = factory.create('$..value.a[0]').body(acc)
+    let result = factory.create(createReducer, '$..value.a[0]').body(acc)
     expect(result).toBe('test')
-    result = factory.create('$..locals').body(acc)
+    result = factory.create(createReducer, '$..locals').body(acc)
     expect(result).toBe('test2')
   })
 
@@ -132,7 +133,7 @@ describe('ReducerPath#body', () => {
         a: ['test']
       }
     }
-    const result = factory.create('$a[0]').body(acc)
+    const result = factory.create(createReducer, '$a[0]').body(acc)
     expect(result).toBe('test')
   })
 
@@ -162,7 +163,7 @@ describe('ReducerPath#body', () => {
         }
       ]
     }
-    const result = factory.create('$a.b.c[]').body(acc)
+    const result = factory.create(createReducer, '$a.b.c[]').body(acc)
     expect(result).toEqual([1, 2, 3])
   })
 
@@ -192,7 +193,7 @@ describe('ReducerPath#body', () => {
         }
       ]
     }
-    const result = factory.create('$a.b.d[]').body(acc)
+    const result = factory.create(createReducer, '$a.b.d[]').body(acc)
     expect(result).toEqual([undefined, undefined, undefined])
   })
 
@@ -204,7 +205,7 @@ describe('ReducerPath#body', () => {
         }
       }
     }
-    const result = factory.create('$a.b.c[]').body(acc)
+    const result = factory.create(createReducer, '$a.b.c[]').body(acc)
     expect(result).toBe(undefined)
   })
 })
