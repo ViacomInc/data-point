@@ -3,9 +3,9 @@
 
 const factory = require('./factory')
 
-it('reducer/reducer-path#isPath', () => {
-  expect(factory.isPath('#a')).not.toBe('is not path')
-  expect(factory.isPath('$.')).toBeTruthy()
+it('reducer/reducer-path#isType', () => {
+  expect(factory.isType('#a')).not.toBe('is not path')
+  expect(factory.isType('$.')).toBeTruthy()
 })
 
 describe('ReducerPath getters', () => {

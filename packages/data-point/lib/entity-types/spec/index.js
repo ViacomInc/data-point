@@ -5,5 +5,5 @@ const reducer = require('./factory')
 module.exports = {
   create: reducer.create,
   type: reducer.type,
-  isType: reducer.isEntity
+  isType: reducer.isType
 }

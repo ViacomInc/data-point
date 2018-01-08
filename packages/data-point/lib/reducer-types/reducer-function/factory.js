@@ -25,11 +25,11 @@ module.exports.ReducerFunction = ReducerFunction
  * @param {*} source
  * @returns {boolean}
  */
-function isFunction (source) {
+function isType (source) {
   return _.isFunction(source)
 }
 
-module.exports.isFunction = isFunction
+module.exports.isType = isType
 
 /**
  * @param {Function} fn

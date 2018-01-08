@@ -3,10 +3,10 @@
 
 const rf = require('./factory')
 
-test('reducer/reducer-function#isFunction', () => {
-  expect(rf.isFunction('$foo')).toBe(false)
-  expect(rf.isFunction('foo()')).toBe(false)
-  expect(rf.isFunction(() => true)).toBe(true)
+test('reducer/reducer-function#isType', () => {
+  expect(rf.isType('$foo')).toBe(false)
+  expect(rf.isType('foo()')).toBe(false)
+  expect(rf.isType(() => true)).toBe(true)
 })
 
 describe('reducer/reducer-function#validateFunction', () => {
