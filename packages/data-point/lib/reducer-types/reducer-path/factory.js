@@ -25,11 +25,11 @@ module.exports.ReducerPath = ReducerPath
  * @param {*} source
  * @returns {boolean}
  */
-function isPath (source) {
+function isType (source) {
   return _.isString(source) && source.charAt(0) === '$'
 }
 
-module.exports.isPath = isPath
+module.exports.isType = isType
 
 /**
  * @param {Accumulator} acc
@@ -102,11 +102,11 @@ function getPathReducerFunction (jsonPath, asCollection) {
 module.exports.getPathReducerFunction = getPathReducerFunction
 
 /**
- * parse reducer
- * @param {string} source - raw reducer path
+ * @param {Function} createReducer
+ * @param {string} source
  * @return {reducer}
  */
-function create (source) {
+function create (createReducer, source) {
   const reducer = new ReducerPath()
 
   reducer.asCollection = source.slice(-2) === '[]'

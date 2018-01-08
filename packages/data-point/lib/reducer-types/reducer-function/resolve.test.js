@@ -1,9 +1,17 @@
 /* eslint-env jest */
 'use strict'
 
-const AccumulatorFactory = require('../../accumulator/factory')
 const reducerFactory = require('../factory')
 const resolveFunction = require('./resolve')
+const resolveReducer = require('../index').resolve
+const AccumulatorFactory = require('../../accumulator/factory')
+const FixtureStore = require('../../../test/utils/fixture-store')
+
+let dataPoint
+
+beforeAll(() => {
+  dataPoint = FixtureStore.create()
+})
 
 describe('resolve#filter.resolve', () => {
   test('resolves node style callback', () => {
@@ -15,9 +23,11 @@ describe('resolve#filter.resolve', () => {
       done(null, `${acc.value}node`)
     )
 
-    return resolveFunction.resolve(accumulator, reducer).then(result => {
-      expect(result.value).toBe('testnode')
-    })
+    return resolveFunction
+      .resolve(dataPoint, resolveReducer, accumulator, reducer)
+      .then(result => {
+        expect(result.value).toBe('testnode')
+      })
   })
 
   test('resolves a sync function', () => {
@@ -27,9 +37,11 @@ describe('resolve#filter.resolve', () => {
 
     const reducer = reducerFactory.create(acc => `${acc.value}sync`)
 
-    return resolveFunction.resolve(accumulator, reducer).then(result => {
-      expect(result.value).toBe('testsync')
-    })
+    return resolveFunction
+      .resolve(dataPoint, resolveReducer, accumulator, reducer)
+      .then(result => {
+        expect(result.value).toBe('testsync')
+      })
   })
 
   test('resolves a promise function', () => {
@@ -41,9 +53,11 @@ describe('resolve#filter.resolve', () => {
       Promise.resolve(`${acc.value}promise`)
     )
 
-    return resolveFunction.resolve(accumulator, reducer).then(result => {
-      expect(result.value).toBe('testpromise')
-    })
+    return resolveFunction
+      .resolve(dataPoint, resolveReducer, accumulator, reducer)
+      .then(result => {
+        expect(result.value).toBe('testpromise')
+      })
   })
 
   test('rejects if callback passes error as first param', () => {
@@ -56,7 +70,7 @@ describe('resolve#filter.resolve', () => {
     })
 
     return resolveFunction
-      .resolve(accumulator, reducer)
+      .resolve(dataPoint, resolveReducer, accumulator, reducer)
       .catch(err => err)
       .then(err => {
         expect(err).toHaveProperty('message', 'Test')

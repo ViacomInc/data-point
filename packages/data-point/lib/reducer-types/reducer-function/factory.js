@@ -25,11 +25,11 @@ module.exports.ReducerFunction = ReducerFunction
  * @param {*} source
  * @returns {boolean}
  */
-function isFunction (source) {
+function isType (source) {
   return _.isFunction(source)
 }
 
-module.exports.isFunction = isFunction
+module.exports.isType = isType
 
 /**
  * @param {Function} fn
@@ -49,11 +49,11 @@ function validateFunction (fn) {
 module.exports.validateFunction = validateFunction
 
 /**
- * parse reducer
- * @param  {string} reducerRaw raw reducer path
+ * @param {Function} createReducer
+ * @param {Function} source
  * @return {reducer}
  */
-function create (source) {
+function create (createReducer, source) {
   validateFunction(source)
   const reducer = new ReducerFunction()
   reducer.body = source

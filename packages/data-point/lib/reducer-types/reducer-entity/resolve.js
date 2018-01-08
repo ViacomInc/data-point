@@ -8,17 +8,17 @@ const BaseEntity = require('../../entity-types/base-entity/resolve')
  * @param {Object} manager
  * @param {function} resolveReducer
  * @param {Accumulator} accumulator
- * @param {ReducerEntity} reducerEntity
+ * @param {ReducerEntity} reducer
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducerEntity) {
-  const reducerEntityType = reducerEntity.entityType
+function resolve (manager, resolveReducer, accumulator, reducer) {
+  const reducerEntityType = reducer.entityType
   const EntityType = manager.entityTypes.get(reducerEntityType)
   return BaseEntity.resolve(
     manager,
     resolveReducer,
     accumulator,
-    reducerEntity,
+    reducer,
     EntityType.resolve
   )
 }

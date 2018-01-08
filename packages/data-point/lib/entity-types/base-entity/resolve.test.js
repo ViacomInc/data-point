@@ -2,9 +2,9 @@
 'use strict'
 
 const ResolveEntity = require('./resolve')
-const createReducerEntity = require('../../reducer-types/reducer-entity').create
 const createReducer = require('../../reducer-types').create
 const resolveReducer = require('../../reducer-types').resolve
+const createReducerEntity = require('../../reducer-types/reducer-entity').create
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
@@ -68,7 +68,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
 describe('ResolveEntity.createCurrentAccumulator', () => {
   let acc
   beforeAll(() => {
-    const reducerEntity = createReducerEntity('hash:base')
+    const reducerEntity = createReducerEntity(createReducer, 'hash:base')
     const accumulator = helpers.createAccumulator({
       foo: 'bar'
     })
@@ -136,7 +136,7 @@ describe('ResolveEntity.resolveEntity', () => {
 
   const resolveEntity = (entityId, input, options, resolver) => {
     const racc = helpers.createAccumulator.call(null, input, options)
-    const reducer = createReducerEntity(entityId)
+    const reducer = createReducerEntity(createReducer, entityId)
     return ResolveEntity.resolveEntity(
       dataPoint,
       resolveReducer,
@@ -203,7 +203,7 @@ describe('ResolveEntity.resolveEntity', () => {
 describe('ResolveEntity.resolve', () => {
   const resolve = resolver => (entityId, input, options) => {
     const racc = helpers.createAccumulator.call(null, input, options)
-    const reducer = createReducerEntity(entityId)
+    const reducer = createReducerEntity(createReducer, entityId)
     return ResolveEntity.resolve(
       dataPoint,
       resolveReducer,
