@@ -47,7 +47,7 @@ function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec
 
   return resolveReducer(accumulator, entity.value)
-    .then(itemContext => validateAsObject(itemContext))
+    .then(validateAsObject)
     .then(acc => resolveCompose(acc, entity.compose, resolveReducer))
 }
 
