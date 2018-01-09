@@ -54,7 +54,7 @@ function dealWithPipeOperators (source) {
  */
 function createReducer (source) {
   source = dealWithPipeOperators(source)
-  const reducer = _.find(reducerTypes, r => r.isType(source))
+  const reducer = reducerTypes.find(r => r.isType(source))
 
   if (_.isUndefined(reducer)) {
     const message = [
