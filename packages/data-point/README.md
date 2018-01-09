@@ -920,7 +920,7 @@ const {
   find,
   omit,
   pick
-} = require('data-doint').helpers
+} = require('data-point').helpers
 ```
 
 ### <a name="reducer-assign">Assign</a>
