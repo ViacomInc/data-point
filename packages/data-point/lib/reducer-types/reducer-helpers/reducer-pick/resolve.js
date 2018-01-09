@@ -4,12 +4,12 @@ const utils = require('../../../utils')
 
 /**
  * @param {Object} manager
- * @param {Function} createReducer
+ * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerPick} reducerPick
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, createReducer, accumulator, reducerPick) {
+function resolve (manager, resolveReducer, accumulator, reducerPick) {
   const keys = reducerPick.keys
   if (keys.length === 0) {
     return Promise.resolve(accumulator)
