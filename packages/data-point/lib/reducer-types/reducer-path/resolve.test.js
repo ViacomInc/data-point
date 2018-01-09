@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const reducerPath = require('./index')
 const createReducer = require('../index').create

@@ -1,4 +1,3 @@
-'use strict'
 
 const _ = require('lodash')
 const parseCompose = require('../parse-compose')

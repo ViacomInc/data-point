@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const createBaseEntity = require('./factory').create
 

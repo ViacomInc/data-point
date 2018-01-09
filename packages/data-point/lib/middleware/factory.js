@@ -1,4 +1,3 @@
-'use strict'
 
 function Middleware (name, callback) {
   this.name = name

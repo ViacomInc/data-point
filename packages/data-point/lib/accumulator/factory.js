@@ -1,4 +1,3 @@
-'use strict'
 
 const _ = require('lodash')
 const LocalsFactory = require('../locals/factory')

@@ -1,4 +1,3 @@
-'use strict'
 
 const coreFactory = require('../../lib/core')
 

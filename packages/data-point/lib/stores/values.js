@@ -1,4 +1,3 @@
-'use strict'
 
 const ObjectStoreManager = require('./object-store-manager')
 

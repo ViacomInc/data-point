@@ -1,4 +1,3 @@
-'use strict'
 
 const IORedis = require('ioredis')
 const Promise = require('bluebird')

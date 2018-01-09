@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const resolveTransformEntity = require('./resolve').resolve
 

@@ -1,4 +1,3 @@
-'use strict'
 
 function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec

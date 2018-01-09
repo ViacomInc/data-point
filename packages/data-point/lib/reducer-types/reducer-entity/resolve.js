@@ -1,4 +1,3 @@
-'use strict'
 
 const BaseEntity = require('../../entity-types/base-entity/resolve')
 
