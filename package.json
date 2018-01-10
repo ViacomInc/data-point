@@ -8,10 +8,12 @@
     "precommit": "lint-staged",
     "commit": "git-cz",
     "test": "jest --coverage",
+    "posttest": "npm run test-examples",
     "lint": "standard --verbose | snazzy",
     "contributors:add": "all-contributors add",
     "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
-    "watch": "jest --watchAll --coverage"
+    "watch": "jest --watchAll --coverage",
+    "test-examples": "node other/run-examples.js"
   },
   "author": {
     "name": "Acatl Pacheco",
