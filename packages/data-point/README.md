@@ -976,7 +976,7 @@ Example at: [examples/reducer-assign.js](examples/reducer-assign.js)
 
 ### <a name="reducer-map">map</a>
 
-The **map** reducer creates a new array with the results of applying the provided [Reducer](#reducers) on every element in the input array.
+The **map** reducer creates a new array with the results of applying the provided [Reducer](#reducers) to every element in the input array.
 
 **SYNOPSIS**
 
