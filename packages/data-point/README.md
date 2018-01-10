@@ -27,7 +27,6 @@ npm install --save data-point
   - [PathReducer](#path-reducer)
   - [FunctionReducer](#function-reducer)
   - [ObjectReducer](#object-reducer)
-  - [Higher Order Reducers](#higher-order-reducers)
   - [EntityReducer](#entity-reducer)
   - [ListReducer](#list-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
@@ -53,6 +52,7 @@ npm install --save data-point
 - [dataPoint.addValue](#api-data-point-add-value)
 - [Custom Entity Types](#custom-entity-types)
 - [Integrations](#integrations)
+- [Patterns and Best Practices](#patterns-best-practices)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -721,45 +721,6 @@ Each of the reducers might contain more ObjectReducers (which might contain redu
   ```
 </details>
 
-
-### <a name="higher-order-reducers">Higher Order Reducers</a>
-
-Higher Order Reducers are expected to be [Higher-order Functions](https://en.wikipedia.org/wiki/Higher-order_function). This means that a higher order reducer **MUST** return a [FunctionReducer](#function-reducer).
-
-```js
-// sync
-const name = (param1, param2, ...) => (acc:Accumulator) => {
-  return newValue
-}
-// async via promise
-const name = (param1, param2, ...) => (acc:Accumulator) => {
-  return Promise.resolve(newValue)
-}
-// async via callback
-const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
-  next(error:Error, newValue:*)
-}
-```
-
-<details>
-  <summary>Higher Order Reducer Example</summary>
-  
-  ```js
-  const addStr = (value) => (acc) => {
-    return acc.value + value
-  }
-  
-  dataPoint
-    .transform(addStr(' World!!'), 'Hello')
-    .then((acc) => {
-      assert.equal(acc.value, 'Hello World!!')
-    })
-  ```
-</details>
-
-
-Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
-
 ### <a name="entity-reducer">EntityReducer</a>
 
 An EntityReducer is the actual implementation of an entity. When implementing an EntityReducer, you are actually passing the current [Accumulator](#accumulator) Object to an entity spec, to become its current Accumulator object.
@@ -1107,37 +1068,6 @@ find(reducer:Reducer):*
 </details>
 
 Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
-
-### <a name="patterns-and-best-practices">Patterns and Best Practices</a>
-
-**Best Practices (Recommendations) with reducers**
-
-```js
-const badReducer = () => (acc) => {
-  // never ever modify the value object.
-  acc.value[1].username = 'foo'
-
-  // keep in mind JS is by reference
-  // so this means this is also
-  // modifying the value object
-  const image = acc.value[1]
-  image.username = 'foo'
-
-  // pass value to next reducer
-  return acc.value
-}
-
-// this is better
-const fp = require('lodash/fp')
-const goodReducer = () => (acc) => {
-  // https://github.com/lodash/lodash/wiki/FP-Guide
-  // this will cause no side effects
-  const value = fp.set('[1].username', 'foo', acc.value)
-
-  // pass value to next reducer
-  return value
-}
-```
 
 ## <a name="entities">Entities</a>
 
@@ -3194,6 +3124,85 @@ app.listen(3000, function () {
   console.log('listening on port 3000!')
 })
 ```
+
+## <a name="patterns-best-practices">Patterns and Best Practices</a>
+
+This section documents some of the patterns and best practices we have found useful while using DataPoint.
+
+### Parameterize a FunctionReducer
+
+You may use a [higher order function](https://medium.com/javascript-scene/higher-order-functions-composing-software-5365cf2cbe99) to parameterize a [FunctionReducer](#function-reducer). To do this you will create a function that **must** return a [FunctionReducer](#function-reducer).
+
+```js
+// sync
+const name = (param1, param2, ...) => (acc:Accumulator) => {
+  return newValue
+}
+// async via promise
+const name = (param1, param2, ...) => (acc:Accumulator) => {
+  return Promise.resolve(newValue)
+}
+// async via callback
+const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
+  next(error:Error, newValue:*)
+}
+```
+
+<details>
+  <summary>Higher Order Reducer Example</summary>
+  
+  ```js
+  const addStr = (value) => (acc) => {
+    return acc.value + value
+  }
+  
+  dataPoint
+    .transform(addStr(' World!!'), 'Hello')
+    .then((acc) => {
+      assert.equal(acc.value, 'Hello World!!')
+    })
+  ```
+</details>
+
+
+Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
+
+### Keeping your FunctionReducers pure
+
+When it comes to creating your own reducer functions you want them to be [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0); this is so they do not produce any side effects. 
+
+In the context of a [FunctionReducer](#function-reducer) it means you should never change directly (or indirectly) the value of the [Accumulator.value](#accumulator). 
+
+<details>
+  <summary>Example</summary>
+
+  ```js
+  const badReducer = () => (acc) => {
+    // never ever modify the value object.
+    acc.value[1].username = 'foo'
+
+    // keep in mind JS is by reference
+    // so this means this is also
+    // modifying the value object
+    const image = acc.value[1]
+    image.username = 'foo'
+
+    // pass value to next reducer
+    return acc.value
+  }
+
+  // this is better
+  const fp = require('lodash/fp')
+  const goodReducer = () => (acc) => {
+    // https://github.com/lodash/lodash/wiki/FP-Guide
+    // this will cause no side effects
+    const value = fp.set('[1].username', 'foo', acc.value)
+
+    // pass value to next reducer
+    return value
+  }
+  ```
+</details>
 
 ## <a name="contributing">Contributing</a>
 
