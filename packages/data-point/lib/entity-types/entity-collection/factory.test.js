@@ -2,6 +2,7 @@
 'use strict'
 
 const modelFactory = require('./factory')
+const helpers = require('../../helpers')
 
 test('modelFactory#create default', () => {
   const result = modelFactory.create({})
@@ -12,7 +13,7 @@ test('modelFactory#create default', () => {
   expect(result.params).toEqual({})
 
   expect(result).not.toHaveProperty('value')
-  expect(result.compose).toBeInstanceOf(Array)
+  expect(helpers.isReducer(result.compose)).toBe(true)
 })
 
 describe('parse loose modifiers', () => {
@@ -21,9 +22,9 @@ describe('parse loose modifiers', () => {
       map: '$a'
     })
 
-    expect(result.compose).toBeInstanceOf(Array)
-    expect(result.compose[0]).toHaveProperty('type', 'map')
-    expect(result.compose[0].reducer).toHaveProperty('type', 'ReducerPath')
+    expect(helpers.isReducer(result.compose)).toBe(true)
+    expect(result.compose).toHaveProperty('type', 'ReducerMap')
+    expect(result.compose.reducer).toHaveProperty('type', 'ReducerPath')
   })
 
   test('modelFactory#create default', () => {
@@ -33,10 +34,11 @@ describe('parse loose modifiers', () => {
       filter: '$a'
     })
 
-    expect(result.compose).toBeInstanceOf(Array)
-    expect(result.compose[0]).toHaveProperty('type', 'filter')
-    expect(result.compose[1]).toHaveProperty('type', 'map')
-    expect(result.compose[2]).toHaveProperty('type', 'find')
+    expect(helpers.isReducer(result.compose)).toBe(true)
+    expect(result.compose).toHaveProperty('type', 'ReducerList')
+    expect(result.compose.reducers[0]).toHaveProperty('type', 'ReducerFilter')
+    expect(result.compose.reducers[1]).toHaveProperty('type', 'ReducerMap')
+    expect(result.compose.reducers[2]).toHaveProperty('type', 'ReducerFind')
   })
 })
 
@@ -46,9 +48,9 @@ describe('parse compose modifier', () => {
       compose: [{ map: '$a' }]
     })
 
-    expect(result.compose).toBeInstanceOf(Array)
-    expect(result.compose[0]).toHaveProperty('type', 'map')
-    expect(result.compose[0].reducer).toHaveProperty('type', 'ReducerPath')
+    expect(helpers.isReducer(result.compose)).toBe(true)
+    expect(result.compose).toHaveProperty('type', 'ReducerMap')
+    expect(result.compose.reducer).toHaveProperty('type', 'ReducerPath')
   })
 
   test('throw error if compose is not an array', () => {
@@ -56,10 +58,10 @@ describe('parse compose modifier', () => {
       modelFactory.create({
         compose: { map: '$a' }
       })
-    }).toThrow()
+    }).toThrowErrorMatchingSnapshot()
   })
 
-  test('throw error if compose is mixed with inline modoifiers (map, filter, ..) ', () => {
+  test('throw error if compose is mixed with inline modifiers (map, filter, ..) ', () => {
     expect(() => {
       modelFactory.create(
         {
@@ -77,9 +79,10 @@ describe('parse compose modifier', () => {
       compose: [{ map: '$a' }, { find: '$a' }, { filter: '$a' }]
     })
 
-    expect(result.compose).toBeInstanceOf(Array)
-    expect(result.compose[0]).toHaveProperty('type', 'map')
-    expect(result.compose[1]).toHaveProperty('type', 'find')
-    expect(result.compose[2]).toHaveProperty('type', 'filter')
+    expect(helpers.isReducer(result.compose)).toBe(true)
+    expect(result.compose).toHaveProperty('type', 'ReducerList')
+    expect(result.compose.reducers[0]).toHaveProperty('type', 'ReducerMap')
+    expect(result.compose.reducers[1]).toHaveProperty('type', 'ReducerFind')
+    expect(result.compose.reducers[2]).toHaveProperty('type', 'ReducerFilter')
   })
 })

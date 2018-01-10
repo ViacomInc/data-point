@@ -1,5 +1,7 @@
 const isPlainObject = require('lodash/isPlainObject')
 
+const REDUCER_SYMBOL = require('../reducer-symbol')
+
 const REDUCER_OBJECT = 'ReducerObject'
 
 module.exports.type = REDUCER_OBJECT
@@ -10,6 +12,7 @@ module.exports.type = REDUCER_OBJECT
  * @property {Array} props
  */
 function ReducerObject () {
+  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_OBJECT
   this.props = undefined
 }

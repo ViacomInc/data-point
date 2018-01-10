@@ -4,13 +4,15 @@ const ReducerList = require('./reducer-list')
 const ReducerObject = require('./reducer-object')
 const ReducerPath = require('./reducer-path')
 
-const resolveFunctions = {
-  [ReducerEntity.type]: ReducerEntity.resolve,
-  [ReducerFunction.type]: ReducerFunction.resolve,
-  [ReducerList.type]: ReducerList.resolve,
-  [ReducerObject.type]: ReducerObject.resolve,
-  [ReducerPath.type]: ReducerPath.resolve
-}
+const ReducerHelpers = require('./reducer-helpers').reducers
+
+const reducers = Object.assign({}, ReducerHelpers, {
+  [ReducerEntity.type]: ReducerEntity,
+  [ReducerFunction.type]: ReducerFunction,
+  [ReducerList.type]: ReducerList,
+  [ReducerObject.type]: ReducerObject,
+  [ReducerPath.type]: ReducerPath
+})
 
 /**
  * apply a Reducer to an accumulator
@@ -27,13 +29,13 @@ function resolve (manager, accumulator, reducer) {
     return Promise.resolve(accumulator)
   }
 
-  const resolveReducer = resolveFunctions[reducer.type]
-  if (!resolveReducer) {
+  const reducerType = reducers[reducer.type]
+  if (!reducerType) {
     throw new Error(`Reducer type '${reducer.type}' was not recognized`)
   }
 
   // NOTE: recursive call
-  return resolveReducer(manager, resolve, accumulator, reducer)
+  return reducerType.resolve(manager, resolve, accumulator, reducer)
 }
 
 module.exports.resolve = resolve

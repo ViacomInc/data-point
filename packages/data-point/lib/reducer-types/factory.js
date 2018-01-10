@@ -3,8 +3,11 @@
 const _ = require('lodash')
 const util = require('util')
 
+const REDUCER_SYMBOL = require('./reducer-symbol')
+
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
+const ReducerHelpers = require('./reducer-helpers')
 const ReducerList = require('./reducer-list')
 const ReducerObject = require('./reducer-object')
 const ReducerPath = require('./reducer-path')
@@ -12,10 +15,21 @@ const ReducerPath = require('./reducer-path')
 const reducerTypes = [
   ReducerEntity,
   ReducerFunction,
+  ReducerHelpers,
   ReducerList,
   ReducerObject,
   ReducerPath
 ]
+
+/**
+ * @param {*} item
+ * @returns {boolean}
+ */
+function isReducer (item) {
+  return !!(item && item[REDUCER_SYMBOL])
+}
+
+module.exports.isReducer = isReducer
 
 /**
  * this is here because ReducerLists can be arrays or | separated strings
@@ -40,7 +54,7 @@ function dealWithPipeOperators (source) {
  */
 function createReducer (source) {
   source = dealWithPipeOperators(source)
-  const reducer = _.find(reducerTypes, r => r.isType(source))
+  const reducer = reducerTypes.find(r => r.isType(source))
 
   if (_.isUndefined(reducer)) {
     const message = [

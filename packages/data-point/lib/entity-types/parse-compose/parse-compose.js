@@ -77,6 +77,7 @@ module.exports.createComposeReducer = createComposeReducer
 
 /**
  * @param {Object} modifierSpec
+ * @throws if the spec does not contain exactly one key
  * @returns {Object}
  */
 function parseModifierSpec (modifierSpec) {

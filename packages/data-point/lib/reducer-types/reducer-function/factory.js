@@ -2,6 +2,8 @@
 
 const _ = require('lodash')
 
+const REDUCER_SYMBOL = require('../reducer-symbol')
+
 const REDUCER_FUNCTION = 'ReducerFunction'
 
 module.exports.type = REDUCER_FUNCTION
@@ -15,6 +17,7 @@ module.exports.type = REDUCER_FUNCTION
  * @property {Function} body - actual function body
  */
 function ReducerFunction () {
+  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_FUNCTION
   this.body = undefined
 }
