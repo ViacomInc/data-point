@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const ResolveEntity = require('./resolve')
 const createReducer = require('../../reducer-types').create

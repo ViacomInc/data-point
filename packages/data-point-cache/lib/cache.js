@@ -1,4 +1,3 @@
-'use strict'
 
 const RedisClient = require('./redis-client')
 const InMemory = require('./in-memory')

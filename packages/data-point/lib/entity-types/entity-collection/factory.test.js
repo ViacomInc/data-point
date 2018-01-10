@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const modelFactory = require('./factory')
 const helpers = require('../../helpers')

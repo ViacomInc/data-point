@@ -1,4 +1,3 @@
-'use strict'
 
 const Util = require('util')
 const Promise = require('bluebird')

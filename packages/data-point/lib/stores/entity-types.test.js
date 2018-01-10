@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const _ = require('lodash')
 const EntityType = require('./entity-types')

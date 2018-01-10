@@ -1,4 +1,3 @@
-'use strict'
 
 const createBaseEntity = require('../base-entity').create
 

@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const resolveControlEntity = require('./resolve').resolve
 

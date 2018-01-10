@@ -1,4 +1,3 @@
-'use strict'
 
 const _ = require('lodash')
 const storeManager = require('./store-manager')

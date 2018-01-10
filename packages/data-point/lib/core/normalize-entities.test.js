@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const normalizeEntities = require('./normalize-entities')
 const _ = require('lodash')

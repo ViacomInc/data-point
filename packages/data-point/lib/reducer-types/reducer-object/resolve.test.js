@@ -1,5 +1,4 @@
 /* eslint-env jest */
-'use strict'
 
 const createReducerObject = require('./index').create
 const resolveReducerObject = require('./index').resolve

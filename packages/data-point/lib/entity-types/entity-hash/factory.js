@@ -1,4 +1,3 @@
-'use strict'
 
 const createReducer = require('../../reducer-types').create
 const deepFreeze = require('deep-freeze')

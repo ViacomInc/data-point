@@ -1,4 +1,3 @@
-'use strict'
 
 /* eslint no-underscore-dangle: ["error", { "allow": ["___done", "___resolve"] }] */
 
