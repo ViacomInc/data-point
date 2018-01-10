@@ -3171,7 +3171,7 @@ Example at: [examples/reducer-function-closure.js](examples/reducer-function-clo
 
 When it comes to creating your own reducer functions you want them to be [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0); this is so they do not produce any side effects. 
 
-In the context of a [FunctionReducer](#function-reducer) this means, you should never change directly (or indirectly) the value of the [Accumulator.value](#accumulator). 
+In the context of a [FunctionReducer](#function-reducer) it means you should never change directly (or indirectly) the value of the [Accumulator.value](#accumulator). 
 
 <details>
   <summary>Example</summary>
