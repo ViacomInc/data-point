@@ -32,12 +32,10 @@ npm install --save data-point
   - [ListReducer](#list-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
 - [Reducer Helpers](#reducer-helpers)
-  - [Assign](#reducer-assign)
-  - [Map](#reducer-map)
-  - [Filter](#reducer-filter)
-  - [Find](#reducer-find)
-  - [Omit](#reducer-omit)
-  - [Pick](#reducer-pick)
+  - [assign](#reducer-assign)
+  - [map](#reducer-map)
+  - [filter](#reducer-filter)
+  - [find](#reducer-find)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
@@ -921,7 +919,7 @@ const {
 } = require('data-point').helpers
 ```
 
-### <a name="reducer-assign">Assign</a>
+### <a name="reducer-assign">assign</a>
 
 The **assign** reducer creates a new Object by copying the values of all enumerable own properties resulting from the provided [Reducer](#reducers) with the current accumulator value. It uses [Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) internally.
 
@@ -930,6 +928,12 @@ The **assign** reducer creates a new Object by copying the values of all enumera
 ```js
 assign(reducer:Reducer):Object
 ```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *reducer* | [Reducer](#reducers) | Result from the provided reducer will be merged into the current accumulator.value |
 
 **EXAMPLE:**
 
@@ -970,7 +974,7 @@ assign(reducer:Reducer):Object
 
 Example at: [examples/reducer-assign.js](examples/reducer-assign.js)
 
-### <a name="reducer-map">Map</a>
+### <a name="reducer-map">map</a>
 
 The **map** reducer creates a new array with the results of applying the provided [Reducer](#reducers) on every element in the input array.
 
@@ -980,10 +984,16 @@ The **map** reducer creates a new array with the results of applying the provide
 map(reducer:Reducer):Array
 ```
 
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *reducer* | [Reducer](#reducers) | The reducer will get applied to each element in the array. |
+
 **EXAMPLE:**
 
 <details>
-  <summary>Apply a set of reduces to each item in an array</summary>
+  <summary>Apply a set of reducers to each item in an array</summary>
 
   ```js
   const {
@@ -1012,15 +1022,21 @@ map(reducer:Reducer):Array
 
 Example at: [examples/reducer-helper-map.js](examples/reducer-helper-map.js)
 
-### <a name="reducer-filter">Filter</a>
+### <a name="reducer-filter">filter</a>
 
-The **filter** reducer creates a new array with elements that pass the test implemented by the provided [Reducer](#reducers).
+The **filter** reducer creates a new array with elements that resolve as *truthy* when passed to the given [Reducer](#reducers).
 
 **SYNOPSIS**
 
 ```js
 filter(reducer:Reducer):Array
 ```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *reducer* | [Reducer](#reducers) | Reducer result is used to test for _truthy_ on each element of the array. |
 
 **EXAMPLE:**
 
@@ -1050,7 +1066,7 @@ filter(reducer:Reducer):Array
 
 Example at: [examples/reducer-helper-filter.js](examples/reducer-helper-filter.js)
 
-### <a name="reducer-find">Find</a>
+### <a name="reducer-find">find</a>
 
 The **find** reducer returns the first element of an array that resolves to _truthy_ when passed through the provided [Reducer](#reducers). It returns `undefined` if no match is found.
 
@@ -1059,6 +1075,12 @@ The **find** reducer returns the first element of an array that resolves to _tru
 ```js
 find(reducer:Reducer):*
 ```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *reducer* | [Reducer](#reducers) | Reducer result is used to test for _truthy_ on each element of the array. |
 
 **EXAMPLE:**
 
