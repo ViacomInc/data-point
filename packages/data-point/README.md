@@ -908,7 +908,7 @@ Adding `[]` at the end of an entity reducer will map the given entity to each re
   ```
 </details>
 
-## <a name="reducers">Reducer Helpers</a>
+## <a name="reducer-helpers">Reducer Helpers</a>
 
 Reducer helpers are factory functions for creating reducers. They're exposed through `DataPoint.helpers`:
 
@@ -917,121 +917,176 @@ const {
   assign,
   map,
   filter,
-  find,
-  omit,
-  pick
+  find
 } = require('data-point').helpers
 ```
 
 ### <a name="reducer-assign">Assign</a>
 
-`(Reducer) -> Object`
+The **assign** reducer creates a new Object by copying the values of all enumerable own properties resulting from the provided [Reducer](#reducers) with the current accumulator value. It uses [Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) internally.
 
-**assign** merges the result of a reducer with the current accumulator value. It uses `Object.assign` internally.
+**SYNOPSIS**
 
 ```js
-const value = {
-  a: 1,
-  b: {
-    c: 2
-  }
-}
-
-// resolves the $b reducer and merges
-// the result with accumulator.value
-const reducer = assign('$b')
-
-dataPoint.transform(reducer, value)
-
-// {
-//   a: 1,
-//   b: {
-//     c: 2
-//   },
-//   c: 2
-// }
+assign(reducer:Reducer):Object
 ```
+
+**EXAMPLE:**
+
+<details>
+  <summary>Add a key that references a nested value from the accumulator.</summary>
+
+  ```js
+  const {
+    assign
+  } = DataPoint.helpers
+
+  const value = {
+    a: 1
+  }
+
+  // merges the ReducerObject with
+  // accumulator.value
+  const reducer = assign({
+    c: '$b.c'
+  })
+
+  dataPoint
+    .transform(reducer, value)
+    .then(acc => {
+      /*
+       acc.value --> {
+        a: 1,
+        b: {
+          c: 2
+        },
+        c: 2
+      }
+      */
+    })
+
+  ```
+</details>
+
+Example at: [examples/reducer-assign.js](examples/reducer-assign.js)
 
 ### <a name="reducer-map">Map</a>
 
-`(Reducer) -> Array`
+The **map** reducer creates a new array with the results of applying the provided [Reducer](#reducers) on every element in the input array.
 
-**map** applies a reducer to each element of an input array.
+**SYNOPSIS**
 
 ```js
-const value = [{ a: 1 }, { a: 2 }]
-
-// applies the $a reducer to each element in the array
-const reducer = map('$a')
-
-dataPoint.transform(reducer, value) // [1, 2]
+map(reducer:Reducer):Array
 ```
 
-This helper functions like a collection mapping:
+**EXAMPLE:**
 
-- `map('$a')` is equivalent to `'$a[]'`
+<details>
+  <summary>Apply a set of reduces to each item in an array</summary>
 
-- `map('hash:example')` is equivalent to `'hash:example[]'`
+  ```js
+  const {
+    map
+  } = DataPoint.helpers
+
+  const value = [{
+    a: 1
+  }, {
+    a: 2
+  }]
+
+  // get path `a` then multiply by 2
+  const reducer = map(
+    ['$a', (acc) => acc.value * 2]
+  )
+
+  dataPoint
+    .transform(reducer, value)
+    .then(acc => {
+      // acc.value -> [2, 4]
+    })
+  ```
+
+</details>
+
+Example at: [examples/reducer-helper-map.js](examples/reducer-helper-map.js)
 
 ### <a name="reducer-filter">Filter</a>
 
-`(Reducer) -> Array`
+The **filter** reducer creates a new array with elements that pass the test implemented by the provided [Reducer](#reducers).
 
-**filter** executes a reducer against each item in an array. If the reducer does not resolve to a truthy value, that item is filtered from the resulting array.
+**SYNOPSIS**
 
 ```js
-const value = [{ a: 1 }, { a: 2 }]
-
-// filters array elements that are not
-// truthy for the given reducer list
-const reducer = filter(['$a', (acc) => acc.value > 1])
-
-dataPoint.transform(reducer, value) // [{ a: 2 }]
+filter(reducer:Reducer):Array
 ```
+
+**EXAMPLE:**
+
+<details>
+  <summary>Find objects where path `a` is greater than 1</summary>
+
+  ```js
+  const {
+    map
+  } = DataPoint.helpers
+
+  const value = [{ a: 1 }, { a: 2 }]
+
+  // filters array elements that are not
+  // truthy for the given reducer list
+  const reducer = filter(
+    ['$a', (acc) => acc.value > 1]
+  )
+
+  dataPoint
+    .transform(reducer, value) 
+    .then(acc => {
+      // acc.value ->  [{ a: 2 }]
+    })  
+  ```
+</details>
+
+Example at: [examples/reducer-helper-filter.js](examples/reducer-helper-filter.js)
 
 ### <a name="reducer-find">Find</a>
 
-`(Reducer) -> *`
+The **find** reducer returns the first element of an array that resolves to _truthy_ when passed through the provided [Reducer](#reducers). It returns `undefined` if no match is found.
 
-**find** returns the first element of an array that resolves to a truthy when passed to a given reducer. It returns `undefined` if no match is found.
-
-```js
-const value = [{ a: 1 }, { b: 2 }]
-
-// the $b reducer is truthy for the
-// the second element in the array
-const reducer = find('$b')
-
-dataPoint.transform(reducer, value) // { b: 2 }
-```
-
-### <a name="reducer-omit">Omit</a>
-
-`(Array<string>) -> Object`
-
-**omit** applies lodash's `omit` function to an input object.
+**SYNOPSIS**
 
 ```js
-const value = { a: 1, b: 2, c: 3 }
-
-const reducer = omit(['a', 'b'])
-
-dataPoint.transform(reducer, value) // { c: 3 }
+find(reducer:Reducer):*
 ```
 
-### <a name="reducer-pick">Pick</a>
+**EXAMPLE:**
 
-`(Array<string>) -> Object`
+<details>
+  <summary>Find elements where path `b` resolves to _truthy_ value</summary>
 
-**pick** applies lodash's `pick` function to an input object.
+  ```js
+  const {
+    map
+  } = DataPoint.helpers
 
-```js
-const value = { a: 1, b: 2, c: 3 }
+  const value = [{ a: 1 }, { b: 2 }]
 
-const reducer = pick(['a', 'w'])
+  // the $b reducer is truthy for the
+  // second element in the array
+  const reducer = find('$b')
 
-dataPoint.transform(reducer, value) // { a: 1 }
-```
+  dataPoint
+    .transform(reducer, value) 
+    .then(acc => {
+      // acc.value -> { b: 2 }
+    })
+  ```
+</details>
+
+Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
+
+### <a name="patterns-and-best-practices">Patterns and Best Practices</a>
 
 **Best Practices (Recommendations) with reducers**
 
