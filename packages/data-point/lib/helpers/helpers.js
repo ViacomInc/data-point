@@ -4,14 +4,9 @@ const Promise = require('bluebird')
 const resolveReducer = require('../reducer-types').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 
-const ReducerEntity = require('../reducer-types/reducer-entity/factory')
-  .ReducerEntity
-const ReducerFunction = require('../reducer-types/reducer-function/factory')
-  .ReducerFunction
-const ReducerList = require('../reducer-types/reducer-list/factory').ReducerList
-const ReducerObject = require('../reducer-types/reducer-object/factory')
-  .ReducerObject
-const ReducerPath = require('../reducer-types/reducer-path/factory').ReducerPath
+module.exports.helpers = require('../reducer-types/reducer-helpers').stubFactories
+
+module.exports.isReducer = require('../reducer-types').isReducer
 
 module.exports.createReducer = require('../reducer-types').create
 
@@ -70,19 +65,3 @@ function createReducerResolver (dataPoint) {
 }
 
 module.exports.createReducerResolver = createReducerResolver
-
-/**
- * @param {*} data
- * @returns {boolean}
- */
-function isReducer (data) {
-  return (
-    data instanceof ReducerEntity ||
-    data instanceof ReducerFunction ||
-    data instanceof ReducerList ||
-    data instanceof ReducerObject ||
-    data instanceof ReducerPath
-  )
-}
-
-module.exports.isReducer = isReducer

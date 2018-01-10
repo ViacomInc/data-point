@@ -11,6 +11,7 @@ Array [
       "body": [Function],
       "name": "a",
       "type": "ReducerPath",
+      Symbol(reducer): true,
     },
   },
   Object {
@@ -25,13 +26,16 @@ Array [
           "body": [Function],
           "name": "a2",
           "type": "ReducerPath",
+          Symbol(reducer): true,
         },
         ReducerFunction {
           "body": [Function],
           "type": "ReducerFunction",
+          Symbol(reducer): true,
         },
       ],
       "type": "ReducerList",
+      Symbol(reducer): true,
     },
   },
   Object {
@@ -53,6 +57,7 @@ Array [
             "name": "entity-name",
             "type": "ReducerEntity",
             "withEmptyConditional": false,
+            Symbol(reducer): true,
           },
         },
         Object {
@@ -64,10 +69,12 @@ Array [
             "body": [Function],
             "name": "b1.b2.b3",
             "type": "ReducerPath",
+            Symbol(reducer): true,
           },
         },
       ],
       "type": "ReducerObject",
+      Symbol(reducer): true,
     },
   },
 ]

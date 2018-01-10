@@ -1,6 +1,8 @@
 
 const _ = require('lodash')
 
+const REDUCER_SYMBOL = require('../reducer-symbol')
+
 const REDUCER_LIST = 'ReducerList'
 
 module.exports.type = REDUCER_LIST
@@ -11,6 +13,7 @@ module.exports.type = REDUCER_LIST
  * @property {Array<reducer>} reducers
  */
 function ReducerList () {
+  this[REDUCER_SYMBOL] = true
   this.type = 'ReducerList'
   this.reducers = []
 }
