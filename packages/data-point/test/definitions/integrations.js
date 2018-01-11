@@ -5,7 +5,7 @@ module.exports = {
     value: '$a.f | hash:branchLeaf'
   },
   'hash:branchLeaf': {
-    value: '$.',
+    value: '$',
     mapKeys: {
       label: '$text',
       // using Collection map []

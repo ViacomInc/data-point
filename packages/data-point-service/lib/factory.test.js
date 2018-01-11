@@ -168,7 +168,7 @@ describe('create', () => {
         isRequired: false
       },
       entities: {
-        'transform:foo': '$.'
+        'transform:foo': '$'
       }
     })
       .then(service => {
@@ -207,7 +207,7 @@ describe('create', () => {
         isRequired: true
       },
       entities: {
-        'transform:foo': '$.'
+        'transform:foo': '$'
       }
     })
       .then(service => {
