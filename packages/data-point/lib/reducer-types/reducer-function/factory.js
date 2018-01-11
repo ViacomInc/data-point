@@ -58,6 +58,7 @@ function create (createReducer, source) {
   validateFunction(source)
   const reducer = new ReducerFunction()
   reducer.body = source
+
   return Object.freeze(reducer)
 }
 
