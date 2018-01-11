@@ -10,7 +10,7 @@ module.exports = {
     value: '$a.b.c'
   },
   'hash:asIs': {
-    value: '$.'
+    value: '$'
   },
   'hash:a.1': {
     value: '$a.h'

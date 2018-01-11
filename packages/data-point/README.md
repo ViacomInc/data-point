@@ -303,12 +303,12 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 
 | Option | Description |
 |:---|:---|
-| *$.* | Reference to current `accumulator.value`. |
+| *$* | Reference to current `accumulator.value`. |
 | *$..* | Gives you full access to current `accumulator`. |
 | *$path* | Simple Object path notation to extract a path from current `accumulator.value`. |
 | *$path[]* | Object path notation with trailing `[]` to extract a value from an array of objects at the `accumulator.value` for each. |
 
-#### <a name="root-path">Root path $.</a>
+#### <a name="root-path">Root path $</a>
 
 **EXAMPLES:**
 
@@ -328,7 +328,7 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
   }
 
   dataPoint
-    .transform('$.', input)
+    .transform('$', input)
     .then((acc) => {
       assert.equal(acc.value, input)
     })
@@ -1280,7 +1280,7 @@ Example at: [examples/entity-entry-basic.js](examples/entity-entry-basic.js)
   dataPoint.addEntities({
     'entry:foo': {
       before: isArray(),
-      value: '$.'
+      value: '$'
     }
   })
   
