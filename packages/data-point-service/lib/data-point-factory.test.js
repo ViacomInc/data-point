@@ -8,7 +8,7 @@ describe('verify', () => {
     const result = DataPointFactory.verify({
       DataPoint,
       entities: {
-        'transform:foo': '$.'
+        'transform:foo': '$'
       }
     })
     expect(result).toEqual(result)
@@ -18,7 +18,7 @@ describe('verify', () => {
     expect(() => {
       DataPointFactory.verify({
         entities: {
-          'transform:foo': '$.'
+          'transform:foo': '$'
         }
       })
     }).toThrowError(/provided/)
@@ -38,7 +38,7 @@ describe('createDataPoint', () => {
     const dp = DataPointFactory.createDataPoint({
       DataPoint,
       entities: {
-        'transform:foo': '$.'
+        'transform:foo': '$'
       }
     })
 
@@ -51,7 +51,7 @@ describe('create', () => {
     return DataPointFactory.create({
       DataPoint,
       entities: {
-        'transform:foo': '$.'
+        'transform:foo': '$'
       }
     }).then(dp => {
       expect(dp).toHaveProperty('transform')

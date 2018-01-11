@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 
 const REDUCER_SYMBOL = require('../reducer-symbol')
@@ -59,6 +58,7 @@ function create (createReducer, source) {
   validateFunction(source)
   const reducer = new ReducerFunction()
   reducer.body = source
+
   return Object.freeze(reducer)
 }
 
