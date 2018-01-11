@@ -8,29 +8,42 @@ const examplesFolder = 'packages/data-point/examples/'
 fs.readdir(examplesFolder, (err, files) => {
   if (err) {
     console.log(err)
+    process.exitCode(1)
     return
   }
 
+  const startTime = Date.now()
+  let errorCount = 0
+
   coloredLog('blue', `Executing all examples in ${examplesFolder}`, true)
 
-  files.forEach(file => {
-    const filename = examplesFolder + file
-    exec(`node ${path.resolve(filename)}`, (err, stdout, stderr) => {
-      if (err) {
-        console.error(err)
-        return
-      }
+  const runExamples = files.map(file => {
+    return new Promise(resolve => {
+      const filename = examplesFolder + file
+      exec(`node ${path.resolve(filename)}`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(err)
+          return
+        }
 
-      if (stdout) {
-        coloredLog('green', `stdout from ${filename}`, true)
-        coloredLog('green', stdout)
-      }
+        if (stderr) {
+          errorCount++
+          coloredLog('red', `stderr from ${filename}`, true)
+          coloredLog('red', stderr)
+        }
 
-      if (stderr) {
-        coloredLog('red', `stderr from ${filename}`, true)
-        coloredLog('red', stderr)
-      }
+        resolve()
+      })
     })
+  })
+
+  Promise.all(runExamples).then(() => {
+    coloredLog(
+      'green',
+      `${files.length} examples were run in ${(Date.now() - startTime) /
+        1000}s.`
+    )
+    coloredLog('red', `${errorCount} examples produced an error.`)
   })
 })
 
