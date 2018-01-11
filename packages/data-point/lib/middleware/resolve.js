@@ -1,4 +1,3 @@
-
 const middlewareContextFactory = require('../middleware-context')
 const middlewareControl = require('../middleware-control')
 

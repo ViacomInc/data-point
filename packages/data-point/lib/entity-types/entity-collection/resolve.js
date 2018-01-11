@@ -1,4 +1,3 @@
-
 const Util = require('util')
 const Promise = require('bluebird')
 const _ = require('lodash')

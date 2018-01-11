@@ -1,4 +1,3 @@
-
 const createBaseEntity = require('../base-entity').create
 
 /**

@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 
 const REDUCER_SYMBOL = require('../reducer-symbol')

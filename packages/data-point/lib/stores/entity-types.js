@@ -1,4 +1,3 @@
-
 const createEntity = require('../entity-types/spec').create
 const storeManager = require('./store-manager')
 

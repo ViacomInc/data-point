@@ -1,4 +1,3 @@
-
 const Promise = require('bluebird')
 const utils = require('../../utils')
 

@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 const deepFreeze = require('deep-freeze')
 const createBaseEntity = require('../base-entity').create
