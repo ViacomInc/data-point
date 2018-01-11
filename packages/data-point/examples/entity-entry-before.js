@@ -13,7 +13,7 @@ const isArray = () => acc => {
 dataPoint.addEntities({
   'entry:foo': {
     before: isArray(),
-    value: '$.'
+    value: '$'
   }
 })
 
