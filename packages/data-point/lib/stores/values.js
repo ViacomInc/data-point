@@ -1,4 +1,3 @@
-
 const ObjectStoreManager = require('./object-store-manager')
 
 /**
