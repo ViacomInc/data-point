@@ -8,10 +8,10 @@ describe('factory.createBaseEntity', () => {
     const entity = createBaseEntity(
       FooEntity,
       {
-        before: '$.',
-        value: '$.',
-        error: '$.',
-        after: '$.'
+        before: '$',
+        value: '$',
+        error: '$',
+        after: '$'
       },
       'foo'
     )

@@ -30,7 +30,7 @@ describe('ReducerPath#resolve', () => {
     const expected = {
       a: 1
     }
-    return resolve(expected, '$.').then(res => expect(res.value).toBe(expected))
+    return resolve(expected, '$').then(res => expect(res.value).toBe(expected))
   })
 
   test('resolve to context scope', () => {

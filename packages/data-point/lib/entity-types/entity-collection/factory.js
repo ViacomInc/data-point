@@ -1,4 +1,3 @@
-
 const parseCompose = require('../parse-compose')
 const createReducer = require('../../reducer-types').create
 const createBaseEntity = require('../base-entity').create

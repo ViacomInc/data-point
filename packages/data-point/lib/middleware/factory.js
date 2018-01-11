@@ -1,4 +1,3 @@
-
 function Middleware (name, callback) {
   this.name = name
   this.callback = callback
