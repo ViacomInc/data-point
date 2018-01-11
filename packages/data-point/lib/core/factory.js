@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 
 const normalizeEntities = require('./normalize-entities')
@@ -58,26 +57,28 @@ function create (spec) {
 
   // add single item (singular)
   manager.addValue = manager.values.add
-  manager.addEntityTypes = manager.entityTypes.add
+  manager.addEntityType = manager.entityTypes.add
   manager.use = manager.middleware.use
 
   // add collection of items (plural)
   manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
+  // add multiple entity types
+  manager.addEntityTypes = _.partial(addToStore, manager.entityTypes)
 
   // using options to initialize dataPoint
 
   // built-in entity types
-  manager.addEntityTypes('transform', EntityTransform)
-  manager.addEntityTypes('entry', EntityEntry)
+  manager.addEntityType('transform', EntityTransform)
+  manager.addEntityType('entry', EntityEntry)
   // alias to entry, may be used to process any object type
-  manager.addEntityTypes('model', EntityEntry)
-  manager.addEntityTypes('hash', EntityHash)
-  manager.addEntityTypes('collection', EntityCollection)
-  manager.addEntityTypes('request', EntityRequest)
+  manager.addEntityType('model', EntityEntry)
+  manager.addEntityType('hash', EntityHash)
+  manager.addEntityType('collection', EntityCollection)
+  manager.addEntityType('request', EntityRequest)
   // for backwards compatibility
-  manager.addEntityTypes('source', EntityRequest)
-  manager.addEntityTypes('control', EntityControl)
-  manager.addEntityTypes('schema', EntitySchema)
+  manager.addEntityType('source', EntityRequest)
+  manager.addEntityType('control', EntityControl)
+  manager.addEntityType('schema', EntitySchema)
 
   addToStore(manager.values, options.values)
   addToStore(manager.entityTypes, options.entityTypes)
