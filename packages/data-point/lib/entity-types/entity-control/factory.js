@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 
 const createReducer = require('../../reducer-types').create

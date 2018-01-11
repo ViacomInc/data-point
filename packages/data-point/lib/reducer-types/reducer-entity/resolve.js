@@ -1,4 +1,3 @@
-
 const BaseEntity = require('../../entity-types/base-entity/resolve')
 
 /**
