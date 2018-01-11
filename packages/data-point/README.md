@@ -2959,7 +2959,7 @@ dataPoint.addValue(objectPath, value)
 
 ## <a name="custom-entity-types">Custom Entity Types</a>
 
-DataPoint exposes a set of methods to help you build your own Custom Entity types. With them you are enabled to build on top of the [base entity API](#entity-base-api).
+DataPoint exposes a set of methods to help you build your own Custom Entity types. With them you can build on top of the [base entity API](#entity-base-api).
 
 ### <a name="adding-entity-types">Adding new Entity types</a>
 
