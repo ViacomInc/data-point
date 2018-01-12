@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 
-const coreFactory = require('./factory')
+const core = require('./core')
 
 const reducers = require('../../test/utils/reducers')
 const entities = require('../../test/definitions/entities')
@@ -10,7 +10,7 @@ const entities = require('../../test/definitions/entities')
 let instance
 
 beforeAll(() => {
-  instance = coreFactory.create({
+  instance = core.create({
     values: {
       v1: 'v1'
     },
@@ -50,7 +50,7 @@ describe('addEntityType', () => {
   }
 
   test('It should add single new entity type', () => {
-    const dataPoint = coreFactory.create()
+    const dataPoint = core.create()
 
     dataPoint.addEntityType('foo', createEntityFactory())
 
@@ -59,7 +59,7 @@ describe('addEntityType', () => {
   })
 
   test('It should add multiple entity types', () => {
-    const dataPoint = coreFactory.create()
+    const dataPoint = core.create()
 
     dataPoint.addEntityTypes({
       foo: createEntityFactory(),
