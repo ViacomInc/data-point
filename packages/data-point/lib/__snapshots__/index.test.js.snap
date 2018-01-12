@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib It should explicity expose set of methods 1`] = `
+Object {
+  "create": [Function],
+  "createEntity": [Function],
+  "createReducerResolver": [Function],
+  "helpers": Object {
+    "assign": [Function],
+    "filter": [Function],
+    "find": [Function],
+    "map": [Function],
+    "omit": [Function],
+    "pick": [Function],
+  },
+  "reducify": [Function],
+  "reducifyAll": [Function],
+  "resolveEntity": [Function],
+}
+`;
