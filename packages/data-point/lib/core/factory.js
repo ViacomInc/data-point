@@ -16,9 +16,14 @@ const EntityRequest = require('../entity-types/entity-request')
 const EntityControl = require('../entity-types/entity-control')
 const EntitySchema = require('../entity-types/entity-schema')
 
-function addToStore (store, reducers) {
-  _.forOwn(reducers, (value, key) => {
-    store.add(key, value, true)
+/**
+ * @param {Object} store
+ * @param {Object} items
+ * @param {boolean} override
+ */
+function addToStore (store, items, override) {
+  _.forOwn(items, (value, key) => {
+    store.add(key, value, override)
   })
 }
 
@@ -57,13 +62,15 @@ function create (spec) {
 
   // add single item (singular)
   manager.addValue = manager.values.add
+
   manager.addEntityType = manager.entityTypes.add
+  // add multiple entity types
+  manager.addEntityTypes = _.partial(addToStore, manager.entityTypes)
+
   manager.use = manager.middleware.use
 
   // add collection of items (plural)
   manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
-  // add multiple entity types
-  manager.addEntityTypes = _.partial(addToStore, manager.entityTypes)
 
   // using options to initialize dataPoint
 
@@ -80,8 +87,9 @@ function create (spec) {
   manager.addEntityType('control', EntityControl)
   manager.addEntityType('schema', EntitySchema)
 
-  addToStore(manager.values, options.values)
-  addToStore(manager.entityTypes, options.entityTypes)
+  addToStore(manager.values, options.values, true)
+
+  manager.addEntityTypes(options.entityTypes, true)
   manager.addEntities(options.entities)
 
   return manager

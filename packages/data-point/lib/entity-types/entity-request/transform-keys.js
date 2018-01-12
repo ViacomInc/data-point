@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 
 function getTransformKeys (data, path, keyPaths) {

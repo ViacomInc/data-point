@@ -1,8 +1,8 @@
-
 const _ = require('lodash')
 
 /**
  * get all added models
+ * @param {Object} manager
  * @return {Map}
  */
 function getStore (manager) {
@@ -13,6 +13,7 @@ module.exports.getStore = getStore
 
 /**
  * clear map
+ * @param {Object} manager
  * @return {Map}
  */
 function clear (manager) {
@@ -23,9 +24,11 @@ function clear (manager) {
 module.exports.clear = clear
 
 /**
- * get value by path
- * @throws Will throw error if id is invalid
- * @param  {string} id - model id
+ * get value by id
+ * @throws if value for id is undefined
+ * @param {Object} manager
+ * @param {Function} errorInfoCb
+ * @param {string} id - model id
  * @return {*}
  */
 function get (manager, errorInfoCb, id) {
@@ -43,13 +46,17 @@ function get (manager, errorInfoCb, id) {
 module.exports.get = get
 
 /**
- * get filter by path
- * @throws Will throw error if id already exists and override is not true
- * @param  {string} id - filter id
- * @return {*} returns reference to entire store
+ * @throws if value already exists for id and override is not true
+ * @param {Object} manager
+ * @param {Function} errorInfoCb
+ * @param {Function} factory
+ * @param {string} id
+ * @param {Object} spec
+ * @param {boolean} override
+ * @return {Map} returns reference to entire store
  */
-function add (manager, errorInfoCb, factory, id, spec) {
-  if (manager.store.get(id)) {
+function add (manager, errorInfoCb, factory, id, spec, override) {
+  if (manager.store.get(id) && !override) {
     const errorInfo = errorInfoCb(id)
     const e = new Error(errorInfo.message)
     e.name = errorInfo.name
@@ -75,6 +82,10 @@ function add (manager, errorInfoCb, factory, id, spec) {
 
 module.exports.add = add
 
+/**
+ * @param {Object} spec
+ * @returns {Object}
+ */
 function create (spec) {
   const manager = {
     store: new Map()

@@ -2959,11 +2959,28 @@ dataPoint.addValue(objectPath, value)
 
 ## <a name="custom-entity-types">Custom Entity Types</a>
 
-DataPoint exposes a set of methods to help you build your own Custom Entity Types. With them you are enabled to build on top of the [base entity API](#entity-base-api). 
+DataPoint exposes a set of methods to help you build your own Custom Entity types. With them you can build on top of the [base entity API](#entity-base-api).
 
-### <a name="adding-entity-types">Adding new Entity Types</a>
+### <a name="adding-entity-types">Adding new Entity types</a>
 
-You may add new Entity Types through the [DataPoint.create](#api-data-point-create) method, or through the [dataPoint.addEntityTypes](#data-point-add-entity-types)
+You can add custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also add them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
+
+#### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
+
+Add a new Entity type to the DataPoint instance.
+
+**SYNOPSIS**
+
+```js
+dataPoint.addEntityType(id:String, spec:Object)
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *id* | `String` | The name of the new Entity type. |
+| *spec* | `Object` | The Entity spec. |
 
 #### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
 

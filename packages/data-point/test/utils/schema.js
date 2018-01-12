@@ -1,4 +1,3 @@
-
 //
 // var tv4 = require('tv4');
 // var R = require('ramda');
