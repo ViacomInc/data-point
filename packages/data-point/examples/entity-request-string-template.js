@@ -1,55 +1,39 @@
 const dataPoint = require('../').create()
+const nock = require('nock')
+const assert = require('assert')
 
 dataPoint.addEntities({
-  'request:getOrgInfo': {
-    url: 'https://api.github.com/orgs/{value}',
-    options: {
-      headers: {
-        'User-Agent': 'DataPoint'
-      }
-    }
-  },
+  'request:getRemoteService': {
+    url: 'http://remote.test/{value.serviceName}',
+    beforeRequest: acc => {
+      // acc.value holds reference to request.options
+      const options = Object.assign({}, acc.value, {
+        headers: {
+          'User-Agent': 'DataPoint'
+        }
+      })
 
-  'request:getOrgInfoFromObject': {
-    // notice here dot notation to get the value of name
-    url: 'https://api.github.com/orgs/{value.org.name}',
-    options: {
-      headers: {
-        'User-Agent': 'DataPoint'
-      }
-    }
-  },
-
-  'request:getOrgInfoFromLocals': {
-    // notice here dot notation to get the value of name from locals
-    url: 'https://api.github.com/orgs/{locals.name}',
-    options: {
-      headers: {
-        'User-Agent': 'DataPoint'
-      }
+      return options
     }
   }
 })
 
-dataPoint.transform('request:getOrgInfo', 'nodejs').then(acc => {
-  console.log(acc.value)
-  // entire result from https://api.github.com/orgs/nodejs
-})
-
-// here we pass an Object as the input value
-dataPoint
-  .transform('request:getOrgInfoFromObject', { org: { name: 'nodejs' } })
-  .then(acc => {
-    console.log(acc.value)
-    // entire result from https://api.github.com/orgs/nodejs
+// this will mock the remote service
+nock('http://remote.test')
+  .get('/my-service')
+  .reply(200, {
+    ok: true
   })
 
-const options = {
-  locals: { name: 'nodejs' }
+const expectedResult = {
+  ok: true
 }
 
-// here we pass options (third argument to transform)
-dataPoint.transform('request:getOrgInfoFromLocals', true, options).then(acc => {
+const input = {
+  serviceName: 'my-service'
+}
+
+dataPoint.transform('request:getRemoteService', input).then(acc => {
+  assert.deepEqual(acc.value, expectedResult)
   console.log(acc.value)
-  // entire result from https://api.github.com/orgs/nodejs
 })

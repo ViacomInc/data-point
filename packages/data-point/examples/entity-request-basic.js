@@ -1,16 +1,25 @@
 const dataPoint = require('../').create()
+const assert = require('assert')
+const nock = require('nock')
 
 dataPoint.addEntities({
-  'request:getOrgInfo': {
-    url: 'https://api.github.com/orgs/nodejs',
-    options: {
-      headers: {
-        'User-Agent': 'DataPoint'
-      }
-    }
+  'request:getRemoteService': {
+    url: 'http://remote.test/source'
   }
 })
 
-dataPoint.transform('request:getOrgInfo', {}).then(acc => {
-  console.log(acc.value) // entire result from https://api.github.com/orgs/nodejs
+// this will mock the remote service
+nock('http://remote.test')
+  .get('/source')
+  .reply(200, {
+    ok: true
+  })
+
+const expectedResult = {
+  ok: true
+}
+
+dataPoint.transform('request:getRemoteService', {}).then(acc => {
+  assert.deepEqual(acc.value, expectedResult)
+  console.log(acc.value)
 })

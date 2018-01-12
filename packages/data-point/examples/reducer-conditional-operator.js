@@ -1,5 +1,6 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
+const mockRequests = require('./reducer-conditional-operator.mock')
 
 const people = [
   {
@@ -25,6 +26,8 @@ dataPoint.addEntities({
   }
 })
 
+mockRequests()
+
 dataPoint.transform('transform:getPerson[]', people).then(acc => {
   assert.deepEqual(acc.value, [
     {
@@ -36,4 +39,6 @@ dataPoint.transform('transform:getPerson[]', people).then(acc => {
       birthYear: undefined
     }
   ])
+
+  console.dir(acc.value, { colors: true })
 })

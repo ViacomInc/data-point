@@ -1,12 +1,13 @@
 const dataPoint = require('../').create()
-const _ = require('lodash')
+const nock = require('nock')
+const assert = require('assert')
 
 dataPoint.addEntities({
-  'request:getOrgInfo': {
-    url: 'https://api.github.com/orgs/{value}',
+  'request:getRemoteService': {
+    url: 'http://remote.test/',
     beforeRequest: acc => {
       // acc.value holds reference to request.options
-      const options = _.assign({}, acc.value, {
+      const options = Object.assign({}, acc.value, {
         headers: {
           'User-Agent': 'DataPoint'
         }
@@ -17,7 +18,22 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('request:getOrgInfo', 'nodejs').then(acc => {
+// this will mock the remote service
+nock('http://remote.test', {
+  reqheaders: {
+    'User-Agent': 'DataPoint'
+  }
+})
+  .get('/')
+  .reply(200, {
+    ok: true
+  })
+
+const expectedResult = {
+  ok: true
+}
+
+dataPoint.transform('request:getRemoteService', {}).then(acc => {
+  assert.deepEqual(acc.value, expectedResult)
   console.log(acc.value)
-  // entire result from https://api.github.com/orgs/nodejs
 })
