@@ -88,10 +88,12 @@ dataPoint
 
 Example at: [examples/hello-world.js](examples/hello-world.js)
 
-<details>
-  <summary>Async example</summary>
+### Fetching remote services
 
-  Using the amazing [swapi.co](https://swapi.co) service, the script below gets information about a planet and the residents of that planet.
+Using the amazing [swapi.co](https://swapi.co) service, the example below gets information about a planet and the residents of that planet.
+
+<details>
+  <summary>Based on an initial feed, fetch and aggregate results from multiple remote services:</summary>
 
   ```js
   const DataPoint = require('data-point')
