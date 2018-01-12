@@ -1,28 +1,31 @@
 const dataPoint = require('../').create()
+const assert = require('assert')
+const _ = require('lodash')
 
 dataPoint.addEntities({
-  'request:getOrgInfo': {
-    url: 'https://api.github.com/orgs/nodejs',
-    options: { headers: { 'User-Agent': 'DataPoint' } }
-  },
-  'hash:OrgInfo': {
+  'hash:mapKeys': {
     mapKeys: {
-      reposUrl: '$repos_url',
-      eventsUrl: '$events_url',
-      avatarUrl: '$avatar_url',
-      orgName: '$name',
-      blogUrl: '$blog'
+      name: '$name',
+      url: [
+        '$name',
+        acc => {
+          return `https://github.com/ViacomInc/${_.kebabCase(acc.value)}`
+        }
+      ]
     }
   }
 })
 
-dataPoint.transform('request:getOrgInfo | hash:OrgInfo').then(acc => {
+const expectedResult = {
+  name: 'DataPoint',
+  url: 'https://github.com/ViacomInc/data-point'
+}
+
+const input = {
+  name: 'DataPoint'
+}
+
+dataPoint.transform('hash:mapKeys', input).then(acc => {
+  assert.deepEqual(acc.value, expectedResult)
   console.log(acc.value)
-  // {
-  //  reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-  //  eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-  //  avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-  //  orgName: 'Node.js Foundation',
-  //  blogUrl: 'https://nodejs.org/foundation/'
-  // }
 })
