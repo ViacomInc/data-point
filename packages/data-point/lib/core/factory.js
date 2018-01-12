@@ -62,8 +62,11 @@ function create (spec) {
 
   // add single item (singular)
   manager.addValue = manager.values.add
+
   manager.addEntityType = manager.entityTypes.add
+  // add multiple entity types
   manager.addEntityTypes = _.partial(addToStore, manager.entityTypes)
+
   manager.use = manager.middleware.use
 
   // add collection of items (plural)
@@ -84,10 +87,9 @@ function create (spec) {
   manager.addEntityType('control', EntityControl)
   manager.addEntityType('schema', EntitySchema)
 
-  manager.addEntityTypes(options.entityTypes, true)
-
   addToStore(manager.values, options.values, true)
 
+  manager.addEntityTypes(options.entityTypes, true)
   manager.addEntities(options.entities)
 
   return manager
