@@ -15,7 +15,7 @@ describe('createComposeReducer', () => {
 })
 
 describe('parseModifierSpec', () => {
-  test('parses a modifier spec', () => {
+  test('parses a modifier spec | and contains only one key', () => {
     const result = parseCompose.parseModifierSpec({
       map: '$a'
     })
@@ -24,12 +24,13 @@ describe('parseModifierSpec', () => {
 })
 
 describe('parseComposeSpecProperty', () => {
-  test('parses a modifier spec', () => {
+  test('parses a modifier spec | and can contain array of keys', () => {
     const result = parseCompose.parseComposeSpecProperty([
       {
         map: '$a'
       }
     ])
+
     expect(result).toHaveLength(1)
     result.forEach(expectModifier)
   })

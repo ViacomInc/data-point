@@ -37,12 +37,7 @@ describe('resolve#reducerObject.resolve', () => {
     })
   })
 
-  it('should resolve a reducer object', () => {
-    const reducer = createReducerObject(createReducer, {
-      y: '$x.y',
-      zPlusOne: ['$x.y.z', acc => acc.value + 1]
-    })
-
+  it('should resolve a reducer object for reducer that changes value', () => {
     const accumulator = AccumulatorFactory.create({
       value: {
         x: {
@@ -51,6 +46,11 @@ describe('resolve#reducerObject.resolve', () => {
           }
         }
       }
+    })
+
+    const reducer = createReducerObject(createReducer, {
+      y: '$x.y',
+      zPlusOne: ['$x.y.z', acc => acc.value + 1]
     })
 
     return resolveReducerObject(
@@ -68,17 +68,9 @@ describe('resolve#reducerObject.resolve', () => {
     })
   })
 
-  it('should resolve a reducer object', () => {
-    const reducer = createReducerObject(createReducer, {
-      x: '$c.x',
-      y: '$c.y',
-      z: {
-        a: '$a',
-        b: '$b'
-      }
-    })
-
+  it('should resolve a reducer object that has reducer object inside reducer', () => {
     const accumulator = AccumulatorFactory.create({
+      // this is the input
       value: {
         a: 'A',
         b: 'B',
@@ -86,6 +78,16 @@ describe('resolve#reducerObject.resolve', () => {
           x: 'X',
           y: 'Y'
         }
+      }
+    })
+
+    const reducer = createReducerObject(createReducer, {
+      // this is the function itself
+      x: '$c.x',
+      y: '$c.y',
+      z: {
+        a: '$a',
+        b: '$b'
       }
     })
 
@@ -106,7 +108,16 @@ describe('resolve#reducerObject.resolve', () => {
     })
   })
 
-  it('should resolve a reducer object', () => {
+  it('should resolve a reducer object that returns one sepecfic key when root is passed as first elt, returns all keys when passed in last', () => {
+    const accumulator = AccumulatorFactory.create({
+      value: {
+        a: {
+          a: 1,
+          b: 2
+        }
+      }
+    })
+
     const reducer = createReducerObject(createReducer, {
       x: [
         '$a',
@@ -120,15 +131,6 @@ describe('resolve#reducerObject.resolve', () => {
         },
         '$a'
       ]
-    })
-
-    const accumulator = AccumulatorFactory.create({
-      value: {
-        a: {
-          a: 1,
-          b: 2
-        }
-      }
     })
 
     return resolveReducerObject(

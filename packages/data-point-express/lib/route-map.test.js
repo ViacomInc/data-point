@@ -71,7 +71,7 @@ describe('toCollection', () => {
 })
 
 describe('sortByPriority', () => {
-  test('sorts routes in prioroty order', () => {
+  test('sorts routes in prioroty order according to priority key', () => {
     const result = RouteMap.sortByPriority([
       {
         id: 'a',
@@ -110,7 +110,7 @@ describe('filterEnabled', () => {
 })
 
 describe('normalizeRoutesMiddleware', () => {
-  test('sorts routes in prioroty order', () => {
+  test('it will wrap all routes in an array', () => {
     const result = RouteMap.normalizeRoutesMiddleware([
       { middleware: 'a' },
       { middleware: ['a'] }

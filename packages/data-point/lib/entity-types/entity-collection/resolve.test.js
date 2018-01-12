@@ -94,14 +94,14 @@ describe('entity.collection.filter', () => {
     })
   })
 
-  test('should resolve filter Transform', () => {
+  test('should resolve filter Transform | values of collection 3 passed into acc', () => {
     return transform('collection:c.2', testData).then(acc => {
       expect(acc.value).toEqual([1, 3])
     })
   })
 
   // NOTE: to skip map execution when filter is empty
-  test('should skip Filter Transform if empty', () => {
+  test('should skip Filter Transform if empty | values fo collection 3 passed into acc', () => {
     return transform('collection:c.3', testData).then(acc => {
       expect(acc.value).toEqual([1, 2, 3])
     })
@@ -150,7 +150,7 @@ describe('entity.collection.compose', () => {
       })
   })
 
-  test('find should handle error and rethrow with appended information', () => {
+  test('find should handle error and rethrow with appended information | collection test definition j.4', () => {
     return transform('collection:j.4', testData)
       .catch(acc => acc)
       .then(acc => {
@@ -158,7 +158,7 @@ describe('entity.collection.compose', () => {
       })
   })
 
-  test('filter should handle error and rethrow with appended information', () => {
+  test('filter should handle error and rethrow with appended information | collection test definition j.5', () => {
     return transform('collection:j.5', testData)
       .catch(acc => acc)
       .then(acc => {

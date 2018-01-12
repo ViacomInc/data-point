@@ -33,7 +33,7 @@ describe('factory#create', () => {
     expect(reducer.asCollection).toBe(true)
   })
 
-  test('factory#create context with reducers', () => {
+  test('factory#create context with reducers | using piped reducer', () => {
     const result = factory.create(createReducer, [
       '$foo.bar | reducer:add',
       () => true
@@ -45,7 +45,7 @@ describe('factory#create', () => {
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 
-  test('factory#create context with reducers', () => {
+  test('factory#create context with reducers | using array reducer', () => {
     const result = factory.create(createReducer, [
       '$foo.bar',
       'reducer:add',

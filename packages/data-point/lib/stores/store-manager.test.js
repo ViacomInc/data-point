@@ -18,7 +18,6 @@ describe('add', () => {
     })
     const Factory = () => 1
     ObjectStoreManager.add(mgr, errorInfoCb, Factory, 'id1')
-
     const error = _.attempt(
       ObjectStoreManager.add,
       mgr,
@@ -26,13 +25,12 @@ describe('add', () => {
       Factory,
       'id1'
     )
-
     expect(error).toBeInstanceOf(Error)
     expect(error).toHaveProperty('name', 'Foo')
     expect(error).toMatchSnapshot()
   })
 
-  test('It should throw error with information if item already exist', () => {
+  test('It should throw error with information if item already exist | error containing spec will return and entitiy containing spec object', () => {
     const mgr = createManager()
     const errorInfoCb = () => ({
       name: 'Foo',
@@ -56,7 +54,7 @@ describe('add', () => {
     expect(error).toMatchSnapshot()
   })
 
-  test('It should throw error with information if item already exist', () => {
+  test('When ObjectStoreManager is only called once, it should return the object id and spec with no errors', () => {
     const mgr = createManager()
     const errorInfoCb = () => ({
       name: 'Foo',
@@ -65,6 +63,7 @@ describe('add', () => {
     const Factory = (spec, id) => `${id}:${spec.type}`
 
     ObjectStoreManager.add(mgr, errorInfoCb, Factory, 'id1', { type: 'myType' })
+
     expect(mgr.store.get('id1')).toEqual('id1:myType')
   })
 })

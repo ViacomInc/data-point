@@ -324,7 +324,7 @@ describe('resolve', () => {
     })
   })
 
-  test('inject locals value with string template', () => {
+  test('inject locals value with string template | contains object with {url : }', () => {
     nock('http://remote.test')
       .get('/source1')
       .reply(200, {
@@ -346,7 +346,7 @@ describe('resolve', () => {
     })
   })
 
-  test('inject locals value with string template', () => {
+  test('inject locals value with string template | contains object with {url: , and options: { baseUrl : } }', () => {
     nock('http://remote.test')
       .get('/source1')
       .reply(200, {

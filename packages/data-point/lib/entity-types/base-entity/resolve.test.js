@@ -88,7 +88,7 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
       foo: 'bar'
     })
   })
-  test('It should initialValue acc.value', () => {
+  test('It should initialValue acc.params', () => {
     expect(acc).toHaveProperty('params', {
       base: true
     })
@@ -97,9 +97,10 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
 
 describe('ResolveEntity.resolveMiddleware', () => {
   test('It should execute a middleware', () => {
-    dataPoint.middleware.use('request:before', (acc, next) => {
+    var x = dataPoint.middleware.use('request:before', (acc, next) => {
       acc.value = 'bar'
       next(null)
+      return x
     })
 
     const racc = helpers.createAccumulator('foo')
@@ -112,7 +113,7 @@ describe('ResolveEntity.resolveMiddleware', () => {
     })
   })
 
-  test('It should execute a middleware', () => {
+  test('It should execute a middleware that forces an error to bypass the promise chain', () => {
     dataPoint.middleware.use('request:before', (acc, next) => {
       acc.resolve('bar')
       next(null)
@@ -186,7 +187,7 @@ describe('ResolveEntity.resolveEntity', () => {
     })
   })
 
-  test('It should resolve through bypass', () => {
+  test('acc is never resolved, caught error contains error mesage ', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
       const err = new Error('test')
       throw err
