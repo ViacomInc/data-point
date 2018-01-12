@@ -1,4 +1,3 @@
-
 const createReducer = require('../../reducer-types').create
 const deepFreeze = require('deep-freeze')
 const constant = require('lodash/constant')

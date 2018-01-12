@@ -2,32 +2,22 @@ const dataPoint = require('../').create()
 const assert = require('assert')
 
 dataPoint.addEntities({
-  'entry:orgInfo': {
-    value: 'request:getOrgInfo | hash:OrgInfo'
-  },
-  'request:getOrgInfo': {
-    url: 'https://api.github.com/orgs/{value.org}',
-    options: { headers: { 'User-Agent': 'DataPoint' } }
-  },
-  'hash:OrgInfo': {
-    // notice this is an array not a Transform or Object
-    pickKeys: ['name', 'blog']
+  'hash:pickKeys': {
+    pickKeys: ['url']
   }
 })
 
-// keys came out intact
+// notice how name is no longer in the object
 const expectedResult = {
-  name: 'Node.js Foundation',
-  blog: 'https://nodejs.org/foundation/'
+  url: 'https://github.com/ViacomInc/data-point'
 }
 
-dataPoint.transform('entry:orgInfo', { org: 'nodejs' }).then(acc => {
-  console.log(acc.value)
+const input = {
+  name: 'DataPoint',
+  url: 'https://github.com/ViacomInc/data-point'
+}
+
+dataPoint.transform('hash:pickKeys', input).then(acc => {
   assert.deepEqual(acc.value, expectedResult)
-  /*
-  {
-    name: 'Node.js Foundation',
-    blog: 'https://nodejs.org/foundation/'
-  }
-  */
+  console.log(acc.value)
 })

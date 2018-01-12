@@ -27,7 +27,6 @@ npm install --save data-point
   - [PathReducer](#path-reducer)
   - [FunctionReducer](#function-reducer)
   - [ObjectReducer](#object-reducer)
-  - [Higher Order Reducers](#higher-order-reducers)
   - [EntityReducer](#entity-reducer)
   - [ListReducer](#list-reducer)
   - [Collection Mapping](#reducer-collection-mapping)
@@ -53,6 +52,7 @@ npm install --save data-point
 - [dataPoint.addValue](#api-data-point-add-value)
 - [Custom Entity Types](#custom-entity-types)
 - [Integrations](#integrations)
+- [Patterns and Best Practices](#patterns-best-practices)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -88,15 +88,20 @@ dataPoint
 
 Example at: [examples/hello-world.js](examples/hello-world.js)
 
-<details>
-  <summary>Async example</summary>
+### Fetching remote services
 
-  Using the amazing [swapi.co](https://swapi.co) service, the script below gets information about a planet and the residents of that planet.
+Based on an initial feed, fetch and aggregate results from multiple remote services.
+
+<details>
+  <summary>Example</summary>
+
+  Using the amazing [swapi.co](https://swapi.co) service, the example below gets information about a planet and the residents of that planet.
 
   ```js
   const DataPoint = require('data-point')
   // create DataPoint instance
   const dataPoint = DataPoint.create()
+  const { map } = DataPoint.helpers
 
   // add entities to dataPoint instance
   dataPoint.addEntities({
@@ -115,25 +120,26 @@ Example at: [examples/hello-world.js](examples/hello-world.js)
         name: '$name',
         // residents is an array of urls
         // where each url gets mapped
-        // to a request:Resident
-        // and then to a hash:Resident
-        // entity 
-        residents: '$residents | request:Resident[] | hash:Resident[]'
+        // to a request:Resident and
+        // its result gets reduced 
+        // by an ObjectReducer
+        residents: [
+          '$residents',
+          map([
+            'request:Resident',
+            {
+              name: '$name',
+              gender: '$gender',
+              birthYear: '$birth_year'
+            }
+          ])
+        ]
       }
     },
 
     // requests url passed
     'request:Resident': {
       url: '{value}'
-    },
-
-    'hash:Resident': {
-      // map keys we want exposed
-      mapKeys: {
-        name: '$name',
-        gender: '$gender',
-        birthYear: '$birth_year'
-      }
     }
   })
 
@@ -303,12 +309,12 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 
 | Option | Description |
 |:---|:---|
-| *$.* | Reference to current `accumulator.value`. |
+| *$* | Reference to current `accumulator.value`. |
 | *$..* | Gives you full access to current `accumulator`. |
 | *$path* | Simple Object path notation to extract a path from current `accumulator.value`. |
 | *$path[]* | Object path notation with trailing `[]` to extract a value from an array of objects at the `accumulator.value` for each. |
 
-#### <a name="root-path">Root path $.</a>
+#### <a name="root-path">Root path $</a>
 
 **EXAMPLES:**
 
@@ -328,7 +334,7 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
   }
 
   dataPoint
-    .transform('$.', input)
+    .transform('$', input)
     .then((acc) => {
       assert.equal(acc.value, input)
     })
@@ -721,45 +727,6 @@ Each of the reducers might contain more ObjectReducers (which might contain redu
   ```
 </details>
 
-
-### <a name="higher-order-reducers">Higher Order Reducers</a>
-
-Higher Order Reducers are expected to be [Higher-order Functions](https://en.wikipedia.org/wiki/Higher-order_function). This means that a higher order reducer **MUST** return a [FunctionReducer](#function-reducer).
-
-```js
-// sync
-const name = (param1, param2, ...) => (acc:Accumulator) => {
-  return newValue
-}
-// async via promise
-const name = (param1, param2, ...) => (acc:Accumulator) => {
-  return Promise.resolve(newValue)
-}
-// async via callback
-const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
-  next(error:Error, newValue:*)
-}
-```
-
-<details>
-  <summary>Higher Order Reducer Example</summary>
-  
-  ```js
-  const addStr = (value) => (acc) => {
-    return acc.value + value
-  }
-  
-  dataPoint
-    .transform(addStr(' World!!'), 'Hello')
-    .then((acc) => {
-      assert.equal(acc.value, 'Hello World!!')
-    })
-  ```
-</details>
-
-
-Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
-
 ### <a name="entity-reducer">EntityReducer</a>
 
 An EntityReducer is the actual implementation of an entity. When implementing an EntityReducer, you are actually passing the current [Accumulator](#accumulator) Object to an entity spec, to become its current Accumulator object.
@@ -1108,37 +1075,6 @@ find(reducer:Reducer):*
 
 Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
 
-### <a name="patterns-and-best-practices">Patterns and Best Practices</a>
-
-**Best Practices (Recommendations) with reducers**
-
-```js
-const badReducer = () => (acc) => {
-  // never ever modify the value object.
-  acc.value[1].username = 'foo'
-
-  // keep in mind JS is by reference
-  // so this means this is also
-  // modifying the value object
-  const image = acc.value[1]
-  image.username = 'foo'
-
-  // pass value to next reducer
-  return acc.value
-}
-
-// this is better
-const fp = require('lodash/fp')
-const goodReducer = () => (acc) => {
-  // https://github.com/lodash/lodash/wiki/FP-Guide
-  // this will cause no side effects
-  const value = fp.set('[1].username', 'foo', acc.value)
-
-  // pass value to next reducer
-  return value
-}
-```
-
 ## <a name="entities">Entities</a>
 
 Entities are artifacts that transform data. An entity is represented by a data structure (spec) that defines how the entity behaves. 
@@ -1350,7 +1286,7 @@ Example at: [examples/entity-entry-basic.js](examples/entity-entry-basic.js)
   dataPoint.addEntities({
     'entry:foo': {
       before: isArray(),
-      value: '$.'
+      value: '$'
     }
   })
   
@@ -1642,33 +1578,23 @@ dataPoint.addEntities({
 
 ##### <a name="request-url">Request.url</a>
 
-**GitHub API - list organization info**
-
-(For more information on this API: [https://api.github.com/orgs/nodejs](https://api.github.com/orgs/nodejs))
-
-Fetches an organization's information.
+Sets the url to be requested.
 
 <details>
   <summary>`Request.url` Example</summary>
   
   ```js
   dataPoint.addEntities({
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/nodejs',
-      options: {
-        headers: {
-          'User-Agent': 'DataPoint'
-        }
-      }
+    'request:getLuke': {
+      url: 'https://swapi.co/api/people/1/'
     }
   })
-  
-  dataPoint
-    .transform('request:getOrgInfo', {})
-    .then((acc) => {
-      // entire result from https://api.github.com/orgs/nodejs
-      console.log(acc.value) 
-    })
+
+  dataPoint.transform('request:getLuke', {}).then(acc => {
+    const result = acc.value
+    assert.equal(result.name, 'Luke Skywalker')
+    assert.equal(result.height, '172')
+  })
   ```
 </details>
 
@@ -1686,81 +1612,56 @@ Using `acc.value` property to make the url dynamic.
   
   ```js
   dataPoint.addEntities({
-    // dynamic search, which uses 
-    // StringTemplate's simple 
-    // templating system {value} to
-    // inject the search 
-    // value into the URL string
-    'request:getNodeOrgInfo': {
-      url: 'https://api.github.com/orgs/{value.organization}',
-      // this object will be passed 
-      // to request.js
-      options: {
-        headers: {
-          'User-Agent': 'DataPoint'
-        }
-      }
+    'request:getLuke': {
+      // inject the acc.value.personId
+      url: 'https://swapi.co/api/people/{value.personId}/'
     }
   })
-  
-  // second parameter to transform is
-  // the initial value
-  dataPoint
-    .transform('request:getNodeOrgInfo', {
-      organization: 'nodejs'
-    })
-    .then((acc) => {
-      // outputs full result from the
-      // remote source
-      console.log(acc.value) 
-    })
+
+  const input = {
+    personId: 1
+  }
+
+  dataPoint.transform('request:getLuke', input).then(acc => {
+    const result = acc.value
+    assert.equal(result.name, 'Luke Skywalker')
+    assert.equal(result.height, '172')
+  })
   ```
 </details>
 
 
 <a name="acc-locals-example" >Using `acc.locals` property to make the url dynamic:</a>
 
+For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
+
 <details>
   <summary>`acc.locals` example</summary>
   
   ```js
   dataPoint.addEntities({
-    // dynamic search, which uses
-    // StringTemplate's simple 
-    // templating system {value} to
-    // inject the search 
-    // value into the URL string
-    'request:getNodeOrgInfo': {
-      url: 'https://api.github.com/orgs/{locals.organization}',
-      // this object will be passed
-      // to request.js
-      options: {
-        headers: {
-          'User-Agent': 'request'
-        }
-      }
+    'request:getLuke': {
+      url: 'https://swapi.co/api/people/{locals.personId}/'
     }
   })
-  
-  // The third parameter of transform
-  // is the options object where we 
-  // can pass the `locals` value
-  dataPoint
-    .transform('request:getNodeOrgInfo', { 
-      locals: {
-        organization: 'nodejs'
-      }
-    })
-    .then((acc) => {
-      // outputs full result from the
-      // remote source
-      console.log(acc.value) 
-    })
+
+  const options = {
+    locals: {
+      personId: 1
+    }
+  }
+
+  dataPoint.transform('request:getLuke', {}, options).then(acc => {
+    const result = acc.value
+    assert.equal(result.name, 'Luke Skywalker')
+    assert.equal(result.height, '172')
+  })
+
   ```
 </details>
 
 
-Example at: [examples/entity-request-string-template.js](examples/entity-request-string-template.js)
+Example at: [examples/entity-request-string-template.js](examples/entity-request-options-locals.js)
 
 ##### <a name="transform-object">TransformObject</a>
 
@@ -1782,7 +1683,7 @@ When a TransformObject is to be resolved, all reducers are resolved in parallel.
           // because the key starts
           // with $ it will be treated
           // as a reducer
-          $search: '$query'
+          $search: '$personName'
         }
       }
     }
@@ -1791,9 +1692,11 @@ When a TransformObject is to be resolved, all reducers are resolved in parallel.
   // second parameter to transform is
   // the initial acc.value
   dataPoint
-    .transform('request:searchPeople | $results[0].name', { query: 'r2'})
-    .then((acc) => {
-      assert.equal(acc.value, 'R2-D2')
+    .transform('request:searchPeople', {
+      personName: 'r2'
+    })
+    .then(acc => {
+      assert.equal(acc.value.results[0].name, 'R2-D2')
     })
   ```
 </details>
@@ -1964,34 +1867,37 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
   <summary>Hash.mapKeys Example</summary>
 
   ```js
+  const _ = require('lodash')
+  
   dataPoint.addEntities({
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/nodejs',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
+    'hash:mapKeys': {
       mapKeys: {
-        reposUrl: '$repos_url',
-        eventsUrl: '$events_url',
-        avatarUrl: '$avatar_url',
-        orgName: '$name',
-        blogUrl: '$blog'
+        // map to acc.value.name
+        name: '$name',
+        // uses a ReducerList to 
+        // map to acc.value.name
+        // and generate a string with
+        // a ReducerFunction
+        url: [
+          '$name',
+          acc => {
+            return `https://github.com/ViacomInc/${_.kebabCase(acc.value)}`
+          }
+        ]
       }
     }
   })
-  
-  dataPoint
-    .transform('request:getOrgInfo | hash:OrgInfo')
-    .then((acc) => {
-      console.log(acc.value)
-      // {
-      //  reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-      //  eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-      //  avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-      //  orgName: 'Node.js Foundation',
-      //  blogUrl: 'https://nodejs.org/foundation/'
-      // }
+
+  const input = {
+    name: 'DataPoint'
+  }
+
+  dataPoint.transform('hash:mapKeys', input).then(acc => {
+    assert.deepEqual(acc.value, {
+      name: 'DataPoint',
+      url: 'https://github.com/ViacomInc/data-point'
     })
+  })
   ```
 </details>
 
@@ -2009,57 +1915,25 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
   
   ```js
   dataPoint.addEntities({
-    'entry:orgInfo': {
-      value: 'request:getOrgInfo | hash:OrgInfo | hash:OrgInfoCustom'
-    },
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/nodejs',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
-      mapKeys: {
-        reposUrl: '$repos_url',
-        eventsUrl: '$events_url',
-        avatarUrl: '$avatar_url',
-        orgName: '$name',
-        blogUrl: '$blog'
-      }
-    },
-    'hash:OrgInfoCustom': {
+    'hash:addKeys': {
       addKeys: {
-        // notice we are extracting from the new key
-        // made on the hash:OrgInfo entity
-        avatarUrlDuplicate: '$avatarUrl'
+        nameLowerCase: ['$name', acc => acc.value.toLowerCase()],
+        url: () => 'https://github.com/ViacomInc/data-point'
       }
     }
   })
-  
-  const expectedResult = {
-    reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-    eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-    avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-    orgName: 'Node.js Foundation',
-    blogUrl: 'https://nodejs.org/foundation/',
-    // this key was added through hash:OrgInfoCustom
-    avatarUrlDuplicate: 'https://avatars0.githubusercontent.com/u/9950313?v=3'
+
+  const input = {
+    name: 'DataPoint'
   }
-  
-  dataPoint
-    .transform('entry:orgInfo', { org: 'nodejs' })
-    .then((acc) => {
-      assert.deepEqual(acc.value, expectedResult)
-      console.log(acc.value)
-      /*
-      {
-        reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-        eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-        avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-        orgName: 'Node.js Foundation',
-        blogUrl: 'https://nodejs.org/foundation/',
-        avatarUrlDuplicate: 'https://avatars0.githubusercontent.com/u/9950313?v=3'
-      }
-      */
+
+  dataPoint.transform('hash:addKeys', input).then(acc => {
+    assert.deepEqual(acc.value, {
+      name: 'DataPoint',
+      nameLowerCase: 'datapoint',
+      url: 'https://github.com/ViacomInc/data-point'
     })
+  })
   ```
 </details>
 
@@ -2077,40 +1951,23 @@ The next example is similar to the previous example. However, instead of mapping
   
   ```js
   dataPoint.addEntities({
-    'entry:orgInfo': {
-      value: 'request:getOrgInfo | hash:OrgInfo'
-    },
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/{value.org}',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
-      // notice this is an array, not a transform or object
-      pickKeys: [
-        'name',
-        'blog'
-      ]
+    'hash:pickKeys': {
+      pickKeys: ['url']
     }
   })
-  
-  // keys came out intact
-  const expectedResult = {
-    name: 'Node.js Foundation',
-    blog: 'https://nodejs.org/foundation/'
+
+  const input = {
+    name: 'DataPoint',
+    url: 'https://github.com/ViacomInc/data-point'
   }
-  
-  dataPoint
-    .transform('entry:orgInfo', { org: 'nodejs' })
-    .then((acc) => {
-      console.log(acc.value)
-      assert.deepEqual(acc.value, expectedResult)
-      /*
-      {
-        name: 'Node.js Foundation',
-        blog: 'https://nodejs.org/foundation/'
-      }
-      */
+
+  dataPoint.transform('hash:pickKeys', input).then(acc => {
+    // notice how name is no longer 
+    // in the object
+    assert.deepEqual(acc.value, {
+      url: 'https://github.com/ViacomInc/data-point'
     })
+  })
   ```
 </details>
 
@@ -2128,62 +1985,24 @@ This example will only **omit** some keys, and let the rest pass through:
   
   ```js
   dataPoint.addEntities({
-    'entry:orgInfo': {
-      value: 'request:getOrgInfo | hash:OrgInfo'
-    },
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/{value.org}',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
-      // notice this is an array, not a Transform or Object
-      omitKeys: [
-        'repos_url',
-        'events_url',
-        'hooks_url',
-        'issues_url',
-        'members_url',
-        'public_members_url',
-        'avatar_url',
-        'description',
-        'name',
-        'company',
-        'blog',
-        'location',
-        'email',
-        'has_organization_projects',
-        'has_repository_projects',
-        'public_repos',
-        'public_gists',
-        'followers',
-        'following',
-        'html_url',
-        'created_at',
-        'updated_at',
-        'type'
-      ]
+    'hash:omitKeys': {
+      omitKeys: ['name']
     }
   })
-  
-  // keys came out intact
+
+  // notice how name is no longer in the object
   const expectedResult = {
-    login: 'nodejs',
-    id: 9950313,
-    url: 'https://api.github.com/orgs/nodejs'
+    url: 'https://github.com/ViacomInc/data-point'
   }
-  
-  dataPoint
-    .transform('entry:orgInfo', { org: 'nodejs' })
-    .then((acc) => {
-      assert.deepEqual(acc.value, expectedResult)
-      /*
-      {
-        login: 'nodejs',
-        id: 9950313,
-        url: 'https://api.github.com/orgs/nodejs'
-      }
-      */
-    })
+
+  const input = {
+    name: 'DataPoint',
+    url: 'https://github.com/ViacomInc/data-point'
+  }
+
+  dataPoint.transform('hash:omitKeys', input).then(acc => {
+    assert.deepEqual(acc.value, expectedResult)
+  })
   ```
 </details>
 
@@ -3029,15 +2848,32 @@ dataPoint.addValue(objectPath, value)
 
 ## <a name="custom-entity-types">Custom Entity Types</a>
 
-DataPoint exposes a set of methods to help you build your own Custom Entity Types. With them you are enabled to build on top of the [base entity API](#entity-base-api). 
+DataPoint exposes a set of methods to help you build your own Custom Entity types. With them you can build on top of the [base entity API](#entity-base-api).
 
-### <a name="adding-entity-types">Adding new Entity Types</a>
+### <a name="adding-entity-types">Adding new Entity types</a>
 
-You may add new Entity Types through the [DataPoint.create](#api-data-point-create) method, or through the [dataPoint.addEntityTypes](#data-point-add-entity-types)
+You can add custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also add them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
+
+#### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
+
+Add a new Entity type to the DataPoint instance.
+
+**SYNOPSIS**
+
+```js
+dataPoint.addEntityType(id:String, spec:Object)
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *id* | `String` | The name of the new Entity type. |
+| *spec* | `Object` | The Entity spec. |
 
 #### <a name="data-point-add-entity-types">dataPoint.addEntityTypes</a>
 
-Adds a new set of Entity Types to the DataPoint instance.
+Adds a new set of Entity types to the DataPoint instance.
 
 **SYNOPSIS**
 
@@ -3045,13 +2881,11 @@ Adds a new set of Entity Types to the DataPoint instance.
 dataPoint.addEntityTypes(specs:Object)
 ```
 
-This method will return a **Promise** if `done` is omitted.
-
 **ARGUMENTS**
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *specs* | `Object` | Key/value hash where each key is the name of the new Entity Type and value is the Entity spec API. |
+| *specs* | `Object` | Key/value hash where each key is the name of the new Entity type and value is the Entity spec. |
 
 Every Entity must expose two methods:
 
@@ -3194,6 +3028,85 @@ app.listen(3000, function () {
   console.log('listening on port 3000!')
 })
 ```
+
+## <a name="patterns-best-practices">Patterns and Best Practices</a>
+
+This section documents some of the patterns and best practices we have found useful while using DataPoint.
+
+### Parameterize a FunctionReducer
+
+You may use a [higher order function](https://medium.com/javascript-scene/higher-order-functions-composing-software-5365cf2cbe99) to parameterize a [FunctionReducer](#function-reducer). To do this you will create a function that **must** return a [FunctionReducer](#function-reducer).
+
+```js
+// sync
+const name = (param1, param2, ...) => (acc:Accumulator) => {
+  return newValue
+}
+// async via promise
+const name = (param1, param2, ...) => (acc:Accumulator) => {
+  return Promise.resolve(newValue)
+}
+// async via callback
+const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
+  next(error:Error, newValue:*)
+}
+```
+
+<details>
+  <summary>Higher Order Reducer Example</summary>
+  
+  ```js
+  const addStr = (value) => (acc) => {
+    return acc.value + value
+  }
+  
+  dataPoint
+    .transform(addStr(' World!!'), 'Hello')
+    .then((acc) => {
+      assert.equal(acc.value, 'Hello World!!')
+    })
+  ```
+</details>
+
+
+Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
+
+### Keeping your FunctionReducers pure
+
+When it comes to creating your own reducer functions you want them to be [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0); this is so they do not produce any side effects. 
+
+In the context of a [FunctionReducer](#function-reducer) it means you should never change directly (or indirectly) the value of the [Accumulator.value](#accumulator). 
+
+<details>
+  <summary>Example</summary>
+
+  ```js
+  const badReducer = () => (acc) => {
+    // never ever modify the value object.
+    acc.value[1].username = 'foo'
+
+    // keep in mind JS is by reference
+    // so this means this is also
+    // modifying the value object
+    const image = acc.value[1]
+    image.username = 'foo'
+
+    // pass value to next reducer
+    return acc.value
+  }
+
+  // this is better
+  const fp = require('lodash/fp')
+  const goodReducer = () => (acc) => {
+    // https://github.com/lodash/lodash/wiki/FP-Guide
+    // this will cause no side effects
+    const value = fp.set('[1].username', 'foo', acc.value)
+
+    // pass value to next reducer
+    return value
+  }
+  ```
+</details>
 
 ## <a name="contributing">Contributing</a>
 

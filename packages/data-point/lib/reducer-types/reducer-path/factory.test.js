@@ -5,7 +5,7 @@ const createReducer = require('../index').create
 
 it('reducer/reducer-path#isType', () => {
   expect(factory.isType('#a')).not.toBe('is not path')
-  expect(factory.isType('$.')).toBeTruthy()
+  expect(factory.isType('$')).toBeTruthy()
 })
 
 describe('ReducerPath getters', () => {
@@ -73,7 +73,7 @@ describe('reducer/reducer-path#create', () => {
   it('empty path', () => {
     const reducer = factory.create(createReducer, '$')
     expect(reducer.type).toBe('ReducerPath')
-    expect(reducer.name).toBe('.')
+    expect(reducer.name).toBe('$')
     expect(reducer.asCollection).toBe(false)
   })
 
@@ -109,7 +109,7 @@ describe('ReducerPath#body', () => {
     const acc = {
       value: 'test'
     }
-    const result = factory.create(createReducer, '$.').body(acc)
+    const result = factory.create(createReducer, '$').body(acc)
     expect(result).toBe('test')
   })
 

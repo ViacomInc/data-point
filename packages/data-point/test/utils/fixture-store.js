@@ -1,4 +1,3 @@
-
 const coreFactory = require('../../lib/core')
 
 const entitiesDefinitions = require('../definitions/entities')
