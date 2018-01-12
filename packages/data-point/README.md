@@ -90,10 +90,12 @@ Example at: [examples/hello-world.js](examples/hello-world.js)
 
 ### Fetching remote services
 
-Using the amazing [swapi.co](https://swapi.co) service, the example below gets information about a planet and the residents of that planet.
+Based on an initial feed, fetch and aggregate results from multiple remote services.
 
 <details>
-  <summary>Based on an initial feed, fetch and aggregate results from multiple remote services:</summary>
+  <summary>Example</summary>
+
+  Using the amazing [swapi.co](https://swapi.co) service, the example below gets information about a planet and the residents of that planet.
 
   ```js
   const DataPoint = require('data-point')
