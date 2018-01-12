@@ -2871,9 +2871,26 @@ dataPoint.addEntityType(id:String, spec:Object)
 | *id* | `String` | The name of the new Entity type. |
 | *spec* | `Object` | The Entity spec. |
 
+#### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
+
+Adds a single Entity Type to the DataPoint instance.
+
+**SYNOPSIS**
+
+```js
+dataPoint.addEntityType(name:String, spec:Object)
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *name* | `Object` | Name of the new Entity Type |
+| *spec* | `Object` | New [Entity spec](#custom-entity-spec) API |
+
 #### <a name="data-point-add-entity-types">dataPoint.addEntityTypes</a>
 
-Adds a new set of Entity types to the DataPoint instance.
+Adds one or more Entity Types to the DataPoint instance.
 
 **SYNOPSIS**
 
@@ -2885,7 +2902,9 @@ dataPoint.addEntityTypes(specs:Object)
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *specs* | `Object` | Key/value hash where each key is the name of the new Entity type and value is the Entity spec. |
+| *specs* | `Object` | Key/value hash where each key is the name of the new Entity Type and value is the [Entity spec](#custom-entity-spec) API. |
+
+#### <a name="custom-entity-spec">Custom Entity Spec</a>
 
 Every Entity must expose two methods:
 
