@@ -2,6 +2,7 @@ const _ = require('lodash')
 
 /**
  * get the store
+ * @param {Object} manager
  * @return {Object}
  */
 function getStore (manager) {
@@ -12,6 +13,7 @@ module.exports.getStore = getStore
 
 /**
  * clears the store
+ * @param {Object}
  * @return {Object}
  */
 function clear (manager) {
@@ -23,8 +25,10 @@ module.exports.clear = clear
 
 /**
  * get value by path
- * @throws Will throw error if id is invalid
- * @param  {string} path - dot notation to access a filter path
+ * @throws if the value for path is undefined
+ * @param {Object} manager
+ * @param {Function} errorInfoCb
+ * @param {string} path - dot notation to access an object value
  * @return {*}
  */
 function get (manager, errorInfoCb, path) {
@@ -42,21 +46,24 @@ function get (manager, errorInfoCb, path) {
 module.exports.get = get
 
 /**
- * get filter by path
- * @throws Will throw error if id already exists and override is not true
- * @param  {string} id - filter id
+ * @throws if a value already exists for path and override is not true
+ * @param {Object} manager
+ * @param {Function} errorInfoCb
+ * @param {string} path - dot notation to set an object value
+ * @param {*} value
+ * @param {boolean} override
  * @return {*} returns reference to entire manager.store
  */
-function add (manager, errorInfoCb, id, value, override) {
-  const filter = _.get(manager.store, id)
+function add (manager, errorInfoCb, path, value, override) {
+  const filter = _.get(manager.store, path)
   if (!override && filter) {
-    const errorInfo = errorInfoCb(id)
+    const errorInfo = errorInfoCb(path)
     const e = new Error(errorInfo.message)
     e.name = errorInfo.message.name
     throw e
   }
 
-  _.set(manager.store, id, value)
+  _.set(manager.store, path, value)
 
   return manager.store
 }
@@ -65,6 +72,7 @@ module.exports.add = add
 
 /**
  * create instance
+ * @param {Object} spec
  * @return {Object}
  */
 function create (spec) {
