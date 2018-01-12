@@ -1,16 +1,19 @@
 const dataPoint = require('../').create()
+const assert = require('assert')
+const mockRequest = require('./entity-request-basic.mock')
 
 dataPoint.addEntities({
-  'request:getOrgInfo': {
-    url: 'https://api.github.com/orgs/nodejs',
-    options: {
-      headers: {
-        'User-Agent': 'DataPoint'
-      }
-    }
+  'request:getLuke': {
+    url: 'https://swapi.co/api/people/1/'
   }
 })
 
-dataPoint.transform('request:getOrgInfo', {}).then(acc => {
-  console.log(acc.value) // entire result from https://api.github.com/orgs/nodejs
+// mock the remote service
+mockRequest()
+
+dataPoint.transform('request:getLuke', {}).then(acc => {
+  const result = acc.value
+  assert.equal(result.name, 'Luke Skywalker')
+  assert.equal(result.height, '172')
+  console.dir(acc.value, { colors: true })
 })

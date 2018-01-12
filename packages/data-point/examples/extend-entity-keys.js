@@ -1,24 +1,28 @@
 const dataPoint = require('../').create()
+const assert = require('assert')
 
 dataPoint.addEntities({
-  'entry:getReposWithAllTags': {
-    value: 'request:repositories'
+  'entry:Base': {
+    before: acc => {
+      return acc.value + 'before'
+    },
+    after: acc => {
+      return acc.value + 'after'
+    }
   },
-  'request:githubBase': {
-    options: { headers: { 'User-Agent': 'DataPoint' } }
-  },
-  'request:repositories -> request:githubBase': {
-    // options object is provided by request:githubBase
-    url: 'https://api.github.com/orgs/{locals.orgName}/repos'
+
+  // extends entry:Base
+  'entry:Extended -> entry:Base': {
+    // entry:Base's `before` and
+    // `after` get merged with
+    // this entity
+    value: acc => {
+      return acc.value + ' value '
+    }
   }
 })
 
-const options = {
-  locals: {
-    orgName: 'nodejs'
-  }
-}
-
-dataPoint.transform('entry:getReposWithAllTags', null, options).then(acc => {
+dataPoint.transform('entry:Extended', '').then(acc => {
+  assert.equal(acc.value, 'before value after')
   console.log(acc.value)
 })

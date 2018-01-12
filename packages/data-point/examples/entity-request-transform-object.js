@@ -1,26 +1,29 @@
 const dataPoint = require('../').create()
+const assert = require('assert')
+const mock = require('./entity-request-transform-object.mock')
 
 dataPoint.addEntities({
   'request:searchPeople': {
-    url: 'https://swapi.co/api/people/?search=r2',
+    url: 'https://swapi.co/api/people',
     options: {
       qs: {
         // because the key starts with $
         // it will be treated as a reducer
-        $search: acc => {
-          return acc.value.search
-        }
+        $search: '$personName'
       }
     }
   }
 })
 
+// this will mock the remote service
+mock()
+
 // second parameter to transform is the initial acc value
 dataPoint
   .transform('request:searchPeople', {
-    search: 'r2'
+    personName: 'r2'
   })
   .then(acc => {
-    // R2-D2
-    console.log(acc.value.results[0].name)
+    assert.equal(acc.value.results[0].name, 'R2-D2')
+    console.dir(acc.value, { colors: true })
   })
