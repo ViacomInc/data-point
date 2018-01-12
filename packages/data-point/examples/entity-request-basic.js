@@ -1,25 +1,19 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
-const nock = require('nock')
+const mockRequest = require('./entity-request-basic.mock')
 
 dataPoint.addEntities({
-  'request:getRemoteService': {
-    url: 'http://remote.test/source'
+  'request:getLuke': {
+    url: 'https://swapi.co/api/people/1/'
   }
 })
 
-// this will mock the remote service
-nock('http://remote.test')
-  .get('/source')
-  .reply(200, {
-    ok: true
-  })
+// mock the remote service
+mockRequest()
 
-const expectedResult = {
-  ok: true
-}
-
-dataPoint.transform('request:getRemoteService', {}).then(acc => {
-  assert.deepEqual(acc.value, expectedResult)
-  console.log(acc.value)
+dataPoint.transform('request:getLuke', {}).then(acc => {
+  const result = acc.value
+  assert.equal(result.name, 'Luke Skywalker')
+  assert.equal(result.height, '172')
+  console.dir(acc.value, { colors: true })
 })
