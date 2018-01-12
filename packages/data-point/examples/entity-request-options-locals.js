@@ -4,18 +4,20 @@ const mockRequest = require('./entity-request-basic.mock')
 
 dataPoint.addEntities({
   'request:getLuke': {
-    url: 'https://swapi.co/api/people/{value.personId}/'
+    url: 'https://swapi.co/api/people/{locals.personId}/'
   }
 })
 
 // mock the remote service
 mockRequest()
 
-const input = {
-  personId: 1
+const options = {
+  locals: {
+    personId: 1
+  }
 }
 
-dataPoint.transform('request:getLuke', input).then(acc => {
+dataPoint.transform('request:getLuke', {}, options).then(acc => {
   const result = acc.value
   assert.equal(result.name, 'Luke Skywalker')
   assert.equal(result.height, '172')
