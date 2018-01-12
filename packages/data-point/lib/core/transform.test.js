@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-const coreFactory = require('./factory')
+const core = require('./core')
 
 const reducers = require('../../test/utils/reducers')
 const entities = require('../../test/definitions/entities')
@@ -11,7 +11,7 @@ const TestData = require('../../test/data.json')
 let dataPoint
 
 beforeAll(() => {
-  dataPoint = coreFactory.create({
+  dataPoint = core.create({
     values: {
       v1: 'v1'
     },
