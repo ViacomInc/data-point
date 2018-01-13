@@ -6,6 +6,8 @@ function throwError (error) {
   throw error
 }
 
+module.exports.throwError = throwError
+
 /**
  * @param {Array} stack
  * @return {Function}
