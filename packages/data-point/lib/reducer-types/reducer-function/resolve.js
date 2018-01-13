@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 
 const utils = require('../../utils')
 const { getErrorHandler } = require('../reducer-stack')
+const REDUCER_FUNCTION = require('./type')
 
 /**
  * @param {Object} manager
@@ -16,7 +17,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
 
   const _stack = stack
     ? stack.concat(
-      callbackFunction.name ? `${callbackFunction.name}()` : 'ReducerFunction'
+      callbackFunction.name ? `${callbackFunction.name}()` : REDUCER_FUNCTION
     )
     : stack
   const onError = getErrorHandler(_stack)
