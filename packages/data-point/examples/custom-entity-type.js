@@ -23,9 +23,10 @@ function create (spec, id) {
  * Resolve entity
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
+ * @param {Array} stack
  * @return {Promise}
  */
-function resolve (accumulator, resolveReducer) {
+function resolve (accumulator, resolveReducer, stack) {
   // get Entity Spec
   const spec = accumulator.reducer.spec
   // resolve 'spec.value' reducer
