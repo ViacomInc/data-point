@@ -1,8 +1,9 @@
 /**
  * @param {Array} stack
+ * @param {*} value
  * @return {Function}
  */
-function getErrorHandler (stack) {
+function getErrorHandler (stack, value) {
   /**
    * @param {Error} error
    * @throws the error parameter
@@ -10,6 +11,7 @@ function getErrorHandler (stack) {
   return function onReducerError (error) {
     if (!error.rstack) {
       error.rstack = stack
+      error.rvalue = value
     }
 
     throw error

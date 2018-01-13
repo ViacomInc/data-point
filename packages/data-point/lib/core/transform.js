@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
+const util = require('util')
 
 const Reducer = require('../reducer-types')
 const AccumulatorFactory = require('../accumulator/factory')
@@ -33,7 +34,7 @@ function transform (manager, reducerSource, value, options, done) {
         console.error(
           `The following reducer failed to execute:\n ${stringifyReducerStack(
             error.rstack
-          )}`
+          )}\nwith the following input:\n ${util.inspect(error.rvalue)}`
         )
       }
       throw error

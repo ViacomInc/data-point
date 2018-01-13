@@ -42,7 +42,7 @@ function resolveReducer (manager, accumulator, reducer, stack) {
   // NOTE: recursive call
   return reducerType
     .resolve(manager, resolveReducer, accumulator, reducer, _stack)
-    .catch(getErrorHandler(_stack))
+    .catch(getErrorHandler(_stack, accumulator.value))
 }
 
 module.exports.resolve = resolveReducer

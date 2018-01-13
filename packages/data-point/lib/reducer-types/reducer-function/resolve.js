@@ -20,9 +20,11 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   const _stack =
     stack && reducer.body.name ? [...stack, [reducer.body.name]] : stack
 
-  return Promise.try(() => reducer.body(accumulator)).then(value => {
-    return utils.set(accumulator, 'value', value)
-  }).catch(getErrorHandler(_stack))
+  return Promise.try(() => reducer.body(accumulator))
+    .then(value => {
+      return utils.set(accumulator, 'value', value)
+    })
+    .catch(getErrorHandler(_stack, accumulator.value))
 }
 
 module.exports.resolve = resolve
