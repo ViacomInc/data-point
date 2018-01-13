@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 const fp = require('lodash/fp')
 const createBaseEntity = require('../base-entity').create

@@ -1,4 +1,3 @@
-
 /* eslint no-underscore-dangle: ["error", { "allow": ["___done"] }] */
 
 const _ = require('lodash')

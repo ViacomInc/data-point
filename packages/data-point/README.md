@@ -88,15 +88,20 @@ dataPoint
 
 Example at: [examples/hello-world.js](examples/hello-world.js)
 
-<details>
-  <summary>Async example</summary>
+### Fetching remote services
 
-  Using the amazing [swapi.co](https://swapi.co) service, the script below gets information about a planet and the residents of that planet.
+Based on an initial feed, fetch and aggregate results from multiple remote services.
+
+<details>
+  <summary>Example</summary>
+
+  Using the amazing [swapi.co](https://swapi.co) service, the example below gets information about a planet and the residents of that planet.
 
   ```js
   const DataPoint = require('data-point')
   // create DataPoint instance
   const dataPoint = DataPoint.create()
+  const { map } = DataPoint.helpers
 
   // add entities to dataPoint instance
   dataPoint.addEntities({
@@ -115,25 +120,26 @@ Example at: [examples/hello-world.js](examples/hello-world.js)
         name: '$name',
         // residents is an array of urls
         // where each url gets mapped
-        // to a request:Resident
-        // and then to a hash:Resident
-        // entity 
-        residents: '$residents | request:Resident[] | hash:Resident[]'
+        // to a request:Resident and
+        // its result gets reduced 
+        // by an ObjectReducer
+        residents: [
+          '$residents',
+          map([
+            'request:Resident',
+            {
+              name: '$name',
+              gender: '$gender',
+              birthYear: '$birth_year'
+            }
+          ])
+        ]
       }
     },
 
     // requests url passed
     'request:Resident': {
       url: '{value}'
-    },
-
-    'hash:Resident': {
-      // map keys we want exposed
-      mapKeys: {
-        name: '$name',
-        gender: '$gender',
-        birthYear: '$birth_year'
-      }
     }
   })
 
@@ -1572,33 +1578,23 @@ dataPoint.addEntities({
 
 ##### <a name="request-url">Request.url</a>
 
-**GitHub API - list organization info**
-
-(For more information on this API: [https://api.github.com/orgs/nodejs](https://api.github.com/orgs/nodejs))
-
-Fetches an organization's information.
+Sets the url to be requested.
 
 <details>
   <summary>`Request.url` Example</summary>
   
   ```js
   dataPoint.addEntities({
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/nodejs',
-      options: {
-        headers: {
-          'User-Agent': 'DataPoint'
-        }
-      }
+    'request:getLuke': {
+      url: 'https://swapi.co/api/people/1/'
     }
   })
-  
-  dataPoint
-    .transform('request:getOrgInfo', {})
-    .then((acc) => {
-      // entire result from https://api.github.com/orgs/nodejs
-      console.log(acc.value) 
-    })
+
+  dataPoint.transform('request:getLuke', {}).then(acc => {
+    const result = acc.value
+    assert.equal(result.name, 'Luke Skywalker')
+    assert.equal(result.height, '172')
+  })
   ```
 </details>
 
@@ -1616,81 +1612,56 @@ Using `acc.value` property to make the url dynamic.
   
   ```js
   dataPoint.addEntities({
-    // dynamic search, which uses 
-    // StringTemplate's simple 
-    // templating system {value} to
-    // inject the search 
-    // value into the URL string
-    'request:getNodeOrgInfo': {
-      url: 'https://api.github.com/orgs/{value.organization}',
-      // this object will be passed 
-      // to request.js
-      options: {
-        headers: {
-          'User-Agent': 'DataPoint'
-        }
-      }
+    'request:getLuke': {
+      // inject the acc.value.personId
+      url: 'https://swapi.co/api/people/{value.personId}/'
     }
   })
-  
-  // second parameter to transform is
-  // the initial value
-  dataPoint
-    .transform('request:getNodeOrgInfo', {
-      organization: 'nodejs'
-    })
-    .then((acc) => {
-      // outputs full result from the
-      // remote source
-      console.log(acc.value) 
-    })
+
+  const input = {
+    personId: 1
+  }
+
+  dataPoint.transform('request:getLuke', input).then(acc => {
+    const result = acc.value
+    assert.equal(result.name, 'Luke Skywalker')
+    assert.equal(result.height, '172')
+  })
   ```
 </details>
 
 
 <a name="acc-locals-example" >Using `acc.locals` property to make the url dynamic:</a>
 
+For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
+
 <details>
   <summary>`acc.locals` example</summary>
   
   ```js
   dataPoint.addEntities({
-    // dynamic search, which uses
-    // StringTemplate's simple 
-    // templating system {value} to
-    // inject the search 
-    // value into the URL string
-    'request:getNodeOrgInfo': {
-      url: 'https://api.github.com/orgs/{locals.organization}',
-      // this object will be passed
-      // to request.js
-      options: {
-        headers: {
-          'User-Agent': 'request'
-        }
-      }
+    'request:getLuke': {
+      url: 'https://swapi.co/api/people/{locals.personId}/'
     }
   })
-  
-  // The third parameter of transform
-  // is the options object where we 
-  // can pass the `locals` value
-  dataPoint
-    .transform('request:getNodeOrgInfo', { 
-      locals: {
-        organization: 'nodejs'
-      }
-    })
-    .then((acc) => {
-      // outputs full result from the
-      // remote source
-      console.log(acc.value) 
-    })
+
+  const options = {
+    locals: {
+      personId: 1
+    }
+  }
+
+  dataPoint.transform('request:getLuke', {}, options).then(acc => {
+    const result = acc.value
+    assert.equal(result.name, 'Luke Skywalker')
+    assert.equal(result.height, '172')
+  })
+
   ```
 </details>
 
 
-Example at: [examples/entity-request-string-template.js](examples/entity-request-string-template.js)
+Example at: [examples/entity-request-string-template.js](examples/entity-request-options-locals.js)
 
 ##### <a name="transform-object">TransformObject</a>
 
@@ -1712,7 +1683,7 @@ When a TransformObject is to be resolved, all reducers are resolved in parallel.
           // because the key starts
           // with $ it will be treated
           // as a reducer
-          $search: '$query'
+          $search: '$personName'
         }
       }
     }
@@ -1721,9 +1692,11 @@ When a TransformObject is to be resolved, all reducers are resolved in parallel.
   // second parameter to transform is
   // the initial acc.value
   dataPoint
-    .transform('request:searchPeople | $results[0].name', { query: 'r2'})
-    .then((acc) => {
-      assert.equal(acc.value, 'R2-D2')
+    .transform('request:searchPeople', {
+      personName: 'r2'
+    })
+    .then(acc => {
+      assert.equal(acc.value.results[0].name, 'R2-D2')
     })
   ```
 </details>
@@ -1894,34 +1867,37 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
   <summary>Hash.mapKeys Example</summary>
 
   ```js
+  const _ = require('lodash')
+  
   dataPoint.addEntities({
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/nodejs',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
+    'hash:mapKeys': {
       mapKeys: {
-        reposUrl: '$repos_url',
-        eventsUrl: '$events_url',
-        avatarUrl: '$avatar_url',
-        orgName: '$name',
-        blogUrl: '$blog'
+        // map to acc.value.name
+        name: '$name',
+        // uses a ReducerList to 
+        // map to acc.value.name
+        // and generate a string with
+        // a ReducerFunction
+        url: [
+          '$name',
+          acc => {
+            return `https://github.com/ViacomInc/${_.kebabCase(acc.value)}`
+          }
+        ]
       }
     }
   })
-  
-  dataPoint
-    .transform('request:getOrgInfo | hash:OrgInfo')
-    .then((acc) => {
-      console.log(acc.value)
-      // {
-      //  reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-      //  eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-      //  avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-      //  orgName: 'Node.js Foundation',
-      //  blogUrl: 'https://nodejs.org/foundation/'
-      // }
+
+  const input = {
+    name: 'DataPoint'
+  }
+
+  dataPoint.transform('hash:mapKeys', input).then(acc => {
+    assert.deepEqual(acc.value, {
+      name: 'DataPoint',
+      url: 'https://github.com/ViacomInc/data-point'
     })
+  })
   ```
 </details>
 
@@ -1939,57 +1915,25 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
   
   ```js
   dataPoint.addEntities({
-    'entry:orgInfo': {
-      value: 'request:getOrgInfo | hash:OrgInfo | hash:OrgInfoCustom'
-    },
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/nodejs',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
-      mapKeys: {
-        reposUrl: '$repos_url',
-        eventsUrl: '$events_url',
-        avatarUrl: '$avatar_url',
-        orgName: '$name',
-        blogUrl: '$blog'
-      }
-    },
-    'hash:OrgInfoCustom': {
+    'hash:addKeys': {
       addKeys: {
-        // notice we are extracting from the new key
-        // made on the hash:OrgInfo entity
-        avatarUrlDuplicate: '$avatarUrl'
+        nameLowerCase: ['$name', acc => acc.value.toLowerCase()],
+        url: () => 'https://github.com/ViacomInc/data-point'
       }
     }
   })
-  
-  const expectedResult = {
-    reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-    eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-    avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-    orgName: 'Node.js Foundation',
-    blogUrl: 'https://nodejs.org/foundation/',
-    // this key was added through hash:OrgInfoCustom
-    avatarUrlDuplicate: 'https://avatars0.githubusercontent.com/u/9950313?v=3'
+
+  const input = {
+    name: 'DataPoint'
   }
-  
-  dataPoint
-    .transform('entry:orgInfo', { org: 'nodejs' })
-    .then((acc) => {
-      assert.deepEqual(acc.value, expectedResult)
-      console.log(acc.value)
-      /*
-      {
-        reposUrl: 'https://api.github.com/orgs/nodejs/repos',
-        eventsUrl: 'https://api.github.com/orgs/nodejs/events',
-        avatarUrl: 'https://avatars0.githubusercontent.com/u/9950313?v=3',
-        orgName: 'Node.js Foundation',
-        blogUrl: 'https://nodejs.org/foundation/',
-        avatarUrlDuplicate: 'https://avatars0.githubusercontent.com/u/9950313?v=3'
-      }
-      */
+
+  dataPoint.transform('hash:addKeys', input).then(acc => {
+    assert.deepEqual(acc.value, {
+      name: 'DataPoint',
+      nameLowerCase: 'datapoint',
+      url: 'https://github.com/ViacomInc/data-point'
     })
+  })
   ```
 </details>
 
@@ -2007,40 +1951,23 @@ The next example is similar to the previous example. However, instead of mapping
   
   ```js
   dataPoint.addEntities({
-    'entry:orgInfo': {
-      value: 'request:getOrgInfo | hash:OrgInfo'
-    },
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/{value.org}',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
-      // notice this is an array, not a transform or object
-      pickKeys: [
-        'name',
-        'blog'
-      ]
+    'hash:pickKeys': {
+      pickKeys: ['url']
     }
   })
-  
-  // keys came out intact
-  const expectedResult = {
-    name: 'Node.js Foundation',
-    blog: 'https://nodejs.org/foundation/'
+
+  const input = {
+    name: 'DataPoint',
+    url: 'https://github.com/ViacomInc/data-point'
   }
-  
-  dataPoint
-    .transform('entry:orgInfo', { org: 'nodejs' })
-    .then((acc) => {
-      console.log(acc.value)
-      assert.deepEqual(acc.value, expectedResult)
-      /*
-      {
-        name: 'Node.js Foundation',
-        blog: 'https://nodejs.org/foundation/'
-      }
-      */
+
+  dataPoint.transform('hash:pickKeys', input).then(acc => {
+    // notice how name is no longer 
+    // in the object
+    assert.deepEqual(acc.value, {
+      url: 'https://github.com/ViacomInc/data-point'
     })
+  })
   ```
 </details>
 
@@ -2058,62 +1985,24 @@ This example will only **omit** some keys, and let the rest pass through:
   
   ```js
   dataPoint.addEntities({
-    'entry:orgInfo': {
-      value: 'request:getOrgInfo | hash:OrgInfo'
-    },
-    'request:getOrgInfo': {
-      url: 'https://api.github.com/orgs/{value.org}',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
-    },
-    'hash:OrgInfo': {
-      // notice this is an array, not a Transform or Object
-      omitKeys: [
-        'repos_url',
-        'events_url',
-        'hooks_url',
-        'issues_url',
-        'members_url',
-        'public_members_url',
-        'avatar_url',
-        'description',
-        'name',
-        'company',
-        'blog',
-        'location',
-        'email',
-        'has_organization_projects',
-        'has_repository_projects',
-        'public_repos',
-        'public_gists',
-        'followers',
-        'following',
-        'html_url',
-        'created_at',
-        'updated_at',
-        'type'
-      ]
+    'hash:omitKeys': {
+      omitKeys: ['name']
     }
   })
-  
-  // keys came out intact
+
+  // notice how name is no longer in the object
   const expectedResult = {
-    login: 'nodejs',
-    id: 9950313,
-    url: 'https://api.github.com/orgs/nodejs'
+    url: 'https://github.com/ViacomInc/data-point'
   }
-  
-  dataPoint
-    .transform('entry:orgInfo', { org: 'nodejs' })
-    .then((acc) => {
-      assert.deepEqual(acc.value, expectedResult)
-      /*
-      {
-        login: 'nodejs',
-        id: 9950313,
-        url: 'https://api.github.com/orgs/nodejs'
-      }
-      */
-    })
+
+  const input = {
+    name: 'DataPoint',
+    url: 'https://github.com/ViacomInc/data-point'
+  }
+
+  dataPoint.transform('hash:omitKeys', input).then(acc => {
+    assert.deepEqual(acc.value, expectedResult)
+  })
   ```
 </details>
 
@@ -2959,15 +2848,49 @@ dataPoint.addValue(objectPath, value)
 
 ## <a name="custom-entity-types">Custom Entity Types</a>
 
-DataPoint exposes a set of methods to help you build your own Custom Entity Types. With them you are enabled to build on top of the [base entity API](#entity-base-api). 
+DataPoint exposes a set of methods to help you build your own Custom Entity types. With them you can build on top of the [base entity API](#entity-base-api).
 
-### <a name="adding-entity-types">Adding new Entity Types</a>
+### <a name="adding-entity-types">Adding new Entity types</a>
 
-You may add new Entity Types through the [DataPoint.create](#api-data-point-create) method, or through the [dataPoint.addEntityTypes](#data-point-add-entity-types)
+You can add custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also add them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
+
+#### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
+
+Add a new Entity type to the DataPoint instance.
+
+**SYNOPSIS**
+
+```js
+dataPoint.addEntityType(id:String, spec:Object)
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *id* | `String` | The name of the new Entity type. |
+| *spec* | `Object` | The Entity spec. |
+
+#### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
+
+Adds a single Entity Type to the DataPoint instance.
+
+**SYNOPSIS**
+
+```js
+dataPoint.addEntityType(name:String, spec:Object)
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *name* | `Object` | Name of the new Entity Type |
+| *spec* | `Object` | New [Entity spec](#custom-entity-spec) API |
 
 #### <a name="data-point-add-entity-types">dataPoint.addEntityTypes</a>
 
-Adds a new set of Entity Types to the DataPoint instance.
+Adds one or more Entity Types to the DataPoint instance.
 
 **SYNOPSIS**
 
@@ -2975,13 +2898,13 @@ Adds a new set of Entity Types to the DataPoint instance.
 dataPoint.addEntityTypes(specs:Object)
 ```
 
-This method will return a **Promise** if `done` is omitted.
-
 **ARGUMENTS**
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *specs* | `Object` | Key/value hash where each key is the name of the new Entity Type and value is the Entity spec API. |
+| *specs* | `Object` | Key/value hash where each key is the name of the new Entity Type and value is the [Entity spec](#custom-entity-spec) API. |
+
+#### <a name="custom-entity-spec">Custom Entity Spec</a>
 
 Every Entity must expose two methods:
 
