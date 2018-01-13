@@ -19,11 +19,11 @@ function getErrorHandler (stack) {
 module.exports.getErrorHandler = getErrorHandler
 
 /**
- * @param {Array} path
+ * @param {Array} stack
  * @return {string}
  */
-function stringifyReducerStack (path) {
-  return path.reduce((acc, item) => {
+function stringifyReducerStack (stack) {
+  return stack.reduce((acc, item) => {
     if (typeof item === 'number') {
       return `${acc}[${item}]`
     }

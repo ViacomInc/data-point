@@ -145,21 +145,19 @@ function resolveRequest (acc, resolveReducer) {
 module.exports.resolveRequest = resolveRequest
 
 /**
- * @param {Accumulator} acc
+ * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
  * @param {Array} stack
  * @return {Promise<Accumulator>}
  */
-function resolve (acc, resolveReducer, stack) {
-  const entity = acc.reducer.spec
-  return Promise.resolve(acc)
-    .then(itemContext => resolveReducer(itemContext, entity.value, stack))
-    .then(itemContext => resolveOptions(itemContext, resolveReducer, stack))
-    .then(itemContext => resolveUrl(itemContext))
-    .then(itemContext =>
-      resolveBeforeRequest(itemContext, resolveReducer, stack)
-    )
-    .then(itemContext => resolveRequest(itemContext, resolveReducer))
+function resolve (accumulator, resolveReducer, stack) {
+  const entity = accumulator.reducer.spec
+  return Promise.resolve(accumulator)
+    .then(acc => resolveReducer(acc, entity.value, stack))
+    .then(acc => resolveOptions(acc, resolveReducer, stack))
+    .then(acc => resolveUrl(acc))
+    .then(acc => resolveBeforeRequest(acc, resolveReducer, stack))
+    .then(acc => resolveRequest(acc, resolveReducer))
 }
 
 module.exports.resolve = resolve

@@ -22,9 +22,9 @@ function getMatchingCaseIndex (caseStatements, acc, resolveReducer, stack) {
       }
 
       const _stack = stack ? [...stack, 'case', index] : stack
-      return resolveReducer(acc, statement.case, _stack).then(
-        res => (res.value ? index : null)
-      )
+      return resolveReducer(acc, statement.case, _stack).then(res => {
+        return res.value ? index : null
+      })
     },
     null
   ).catch(error => {
