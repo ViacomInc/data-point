@@ -1,6 +1,5 @@
 const utils = require('../../../utils')
 const { getErrorHandler } = require('../../reducer-stack')
-const REDUCER_ASSIGN = require('./type')
 
 /**
  * @param {Object} manager
@@ -12,13 +11,12 @@ const REDUCER_ASSIGN = require('./type')
  */
 function resolve (manager, resolveReducer, accumulator, reducerAssign, stack) {
   const reducer = reducerAssign.reducer
-  const _stack = stack ? stack.concat(REDUCER_ASSIGN) : stack
-  return resolveReducer(manager, accumulator, reducer, _stack)
+  return resolveReducer(manager, accumulator, reducer, stack)
     .then(acc => {
       const value = Object.assign({}, accumulator.value, acc.value)
       return utils.set(accumulator, 'value', value)
     })
-    .catch(getErrorHandler(_stack))
+    .catch(getErrorHandler(stack))
 }
 
 module.exports.resolve = resolve

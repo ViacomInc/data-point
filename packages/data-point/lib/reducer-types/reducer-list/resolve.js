@@ -1,7 +1,6 @@
 const Promise = require('bluebird')
 
 const { getErrorHandler } = require('../reducer-stack')
-const REDUCER_LIST = require('./type')
 
 /**
  * @param {Object} manager
@@ -20,7 +19,7 @@ function resolve (manager, resolveReducer, accumulator, reducerList, stack) {
   const result = Promise.reduce(
     reducers,
     (accumulator, reducer, index) => {
-      const _stack = stack ? stack.concat([REDUCER_LIST, index]) : stack
+      const _stack = stack ? stack.concat(index) : stack
       return resolveReducer(manager, accumulator, reducer, _stack).catch(
         getErrorHandler(_stack)
       )

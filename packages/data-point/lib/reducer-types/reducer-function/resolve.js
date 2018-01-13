@@ -2,7 +2,6 @@ const Promise = require('bluebird')
 
 const utils = require('../../utils')
 const { getErrorHandler } = require('../reducer-stack')
-const REDUCER_FUNCTION = require('./type')
 
 /**
  * @param {Object} manager
@@ -15,11 +14,14 @@ const REDUCER_FUNCTION = require('./type')
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   const callbackFunction = reducer.body
 
-  const _stack = stack
-    ? stack.concat(
-      callbackFunction.name ? `${callbackFunction.name}()` : REDUCER_FUNCTION
-    )
-    : stack
+  // let _stack = stack
+  // if (stack && callbackFunction.name) {
+  //   _stack = [...stack.slice(0, -1), `${callbackFunction.name}()`]
+  // }
+
+  const _stack =
+    stack && callbackFunction.name ? [...stack, [callbackFunction.name]] : stack
+
   const onError = getErrorHandler(_stack)
   if (callbackFunction.length === 2) {
     // if the arity is 2, we expect a Node Style

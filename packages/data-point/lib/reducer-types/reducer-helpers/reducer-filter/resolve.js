@@ -2,7 +2,6 @@ const Promise = require('bluebird')
 
 const utils = require('../../../utils')
 const { getErrorHandler } = require('../../reducer-stack')
-const REDUCER_FILTER = require('./type')
 
 /**
  * @param {Object} manager
@@ -18,7 +17,6 @@ function resolve (manager, resolveReducer, accumulator, reducerFilter, stack) {
     return Promise.resolve(accumulator)
   }
 
-  stack = stack ? stack.concat(REDUCER_FILTER) : stack
   return Promise.filter(accumulator.value, (itemValue, index) => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
     const _stack = stack ? stack.concat(index) : stack

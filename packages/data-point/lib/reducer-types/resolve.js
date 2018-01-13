@@ -35,13 +35,15 @@ function resolveReducer (manager, accumulator, reducer, stack) {
     throw new Error(`Reducer type '${reducer.type}' was not recognized`)
   }
 
+  const _stack = stack ? stack.concat(reducer.type) : stack
+
   // NOTE: recursive call
   return reducerType.resolve(
     manager,
     resolveReducer,
     accumulator,
     reducer,
-    stack
+    _stack
   )
 }
 
