@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 
 const utils = require('../../utils')
-const { getErrorHandler } = require('../reducer-stack')
+const { onReducerError } = require('../reducer-stack')
 
 /**
  * @param {Object} manager
@@ -12,19 +12,12 @@ const { getErrorHandler } = require('../reducer-stack')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
-  // let _stack = stack
-  // if (stack && callbackFunction.name) {
-  //   _stack = [...stack.slice(0, -1), `${callbackFunction.name}()`]
-  // }
-
   const _stack =
     stack && reducer.body.name ? [...stack, [reducer.body.name]] : stack
 
   return Promise.try(() => reducer.body(accumulator))
-    .then(value => {
-      return utils.set(accumulator, 'value', value)
-    })
-    .catch(getErrorHandler(_stack, accumulator.value))
+    .then(value => utils.set(accumulator, 'value', value))
+    .catch(error => onReducerError(_stack, accumulator.value, error))
 }
 
 module.exports.resolve = resolve

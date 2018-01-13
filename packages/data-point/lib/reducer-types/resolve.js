@@ -6,7 +6,7 @@ const ReducerPath = require('./reducer-path')
 
 const ReducerHelpers = require('./reducer-helpers').reducers
 
-const { getErrorHandler } = require('./reducer-stack')
+const { onReducerError } = require('./reducer-stack')
 
 const reducers = Object.assign({}, ReducerHelpers, {
   [ReducerEntity.type]: ReducerEntity,
@@ -42,7 +42,7 @@ function resolveReducer (manager, accumulator, reducer, stack) {
   // NOTE: recursive call
   return reducerType
     .resolve(manager, resolveReducer, accumulator, reducer, _stack)
-    .catch(getErrorHandler(_stack, accumulator.value))
+    .catch(error => onReducerError(_stack, accumulator.value, error))
 }
 
 module.exports.resolve = resolveReducer

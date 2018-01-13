@@ -1,24 +1,19 @@
 /**
  * @param {Array} stack
  * @param {*} value
+ * @param {Error} error
  * @return {Function}
  */
-function getErrorHandler (stack, value) {
-  /**
-   * @param {Error} error
-   * @throws the error parameter
-   */
-  return function onReducerError (error) {
-    if (!error.rstack) {
-      error.rstack = stack
-      error.rvalue = value
-    }
-
-    throw error
+function onReducerError (stack, value, error) {
+  if (stack && !error.rstack) {
+    error.rstack = stack
+    error.rvalue = value
   }
+
+  throw error
 }
 
-module.exports.getErrorHandler = getErrorHandler
+module.exports.onReducerError = onReducerError
 
 /**
  * @param {Array} stack
