@@ -1,5 +1,4 @@
 const utils = require('../../../utils')
-const { getErrorHandler } = require('../../reducer-stack')
 
 /**
  * @param {Object} manager
@@ -11,12 +10,10 @@ const { getErrorHandler } = require('../../reducer-stack')
  */
 function resolve (manager, resolveReducer, accumulator, reducerAssign, stack) {
   const reducer = reducerAssign.reducer
-  return resolveReducer(manager, accumulator, reducer, stack)
-    .then(acc => {
-      const value = Object.assign({}, accumulator.value, acc.value)
-      return utils.set(accumulator, 'value', value)
-    })
-    .catch(getErrorHandler(stack))
+  return resolveReducer(manager, accumulator, reducer, stack).then(acc => {
+    const value = Object.assign({}, accumulator.value, acc.value)
+    return utils.set(accumulator, 'value', value)
+  })
 }
 
 module.exports.resolve = resolve

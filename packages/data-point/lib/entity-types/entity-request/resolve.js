@@ -4,7 +4,6 @@ const Promise = require('bluebird')
 const rp = require('request-promise')
 
 const utils = require('../../utils')
-const { getErrorHandler } = require('../../reducer-types/reducer-stack')
 
 function resolveUrlInjections (url, acc) {
   const matches = url.match(/\{(.*?)\}/g) || []
@@ -62,11 +61,9 @@ function resolveOptions (acc, resolveReducer, stack) {
     transformOptionKeys,
     (newOptions, key) => {
       const _stack = stack ? [...stack, 'options', key.path] : stack
-      return resolveReducer(acc, key.transform, _stack)
-        .then(res => {
-          return fp.set(key.path, res.value, newOptions)
-        })
-        .catch(getErrorHandler(_stack))
+      return resolveReducer(acc, key.transform, _stack).then(res => {
+        return fp.set(key.path, res.value, newOptions)
+      })
     },
     options
   ).then(resolvedOptions => {
@@ -109,9 +106,9 @@ function resolveBeforeRequest (acc, resolveReducer, stack) {
 
   const beforeRequestAcc = utils.set(acc, 'value', options)
   const _stack = stack ? stack.concat('beforeRequest') : stack
-  return resolveReducer(beforeRequestAcc, entity.beforeRequest, _stack)
-    .then(result => utils.set(acc, 'options', result.value))
-    .catch(getErrorHandler(_stack))
+  return resolveReducer(beforeRequestAcc, entity.beforeRequest, _stack).then(
+    result => utils.set(acc, 'options', result.value)
+  )
 }
 
 module.exports.resolveBeforeRequest = resolveBeforeRequest

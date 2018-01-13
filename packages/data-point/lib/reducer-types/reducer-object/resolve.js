@@ -2,7 +2,6 @@ const Promise = require('bluebird')
 const set = require('lodash/set')
 
 const utils = require('../../utils')
-const { getErrorHandler } = require('../reducer-stack')
 
 /**
  * @param {Object} manager
@@ -19,12 +18,12 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
 
   const props = Promise.map(reducer.props, ({ path, reducer }) => {
     const _stack = stack ? stack.concat(path) : stack
-    return resolveReducer(manager, accumulator, reducer, _stack)
-      .then(({ value }) => ({
+    return resolveReducer(manager, accumulator, reducer, _stack).then(
+      ({ value }) => ({
         path,
         value
-      }))
-      .catch(getErrorHandler(_stack))
+      })
+    )
   })
 
   return props

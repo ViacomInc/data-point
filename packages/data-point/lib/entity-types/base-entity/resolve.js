@@ -4,7 +4,6 @@ const Promise = require('bluebird')
 const middleware = require('../../middleware')
 
 const utils = require('../../utils')
-const { getErrorHandler } = require('../../reducer-types/reducer-stack')
 
 /**
  * @param {Object} manager
@@ -144,24 +143,15 @@ function resolveEntity (
     })
     .then(acc => {
       const _stack = stack ? [...stack, ['before']] : stack
-      return resolveReducer(
-        manager,
-        acc,
-        acc.reducer.spec.before,
-        _stack
-      ).catch(getErrorHandler(_stack))
+      return resolveReducer(manager, acc, acc.reducer.spec.before, _stack)
     })
     .then(acc => {
       const _stack = stack ? [...stack, ['value']] : stack
-      return mainResolver(acc, resolveReducerBound, _stack).catch(
-        getErrorHandler(_stack)
-      )
+      return mainResolver(acc, resolveReducerBound, _stack)
     })
     .then(acc => {
       const _stack = stack ? [...stack, ['after']] : stack
-      return resolveReducer(manager, acc, acc.reducer.spec.after, _stack).catch(
-        getErrorHandler(_stack)
-      )
+      return resolveReducer(manager, acc, acc.reducer.spec.after, _stack)
     })
     .then(acc => {
       return middleware.resolve(manager, `${reducer.entityType}:after`, acc)

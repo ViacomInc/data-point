@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 
 const utils = require('../../utils')
-const { getErrorHandler } = require('../../reducer-types/reducer-stack')
 
 /**
  * @param {Accumulator} accumulator
@@ -18,9 +17,7 @@ function resolveCompose (accumulator, composeReducer, resolveReducer, stack) {
   }
 
   const _stack = stack ? stack.concat('compose') : stack
-  return resolveReducer(accumulator, composeReducer, _stack).catch(
-    getErrorHandler(_stack)
-  )
+  return resolveReducer(accumulator, composeReducer, _stack)
 }
 
 // NOTE: as expensive as this might be, this is to avoid 'surprises'
