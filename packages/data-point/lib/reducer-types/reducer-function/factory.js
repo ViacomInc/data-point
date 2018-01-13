@@ -3,7 +3,7 @@ const Promise = require('bluebird')
 
 const REDUCER_SYMBOL = require('../reducer-symbol')
 
-const REDUCER_FUNCTION = require('./type')
+const REDUCER_FUNCTION = 'ReducerFunction'
 
 module.exports.type = REDUCER_FUNCTION
 

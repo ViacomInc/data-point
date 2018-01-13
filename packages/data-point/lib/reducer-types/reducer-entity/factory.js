@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const REDUCER_SYMBOL = require('../reducer-symbol')
 
-const REDUCER_ENTITY = require('./type')
+const REDUCER_ENTITY = 'ReducerEntity'
 
 module.exports.type = REDUCER_ENTITY
 

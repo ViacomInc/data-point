@@ -1,6 +1,6 @@
 const REDUCER_SYMBOL = require('../../reducer-symbol')
 
-const REDUCER_ASSIGN = require('./type')
+const REDUCER_ASSIGN = 'ReducerAssign'
 
 module.exports.type = REDUCER_ASSIGN
 

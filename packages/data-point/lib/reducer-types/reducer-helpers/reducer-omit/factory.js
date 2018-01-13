@@ -1,6 +1,6 @@
 const REDUCER_SYMBOL = require('../../reducer-symbol')
 
-const REDUCER_OMIT = require('./type')
+const REDUCER_OMIT = 'ReducerOmit'
 
 module.exports.type = REDUCER_OMIT
 

@@ -2,7 +2,7 @@ const isPlainObject = require('lodash/isPlainObject')
 
 const REDUCER_SYMBOL = require('../reducer-symbol')
 
-const REDUCER_OBJECT = require('./type')
+const REDUCER_OBJECT = 'ReducerObject'
 
 module.exports.type = REDUCER_OBJECT
 

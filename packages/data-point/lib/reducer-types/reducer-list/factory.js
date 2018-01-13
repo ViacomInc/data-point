@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const REDUCER_SYMBOL = require('../reducer-symbol')
 
-const REDUCER_LIST = require('./type')
+const REDUCER_LIST = 'ReducerList'
 
 module.exports.type = REDUCER_LIST
 
@@ -13,7 +13,7 @@ module.exports.type = REDUCER_LIST
  */
 function ReducerList () {
   this[REDUCER_SYMBOL] = true
-  this.type = REDUCER_LIST
+  this.type = 'ReducerList'
   this.reducers = []
 }
 
