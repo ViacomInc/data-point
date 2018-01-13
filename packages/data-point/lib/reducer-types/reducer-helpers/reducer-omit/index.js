@@ -1,9 +1,10 @@
 const factory = require('./factory')
 const resolve = require('./resolve').resolve
+const type = require('./type')
 
 module.exports = {
   create: factory.create,
-  type: factory.type,
   name: factory.name,
-  resolve: resolve
+  resolve: resolve,
+  type: type
 }

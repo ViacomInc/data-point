@@ -2,10 +2,11 @@
 
 const reducer = require('./factory')
 const resolve = require('./resolve').resolve
+const type = require('./type')
 
 module.exports = {
   create: reducer.create,
-  type: reducer.type,
   isType: reducer.isType,
-  resolve: resolve
+  resolve: resolve,
+  type: type
 }
