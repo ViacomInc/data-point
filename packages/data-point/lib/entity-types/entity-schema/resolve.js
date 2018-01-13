@@ -1,12 +1,17 @@
-
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Ajv = require('ajv')
 
-function validateContext (acc) {
+/**
+ * @param {Accumulator} acc
+ * @param {Array} stack
+ * @returns {Promise<Accumulator>}
+ */
+function validateContext (acc, stack) {
   const ajv = new Ajv(acc.reducer.spec.options)
   const validate = ajv.compile(acc.reducer.spec.schema)
 
+  // TODO log stack
   return Promise.resolve(validate(acc.value)).then(valid => {
     if (!valid) {
       const messages = _.map(validate.errors, 'message')
@@ -23,11 +28,17 @@ function validateContext (acc) {
 
 module.exports.validateContext = validateContext
 
-function resolve (acc, resolveReducer) {
+/**
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @returns {Promise<Accumulator>}
+ */
+function resolve (acc, resolveReducer, stack) {
   const value = acc.reducer.spec.value
 
-  return resolveReducer(acc, value).then(racc => {
-    return validateContext(racc)
+  return resolveReducer(acc, value, stack).then(racc => {
+    return validateContext(racc, stack)
   })
 }
 

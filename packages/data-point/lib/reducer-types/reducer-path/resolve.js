@@ -1,4 +1,3 @@
-
 const utils = require('../../utils')
 
 /**
@@ -6,9 +5,10 @@ const utils = require('../../utils')
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerPath} reducer
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer) {
+function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   const value = reducer.body(accumulator)
   const acc = utils.set(accumulator, 'value', value)
   return Promise.resolve(acc)

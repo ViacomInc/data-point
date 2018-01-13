@@ -19,9 +19,10 @@ const reducers = Object.assign({}, ReducerHelpers, {
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, accumulator, reducer) {
+function resolveReducer (manager, accumulator, reducer, stack) {
   // this conditional is here because BaseEntity#resolve
   // does not check that lifecycle methods are defined
   // before trying to resolve them
@@ -35,7 +36,13 @@ function resolve (manager, accumulator, reducer) {
   }
 
   // NOTE: recursive call
-  return reducerType.resolve(manager, resolve, accumulator, reducer)
+  return reducerType.resolve(
+    manager,
+    resolveReducer,
+    accumulator,
+    reducer,
+    stack
+  )
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolveReducer

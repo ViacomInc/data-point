@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 const utils = require('../../utils')
 
@@ -28,11 +27,11 @@ function create (entitySpec, id) {
     )
   }
 
-  if (entitySpec.resolve.length !== 2) {
+  if (entitySpec.resolve.length !== 3) {
     throw new Error(
       `Entity Module '${
         id
-      }' 'resolve' method should have an arity of 2, instead got: ${
+      }' 'resolve' method should have an arity of 3, instead got: ${
         entitySpec.resolve.length
       }`
     )

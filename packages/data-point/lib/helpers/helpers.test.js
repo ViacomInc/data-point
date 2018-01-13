@@ -99,7 +99,7 @@ describe('helpers.createAccumulator', () => {
 describe('helpers.createReducerResolver', () => {
   test('It should partially apply dataPoint to method', () => {
     const resolveReducerBound = helpers.createReducerResolver({})
-    expect(resolveReducerBound.length).toEqual(2)
+    expect(resolveReducerBound.length).toEqual(3)
   })
 })
 

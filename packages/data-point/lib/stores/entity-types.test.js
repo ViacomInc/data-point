@@ -8,7 +8,7 @@ const FooEntityType = (() => {
     // body;
   }
 
-  function resolve (accumulator, resolveReducer) {
+  function resolve (accumulator, resolveReducer, stack) {
     // body;
   }
 

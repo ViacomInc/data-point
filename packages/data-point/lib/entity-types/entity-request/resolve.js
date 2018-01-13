@@ -1,10 +1,10 @@
-
 const _ = require('lodash')
 const fp = require('lodash/fp')
 const Promise = require('bluebird')
 const rp = require('request-promise')
 
 const utils = require('../../utils')
+const { getErrorHandler } = require('../../reducer-types/reducer-stack')
 
 function resolveUrlInjections (url, acc) {
   const matches = url.match(/\{(.*?)\}/g) || []
@@ -51,17 +51,22 @@ module.exports.getRequestOptions = getRequestOptions
  * Resolve options object
  * @param {Accumulator} acc
  * @param {function} resolveReducer
+ * @param {Array} stack
+ * @return {Promise<Accumulator>}
  */
-function resolveOptions (acc, resolveReducer) {
+function resolveOptions (acc, resolveReducer, stack) {
   const options = acc.reducer.spec.options
   const transformOptionKeys = acc.reducer.spec.transformOptionKeys
   // iterate over each option transform key
   return Promise.reduce(
     transformOptionKeys,
     (newOptions, key) => {
-      return resolveReducer(acc, key.transform).then(res => {
-        return fp.set(key.path, res.value, newOptions)
-      })
+      const _stack = stack ? [...stack, 'options', key.path] : stack
+      return resolveReducer(acc, key.transform, _stack)
+        .then(res => {
+          return fp.set(key.path, res.value, newOptions)
+        })
+        .catch(getErrorHandler(_stack))
     },
     options
   ).then(resolvedOptions => {
@@ -79,9 +84,16 @@ function inspect (acc) {
     })
   }
 }
+
 module.exports.inspect = inspect
 
-function resolveBeforeRequest (acc, resolveReducer) {
+/**
+ * @param {Accumulator} acc
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @return {Promise<Accumulator>}
+ */
+function resolveBeforeRequest (acc, resolveReducer, stack) {
   const entity = acc.reducer.spec
 
   let options = getRequestOptions(acc.options)
@@ -96,9 +108,10 @@ function resolveBeforeRequest (acc, resolveReducer) {
   }
 
   const beforeRequestAcc = utils.set(acc, 'value', options)
-  return resolveReducer(beforeRequestAcc, entity.beforeRequest).then(result =>
-    utils.set(acc, 'options', result.value)
-  )
+  const _stack = stack ? stack.concat('beforeRequest') : stack
+  return resolveReducer(beforeRequestAcc, entity.beforeRequest, _stack)
+    .then(result => utils.set(acc, 'options', result.value))
+    .catch(getErrorHandler(_stack))
 }
 
 module.exports.resolveBeforeRequest = resolveBeforeRequest
@@ -134,13 +147,21 @@ function resolveRequest (acc, resolveReducer) {
 
 module.exports.resolveRequest = resolveRequest
 
-function resolve (acc, resolveReducer) {
+/**
+ * @param {Accumulator} acc
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @return {Promise<Accumulator>}
+ */
+function resolve (acc, resolveReducer, stack) {
   const entity = acc.reducer.spec
   return Promise.resolve(acc)
-    .then(itemContext => resolveReducer(itemContext, entity.value))
-    .then(itemContext => resolveOptions(itemContext, resolveReducer))
+    .then(itemContext => resolveReducer(itemContext, entity.value, stack))
+    .then(itemContext => resolveOptions(itemContext, resolveReducer, stack))
     .then(itemContext => resolveUrl(itemContext))
-    .then(itemContext => resolveBeforeRequest(itemContext, resolveReducer))
+    .then(itemContext =>
+      resolveBeforeRequest(itemContext, resolveReducer, stack)
+    )
     .then(itemContext => resolveRequest(itemContext, resolveReducer))
 }
 

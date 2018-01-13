@@ -1,4 +1,3 @@
-
 const BaseEntity = require('../../entity-types/base-entity/resolve')
 
 /**
@@ -8,17 +7,20 @@ const BaseEntity = require('../../entity-types/base-entity/resolve')
  * @param {function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerEntity} reducer
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer) {
+function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   const reducerEntityType = reducer.entityType
   const EntityType = manager.entityTypes.get(reducerEntityType)
+  const _stack = stack ? stack.concat(reducer.id) : stack
   return BaseEntity.resolve(
     manager,
     resolveReducer,
     accumulator,
     reducer,
-    EntityType.resolve
+    EntityType.resolve,
+    _stack
   )
 }
 
