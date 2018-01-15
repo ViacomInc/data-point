@@ -12,8 +12,10 @@ const { onReducerError } = require('../reducer-stack')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
-  const _stack =
-    stack && reducer.body.name ? [...stack, [reducer.body.name]] : stack
+  let _stack = stack
+  if (stack && reducer.body.name && reducer.body.prototype) {
+    _stack = [...stack, [reducer.body.name]]
+  }
 
   return Promise.try(() => reducer.body(accumulator))
     .then(value => utils.set(accumulator, 'value', value))

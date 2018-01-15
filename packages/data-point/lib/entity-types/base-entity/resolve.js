@@ -146,8 +146,7 @@ function resolveEntity (
       return resolveReducer(manager, acc, acc.reducer.spec.before, _stack)
     })
     .then(acc => {
-      const _stack = stack ? [...stack, ['value']] : stack
-      return mainResolver(acc, resolveReducerBound, _stack)
+      return mainResolver(acc, resolveReducerBound, stack)
     })
     .then(acc => {
       const _stack = stack ? [...stack, ['after']] : stack

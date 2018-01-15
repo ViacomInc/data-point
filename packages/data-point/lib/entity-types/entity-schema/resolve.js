@@ -37,8 +37,9 @@ module.exports.validateContext = validateContext
 function resolve (acc, resolveReducer, stack) {
   const value = acc.reducer.spec.value
 
-  return resolveReducer(acc, value, stack).then(racc => {
-    return validateContext(racc, stack)
+  const _stack = stack ? [...stack, 'value'] : stack
+  return resolveReducer(acc, value, _stack).then(racc => {
+    return validateContext(racc, _stack)
   })
 }
 

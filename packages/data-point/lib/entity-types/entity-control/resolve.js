@@ -21,7 +21,7 @@ function getMatchingCaseIndex (caseStatements, acc, resolveReducer, stack) {
         return Promise.reject(err)
       }
 
-      const _stack = stack ? [...stack, 'case', index] : stack
+      const _stack = stack ? [...stack, index, ['case']] : stack
       return resolveReducer(acc, statement.case, _stack).then(res => {
         return res.value ? index : null
       })
@@ -50,15 +50,16 @@ function resolve (acc, resolveReducer, stack) {
   const caseStatements = selectControl.cases
   const defaultTransform = selectControl.default
 
-  return getMatchingCaseIndex(caseStatements, acc, resolveReducer, stack).then(
+  let _stack = stack ? [...stack, 'select'] : stack
+  return getMatchingCaseIndex(caseStatements, acc, resolveReducer, _stack).then(
     index => {
       if (index === null) {
-        const _stack = stack ? [...stack, 'do', ['default']] : stack
+        _stack = stack ? [...stack, 'do', ['default']] : stack
         return resolveReducer(acc, defaultTransform, _stack)
       }
 
       const caseStatement = caseStatements[index]
-      const _stack = stack ? [...stack, 'do', index] : stack
+      _stack = stack ? [...stack, 'do', index] : stack
       return resolveReducer(acc, caseStatement.do, _stack)
     }
   )

@@ -152,8 +152,9 @@ module.exports.resolveRequest = resolveRequest
  */
 function resolve (accumulator, resolveReducer, stack) {
   const entity = accumulator.reducer.spec
+  const _stack = stack ? [...stack, 'value'] : stack
   return Promise.resolve(accumulator)
-    .then(acc => resolveReducer(acc, entity.value, stack))
+    .then(acc => resolveReducer(acc, entity.value, _stack))
     .then(acc => resolveOptions(acc, resolveReducer, stack))
     .then(acc => resolveUrl(acc))
     .then(acc => resolveBeforeRequest(acc, resolveReducer, stack))

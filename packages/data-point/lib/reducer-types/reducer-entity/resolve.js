@@ -13,7 +13,7 @@ const BaseEntity = require('../../entity-types/base-entity/resolve')
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   const reducerEntityType = reducer.entityType
   const EntityType = manager.entityTypes.get(reducerEntityType)
-  const _stack = stack ? [...stack, [reducer.id]] : stack
+  const _stack = stack ? [...stack.slice(0, -1), reducer.id] : stack
   return BaseEntity.resolve(
     manager,
     resolveReducer,
