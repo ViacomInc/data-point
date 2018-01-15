@@ -134,9 +134,7 @@ function resolveRequest (acc, resolveReducer) {
 module.exports.resolveRequest = resolveRequest
 
 function resolve (acc, resolveReducer) {
-  const entity = acc.reducer.spec
   return Promise.resolve(acc)
-    .then(itemContext => resolveReducer(itemContext, entity.value))
     .then(itemContext => resolveOptions(itemContext, resolveReducer))
     .then(itemContext => resolveUrl(itemContext))
     .then(itemContext => resolveBeforeRequest(itemContext, resolveReducer))
