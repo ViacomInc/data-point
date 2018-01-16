@@ -197,6 +197,49 @@ describe('ResolveEntity.resolveEntity', () => {
         expect(err).toHaveProperty('message', 'test')
       })
   })
+
+  test('inputType -throws error if inputType does not pass', () => {
+    return resolveEntity('model:c.0', 'foo')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
+  test('inputType - if typeCheck passes then resolve normal', () => {
+    return resolveEntity('model:c.0', 1).then(ac => {
+      expect(ac.value).toEqual(1)
+    })
+  })
+
+  test('outputType -throws error if outputType does not pass', () => {
+    return resolveEntity('model:c.1', 1)
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
+  test('outputType - if typeCheck passes then resolve normal', () => {
+    return resolveEntity('model:c.1', 'foo').then(ac => {
+      expect(ac.value).toEqual('foo')
+    })
+  })
+
+  test('typeCheck should not be able to change acc.value', () => {
+    return resolveEntity('model:c.2', 'my string').then(result => {
+      expect(result.value).toEqual('my string')
+    })
+  })
+
+  test('if custom typeCheck throws then fail', () => {
+    return resolveEntity('model:c.3', 123)
+      .catch(e => e)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
+        expect(result).toMatchSnapshot()
+      })
+  })
 })
 
 describe('ResolveEntity.resolve', () => {

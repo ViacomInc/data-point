@@ -97,6 +97,12 @@ function resolveMiddleware (manager, name, acc) {
 
 module.exports.resolveMiddleware = resolveMiddleware
 
+function typeCheck (manager, acc, reducer, resolveReducer) {
+  // if no error returns original accumulator
+  // this prevents typeCheckTransform of mutating the value
+  return resolveReducer(manager, acc, reducer).return(acc)
+}
+
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
@@ -135,13 +141,20 @@ function resolveEntity (
   return Promise.resolve(accUid)
     .then(acc => resolveMiddleware(manager, `before`, acc))
     .then(acc =>
+      typeCheck(manager, acc, acc.reducer.spec.inputType, resolveReducer)
+    )
+    .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
     .then(acc => resolveReducer(manager, acc, acc.reducer.spec.before))
     .then(acc => mainResolver(acc, resolveReducerBound))
     .then(acc => resolveReducer(manager, acc, acc.reducer.spec.after))
+    .then(acc => resolveReducer(manager, acc, acc.reducer.spec.resolveAfter))
     .then(acc =>
       middleware.resolve(manager, `${reducer.entityType}:after`, acc)
+    )
+    .then(acc =>
+      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
     )
     .then(acc => resolveMiddleware(manager, `after`, acc))
     .catch(error => {

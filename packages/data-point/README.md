@@ -39,6 +39,7 @@ npm install --save data-point
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
     - [Transform](#transform-entity)
+    - [Model](#model-entity)
     - [Entry](#entry-entity)
     - [Request](#request-entity)
     - [Hash](#hash-entity)
@@ -1112,6 +1113,7 @@ dataPoint.addEntities({
 DataPoint comes with the following built-in entities: 
 
 - [Transform](#transform-entity)
+- [Model](#model-entity)
 - [Entry](#entry-entity)
 - [Request](#request-entity)
 - [Hash](#hash-entity)
@@ -1125,12 +1127,18 @@ All entities share a common API (except for [Transform](#transform-entity)).
 
 ```js
 {
-  // executes --before-- everything else
+  // type checks the entity's input
+  inputType: String | Reducer,
+
+  // executes --before-- any modifier
   before: Reducer,
   
-  // executes --after-- everything else
+  // executes --after-- any modifier
   after: Reducer,
   
+  // type checks the entity's output
+  outputType: String | Reducer,
+
   // executes in case there is an error at any
   // point of the entire transformation
   error: Reducer,
@@ -1145,18 +1153,125 @@ All entities share a common API (except for [Transform](#transform-entity)).
 
 | Key | Type | Description |
 |:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params*  | `Object` | User defined Hash that will be passed to every transform within the context of the transform's execution |
 
-##### <a name="transform-entity">Transform Entity</a>
+
+##### <a name="entity-type-check">Entity Type checking</a>
+
+You may use **inputType** and **outputType** to type check against the values being passed and resolved from an entity. Type checking does not mutate the result. 
+
+**Built in type checks:**
+
+To use built-in type checks you may set the value of inputType/outputType to: `'isString'`, `'isNumber'`, `'isBoolean'`, `'isFunction'`, `'isError'`, `'isArray'`, or `'isObject'`. 
+
+<details>
+  <summary>Check if a model outputs an string</summary>
+
+  This example uses a Model Entity, for information on what a model is please go to the [Model Entity](#model-entity) section.
+
+  ```js
+  const dataPoint = DataPoint.create()
+  const helpers = DataPoint.helpers
+
+  dataPoint.addEntities({
+    'model:getName': {
+      value: '$name',
+      outputType: 'isString'
+    }
+  })
+
+  const input = {
+    name: 'DataPoint'
+  }
+
+  dataPoint.transform('model:getName', input)
+    .then(acc => {
+      // acc.value -> DataPoint
+    })
+  ```
+
+</details>
+
+**Type Check using Reducer**
+
+To customize type checking you may use a [Reducer](#reducers). If the reducer throws an error, the type check fails.
+
+
+<details>
+  <summary>Custom type check with <a href="#function-reducer">FunctionReducer</a></summary>
+
+  ```js
+  const dataPoint = DataPoint.create()
+
+  dataPoint.addEntities({
+    'model:getName': {
+      value: '$name',
+
+      outputType: acc => {
+        if(typeof acc.value === 'string' && acc.value.length > 5) {
+          return trues
+        }
+
+        throw new Error('should be string and length > 5')
+      }
+    }
+  })
+
+  const input = {
+    name: 'DataPoint'
+  }
+
+  dataPoint.transform('model:getName', input)
+    .then(acc => {
+      // acc.value -> DataPoint
+    })
+  ```
+
+</details>
+
+<details>
+  <summary>Custom type check with <a href="#entity-reducer">EntityReducer</a></summary>
+
+  In this example we are using a [Schema Entity](#schema-entity) to check the inputType.
+
+  ```js
+  const dataPoint = DataPoint.create()
+
+  dataPoint.addEntities({
+    'model:getName': {
+      // assume schema:RepoSchema 
+      // exists and checks of the
+      // existence of name
+      inputType: 'schema:RepoSchema',
+      value: '$name'
+    }
+  })
+
+  const input = {
+    name: 'DataPoint'
+  }
+
+  dataPoint.transform('model:getName', input)
+    .then(acc => {
+      // acc.value -> DataPoint
+    })
+  ```
+
+</details>
+
+
+#### <a name="transform-entity">Transform Entity</a>
 
 A Transform entity is meant to be used as a 'snippet' entity that you can re-use in other entities. It does not expose the before/after/error/params API that other entities have.
 
 The value of a Transform entity is a [Reducer](#reducers).
 
-IMPORTANT: Transform Entities **do not support** (extension)[#extending-entities].
+IMPORTANT: Transform Entities **do not support** [extension](#extending-entities).
 
 **SYNOPSIS**
 
@@ -1199,18 +1314,20 @@ dataPoint.addEntities({
 </details>
 
 
-#### <a name="entry-entity">Entry Entity</a>
+#### <a name="model-entity">Model Entity</a>
 
-An Entry entity is where your data manipulation starts. As a best practice, use it as your starting point, and use it to call more complex entities.
+A Model entity is a generic entity that provides the [base modifiers](#entity-base-api).
 
 **SYNOPSIS**
 
 ```js
 dataPoint.addEntities({
-  'entry:<entityId>': {
+  'model:<entityId>': {
+    inputType: String | Reducer,
     before: Reducer,
     value: Reducer,
     after: Reducer,
+    outputType: String | Reducer,
     error: Reducer,
     params: Object
   }
@@ -1221,13 +1338,14 @@ dataPoint.addEntities({
 
 | Key | Type | Description |
 |:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
-| *value* | [Reducer](#reducers) | reducer to be resolved
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
-| *params*    | `Object` | user defined Hash that will be passed to every transform within the context of this transform's execution |
+| *params*  | `Object` | User defined Hash that will be passed to every transform within the context of the transform's execution |
 
-##### <a name="entry-value">Entry.value</a>
+##### <a name="model-value">Model.value</a>
 
 <details>
   <summary>Using the `value` property to transform an input</summary>
@@ -1250,13 +1368,13 @@ dataPoint.addEntities({
   }
   
   dataPoint.addEntities({
-    'entry:foo': {
+    'model:foo': {
       value: ['$a.b.c', getMax, multiplyBy(10)]
     }
   })
   
   dataPoint
-    .transform('entry:foo', input)
+    .transform('model:foo', input)
     .then((acc) => {
       assert.equal(acc.value, 30)
     })
@@ -1264,62 +1382,52 @@ dataPoint.addEntities({
 </details>
 
 
-Example at: [examples/entity-entry-basic.js](examples/entity-entry-basic.js)
+Example at: [examples/entity-model-basic.js](examples/entity-model-basic.js)
 
-##### <a name="entry-before">Entry.before</a>
+##### <a name="model-before">Model.before</a>
 
 <details>
   <summary>Checking whether the value passed to an entity is an array</summary>
   
   ```js
-  const isArray = () => (acc, next) => {
-    if (acc.value instanceof Array) {
-      // if the value is valid, then just pass it along
-      return next(null, acc.value)
-    }
-  
-    // Notice how we pass this error object as the FIRST parameter.
-    // This tells DataPoint that there was an error, and to treat it as such.
-    next(new Error(`${acc.value} should be an Array`))
+  const toArray = (acc) => {
+    return Array.isArray(acc.value)
+      ? acc.value
+      : [acc.value]
   }
   
   dataPoint.addEntities({
-    'entry:foo': {
-      before: isArray(),
+    'model:foo': {
+      before: toArray,
       value: '$'
     }
   })
   
   dataPoint
-    .transform('entry:foo', [3, 15])
+    .transform('model:foo', 100)
     .then((acc) => {
-      assert.deepEqual(acc.value, [3, 15])
+      assert.deepEqual(acc.value, [100])
     })
   ```
 </details>
 
 
-Example at: [examples/entity-entry-before.js](examples/entity-entry-before.js)
+Example at: [examples/entity-model-before.js](examples/entity-model-before.js)
 
-##### <a name="entry-after">Entry.after</a>
+##### <a name="model-after">Model.after</a>
 
 <details>
   <summary>Using `after` transform</summary>
   
   ```js
-  const isArray = () => (acc, next) => {
-    if (acc.value instanceof Array) {
-      // if the value is valid, then just pass it along
-      return next(null, acc.value)
-    }
-  
-    // Notice how we pass this error object as the FIRST parameter.
-    // This tells DataPoint that there was an error, and to treat it as such.
-    next(new Error(`${acc.value} should be an Array`))
+  const toArray = (acc) => {
+    return Array.isArray(acc.value)
+      ? acc.value
+      : [acc.value]
   }
   
   dataPoint.addEntities({
-    'entry:foo': {
+    'model:foo': {
       value: '$a.b',
       after: isArray()
     }
@@ -1332,17 +1440,14 @@ Example at: [examples/entity-entry-before.js](examples/entity-entry-before.js)
   }
   
   dataPoint
-    .transform('entry:foo', input)
+    .transform('model:foo', input)
     .then((acc) => {
       assert.deepEqual(acc.value, [3, 15])
     })
   ```
 </details>
 
-
-Example at: [examples/entity-entry-after.js](examples/entity-entry-after.js)
-
-##### <a name="entry-error">Entry.error</a>
+##### <a name="model-error">Model.error</a>
 
 Any error that happens within the scope of the Entity can be handled by the `error` transform. To respect the API, error reducers have the same API, and the value of the error is under `acc.value`.
 
@@ -1352,52 +1457,41 @@ Passing a value as the second argument will stop the propagation of the error.
 
 **EXAMPLES:**
 
-Let's resolve to a NON array value and see how this would be handled.
-
 <details>
   <summary>Handling Entry Errors</summary>
   
+  Let's resolve to a non-array value and see how it would be handled, this example will use [outputType](#entity-type-check) for type checking.
+
   ```js
-  const isArray = () => (acc, next) => {
-    if (acc.value instanceof Array) {
-      // if the value is valid, then just pass it along
-      return next(null, acc.value)
-    }
-  
-    // Notice how we pass this error object as the FIRST parameter.
-    // This tells DataPoint that there was an error, and to treat it as such.
-    next(new Error(`${acc.value} should be an Array`))
-  }
   
   dataPoint.addEntities({
-    'entry:foo': {
+    'model:getArray': {
       // points to a NON Array value
-      value: '$a',
-      after: isArray(),
+      value: '$a.b',
+      outputType: 'isArray',
       error: (acc) => {
-        // prints out the error 
+        // prints out the error
         // message generated by
-        // isArray function
-        console.log(acc.value.message) 
-  
+        // isArray type check
+        console.log(acc.value.message)
+
         console.log('Value is invalid, resolving to empty array')
-  
-        // passing a value as the 
-        // second argument will stop
+
+        // passing a value will stop
         // the propagation of the error
         return []
       }
     }
   })
-  
+
   const input = {
     a: {
-      b: [3, 15]
+      b: 'foo'
     }
   }
-  
+
   dataPoint
-    .transform('entry:foo', input)
+    .transform('model:getArray', input)
     .then((acc) => {
       assert.deepEqual(acc.value, [])
     })
@@ -1405,95 +1499,44 @@ Let's resolve to a NON array value and see how this would be handled.
 </details>
 
 
-Example at: [examples/entity-entry-error-handled.js](examples/entity-entry-error-handled.js)
+Example at: [examples/entity-model-error-handled.js](examples/entity-model-error-handled.js)
 
 <details>
   <summary>Pass the array to be handled somewhere else</summary>
   
   ```js
-  const logError = () => (acc, next) => {
+  const logError = (acc) => {
     // acc.value holds the actual Error Object
     console.log(acc.value.toString())
-    // outputs: Error: [object Object] should be an Array
-  
-    // if we wish to bubble it up, then pass it to
-    // the next() as the first parameter
-    next(acc.value)
-  
-    // if we wished not to bubble it, we could pass
-    // an empty first param, and a second value to
-    // be used as the final resolved value
-    // next(null, false) <-- this is just an example
+    throw acc.value
   }
-  
+
   dataPoint.addEntities({
-    'entry:foo': {
+    'model:getArray': {
       value: '$a',
-      after: isArray(),
-      error: logError()
+      outputType: 'isArray',
+      error: logError
     }
   })
   
   const input = {
     a: {
-      b: [3, 15]
+      b: 'foo'
     }
   }
   
   dataPoint
-    .transform('entry:foo', input)
+    .transform('model:getArray', input)
     .catch((error) => {
       console.log(error.toString())
-      // Error: [object Object] 
-      // should be an Array
     })
   ```
 </details>
 
 
-Example at: [examples/entity-entry-error-rethrow.js](examples/entity-entry-error-rethrow.js)
+Example at: [examples/entity-model-error-rethrow.js](examples/entity-model-error-rethrow.js)
 
-<details>
-  <summary>Resolve entry to a value to prevent the transform from failing</summary>
-  
-  ```js
-  const resolveTo = (value) => (acc) => {
-    // since we don't pass the error
-    // back it will resolve to the
-    // new value
-    return value
-  }
-  
-  dataPoint.addEntities({
-    'entry:foo': {
-      value: '$a',
-      after: isArray(),
-      // in case of error resolve
-      // the value to an empty array
-      error: resolveTo([])
-    }
-  })
-  
-  const input = {
-    a: {
-      b: [3, 15, 6, 3, 8]
-    }
-  }
-  
-  dataPoint
-    .transform('entry:foo', input)
-    .then((acc) => {
-      assert.deepEqual(acc.value, [])
-    })
-  ```
-</details>
-
-
-Example at: [examples/entity-entry-error-resolved.js](examples/entity-entry-error-resolved.js)
-
-For examples of entry entities, see the ones used in the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/entry.js) and [Integration Examples](test/definitions/integrations.js)
-
-##### <a name="entry-params">Entry.params</a>
+##### <a name="model-params">Entry.params</a>
 
 The params object is used to pass custom data to your entity. This Object is exposed as a property of the [Accumulator](#accumulator) Object. Which can be accessed via a [FunctionReducer](#function-reducer), as well as through a [PathReducer](#path-reducer) expression.
 
@@ -1506,7 +1549,7 @@ The params object is used to pass custom data to your entity. This Object is exp
   }
   
   dataPoint.addEntities({
-    'entry:multiply': {
+    'model:multiply': {
       value: multiplyValue,
       params: {
         multiplier: 100
@@ -1515,7 +1558,7 @@ The params object is used to pass custom data to your entity. This Object is exp
   })
   
   dataPoint
-    .transform('entry:multiply', 200)
+    .transform('model:multiply', 200)
     .then((acc) => {
       assert.deepEqual(acc.value, 20000)
     })
@@ -1528,7 +1571,7 @@ The params object is used to pass custom data to your entity. This Object is exp
   
   ```js
   dataPoint.addEntities({
-    'entry:getParam': {
+    'model:getParam': {
       value: '$..params.multiplier',
       params: {
         multiplier: 100
@@ -1536,12 +1579,43 @@ The params object is used to pass custom data to your entity. This Object is exp
     }
   })
   
-  dataPoint.transform('entry:getParam')
+  dataPoint.transform('model:getParam')
     .then((acc) => {
       assert.deepEqual(acc.value, 100)
     })
   ```
 </details>
+
+#### <a name="entry-entity">Entry Entity</a>
+
+This entity is very similar to the [Model entity](#model-entity). Its main difference is that this entity will default to an empty object `{ }` as its initial value if none was passed. As a best practice, use it as your starting point, and use it to call more complex entities.
+
+**SYNOPSIS**
+
+```js
+dataPoint.addEntities({
+  'entry:<entityId>': {
+    inputType: String | Reducer,
+    before: Reducer,
+    value: Reducer,
+    after: Reducer,
+    outputType: String | Reducer,
+    error: Reducer,
+    params: Object
+  }
+})
+```
+
+**Properties exposed:**
+
+| Key | Type | Description |
+|:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
+| *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
+| *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
+| *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
+| *params*  | `Object` | User defined Hash that will be passed to every transform within the context of the transform's execution |
 
 
 #### <a name="request-entity">Request Entity</a>
@@ -1553,11 +1627,13 @@ Requests a remote source, using [request](https://github.com/request/request) be
 ```js
 dataPoint.addEntities({
   'request:<entityId>': {
+    inputType: String | Reducer,
     before: Reducer,
     url: StringTemplate,
     options: TransformObject,
     beforeRequest: Reducer,
     after: Reducer,
+    outputType: String | Reducer,
     error: Reducer,
     params: Object
   }
@@ -1568,12 +1644,14 @@ dataPoint.addEntities({
 
 | Key | Type | Description |
 |:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *url*   | [StringTemplate](#string-template) | String value to resolve the request's url |
 | *options* | [TransformObject](#transform-object) | Request's options. These map directly to [request.js](https://github.com/request/request) options
 | *beforeRequest* | [Reducer](#reducers) | `acc.value` at this point will be the request options object being passed to the final request. You may do any modifications here, and then pass to the next reducer |
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *params*    | `Object` | User defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
 ##### <a name="request-url">Request.url</a>
@@ -1789,8 +1867,8 @@ If you want to have more control over the order of execution, you may use the [c
 ```js
 dataPoint.addEntities({
   'hash:<entityId>': {
+    inputType: String | Reducer,
     before: Reducer,
-
     value: Reducer,
     mapKeys: TransformMap,
     omitKeys: String[],
@@ -1798,8 +1876,8 @@ dataPoint.addEntities({
     addKeys: TransformMap,
     addValues: Object,
     compose: ComposeReducer[],
-
     after: Reducer,
+    outputType: String | Reducer,
     error: Reducer,
     params: Object,
   }
@@ -1810,6 +1888,8 @@ dataPoint.addEntities({
 
 | Key | Type | Description |
 |:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
+| *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value* | [Reducer](#reducers) | The value to which the Entity resolves |
 | *mapKeys* | [ObjectReducer](#object-reducer) | Map to a new set of key/values. Each value accepts a reducer |
 | *omitKeys* | `String[]` | Omits keys from acc.value. Internally, this uses the [omit](#reducer-omit) reducer helper |
@@ -1817,8 +1897,8 @@ dataPoint.addEntities({
 | *addKeys* | [ObjectReducer](#object-reducer) | Add/Override key/values. Each value accepts a reducer. Internally, this uses the [assign](#reducer-assign) reducer helper |
 | *addValues* | `Object` | Add/Override hard-coded key/values. Internally, this uses the [assign](#reducer-assign) reducer helper |
 | *compose* | [ComposeReducer](#compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one operation gets passed to the next one|
-| *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params*    | `Object` | User-defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
@@ -2117,15 +2197,15 @@ To prevent unexpected results, a **Collection Entity** can only process **Arrays
 ```js
 dataPoint.addEntities({
   'collection:<entityId>': {
+    inputType: String | Reducer,
     before: Reducer,
-
     value: Reducer,
     filter: Reducer,
     map: Reducer,
     find: Reducer,
     compose: ComposeReducer[],
-
     after: Reducer,
+    outputType: String | Reducer,
     error: Reducer,
     params: Object,
   }
@@ -2136,6 +2216,7 @@ dataPoint.addEntities({
 
 | Key | Type | Description |
 |:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value* | [Reducer](#reducers) | The value to which the Entity resolves |
 | *map* | [Reducer](#reducers) | Maps the items of an array. Internally, this uses the [map](#reducer-map) reducer helper |
@@ -2143,6 +2224,7 @@ dataPoint.addEntities({
 | *filter* | [Reducer](#reducers) | Filters the items of an array. Internally, this uses the [filter](#reducer-filter) reducer helper |
 | *compose* | [ComposeReducer](#compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one object gets passed to the next one |
 | *after* | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params* | `Object` | User-defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
@@ -2559,13 +2641,15 @@ The Flow Control entity allows you to control the flow of your transformations.
 ```js
 dataPoint.addEntities({
   'control:<entityId>': {
+    inputType: String | Reducer,
+    before: Reducer,
     select: [
       { case: Reducer, do: Transform },
       ...
       { default: Transform }
     ],
-    before: Reducer,
     after: Reducer,
+    outputType: String | Reducer,
     error: Reducer,
     params: Object,
   }
@@ -2576,10 +2660,12 @@ dataPoint.addEntities({
 
 | Key | Type | Description |
 |:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
+| *before* | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *select* | [Case Statements](#case-statements)`[]` | Array of case statements, and a default fallback |
 | *params* | `Object` | User-defined Hash that will be passed to every transform within the context of the transform's execution |
-| *before* | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *after* | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |
 
 ##### <a name="case-statements">Case Statements</a>
@@ -2645,12 +2731,13 @@ For examples of control entities, see the ones used on the unit tests: [Control 
 ```js
 dataPoint.addEntities({
   'schema:<entityId>': {
+    before: Reducer,
+    inputType: String | Reducer,
     value: Reducer,
     schema: JSONSchema,
     options: Object,
-
-    before: Reducer,
     after: Reducer,
+    outputType: String | Reducer,
     error: Reducer,
     params: Object
   }
@@ -2661,13 +2748,15 @@ dataPoint.addEntities({
 
 | Key | Type | Description |
 |:---|:---|:---|
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
+| *before* | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value* | [Reducer](#reducers) | The value that this entity will pass to the schema validation |
 | *schema* | `Object` | Valid [JSON Schema](http://json-schema.org/documentation.html) object |
 | *options* | `Object` | Avj's [options](https://github.com/epoberezkin/ajv#options) object
-| *params* | `Object` | User-defined Hash that will be passed to every transform within the context of the transform's execution |
-| *before* | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *after* | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |
+| *params* | `Object` | User-defined Hash that will be passed to every transform within the context of the transform's execution |
 
 **EXAMPLES**
 

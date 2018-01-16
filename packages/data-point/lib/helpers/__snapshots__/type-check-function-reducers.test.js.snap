@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`isArray It should throw error when not matched 1`] = `"Cannot read property 'spec' of undefined"`;
+
+exports[`isBoolean It should throw error when not matched 1`] = `"Cannot read property 'spec' of undefined"`;
+
+exports[`isBoolean It should throw error when not matched 2`] = `"Cannot read property 'spec' of undefined"`;
+
+exports[`isError It should throw error when not matched 1`] = `"Cannot read property 'spec' of undefined"`;
+
+exports[`isFunction It should throw error when not matched 1`] = `"Cannot read property 'spec' of undefined"`;
+
+exports[`isNumber It should throw error when not matched 1`] = `"Cannot read property 'spec' of undefined"`;
+
+exports[`isObject It should throw error when not matched 1`] = `"Cannot read property 'spec' of undefined"`;
+
+exports[`isString It should throw error when not matched 1`] = `"Cannot read property 'spec' of undefined"`;
