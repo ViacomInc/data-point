@@ -3,10 +3,10 @@ const _ = require('lodash')
 const utils = require('../utils')
 
 function errorMessage (acc, expectedType) {
-  const entity = acc.reducer.spec
+  const entityId = _.get(acc, 'reducer.spec.id', 'value')
   return Util.format(
-    '%s did not pass the type check, value received: %s of type: %s, expected: %s',
-    entity.id,
+    '%s did not pass type check, received: %s of type: %s, expected: %s',
+    entityId,
     _.truncate(Util.inspect(acc.value, { breakLength: Infinity }), {
       length: 30
     }),
