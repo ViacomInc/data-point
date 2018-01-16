@@ -140,9 +140,7 @@ function resolveEntity (
     .then(acc => resolveReducer(manager, acc, acc.reducer.spec.before))
     .then(acc => mainResolver(acc, resolveReducerBound))
     .then(acc => resolveReducer(manager, acc, acc.reducer.spec.after))
-    .then(acc =>
-      middleware.resolve(manager, `${reducer.entityType}:after`, acc)
-    )
+    .then(acc => resolveMiddleware(manager, `${reducer.entityType}:after`, acc))
     .then(acc => resolveMiddleware(manager, `after`, acc))
     .catch(error => {
       // checking if this is an error to bypass the `then` chain
