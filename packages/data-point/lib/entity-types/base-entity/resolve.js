@@ -231,7 +231,7 @@ function resolve (
       return Promise.resolve(itemCtx)
     }
 
-    const _stack = stack ? stack.concat(index) : stack
+    const _stack = stack ? [...stack, index] : stack
     return resolveEntity(
       manager,
       resolveReducer,

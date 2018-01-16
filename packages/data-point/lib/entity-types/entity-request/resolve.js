@@ -60,7 +60,7 @@ function resolveOptions (acc, resolveReducer, stack) {
   return Promise.reduce(
     transformOptionKeys,
     (newOptions, key) => {
-      const _stack = stack ? [...stack, 'options', key.path] : stack
+      const _stack = stack ? [...stack, ['options'], key.path] : stack
       return resolveReducer(acc, key.transform, _stack).then(res => {
         return fp.set(key.path, res.value, newOptions)
       })
@@ -105,7 +105,7 @@ function resolveBeforeRequest (acc, resolveReducer, stack) {
   }
 
   const beforeRequestAcc = utils.set(acc, 'value', options)
-  const _stack = stack ? stack.concat('beforeRequest') : stack
+  const _stack = stack ? [...stack, ['beforeRequest']] : stack
   return resolveReducer(beforeRequestAcc, entity.beforeRequest, _stack).then(
     result => utils.set(acc, 'options', result.value)
   )
@@ -152,7 +152,7 @@ module.exports.resolveRequest = resolveRequest
  */
 function resolve (accumulator, resolveReducer, stack) {
   const entity = accumulator.reducer.spec
-  const _stack = stack ? [...stack, 'value'] : stack
+  const _stack = stack ? [...stack, ['value']] : stack
   return Promise.resolve(accumulator)
     .then(acc => resolveReducer(acc, entity.value, _stack))
     .then(acc => resolveOptions(acc, resolveReducer, stack))

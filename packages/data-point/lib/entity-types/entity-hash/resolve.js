@@ -16,7 +16,7 @@ function resolveCompose (accumulator, composeReducer, resolveReducer, stack) {
     return Promise.resolve(accumulator)
   }
 
-  const _stack = stack ? stack.concat('compose') : stack
+  const _stack = stack ? [...stack, 'compose'] : stack
   return resolveReducer(accumulator, composeReducer, _stack)
 }
 

@@ -18,7 +18,7 @@ function resolve (manager, resolveReducer, accumulator, reducerMap, stack) {
 
   return Promise.map(accumulator.value, (itemValue, index) => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
-    const _stack = stack ? stack.concat(index) : stack
+    const _stack = stack ? [...stack, index] : stack
     return resolveReducer(manager, itemContext, reducer, _stack).then(res => {
       return res.value
     })

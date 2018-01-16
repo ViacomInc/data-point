@@ -17,7 +17,7 @@ function resolve (manager, resolveReducer, accumulator, reducerList, stack) {
   const result = Promise.reduce(
     reducers,
     (accumulator, reducer, index) => {
-      const _stack = stack ? stack.concat(index) : stack
+      const _stack = stack ? [...stack, index] : stack
       return resolveReducer(manager, accumulator, reducer, _stack)
     },
     accumulator

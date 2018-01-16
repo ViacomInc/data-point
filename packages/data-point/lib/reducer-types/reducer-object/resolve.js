@@ -17,7 +17,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   }
 
   const props = Promise.map(reducer.props, ({ path, reducer }) => {
-    const _stack = stack ? stack.concat(path) : stack
+    const _stack = stack ? [...stack, path] : stack
     return resolveReducer(manager, accumulator, reducer, _stack).then(
       ({ value }) => ({
         path,

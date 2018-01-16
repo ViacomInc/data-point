@@ -50,16 +50,16 @@ function resolve (acc, resolveReducer, stack) {
   const caseStatements = selectControl.cases
   const defaultTransform = selectControl.default
 
-  let _stack = stack ? [...stack, 'select'] : stack
-  return getMatchingCaseIndex(caseStatements, acc, resolveReducer, _stack).then(
+  stack = stack ? [...stack, 'select'] : stack
+  return getMatchingCaseIndex(caseStatements, acc, resolveReducer, stack).then(
     index => {
       if (index === null) {
-        _stack = stack ? [...stack, 'do', ['default']] : stack
+        const _stack = stack ? [...stack, ['default']] : stack
         return resolveReducer(acc, defaultTransform, _stack)
       }
 
       const caseStatement = caseStatements[index]
-      _stack = stack ? [...stack, 'do', index] : stack
+      const _stack = stack ? [...stack, index, ['do']] : stack
       return resolveReducer(acc, caseStatement.do, _stack)
     }
   )
