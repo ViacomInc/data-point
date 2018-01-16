@@ -106,41 +106,66 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
 
   // add entities to dataPoint instance
   dataPoint.addEntities({
-    // remote request
+    // remote service request
     'request:Planet': {
       // {value.planetId} injects the
       // value from the accumulator
+      // creates: https://swapi.co/api/planets/1/
       url: 'https://swapi.co/api/planets/{value.planetId}'
     },
 
-    // hash entity to resolve a Planet
-    'hash:Planet': {
-      // maps keys
-      mapKeys: {
-        // map name key
-        name: '$name',
-        // residents is an array of urls
-        // where each url gets mapped
-        // to a request:Resident and
-        // its result gets reduced 
-        // by an ObjectReducer
-        residents: [
-          '$residents',
-          map([
-            'request:Resident',
-            {
-              name: '$name',
-              gender: '$gender',
-              birthYear: '$birth_year'
-            }
-          ])
-        ]
-      }
+    // model entity to resolve a Planet
+    'model:Planet': {
+      inputType: 'schema:DataInput',
+      value: [
+        // hit request:Planet data source
+        'request:Planet',
+        // map result to ObjectReducer
+        {
+          // map name key
+          name: '$name',
+          population: '$population',
+          // residents is an array of urls
+          // eg. https://swapi.co/api/people/1/
+          // where each url gets mapped
+          // to a model:Resident
+          residents: ['$residents', map('model:Resident')]
+        }
+      ]
     },
 
-    // requests url passed
+    // model entity to resolve a Planet
+    'model:Resident': {
+      inputType: 'isString',
+      value: [
+        // hit request:Resident
+        'request:Resident',
+        // extract data
+        {
+          name: '$name',
+          gender: '$gender',
+          birthYear: '$birth_year'
+        }
+      ]
+    },
+
     'request:Resident': {
+      // check input is string
+      inputType: 'isString',
       url: '{value}'
+    },
+
+    // schema to verify data input
+    'schema:DataInput': {
+      schema: {
+        type: 'object',
+        properties: {
+          planetId: {
+            $id: '/properties/planet',
+            type: 'integer'
+          }
+        }
+      }
     }
   })
 
@@ -148,11 +173,10 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
     planetId: 1
   }
 
-  dataPoint
-    .transform('request:Planet | hash:Planet', input)
+  dataPoint.transform('model:Planet', input)
     .then((acc) => {
-      console.log(acc.value)
       /*
+      acc.value -> 
       { 
         name: 'Tatooine',
         population: 200000,
