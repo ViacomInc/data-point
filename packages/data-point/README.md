@@ -2662,7 +2662,7 @@ dataPoint.addEntities({
 | Key | Type | Description |
 |:---|:---|:---|
 | *value* | [Reducer](#reducers) | The value that this entity will pass to the schema validation |
-| *schema* | `Object` | Valid [JSON Schema](http://json-schema.org/documentation.html) object |
+| *schema* | `Object` | Valid [JSON Schema](http://json-schema.org/documentation.html) object. If the schema is not valid, an error is thrown when creating the entity. |
 | *options* | `Object` | Avj's [options](https://github.com/epoberezkin/ajv#options) object
 | *params* | `Object` | User-defined Hash that will be passed to every transform within the context of the transform's execution |
 | *before* | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
