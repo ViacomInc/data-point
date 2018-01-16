@@ -2751,7 +2751,7 @@ dataPoint.addEntities({
 | *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *before* | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value* | [Reducer](#reducers) | The value that this entity will pass to the schema validation |
-| *schema* | `Object` | Valid [JSON Schema](http://json-schema.org/documentation.html) object |
+| *schema* | `Object` | Valid [JSON Schema](http://json-schema.org/documentation.html) object. If the schema is not valid, an error is thrown when creating the entity. |
 | *options* | `Object` | Avj's [options](https://github.com/epoberezkin/ajv#options) object
 | *after* | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
