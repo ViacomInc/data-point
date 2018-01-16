@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReducerFunction with async error 1`] = `
+Array [
+  "ReducerFunction",
+]
+`;
+
+exports[`ReducerFunction with async error 2`] = `"input"`;
+
+exports[`ReducerFunction with async error 3`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerFunction
+with the following input:
+\\"input\\"",
+  ],
+]
+`;
+
+exports[`ReducerFunction with sync error 1`] = `
+Array [
+  "ReducerFunction",
+  Array [
+    "throwError",
+  ],
+]
+`;
+
+exports[`ReducerFunction with sync error 2`] = `"input"`;
+
+exports[`ReducerFunction with sync error 3`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerFunction[throwError]
+with the following input:
+\\"input\\"",
+  ],
+]
+`;
+
+exports[`ReducerList with errors  1`] = `
+Array [
+  "ReducerList",
+  2,
+  "ReducerFunction",
+]
+`;
+
+exports[`ReducerList with errors  2`] = `[Function]`;
+
+exports[`ReducerList with errors  3`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerList[2] -> ReducerFunction
+with the following input:
+undefined",
+  ],
+]
+`;
+
+exports[`ReducerList with errors  4`] = `
+Array [
+  "ReducerList",
+  1,
+  "ReducerFunction",
+  Array [
+    "throwError",
+  ],
+]
+`;
+
+exports[`ReducerList with errors  5`] = `"input"`;
+
+exports[`ReducerList with errors  6`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerList[1] -> ReducerFunction[throwError]
+with the following input:
+\\"input\\"",
+  ],
+]
+`;
+
+exports[`ReducerObject with errors nested property 1`] = `
+Array [
+  "ReducerObject",
+  Array [
+    "b",
+    "c",
+    "d",
+  ],
+  "ReducerFunction",
+  Array [
+    "throwError",
+  ],
+]
+`;
+
+exports[`ReducerObject with errors nested property 2`] = `
+Object {
+  "b": Object {
+    "c": Object {
+      "d": 1,
+    },
+  },
+}
+`;
+
+exports[`ReducerObject with errors nested property 3`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerObject[b.c.d] -> ReducerFunction[throwError]
+with the following input:
+{
+  \\"b\\": {
+    \\"c\\": {
+      \\"d\\": 1
+    }
+  }
+}",
+  ],
+]
+`;
+
+exports[`ReducerObject with errors single property 1`] = `
+Array [
+  "ReducerObject",
+  Array [
+    "b",
+  ],
+  "ReducerFunction",
+  Array [
+    "throwError",
+  ],
+]
+`;
+
+exports[`ReducerObject with errors single property 2`] = `
+Object {
+  "a": 1,
+}
+`;
+
+exports[`ReducerObject with errors single property 3`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerObject[b] -> ReducerFunction[throwError]
+with the following input:
+{
+  \\"a\\": 1
+}",
+  ],
+]
+`;
