@@ -2,6 +2,7 @@ const _ = require('lodash')
 
 const createReducer = require('../../reducer-types').create
 const createBaseEntity = require('../base-entity').create
+const { allowedModifiers } = require('../allowed-modifiers')
 
 /**
  * @class
@@ -73,6 +74,7 @@ module.exports.parseSwitch = parseSwitch
  * @return {EntityControl} Entity Object
  */
 function create (spec, id) {
+  allowedModifiers(id, spec, ['select'])
   const entity = createBaseEntity(EntityControl, spec, id)
   entity.select = parseSwitch(spec)
   return Object.freeze(entity)

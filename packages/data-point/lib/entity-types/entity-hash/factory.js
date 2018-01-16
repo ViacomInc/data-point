@@ -5,6 +5,7 @@ const defaultTo = require('lodash/defaultTo')
 const reducerHelpers = require('../../reducer-types/reducer-helpers')
 const parseCompose = require('../parse-compose')
 const createBaseEntity = require('../base-entity').create
+const { allowedModifiers } = require('../allowed-modifiers')
 
 /**
  * @class
@@ -57,7 +58,8 @@ function createCompose (composeParse) {
  * @return {EntityHash} Entity Object
  */
 function create (spec, id) {
-  parseCompose.validateComposeModifiers(spec, modifierKeys)
+  allowedModifiers(id, spec, modifierKeys.concat('compose'))
+  parseCompose.validateComposeModifiers(id, spec, modifierKeys)
 
   const entity = createBaseEntity(EntityHash, spec, id)
 

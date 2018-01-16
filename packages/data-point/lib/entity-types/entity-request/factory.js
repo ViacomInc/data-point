@@ -3,6 +3,7 @@ const fp = require('lodash/fp')
 const createBaseEntity = require('../base-entity').create
 const createReducer = require('../../reducer-types').create
 const TransformKeys = require('./transform-keys')
+const { allowedModifiers } = require('../allowed-modifiers')
 
 /**
  * @class
@@ -39,6 +40,7 @@ module.exports.unsetTransformKeys = unsetTransformKeys
  * @return {EntityRequest} Entity Object
  */
 function create (spec, id) {
+  allowedModifiers(id, spec, ['options', 'url', 'beforeRequest'])
   const entity = createBaseEntity(EntityRequest, spec, id)
   const options = _.defaultTo(spec.options, {})
   entity.url = _.defaultTo(spec.url, '')

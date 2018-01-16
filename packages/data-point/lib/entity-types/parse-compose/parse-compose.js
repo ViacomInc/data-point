@@ -6,7 +6,7 @@ const intersection = require('lodash/intersection')
  * @throws if the spec is not valid
  * @returns {boolean}
  */
-function validateComposeModifiers (spec, validKeys) {
+function validateComposeModifiers (id, spec, validKeys) {
   if (!spec.compose) {
     return true
   }
@@ -14,7 +14,7 @@ function validateComposeModifiers (spec, validKeys) {
   if (!(spec.compose instanceof Array)) {
     throw new Error(
       `Entity ${
-        spec.id
+        id
       } compose property is expected to be an instance of Array, but found ${
         spec.compose
       }`
@@ -26,7 +26,7 @@ function validateComposeModifiers (spec, validKeys) {
   if (invalidKeys.length !== 0) {
     throw new Error(
       `Entity ${
-        spec.id
+        id
       } is invalid; when 'compose' is defined the keys: '${invalidKeys.join(
         ', '
       )}' should be inside compose.`
