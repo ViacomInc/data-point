@@ -61,11 +61,15 @@ function create (Factory, spec, id) {
     entity.error = createReducer(spec.error)
   }
 
-  const inputType = getTypeModifier(spec.inputType)
-  entity.inputType = createReducer(inputType)
+  if (spec.inputType) {
+    const inputType = getTypeModifier(spec.inputType)
+    entity.inputType = createReducer(inputType)
+  }
 
-  const outputType = getTypeModifier(spec.outputType)
-  entity.outputType = createReducer(outputType)
+  if (spec.outputType) {
+    const outputType = getTypeModifier(spec.outputType)
+    entity.outputType = createReducer(outputType)
+  }
 
   entity.params = deepFreeze(defaultTo(spec.params, {}))
 

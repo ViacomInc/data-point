@@ -2,6 +2,6 @@
 
 exports[`ResolveEntity.resolveEntity if custom typeCheck throws then fail 1`] = `[Error: custom type error]`;
 
-exports[`ResolveEntity.resolveEntity inputType - throws error if inputType does not pass 1`] = `[Error: model:c.0 did not pass type check, received: 'foo' of type: string, expected: number]`;
+exports[`ResolveEntity.resolveEntity inputType - throws error if inputType does not pass 1`] = `[Error: model:c.0 did not pass type check, type expected: number but recevied: string. The value received is: 'foo']`;
 
-exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass 1`] = `[Error: model:c.1 did not pass type check, received: 1 of type: number, expected: string]`;
+exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass 1`] = `[Error: model:c.1 did not pass type check, type expected: string but recevied: number. The value received is: 1]`;

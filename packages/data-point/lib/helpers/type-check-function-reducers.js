@@ -5,13 +5,13 @@ const utils = require('../utils')
 function errorMessage (acc, expectedType) {
   const entityId = _.get(acc, 'reducer.spec.id', 'value')
   return Util.format(
-    '%s did not pass type check, received: %s of type: %s, expected: %s',
+    '%s did not pass type check, type expected: %s but recevied: %s. The value received is: %s',
     entityId,
+    expectedType,
+    utils.typeOf(acc.value),
     _.truncate(Util.inspect(acc.value, { breakLength: Infinity }), {
       length: 30
-    }),
-    utils.typeOf(acc.value),
-    expectedType
+    })
   )
 }
 

@@ -7,7 +7,9 @@ dataPoint.addEntities({
     value: '$name',
     outputType: acc => {
       const valid = typeof acc.value === 'string' && acc.value.length > 5
-      return valid || 'string and length > 5'
+      if (!valid) {
+        throw new Error('string and length > 5')
+      }
     }
   }
 })

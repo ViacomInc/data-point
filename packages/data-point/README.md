@@ -1223,7 +1223,7 @@ To use built-in type checks you may set the value of **inputType**/**outputType*
 
 **Type Check using Reducer**
 
-To customize type checking you may use a [Reducer](#reducers). If the reducer throws an error, the type check fails.
+To customize type checking you may use a [Reducer](#reducers). If the reducer throws an error, the type check fails. In the case of `inputType` and `outputType` the return value is ignored.
 
 
 <details>
