@@ -5,10 +5,6 @@ const Factory = require('./factory')
 const typeCheckFunctionReducers = require('../../helpers/type-check-function-reducers')
 
 describe('Factory.getTypeModifier', () => {
-  test('It should return generic type check if no modifier is implemented', () => {
-    expect(Factory.getTypeModifier(undefined)).toEqual(Factory.acceptAnyType)
-  })
-
   test('It should return function reducer it matches any of the predefined types', () => {
     expect(Factory.getTypeModifier('string')).toEqual(
       typeCheckFunctionReducers.isString

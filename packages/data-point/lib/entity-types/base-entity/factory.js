@@ -4,12 +4,6 @@ const typeCheckFunctionReducers = require('../../helpers/type-check-function-red
 
 const createReducer = require('../../reducer-types').create
 
-function acceptAnyType (acc) {
-  return acc.value
-}
-
-module.exports.acceptAnyType = acceptAnyType
-
 const typeCheckModifiers = {
   string: typeCheckFunctionReducers.isString,
   number: typeCheckFunctionReducers.isNumber,
@@ -21,10 +15,6 @@ const typeCheckModifiers = {
 }
 
 function getTypeModifier (reducer) {
-  if (typeof reducer === 'undefined') {
-    return acceptAnyType
-  }
-
   const typeCheckModifier = typeCheckModifiers[reducer]
   if (typeCheckModifier) {
     return typeCheckModifier
