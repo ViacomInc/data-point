@@ -2,7 +2,7 @@
 
 const Factory = require('./factory')
 
-test.skip('Factory#create', () => {
+test('Factory#create', () => {
   const obj = Factory.create({
     value: ['$foo', (acc, done) => {}]
   })

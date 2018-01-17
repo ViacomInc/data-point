@@ -99,7 +99,7 @@ module.exports.resolveMiddleware = resolveMiddleware
 
 function typeCheck (manager, acc, reducer, resolveReducer) {
   // if no error returns original accumulator
-  // this prevents typeCheckTransform of mutating the value
+  // this prevents typeCheckTransform from mutating the value
   return resolveReducer(manager, acc, reducer).return(acc)
 }
 

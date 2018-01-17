@@ -198,7 +198,7 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('inputType -throws error if inputType does not pass', () => {
+  test('inputType - throws error if inputType does not pass', () => {
     return resolveEntity('model:c.0', 'foo')
       .catch(e => e)
       .then(e => {
@@ -212,7 +212,7 @@ describe('ResolveEntity.resolveEntity', () => {
     })
   })
 
-  test('outputType -throws error if outputType does not pass', () => {
+  test('outputType - throws error if outputType does not pass', () => {
     return resolveEntity('model:c.1', 1)
       .catch(e => e)
       .then(e => {
