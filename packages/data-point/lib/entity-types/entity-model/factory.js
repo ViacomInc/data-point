@@ -11,7 +11,7 @@ module.exports.EntityModel = EntityModel
  * Creates new Entity Object
  * @param  {Object} spec - spec
  * @param {string} id - Entity id
- * @return {EntityEntry} Entity Object
+ * @return {EntityModel} Entity Object
  */
 function create (spec, id) {
   const entity = createBaseEntity(EntityModel, spec, id)
