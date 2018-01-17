@@ -35,7 +35,7 @@ dataPoint.addEntities({
 
   // model entity to resolve a Planet
   'model:Resident': {
-    inputType: 'isString',
+    inputType: 'string',
     value: [
       // hit request:Resident
       'request:Resident',
@@ -50,7 +50,7 @@ dataPoint.addEntities({
 
   'request:Resident': {
     // check input is string
-    inputType: 'isString',
+    inputType: 'string',
     url: '{value}'
   },
 

@@ -1,12 +1,11 @@
 const DataPoint = require('../')
 const dataPoint = DataPoint.create()
-const helpers = DataPoint.helpers
 const assert = require('assert')
 
 dataPoint.addEntities({
   'model:string': {
     value: '$name',
-    type: helpers.isString
+    outputType: 'string'
   }
 })
 

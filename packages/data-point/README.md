@@ -136,7 +136,7 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
 
     // model entity to resolve a Planet
     'model:Resident': {
-      inputType: 'isString',
+      inputType: 'string',
       value: [
         // hit request:Resident
         'request:Resident',
@@ -151,7 +151,7 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
 
     'request:Resident': {
       // check input is string
-      inputType: 'isString',
+      inputType: 'string',
       url: '{value}'
     },
 
@@ -1191,7 +1191,7 @@ You may use **inputType** and **outputType** to type check against the values be
 
 **Built in type checks:**
 
-To use built-in type checks you may set the value of inputType/outputType to: `'isString'`, `'isNumber'`, `'isBoolean'`, `'isFunction'`, `'isError'`, `'isArray'`, or `'isObject'`. 
+To use built-in type checks you may set the value of **inputType**/**outputType** to: `'string'`, `'number'`, `'boolean'`, `'function'`, `'error'`, `'array'`, or `'object'`. 
 
 <details>
   <summary>Check if a model outputs an string</summary>
@@ -1205,7 +1205,7 @@ To use built-in type checks you may set the value of inputType/outputType to: `'
   dataPoint.addEntities({
     'model:getName': {
       value: '$name',
-      outputType: 'isString'
+      outputType: 'string'
     }
   })
 

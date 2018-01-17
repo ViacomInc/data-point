@@ -10,10 +10,10 @@ describe('Factory.getTypeModifier', () => {
   })
 
   test('It should return function reducer it matches any of the predefined types', () => {
-    expect(Factory.getTypeModifier('isString')).toEqual(
+    expect(Factory.getTypeModifier('string')).toEqual(
       typeCheckFunctionReducers.isString
     )
-    expect(Factory.getTypeModifier('isNumber')).toEqual(
+    expect(Factory.getTypeModifier('number')).toEqual(
       typeCheckFunctionReducers.isNumber
     )
   })

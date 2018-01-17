@@ -10,7 +10,7 @@ const logError = acc => {
 dataPoint.addEntities({
   'model:getArray': {
     value: '$a',
-    outputType: 'isArray',
+    outputType: 'array',
     error: logError
   }
 })

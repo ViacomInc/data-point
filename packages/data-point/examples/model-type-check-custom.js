@@ -5,7 +5,7 @@ const dataPoint = DataPoint.create()
 dataPoint.addEntities({
   'model:string': {
     value: '$name',
-    type: acc => {
+    outputType: acc => {
       const valid = typeof acc.value === 'string' && acc.value.length > 5
       return valid || 'string and length > 5'
     }

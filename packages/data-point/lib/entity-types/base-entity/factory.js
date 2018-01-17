@@ -10,23 +10,24 @@ function acceptAnyType (acc) {
 
 module.exports.acceptAnyType = acceptAnyType
 
-const validTypechecks = [
-  'isString',
-  'isNumber',
-  'isBoolean',
-  'isFunction',
-  'isError',
-  'isArray',
-  'isObject'
-]
+const typeCheckModifiers = {
+  string: typeCheckFunctionReducers.isString,
+  number: typeCheckFunctionReducers.isNumber,
+  boolean: typeCheckFunctionReducers.isBoolean,
+  function: typeCheckFunctionReducers.isFunction,
+  error: typeCheckFunctionReducers.isError,
+  array: typeCheckFunctionReducers.isArray,
+  object: typeCheckFunctionReducers.isObject
+}
 
 function getTypeModifier (reducer) {
   if (typeof reducer === 'undefined') {
     return acceptAnyType
   }
 
-  if (validTypechecks.includes(reducer)) {
-    return typeCheckFunctionReducers[reducer]
+  const typeCheckModifier = typeCheckModifiers[reducer]
+  if (typeCheckModifier) {
+    return typeCheckModifier
   }
 
   return reducer

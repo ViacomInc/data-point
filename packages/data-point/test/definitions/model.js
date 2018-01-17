@@ -10,11 +10,11 @@ module.exports = {
   // entities c.* are for testing
   // inputType and outputType.
   'model:c.0': {
-    inputType: 'isNumber'
+    inputType: 'number'
   },
 
   'model:c.1': {
-    outputType: 'isString'
+    outputType: 'string'
   },
 
   'model:c.2': {
