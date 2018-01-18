@@ -1,5 +1,3 @@
-const REDUCER_SYMBOL = require('../../reducer-symbol')
-
 const REDUCER_PICK = 'ReducerPick'
 
 module.exports.type = REDUCER_PICK
@@ -14,7 +12,6 @@ module.exports.name = HELPER_NAME
  * @property {Array<string>} keys
  */
 function ReducerPick () {
-  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_PICK
   this.keys = undefined
 }

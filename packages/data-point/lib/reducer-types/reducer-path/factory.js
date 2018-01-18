@@ -1,7 +1,5 @@
 const _ = require('lodash')
 
-const REDUCER_SYMBOL = require('../reducer-symbol')
-
 const REDUCER_PATH = 'ReducerPath'
 
 module.exports.type = REDUCER_PATH
@@ -13,7 +11,6 @@ module.exports.type = REDUCER_PATH
  * @property {Array} parameters - collection of  @see {@link Parameter} items
  */
 function ReducerPath () {
-  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_PATH
   this.name = ''
   this.body = undefined
@@ -114,7 +111,7 @@ function create (createReducer, source) {
   reducer.name = (source.substr(1) || '$').replace(/\[]$/, '')
   reducer.body = getPathReducerFunction(reducer.name, reducer.asCollection)
 
-  return Object.freeze(reducer)
+  return reducer
 }
 
 module.exports.create = create

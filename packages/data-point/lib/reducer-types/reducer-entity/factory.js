@@ -1,7 +1,5 @@
 const _ = require('lodash')
 
-const REDUCER_SYMBOL = require('../reducer-symbol')
-
 const REDUCER_ENTITY = 'ReducerEntity'
 
 module.exports.type = REDUCER_ENTITY
@@ -14,7 +12,6 @@ module.exports.type = REDUCER_ENTITY
  * @property {string} entityType - type of entity
  */
 function ReducerEntity () {
-  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_ENTITY
   this.name = ''
   this.entityType = null
@@ -56,7 +53,7 @@ function create (createReducer, source) {
 
   reducer.id = `${reducer.entityType}:${reducer.name}`
 
-  return Object.freeze(reducer)
+  return reducer
 }
 
 module.exports.create = create
