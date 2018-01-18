@@ -13,6 +13,7 @@ const { onReducerError } = require('../reducer-stack')
  */
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   let _stack = stack
+  // TODO should we actually modify the function name in the factory?
   if (stack && reducer.body.name && reducer.body.prototype) {
     _stack = [...stack, [reducer.body.name]]
   }

@@ -42,7 +42,10 @@ function create (spec, id) {
   const entity = createBaseEntity(EntityRequest, spec, id)
   const options = _.defaultTo(spec.options, {})
   entity.url = _.defaultTo(spec.url, '')
-  entity.beforeRequest = createReducer(spec.beforeRequest)
+  if (spec.beforeRequest) {
+    entity.beforeRequest = createReducer(spec.beforeRequest)
+  }
+
   entity.transformOptionKeys = getTransformKeys(options)
   entity.options = unsetTransformKeys(options, entity.transformOptionKeys)
 

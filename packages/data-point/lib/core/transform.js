@@ -31,6 +31,7 @@ function transform (manager, reducerSource, value, options, done) {
     .then(() => resolve(manager, reducerSource, value, options))
     .catch(error => {
       if (error.rstack) {
+        // TODO delete rstack from error after printing it?
         console.error(
           `The following reducer failed to execute:\n ${stringifyReducerStack(
             error.rstack

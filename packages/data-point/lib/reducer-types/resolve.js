@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
 const ReducerList = require('./reducer-list')
@@ -5,7 +6,6 @@ const ReducerObject = require('./reducer-object')
 const ReducerPath = require('./reducer-path')
 
 const ReducerHelpers = require('./reducer-helpers').reducers
-
 const { onReducerError } = require('./reducer-stack')
 
 const reducers = Object.assign({}, ReducerHelpers, {

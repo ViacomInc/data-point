@@ -2,7 +2,7 @@
  * @param {Array} stack
  * @param {*} value
  * @param {Error} error
- * @return {Function}
+ * @throws the given error
  */
 function onReducerError (stack, value, error) {
   if (stack && !error.rstack) {

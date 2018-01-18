@@ -3,7 +3,24 @@ const Promise = require('bluebird')
 const resolveReducer = require('../reducer-types').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 
-module.exports.helpers = require('../reducer-types/reducer-helpers').stubFactories
+const { stubFactories } = require('../reducer-types/reducer-helpers')
+const typeCheckFunctionReducers = require('./type-check-function-reducers')
+
+module.exports.helpers = {
+  assign: stubFactories.assign,
+  filter: stubFactories.filter,
+  find: stubFactories.find,
+  map: stubFactories.map,
+  omit: stubFactories.omit,
+  pick: stubFactories.pick,
+  isString: typeCheckFunctionReducers.isString,
+  isNumber: typeCheckFunctionReducers.isNumber,
+  isBoolean: typeCheckFunctionReducers.isBoolean,
+  isFunction: typeCheckFunctionReducers.isFunction,
+  isError: typeCheckFunctionReducers.isError,
+  isArray: typeCheckFunctionReducers.isArray,
+  isObject: typeCheckFunctionReducers.isObject
+}
 
 module.exports.isReducer = require('../reducer-types').isReducer
 

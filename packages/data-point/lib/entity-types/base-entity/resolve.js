@@ -99,6 +99,20 @@ module.exports.resolveMiddleware = resolveMiddleware
 
 /**
  * @param {Object} manager
+ * @param {Accumulator} acc
+ * @param {reducer} reducer
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @return {Promise<Accumulator>}
+ */
+function typeCheck (manager, acc, reducer, resolveReducer, stack) {
+  // if no error returns original accumulator
+  // this prevents typeCheckTransform from mutating the value
+  return resolveReducer(manager, acc, reducer, stack).return(acc)
+}
+
+/**
+ * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {Function} reducer
@@ -134,12 +148,18 @@ function resolveEntity (
 
   const resolveReducerBound = _.partial(resolveReducer, manager)
 
+  // TODO add stack for middleware and type checking
   return Promise.resolve(accUid)
     .then(acc => {
-      return resolveMiddleware(manager, `before`, acc)
+      return resolveMiddleware(manager, 'before', acc)
     })
     .then(acc => {
       return resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
+    })
+    .then(acc => {
+      const inputType = acc.reducer.spec.inputType
+      const _stack = stack ? [...stack, ['inputType']] : stack
+      return typeCheck(manager, acc, inputType, resolveReducer, _stack)
     })
     .then(acc => {
       const _stack = stack ? [...stack, ['before']] : stack
@@ -153,10 +173,15 @@ function resolveEntity (
       return resolveReducer(manager, acc, acc.reducer.spec.after, _stack)
     })
     .then(acc => {
-      return middleware.resolve(manager, `${reducer.entityType}:after`, acc)
+      const outputType = acc.reducer.spec.outputType
+      const _stack = stack ? [...stack, ['outputType']] : stack
+      return typeCheck(manager, acc, outputType, resolveReducer, _stack)
     })
     .then(acc => {
-      return resolveMiddleware(manager, `after`, acc)
+      return resolveMiddleware(manager, `${reducer.entityType}:after`, acc)
+    })
+    .then(acc => {
+      return resolveMiddleware(manager, 'after', acc)
     })
     .catch(error => {
       // checking if this is an error to bypass the `then` chain
