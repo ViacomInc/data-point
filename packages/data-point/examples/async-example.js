@@ -1,37 +1,70 @@
 const assert = require('assert')
 const mocks = require('./async-example.mocks')
-
 const DataPoint = require('../')
 const dataPoint = DataPoint.create()
 const { map } = DataPoint.helpers
 
 dataPoint.addEntities({
+  // remote service request
   'request:Planet': {
-    // creates: https://swapi.co/api/people/1/
+    // {value.planetId} injects the
+    // value from the accumulator
+    // creates: https://swapi.co/api/planets/1/
     url: 'https://swapi.co/api/planets/{value.planetId}'
   },
 
-  'hash:Planet': {
-    value: 'request:Planet',
-    mapKeys: {
-      name: '$name',
-      population: '$population',
-      residents: [
-        '$residents',
-        map([
-          'request:Resident',
-          {
-            name: '$name',
-            gender: '$gender',
-            birthYear: '$birth_year'
-          }
-        ])
-      ]
-    }
+  // model entity to resolve a Planet
+  'model:Planet': {
+    inputType: 'schema:DataInput',
+    value: [
+      // hit request:Planet data source
+      'request:Planet',
+      // map result to ObjectReducer
+      {
+        // map name key
+        name: '$name',
+        population: '$population',
+        // residents is an array of urls
+        // eg. https://swapi.co/api/people/1/
+        // where each url gets mapped
+        // to a model:Resident
+        residents: ['$residents', map('model:Resident')]
+      }
+    ]
+  },
+
+  // model entity to resolve a Planet
+  'model:Resident': {
+    inputType: 'string',
+    value: [
+      // hit request:Resident
+      'request:Resident',
+      // extract data
+      {
+        name: '$name',
+        gender: '$gender',
+        birthYear: '$birth_year'
+      }
+    ]
   },
 
   'request:Resident': {
+    // check input is string
+    inputType: 'string',
     url: '{value}'
+  },
+
+  // schema to verify data input
+  'schema:DataInput': {
+    schema: {
+      type: 'object',
+      properties: {
+        planetId: {
+          $id: '/properties/planet',
+          type: 'integer'
+        }
+      }
+    }
   }
 })
 
@@ -42,7 +75,7 @@ const input = {
 // mock actual calls to server
 mocks()
 
-dataPoint.transform('hash:Planet', input).then(acc => {
+dataPoint.transform('model:Planet', input).then(acc => {
   const result = acc.value
   assert.equal(result.name, 'Tatooine')
   assert.equal(result.population, '200000')
