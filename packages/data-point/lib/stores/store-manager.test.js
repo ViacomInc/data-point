@@ -54,7 +54,7 @@ describe('add', () => {
     expect(error).toMatchSnapshot()
   })
 
-  test('When ObjectStoreManager is only called once, it should return the object id and spec with no errors', () => {
+  test('It should return the object id and spec with no errors when ObjectStoreManager is called once', () => {
     const mgr = createManager()
     const errorInfoCb = () => ({
       name: 'Foo',

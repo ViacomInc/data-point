@@ -10,7 +10,7 @@ describe('utils.set', () => {
     const r = utils.set(target, 'a', 'test')
     expect(r.a).toBe('test')
   })
-  test('has no side effects | input object does not changed when used in utils.set', () => {
+  test('It should not change input object when used in utils.set', () => {
     utils.set(target, 'a', 'test')
     expect(target).toEqual({ b: 1 })
   })
@@ -23,7 +23,7 @@ describe('utils.assign', () => {
     const r = utils.assign(target, toMerge)
     expect(r).toEqual({ a: 1, b: { b1: 1 }, c: 1 })
   })
-  test('has no side effects | does not mutate input objects merged together', () => {
+  test('It should not mutate input objects merged together', () => {
     utils.assign(target, toMerge)
     expect(target).toEqual({ a: 1, b: { b1: 1 } })
     expect(toMerge).toEqual({ c: 1 })

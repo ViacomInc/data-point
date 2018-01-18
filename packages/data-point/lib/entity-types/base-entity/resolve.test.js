@@ -97,10 +97,9 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
 
 describe('ResolveEntity.resolveMiddleware', () => {
   test('It should execute a middleware', () => {
-    var x = dataPoint.middleware.use('request:before', (acc, next) => {
+    dataPoint.middleware.use('request:before', (acc, next) => {
       acc.value = 'bar'
       next(null)
-      return x
     })
 
     const racc = helpers.createAccumulator('foo')
@@ -187,7 +186,7 @@ describe('ResolveEntity.resolveEntity', () => {
     })
   })
 
-  test('acc is never resolved, caught error contains error mesage ', () => {
+  test('it should catch errors from middleware', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
       const err = new Error('test')
       throw err
