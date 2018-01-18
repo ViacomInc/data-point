@@ -33,7 +33,7 @@ describe('factory#create', () => {
     expect(reducer.asCollection).toBe(true)
   })
 
-  test('factory#create context with reducers | using piped reducer', () => {
+  test('it should create a ReducerList with reducers using a piped reducer', () => {
     const result = factory.create(createReducer, [
       '$foo.bar | reducer:add',
       () => true

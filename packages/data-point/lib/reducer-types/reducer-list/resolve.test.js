@@ -80,12 +80,13 @@ describe('resolve#reducer.resolve - reducer model', () => {
     ).then(result => expect(result.value).toEqual(testData))
   })
 
-  test('multiple models for reducer model', () => {
+  test('it returns original input after piping through hash:asIs', () => {
     const accumulator = AccumulatorFactory.create({
       value: testData
     })
 
     const reducerList = createReducerList(createReducer, 'hash:asIs | hash:a.1')
+
     return resolveReducerList(
       manager,
       resolveReducer,

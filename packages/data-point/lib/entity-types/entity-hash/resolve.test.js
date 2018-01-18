@@ -86,7 +86,7 @@ describe('entity.hash.addKeys', () => {
       })
     })
   })
-  test('do nothing if addKeys is empty | in hash collection c.2', () => {
+  test('it should do nothing if addKeys is empty', () => {
     return transform('hash:c.2', testData).then(acc => {
       expect(acc.value).toEqual({ g1: 1 })
     })
@@ -101,7 +101,7 @@ describe('entity.hash.omitKeys', () => {
       })
     })
   })
-  test('do nothing if mapKeys is empty | hash d2', () => {
+  test('it should do nothing if omitKeys is empty', () => {
     return transform('hash:d.2', testData).then(acc => {
       expect(acc.value).toEqual({ g1: 1 })
     })
@@ -117,7 +117,7 @@ describe('entity.hash.pickKeys', () => {
       })
     })
   })
-  test('do nothing if mapKeys is empty | hash e2', () => {
+  test('it should do nothing if pickKeys is empty', () => {
     return transform('hash:e.2', testData).then(acc => {
       expect(acc.value).toEqual({ g1: 1 })
     })
@@ -135,7 +135,7 @@ describe('entity.hash.addValues', () => {
       })
     })
   })
-  test('do nothing if mapKeys is empty | f collection', () => {
+  test('it should do nothing if addValues is empty', () => {
     return transform('hash:f.2', testData).then(acc => {
       expect(acc.value).toEqual({ g1: 1 })
     })

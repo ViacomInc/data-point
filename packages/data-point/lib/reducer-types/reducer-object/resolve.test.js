@@ -108,7 +108,7 @@ describe('resolve#reducerObject.resolve', () => {
     })
   })
 
-  it('should resolve a reducer object that returns one sepecfic key when root is passed as first elt, returns all keys when passed in last', () => {
+  it('it should resolve a reducer object whose value follows input schematics', () => {
     const accumulator = AccumulatorFactory.create({
       value: {
         a: {
