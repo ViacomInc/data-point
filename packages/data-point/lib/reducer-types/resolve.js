@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
 const ReducerList = require('./reducer-list')
