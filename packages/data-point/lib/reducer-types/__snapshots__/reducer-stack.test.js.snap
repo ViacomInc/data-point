@@ -43,21 +43,22 @@ with the following input:
 
 exports[`ReducerList with errors  1`] = `
 Array [
-  "ReducerList",
-  2,
   "ReducerFunction",
+  Array [
+    "throwError",
+  ],
 ]
 `;
 
-exports[`ReducerList with errors  2`] = `[Function]`;
+exports[`ReducerList with errors  2`] = `"input"`;
 
 exports[`ReducerList with errors  3`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- ReducerList[2] -> ReducerFunction
+ ReducerFunction[throwError]
 with the following input:
-undefined",
+\\"input\\"",
   ],
 ]
 `;
@@ -82,6 +83,27 @@ Array [
  ReducerList[1] -> ReducerFunction[throwError]
 with the following input:
 \\"input\\"",
+  ],
+]
+`;
+
+exports[`ReducerList with errors  7`] = `
+Array [
+  "ReducerList",
+  2,
+  "ReducerFunction",
+]
+`;
+
+exports[`ReducerList with errors  8`] = `[Function]`;
+
+exports[`ReducerList with errors  9`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerList[2] -> ReducerFunction
+with the following input:
+undefined",
   ],
 ]
 `;

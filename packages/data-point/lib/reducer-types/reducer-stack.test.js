@@ -77,7 +77,7 @@ describe('ReducerFunction', () => {
   })
 })
 
-describe.only('ReducerList with errors', () => {
+describe('ReducerList with errors', () => {
   test('', () => {
     const reducer = [throwError]
     return testError(reducer, 'input')
@@ -86,7 +86,7 @@ describe.only('ReducerList with errors', () => {
     const reducer = [acc => acc.value, throwError]
     return testError(reducer, 'input')
   })
-  test.only('', () => {
+  test('', () => {
     const reducer = ['$a', '$b', acc => acc.value()]
     const input = {
       a: {

@@ -21,7 +21,8 @@ function resolve (manager, reducerSource, value, options) {
   })
 
   const reducer = Reducer.create(reducerSource)
-  const stack = contextOptions.debug ? [] : false // TODO null
+  const stack = contextOptions.debug ? [] : false // TODO null, and don't pass it anyway
+
   return Reducer.resolve(manager, context, reducer, stack)
 }
 
