@@ -6,7 +6,7 @@ const ReducerPath = require('./reducer-path')
 const ReducerFunction = require('./reducer-function')
 const ReducerObject = require('./reducer-object')
 const ReducerEntity = require('./reducer-entity')
-const reducerStubs = require('./reducer-helpers').stubFactories
+const stubFactories = require('./reducer-helpers').stubFactories
 
 describe('reducer#create', () => {
   test('create path', () => {
@@ -63,11 +63,11 @@ describe('reducer#isReducer', () => {
     expect(testIsReducer(['$a', '$b'])).toBe(true)
     expect(testIsReducer({ a: '$a' })).toBe(true)
     expect(testIsReducer('$a.b')).toBe(true)
-    expect(testIsReducer(reducerStubs.assign('$a'))).toBe(true)
-    expect(testIsReducer(reducerStubs.filter('$a'))).toBe(true)
-    expect(testIsReducer(reducerStubs.find('$a'))).toBe(true)
-    expect(testIsReducer(reducerStubs.map('$a'))).toBe(true)
-    expect(testIsReducer(reducerStubs.omit('$a'))).toBe(true)
-    expect(testIsReducer(reducerStubs.pick('$a'))).toBe(true)
+    expect(testIsReducer(stubFactories.assign('$a'))).toBe(true)
+    expect(testIsReducer(stubFactories.filter('$a'))).toBe(true)
+    expect(testIsReducer(stubFactories.find('$a'))).toBe(true)
+    expect(testIsReducer(stubFactories.map('$a'))).toBe(true)
+    expect(testIsReducer(stubFactories.omit('$a'))).toBe(true)
+    expect(testIsReducer(stubFactories.pick('$a'))).toBe(true)
   })
 })
