@@ -4,15 +4,15 @@ module.exports = {
   'request:a0.1': {
     url: 'http://some.path',
     options: {
-      dataType: 'json',
-      method: 'POST',
-      timeout: 1000,
-      username: '$username$',
-      $password: (acc, next) => next(null, '$password$'),
+      dataType: () => 'json',
+      method: () => 'POST',
+      timeout: () => 1000,
+      username: () => '$username$',
+      password: (acc, next) => next(null, '$password$'),
       qs: {
-        $varKey1: (acc, next) => next(null, 'someValue'),
-        varKey2: 1,
-        varKey3: true
+        varKey1: (acc, next) => next(null, 'someValue'),
+        varKey2: () => 1,
+        varKey3: () => true
       }
     }
   },
@@ -56,7 +56,7 @@ module.exports = {
   'request:a4': {
     url: 'source1',
     options: {
-      baseUrl: 'http://remote.test'
+      baseUrl: () => 'http://remote.test'
     }
   },
   'request:a5': {
@@ -64,7 +64,7 @@ module.exports = {
     before: reducers.addQueryVar('varKey2', 'someValue2'),
     options: {
       query: {
-        varKey1: 'someValue1'
+        varKey1: () => 'someValue1'
       }
     }
   },
@@ -83,7 +83,7 @@ module.exports = {
   'request:a8.1': {
     url: 'source1',
     options: {
-      baseUrl: 'http://remote.test'
+      baseUrl: () => 'http://remote.test'
     }
   }
 }

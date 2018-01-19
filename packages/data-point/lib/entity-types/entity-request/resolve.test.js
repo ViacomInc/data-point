@@ -103,44 +103,46 @@ describe('resolveUrl', () => {
 describe('resolveOptions', () => {
   test('It should set acc.options', () => {
     const acc = _.set({}, 'reducer.spec', {
-      options: {
-        port: 80
-      },
-      transformOptionKeys: []
+      options: ReducerFactory.create({
+        port: () => 80
+      })
     })
+
     return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
       expect(result.options).toEqual({
+        method: 'GET',
+        json: true,
         port: 80
       })
     })
   })
 
-  test('It should resolve transformOptionKeys', () => {
+  test('It should set acc.options and override defaults', () => {
     const acc = {
       value: {
-        foo: {
-          bar: 'test'
-        }
+        method: 'POST',
+        testProp: 1
       },
       reducer: {
         spec: {
-          options: {
-            port: 80
-          },
-          transformOptionKeys: [
-            {
-              path: 'qs.key',
-              transform: ReducerFactory.create('$foo.bar')
+          options: ReducerFactory.create({
+            method: '$method',
+            port: () => 80,
+            qs: {
+              testProp: '$testProp'
             }
-          ]
+          })
         }
       }
     }
+
     return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
       expect(result.options).toEqual({
+        method: 'POST',
+        json: true,
         port: 80,
         qs: {
-          key: 'test'
+          testProp: 1
         }
       })
     })
