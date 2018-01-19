@@ -3,15 +3,6 @@
 const _ = require('lodash')
 const helpers = require('./helpers')
 
-const ReducerEntity = require('../reducer-types/reducer-entity/factory')
-  .ReducerEntity
-const ReducerFunction = require('../reducer-types/reducer-function/factory')
-  .ReducerFunction
-const ReducerList = require('../reducer-types/reducer-list/factory').ReducerList
-const ReducerObject = require('../reducer-types/reducer-object/factory')
-  .ReducerObject
-const ReducerPath = require('../reducer-types/reducer-path/factory').ReducerPath
-
 describe('helpers.reducify', () => {
   test('pass simple', done => {
     const rpick = helpers.reducify(_.pick)
@@ -100,19 +91,5 @@ describe('helpers.createReducerResolver', () => {
   test('It should partially apply dataPoint to method', () => {
     const resolveReducerBound = helpers.createReducerResolver({})
     expect(resolveReducerBound.length).toEqual(3)
-  })
-})
-
-describe('helpers.isReducer', () => {
-  test('It should return true for reducers', () => {
-    expect(helpers.isReducer()).toBe(false)
-    expect(helpers.isReducer({})).toBe(false)
-    expect(helpers.isReducer([])).toBe(false)
-    expect(helpers.isReducer({ type: 'ReducerPath' })).toBe(false)
-    expect(helpers.isReducer(new ReducerEntity())).toBe(true)
-    expect(helpers.isReducer(new ReducerFunction())).toBe(true)
-    expect(helpers.isReducer(new ReducerList())).toBe(true)
-    expect(helpers.isReducer(new ReducerObject())).toBe(true)
-    expect(helpers.isReducer(new ReducerPath())).toBe(true)
   })
 })

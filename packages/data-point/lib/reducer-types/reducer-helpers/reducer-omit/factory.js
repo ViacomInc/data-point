@@ -1,5 +1,3 @@
-const REDUCER_SYMBOL = require('../../reducer-symbol')
-
 const REDUCER_OMIT = 'ReducerOmit'
 
 module.exports.type = REDUCER_OMIT
@@ -14,7 +12,6 @@ module.exports.name = HELPER_NAME
  * @property {Array<string>} keys
  */
 function ReducerOmit () {
-  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_OMIT
   this.keys = undefined
 }

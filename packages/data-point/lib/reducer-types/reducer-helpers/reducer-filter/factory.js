@@ -1,5 +1,3 @@
-const REDUCER_SYMBOL = require('../../reducer-symbol')
-
 const REDUCER_FILTER = 'ReducerFilter'
 
 module.exports.type = REDUCER_FILTER
@@ -14,7 +12,6 @@ module.exports.name = HELPER_NAME
  * @property {reducer} transform
  */
 function ReducerFilter () {
-  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_FILTER
   this.transform = undefined
 }

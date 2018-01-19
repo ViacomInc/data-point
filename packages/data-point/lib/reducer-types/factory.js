@@ -52,9 +52,9 @@ function dealWithPipeOperators (source) {
  */
 function createReducer (source) {
   source = dealWithPipeOperators(source)
-  const reducer = reducerTypes.find(r => r.isType(source))
+  const reducerType = reducerTypes.find(r => r.isType(source))
 
-  if (_.isUndefined(reducer)) {
+  if (_.isUndefined(reducerType)) {
     const message = [
       'Invalid reducer type.',
       ' Could not find a matching reducer type while parsing the value:\n ',
@@ -67,7 +67,9 @@ function createReducer (source) {
   }
 
   // NOTE: recursive call
-  return reducer.create(createReducer, source)
+  const reducer = reducerType.create(createReducer, source)
+  reducer[REDUCER_SYMBOL] = true
+  return Object.freeze(reducer)
 }
 
 module.exports.create = createReducer
