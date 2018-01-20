@@ -13,7 +13,7 @@ function getOptions (spec) {
 
 function resolve (manager, reducerSource, value, options) {
   const contextOptions = getOptions(options)
-  const context = AccumulatorFactory.create({
+  const accumulator = AccumulatorFactory.create({
     value: value,
     locals: contextOptions.locals,
     trace: contextOptions.trace,
@@ -23,12 +23,11 @@ function resolve (manager, reducerSource, value, options) {
   const reducer = Reducer.create(reducerSource)
   const stack = contextOptions.debug ? [] : false // TODO null, and don't pass it anyway
 
-  return Reducer.resolve(manager, context, reducer, stack)
+  return Reducer.resolve(manager, accumulator, reducer, stack)
 }
 
 function transform (manager, reducerSource, value, options, done) {
-  return Promise.resolve()
-    .then(() => resolve(manager, reducerSource, value, options))
+  return Promise.try(() => resolve(manager, reducerSource, value, options))
     .catch(error => {
       if (error.rstack) {
         // TODO delete rstack from error after printing it?
