@@ -21,7 +21,7 @@ function resolve (manager, reducerSource, value, options) {
   })
 
   const reducer = Reducer.create(reducerSource)
-  const stack = contextOptions.debug ? [] : false // TODO null, and don't pass it anyway
+  const stack = contextOptions.debug ? [] : null
 
   return Reducer.resolve(manager, accumulator, reducer, stack)
 }
@@ -29,12 +29,13 @@ function resolve (manager, reducerSource, value, options) {
 function transform (manager, reducerSource, value, options, done) {
   return Promise.try(() => resolve(manager, reducerSource, value, options))
     .catch(error => {
+      // TODO have an option for whether or not to log the error
       if (error.rstack) {
-        // TODO delete rstack from error after printing it?
+        error.rstack = stringifyReducerStack(error.rstack)
         console.error(
-          `The following reducer failed to execute:\n ${stringifyReducerStack(
+          `The following reducer failed to execute:\n ${
             error.rstack
-          )}\nwith the following input:\n${JSON.stringify(
+          }\nwith the following input:\n${JSON.stringify(
             error.rvalue,
             null,
             2

@@ -28,29 +28,18 @@ function testError (reducer, input) {
     .catch(e => e)
     .then(e => {
       expect(e).toBeInstanceOf(Error)
-      // TODO remove rstack and rvalue?
+      // TODO remove rstack and rvalue? or should we uncomment these
+      // expect(error).toMatchSnapshot()
       // expect(e.rstack).toMatchSnapshot()
       // expect(e.rvalue).toMatchSnapshot()
+      // TODO have a setting to suppress the console output?
       expect(consoleSpy.mock.calls).toMatchSnapshot()
-      // console.log(consoleSpy.mock.calls)
       consoleSpy.mockClear()
     })
 }
 
 // TODO fix up request and schema traces
 // TODO snapshot input values should not be an empty object
-
-function testIsNotError (reducer, input) {
-  const options = { debug: false }
-  return dataPoint
-    .transform(reducer, input, options)
-    .catch(e => e)
-    .then(acc => {
-      expect(acc).not.toBeInstanceOf(Error)
-      expect(acc).not.toHaveProperty('rstack')
-      expect(acc).not.toHaveProperty('rvalue')
-    })
-}
 
 const throwIfEquals = v1 => acc => {
   return v1 === acc.value ? throwError() : false
@@ -64,21 +53,12 @@ nock('http://remote.test')
 
 const dataPoint = DataPoint.create({
   entities: {
-    'transform:valid': () => true,
     'transform:1': () => {
-      throw new Error()
+      throw new Error('test error')
     },
     'transform:2': 'transform:1',
     'transform:3': 'transform:2',
 
-    'request:valid': {
-      before: () => ({}),
-      value: () => ({}),
-      options: {},
-      beforeRequest: () => ({}),
-      url: 'http://remote.test',
-      after: () => ({})
-    },
     'request:1': {
       value: [identity, throwError],
       url: 'http://remote.test'
@@ -107,12 +87,6 @@ const dataPoint = DataPoint.create({
     //   url: 'INVALID URL'
     // },
 
-    'control:valid-1': {
-      select: [{ case: _true, do: _true }, { default: throwError }]
-    },
-    'control:valid-2': {
-      select: [{ case: _false, do: throwError }, { default: _true }]
-    },
     // fail first case
     'control:1': {
       select: [
@@ -154,13 +128,6 @@ const dataPoint = DataPoint.create({
       ]
     },
 
-    'model:valid': {
-      inputType: 'boolean',
-      before: _true,
-      value: _true,
-      after: _true,
-      outputType: 'boolean'
-    },
     'model:1': {
       before: throwError
     },
@@ -189,11 +156,6 @@ const dataPoint = DataPoint.create({
       error: throwError
     },
 
-    'entry:valid': {
-      before: _true,
-      value: _true,
-      after: _true
-    },
     'entry:type-check-1': {
       inputType: 'string'
     },
@@ -220,10 +182,7 @@ const dataPoint = DataPoint.create({
 
 dataPoint.addEntities(schemaA10)
 
-describe('entity stack traces', () => {
-  test('transform:valid', () => {
-    return testIsNotError('transform:valid', {})
-  })
+describe('reducer stack traces', () => {
   test('transform:1', () => {
     return testError('transform:1', {})
   })
@@ -234,10 +193,6 @@ describe('entity stack traces', () => {
     return testError('transform:3', {})
   })
 
-  // TODO
-  // test('request:valid', () => {
-  //   return testIsNotError('request:valid', {})
-  // })
   test('request:1', () => {
     return testError('request:1', {})
   })
@@ -258,12 +213,6 @@ describe('entity stack traces', () => {
   //   return testError('request:6', {})
   // })
 
-  test('control:valid-1', () => {
-    return testIsNotError('control:valid-1', {})
-  })
-  test('control:valid-2', () => {
-    return testIsNotError('control:valid-2', {})
-  })
   test('control:1', () => {
     return testError('control:1', {})
   })
@@ -280,9 +229,6 @@ describe('entity stack traces', () => {
     return testError('control:5', {})
   })
 
-  test('model:valid', () => {
-    return testIsNotError('model:valid', true)
-  })
   test('model:1', () => {
     return testError('model:1', {})
   })
@@ -296,9 +242,6 @@ describe('entity stack traces', () => {
     return testError('model:4', {})
   })
 
-  test('entry:valid', () => {
-    return testIsNotError('entry:valid', {})
-  })
   test('entry:1', () => {
     return testError('entry:1', {})
   })
@@ -393,21 +336,21 @@ describe('do not log names for anonymous functions', () => {
   test('function in ReducerList', () => {
     const reducer = [
       () => {
-        throw new Error()
+        throw new Error('test error')
       }
     ]
     return testError(reducer, {})
   })
   test('function with inferred name from variable', () => {
     const anonFunction = () => {
-      throw new Error()
+      throw new Error('test error')
     }
     return testError(anonFunction, {})
   })
   test('function with inferred name from object property', () => {
     const reducer = {
       a: () => {
-        throw new Error()
+        throw new Error('test error')
       }
     }
     return testError(reducer, { a: 1 })
@@ -415,10 +358,6 @@ describe('do not log names for anonymous functions', () => {
 })
 
 describe('ReducerAssign', () => {
-  test('valid input type', () => {
-    const reducer = assign({ a: '$a', b: '$b' })
-    return testIsNotError(reducer, { a: 1, b: 2 })
-  })
   test('invalid input type', () => {
     const reducer = assign({ a: throwError, b: '$b' })
     return testError(reducer, { a: 1, b: 2 })
@@ -430,10 +369,6 @@ describe('ReducerAssign', () => {
 })
 
 describe('ReducerMap', () => {
-  test('valid input type', () => {
-    const reducer = map('$a')
-    return testIsNotError(reducer, [{ a: 1 }])
-  })
   test('invalid input type', () => {
     const reducer = map('$a')
     return testError(reducer, false)
@@ -449,10 +384,6 @@ describe('ReducerMap', () => {
 })
 
 describe('ReducerFilter', () => {
-  test('valid input type', () => {
-    const reducer = filter('$a')
-    return testIsNotError(reducer, [{ a: 1 }])
-  })
   test('invalid input type', () => {
     const reducer = filter('$a')
     return testError(reducer, false)
@@ -468,10 +399,6 @@ describe('ReducerFilter', () => {
 })
 
 describe('ReducerFind', () => {
-  test('valid input type', () => {
-    const reducer = find('$a')
-    return testIsNotError(reducer, [{ a: 1 }])
-  })
   test('invalid input type', () => {
     const reducer = find('$a')
     return testError(reducer, false)

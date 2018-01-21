@@ -174,3 +174,24 @@ describe('options argument', () => {
     })
   })
 })
+
+describe('throw error with reducer stack attached', () => {
+  test('error', () => {
+    const throwError = () => {
+      throw new Error('test error')
+    }
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(foo => foo)
+
+    return transform(dataPoint, throwError, {}, { debug: true })
+      .catch(err => err)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
+        expect(result).toHaveProperty('rstack')
+        expect(result).toHaveProperty('rvalue')
+        expect(consoleSpy.mock.calls).toMatchSnapshot()
+        consoleSpy.mockRestore()
+      })
+  })
+})

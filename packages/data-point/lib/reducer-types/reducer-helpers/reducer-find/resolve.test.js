@@ -70,14 +70,10 @@ describe('ReducerFind#resolve', () => {
     ]
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, '$c')
-    return Resolve.resolve(
-      manager,
-      Reducer.resolve,
-      accumulator,
-      reducer,
-      []
-    ).then(result => {
-      expect(result.value).toBeUndefined()
-    })
+    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
+      result => {
+        expect(result.value).toBeUndefined()
+      }
+    )
   })
 })

@@ -249,7 +249,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces control:1 1`] = `
+exports[`reducer stack traces control:1 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -260,7 +260,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces control:2 1`] = `
+exports[`reducer stack traces control:2 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -271,7 +271,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces control:3 1`] = `
+exports[`reducer stack traces control:3 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -282,7 +282,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces control:4 1`] = `
+exports[`reducer stack traces control:4 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -293,7 +293,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces control:5 1`] = `
+exports[`reducer stack traces control:5 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -304,7 +304,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:1 1`] = `
+exports[`reducer stack traces entry:1 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -315,7 +315,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:2 1`] = `
+exports[`reducer stack traces entry:2 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -326,7 +326,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:3 1`] = `
+exports[`reducer stack traces entry:3 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -337,7 +337,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:4 1`] = `
+exports[`reducer stack traces entry:4 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -348,7 +348,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:type-check-1 1`] = `
+exports[`reducer stack traces entry:type-check-1 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -359,7 +359,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:type-check-2 1`] = `
+exports[`reducer stack traces entry:type-check-2 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -370,7 +370,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:type-check-3 1`] = `
+exports[`reducer stack traces entry:type-check-3 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -381,7 +381,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces entry:type-check-4 1`] = `
+exports[`reducer stack traces entry:type-check-4 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -392,7 +392,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces model:1 1`] = `
+exports[`reducer stack traces model:1 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -403,7 +403,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces model:2 1`] = `
+exports[`reducer stack traces model:2 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -414,7 +414,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces model:3 1`] = `
+exports[`reducer stack traces model:3 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -425,7 +425,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces model:4 1`] = `
+exports[`reducer stack traces model:4 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -436,7 +436,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces request:1 1`] = `
+exports[`reducer stack traces request:1 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -447,7 +447,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces request:2 1`] = `
+exports[`reducer stack traces request:2 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -462,7 +462,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces request:3 1`] = `
+exports[`reducer stack traces request:3 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -473,7 +473,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces request:4 1`] = `
+exports[`reducer stack traces request:4 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -484,7 +484,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces request:5 1`] = `
+exports[`reducer stack traces request:5 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -497,7 +497,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces schema:a.1.0 1`] = `
+exports[`reducer stack traces schema:a.1.0 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -511,7 +511,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces schema:with-value-prop 1`] = `
+exports[`reducer stack traces schema:with-value-prop 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -522,7 +522,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces transform:1 1`] = `
+exports[`reducer stack traces transform:1 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -533,7 +533,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces transform:2 1`] = `
+exports[`reducer stack traces transform:2 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
@@ -544,7 +544,7 @@ with the following input:
 ]
 `;
 
-exports[`entity stack traces transform:3 1`] = `
+exports[`reducer stack traces transform:3 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
