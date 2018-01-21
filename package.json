@@ -52,8 +52,5 @@
       "jest --bail --findRelatedTests"
     ]
   },
-  "dependencies": {
-    "jsonfile": "^4.0.0",
-    "object-sizeof": "^1.2.0"
-  }
+  "dependencies": {}
 }

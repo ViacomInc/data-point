@@ -1,8 +1,8 @@
 const Promise = require('bluebird')
 const set = require('lodash/set')
 
-const utils = require('../../utils')
 const { stackPush } = require('../../reducer-stack')
+const utils = require('../../utils')
 
 /**
  * @param {Object} manager

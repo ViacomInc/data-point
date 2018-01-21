@@ -2,8 +2,8 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const Util = require('util')
 
-const utils = require('../../utils')
 const { stackPush } = require('../../reducer-stack')
+const utils = require('../../utils')
 
 /**
  * @param {Accumulator} accumulator

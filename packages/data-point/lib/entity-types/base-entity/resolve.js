@@ -3,8 +3,8 @@ const Promise = require('bluebird')
 
 const middleware = require('../../middleware')
 
-const utils = require('../../utils')
 const { stackPush } = require('../../reducer-stack')
+const utils = require('../../utils')
 
 /**
  * @param {Object} manager
@@ -149,7 +149,6 @@ function resolveEntity (
 
   const resolveReducerBound = _.partial(resolveReducer, manager)
 
-  // TODO add stack for middleware and type checking
   return Promise.resolve(accUid)
     .then(acc => {
       return resolveMiddleware(manager, 'before', acc)

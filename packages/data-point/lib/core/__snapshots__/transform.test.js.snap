@@ -5,7 +5,9 @@ Array [
   Array [
     "The following reducer failed to execute:
  ReducerFunction
-with the following input:
+
+
+Value:
 {}",
   ],
 ]

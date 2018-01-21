@@ -28,12 +28,13 @@ module.exports.stringifyReducerStack = stringifyReducerStack
  * @param {Array} stack
  * @param {*} value
  * @param {Error} error
+ * @param {string} header
  * @throws the given error
  */
-function onReducerError (stack, value, error) {
+function onReducerError (stack, value, error, header = 'Value') {
   if (stack && !error.rstack) {
     error.rstack = stack
-    error.rvalue = value
+    error.rvalue = { header, value }
   }
 
   throw error

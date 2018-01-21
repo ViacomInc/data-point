@@ -6,7 +6,7 @@ const attempt = require('lodash/attempt')
 const DataPoint = require('data-point')
 const { assign, filter, map, find } = DataPoint.helpers
 
-const reducerStack = require('./index')
+const Stack = require('./index')
 const schemaA10 = require('../../test/definitions/schema')
 
 const _true = () => true
@@ -21,25 +21,18 @@ function throwError (acc) {
   throw new Error('test error')
 }
 
-function testError (reducer, input) {
-  const options = { debug: true }
+function testError (reducer, input, options) {
+  options = Object.assign({ debug: true }, options)
   return dataPoint
     .transform(reducer, input, options)
-    .catch(e => e)
-    .then(e => {
-      expect(e).toBeInstanceOf(Error)
-      // TODO remove rstack and rvalue? or should we uncomment these
-      // expect(error).toMatchSnapshot()
-      // expect(e.rstack).toMatchSnapshot()
-      // expect(e.rvalue).toMatchSnapshot()
-      // TODO have a setting to suppress the console output?
+    .catch(err => err)
+    .then(err => {
+      expect(err).toBeInstanceOf(Error)
+      expect(err).toMatchSnapshot()
       expect(consoleSpy.mock.calls).toMatchSnapshot()
       consoleSpy.mockClear()
     })
 }
-
-// TODO fix up request and schema traces
-// TODO snapshot input values should not be an empty object
 
 const throwIfEquals = v1 => acc => {
   return v1 === acc.value ? throwError() : false
@@ -50,6 +43,10 @@ nock('http://remote.test')
   .reply(200, {
     ok: true
   })
+
+nock('http://remote.test')
+  .get('/source1')
+  .reply(404, 'not found')
 
 const dataPoint = DataPoint.create({
   entities: {
@@ -69,8 +66,8 @@ const dataPoint = DataPoint.create({
     },
     'request:3': {
       options: {
-        x: 'hardcoded string',
-        '$y:': [identity, throwError]
+        x: () => 'apples',
+        y: [identity, throwError]
       },
       url: 'http://remote.test'
     },
@@ -82,10 +79,9 @@ const dataPoint = DataPoint.create({
       url: 'http://remote.test',
       after: throwError
     },
-    // TODO
-    // 'request:6': {
-    //   url: 'INVALID URL'
-    // },
+    'request:6': {
+      url: 'http://remote.test/source1'
+    },
 
     // fail first case
     'control:1': {
@@ -168,7 +164,7 @@ const dataPoint = DataPoint.create({
     },
     'entry:type-check-4': {
       value: () => 500,
-      inputType: 'schema:a.1.0'
+      outputType: 'schema:a.1.0'
     },
 
     'schema:with-value-prop': {
@@ -183,93 +179,95 @@ const dataPoint = DataPoint.create({
 dataPoint.addEntities(schemaA10)
 
 describe('reducer stack traces', () => {
+  test('transform:1 with debug.silent', () => {
+    return testError('transform:1', { x: 1 }, { debug: { silent: true } })
+  })
   test('transform:1', () => {
-    return testError('transform:1', {})
+    return testError('transform:1', { x: 1 })
   })
   test('transform:2', () => {
-    return testError('transform:2', {})
+    return testError('transform:2', { x: 1 })
   })
   test('transform:3', () => {
-    return testError('transform:3', {})
+    return testError('transform:3', { x: 1 })
   })
 
   test('request:1', () => {
-    return testError('request:1', {})
+    return testError('request:1', { x: 1 })
   })
   test('request:2', () => {
-    return testError('request:2', {})
+    return testError('request:2', { x: 1 })
   })
   test('request:3', () => {
-    return testError('request:3', {})
+    return testError('request:3', { x: 1 })
   })
   test('request:4', () => {
-    return testError('request:4', {})
+    return testError('request:4', { x: 1 })
   })
   test('request:5', () => {
-    return testError('request:5', {})
+    return testError('request:5', { x: 1 })
   })
-  // TODO
-  // test('request:6', () => {
-  //   return testError('request:6', {})
-  // })
+  test('request:6', () => {
+    return testError('request:6', { x: 1 })
+  })
 
   test('control:1', () => {
-    return testError('control:1', {})
+    return testError('control:1', { x: 1 })
   })
   test('control:2', () => {
-    return testError('control:2', {})
+    return testError('control:2', { x: 1 })
   })
   test('control:3', () => {
-    return testError('control:3', {})
+    return testError('control:3', { x: 1 })
   })
   test('control:4', () => {
-    return testError('control:4', {})
+    return testError('control:4', { x: 1 })
   })
   test('control:5', () => {
-    return testError('control:5', {})
+    return testError('control:5', { x: 1 })
   })
 
   test('model:1', () => {
-    return testError('model:1', {})
+    return testError('model:1', { x: 1 })
   })
   test('model:2', () => {
-    return testError('model:2', {})
+    return testError('model:2', { x: 1 })
   })
   test('model:3', () => {
-    return testError('model:3', {})
+    return testError('model:3', { x: 1 })
   })
   test('model:4', () => {
-    return testError('model:4', {})
+    return testError('model:4', { x: 1 })
   })
 
   test('entry:1', () => {
-    return testError('entry:1', {})
+    return testError('entry:1', { x: 1 })
   })
   test('entry:2', () => {
-    return testError('entry:2', {})
+    return testError('entry:2', { x: 1 })
   })
   test('entry:3', () => {
-    return testError('entry:3', {})
+    return testError('entry:3', { x: 1 })
   })
   test('entry:4', () => {
-    return testError('entry:4', {})
+    return testError('entry:4', { x: 1 })
   })
 
   test('entry:type-check-1', () => {
-    return testError('entry:type-check-1', {})
+    return testError('entry:type-check-1', { x: 1 })
   })
   test('entry:type-check-2', () => {
-    return testError('entry:type-check-2', {})
+    return testError('entry:type-check-2', { x: 1 })
   })
   test('entry:type-check-3', () => {
-    return testError('entry:type-check-3', {})
+    return testError('entry:type-check-3', { x: 1 })
   })
   test('entry:type-check-4', () => {
-    return testError('entry:type-check-4', {})
+    return testError('entry:type-check-4', { x: 1 })
   })
 
   test('schema:with-value-prop', () => {
-    return testError('schema:with-value-prop', {})
+    return testError('schema:with-value-prop', { x: 1 })
   })
 
   test('schema:a.1.0', () => {
@@ -339,13 +337,13 @@ describe('do not log names for anonymous functions', () => {
         throw new Error('test error')
       }
     ]
-    return testError(reducer, {})
+    return testError(reducer, { x: 1 })
   })
   test('function with inferred name from variable', () => {
     const anonFunction = () => {
       throw new Error('test error')
     }
-    return testError(anonFunction, {})
+    return testError(anonFunction, { x: 1 })
   })
   test('function with inferred name from object property', () => {
     const reducer = {
@@ -418,7 +416,7 @@ describe('reducer-stack#onReducerError', () => {
     const stack = undefined
     const value = { a: 1 }
     const error = new Error()
-    const e = attempt(reducerStack.onReducerError, stack, value, error)
+    const e = attempt(Stack.onReducerError, stack, value, error)
 
     expect(e).toEqual(error)
     expect(e).not.toHaveProperty('rstack')
@@ -428,11 +426,12 @@ describe('reducer-stack#onReducerError', () => {
     const stack = ['a', 'b']
     const value = { a: 1 }
     const error = new Error()
-    const e = attempt(reducerStack.onReducerError, stack, value, error)
+    const e = attempt(Stack.onReducerError, stack, value, error)
 
     expect(e).toEqual(error)
     expect(e.rstack).toEqual(stack)
-    expect(e.rvalue).toEqual(value)
+    expect(e.rvalue.value).toEqual(value)
+    expect(e.rvalue.header).toEqual('Value')
   })
   it('should not overwrite existing rstack and rvalue properties', () => {
     const stack1 = ['a', 'b']
@@ -440,17 +439,18 @@ describe('reducer-stack#onReducerError', () => {
     const stack2 = ['c', 'd']
     const value2 = { b: 2 }
     const error = new Error()
-    let e = attempt(reducerStack.onReducerError, stack1, value1, error)
-    e = attempt(reducerStack.onReducerError, stack2, value2, e)
+    let e = attempt(Stack.onReducerError, stack1, value1, error, 'Options')
+    e = attempt(Stack.onReducerError, stack2, value2, e)
 
     expect(e).toEqual(error)
     expect(e.rstack).toEqual(stack1)
-    expect(e.rvalue).toEqual(value1)
+    expect(e.rvalue.value).toEqual(value1)
+    expect(e.rvalue.header).toEqual('Options')
   })
 })
 
 describe('reducer-stack#stringifyReducerStack', () => {
-  const toString = reducerStack.stringifyReducerStack
+  const toString = Stack.stringifyReducerStack
   it('should stringify the input array', () => {
     expect(toString([])).toBe('')
     expect(toString([0])).toBe('[0]')

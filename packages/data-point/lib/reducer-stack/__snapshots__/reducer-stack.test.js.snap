@@ -1,25 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ReducerAssign invalid input type 1`] = `
-Array [
-  Array [
-    "The following reducer failed to execute:
- ReducerAssign -> ReducerObject[a] -> ReducerFunction[throwError]
-with the following input:
-{
-  \\"a\\": 1,
-  \\"b\\": 2
-}",
-  ],
-]
-`;
+exports[`ReducerAssign invalid input type 1`] = `[Error: test error]`;
 
 exports[`ReducerAssign invalid input type 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- ReducerAssign -> ReducerObject[b] -> ReducerFunction[throwError]
-with the following input:
+ ReducerAssign -> ReducerObject[a] -> ReducerFunction[throwError]
+
+
+Value:
 {
   \\"a\\": 1,
   \\"b\\": 2
@@ -28,166 +18,244 @@ with the following input:
 ]
 `;
 
-exports[`ReducerFilter invalid input type 1`] = `
+exports[`ReducerAssign invalid input type 3`] = `[Error: test error]`;
+
+exports[`ReducerAssign invalid input type 4`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ ReducerAssign -> ReducerObject[b] -> ReducerFunction[throwError]
+
+
+Value:
+{
+  \\"a\\": 1,
+  \\"b\\": 2
+}",
+  ],
+]
+`;
+
+exports[`ReducerFilter invalid input type 1`] = `[TypeError: expecting an array or an iterable object but got [object Null]]`;
+
+exports[`ReducerFilter invalid input type 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFilter
-with the following input:
+
+
+Value:
 false",
   ],
 ]
 `;
 
-exports[`ReducerFilter throw error on first item 1`] = `
+exports[`ReducerFilter throw error on first item 1`] = `[Error: test error]`;
+
+exports[`ReducerFilter throw error on first item 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFilter[0] -> ReducerFunction
-with the following input:
+
+
+Value:
 1",
   ],
 ]
 `;
 
-exports[`ReducerFilter throw error on second item 1`] = `
+exports[`ReducerFilter throw error on second item 1`] = `[Error: test error]`;
+
+exports[`ReducerFilter throw error on second item 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFilter[1] -> ReducerFunction
-with the following input:
+
+
+Value:
 2",
   ],
 ]
 `;
 
-exports[`ReducerFind invalid input type 1`] = `
+exports[`ReducerFind invalid input type 1`] = `[TypeError: expecting an array or an iterable object but got [object Null]]`;
+
+exports[`ReducerFind invalid input type 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFind
-with the following input:
+
+
+Value:
 false",
   ],
 ]
 `;
 
-exports[`ReducerFind throw error on first item 1`] = `
+exports[`ReducerFind throw error on first item 1`] = `[Error: test error]`;
+
+exports[`ReducerFind throw error on first item 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFind[0] -> ReducerFunction
-with the following input:
+
+
+Value:
 1",
   ],
 ]
 `;
 
-exports[`ReducerFind throw error on second item 1`] = `
+exports[`ReducerFind throw error on second item 1`] = `[Error: test error]`;
+
+exports[`ReducerFind throw error on second item 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFind[1] -> ReducerFunction
-with the following input:
+
+
+Value:
 2",
   ],
 ]
 `;
 
-exports[`ReducerFunction with async error 1`] = `
+exports[`ReducerFunction with async error 1`] = `[Error: test error]`;
+
+exports[`ReducerFunction with async error 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFunction
-with the following input:
+
+
+Value:
 \\"input\\"",
   ],
 ]
 `;
 
-exports[`ReducerFunction with sync error 1`] = `
+exports[`ReducerFunction with sync error 1`] = `[Error: test error]`;
+
+exports[`ReducerFunction with sync error 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFunction[throwError]
-with the following input:
+
+
+Value:
 \\"input\\"",
   ],
 ]
 `;
 
-exports[`ReducerList with errors first item has error 1`] = `
+exports[`ReducerList with errors first item has error 1`] = `[Error: test error]`;
+
+exports[`ReducerList with errors first item has error 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFunction[throwError]
-with the following input:
+
+
+Value:
 \\"input\\"",
   ],
 ]
 `;
 
-exports[`ReducerList with errors second item has error 1`] = `
+exports[`ReducerList with errors second item has error 1`] = `[Error: test error]`;
+
+exports[`ReducerList with errors second item has error 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerList[1] -> ReducerFunction[throwError]
-with the following input:
+
+
+Value:
 \\"input\\"",
   ],
 ]
 `;
 
-exports[`ReducerList with errors third item has error 1`] = `
+exports[`ReducerList with errors third item has error 1`] = `[Error: test error]`;
+
+exports[`ReducerList with errors third item has error 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerList[2] -> ReducerFunction
-with the following input:
+
+
+Value:
 undefined",
   ],
 ]
 `;
 
-exports[`ReducerMap invalid input type 1`] = `
+exports[`ReducerMap invalid input type 1`] = `[TypeError: expecting an array or an iterable object but got [object Null]]`;
+
+exports[`ReducerMap invalid input type 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerMap
-with the following input:
+
+
+Value:
 false",
   ],
 ]
 `;
 
-exports[`ReducerMap throw error on first item 1`] = `
+exports[`ReducerMap throw error on first item 1`] = `[Error: test error]`;
+
+exports[`ReducerMap throw error on first item 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerMap[0] -> ReducerFunction
-with the following input:
+
+
+Value:
 1",
   ],
 ]
 `;
 
-exports[`ReducerMap throw error on second item 1`] = `
+exports[`ReducerMap throw error on second item 1`] = `[Error: test error]`;
+
+exports[`ReducerMap throw error on second item 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerMap[1] -> ReducerFunction
-with the following input:
+
+
+Value:
 2",
   ],
 ]
 `;
 
-exports[`ReducerObject with errors nested property 1`] = `
+exports[`ReducerObject with errors nested property 1`] = `[Error: test error]`;
+
+exports[`ReducerObject with errors nested property 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerObject[b.c.d] -> ReducerFunction[throwError]
-with the following input:
+
+
+Value:
 {
   \\"a\\": 1,
   \\"b\\": {
@@ -200,12 +268,16 @@ with the following input:
 ]
 `;
 
-exports[`ReducerObject with errors single property 1`] = `
+exports[`ReducerObject with errors single property 1`] = `[Error: test error]`;
+
+exports[`ReducerObject with errors single property 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerObject[b] -> ReducerFunction[throwError]
-with the following input:
+
+
+Value:
 {
   \\"a\\": 1,
   \\"b\\": 2
@@ -214,23 +286,33 @@ with the following input:
 ]
 `;
 
-exports[`do not log names for anonymous functions function in ReducerList 1`] = `
+exports[`do not log names for anonymous functions function in ReducerList 1`] = `[Error: test error]`;
+
+exports[`do not log names for anonymous functions function in ReducerList 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFunction
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`do not log names for anonymous functions function with inferred name from object property 1`] = `
+exports[`do not log names for anonymous functions function with inferred name from object property 1`] = `[Error: test error]`;
+
+exports[`do not log names for anonymous functions function with inferred name from object property 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerObject[a] -> ReducerFunction
-with the following input:
+
+
+Value:
 {
   \\"a\\": 1
 }",
@@ -238,221 +320,341 @@ with the following input:
 ]
 `;
 
-exports[`do not log names for anonymous functions function with inferred name from variable 1`] = `
+exports[`do not log names for anonymous functions function with inferred name from variable 1`] = `[Error: test error]`;
+
+exports[`do not log names for anonymous functions function with inferred name from variable 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerFunction
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces control:1 1`] = `
+exports[`reducer stack traces control:1 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces control:1 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  control:1 -> select[case] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces control:2 1`] = `
+exports[`reducer stack traces control:2 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces control:2 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  control:2 -> select[case] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces control:3 1`] = `
+exports[`reducer stack traces control:3 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces control:3 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  control:3 -> select[0][do] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces control:4 1`] = `
+exports[`reducer stack traces control:4 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces control:4 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  control:4 -> select[1][do] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces control:5 1`] = `
+exports[`reducer stack traces control:5 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces control:5 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  control:5 -> select[2][default] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces entry:1 1`] = `
+exports[`reducer stack traces entry:1 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces entry:1 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  entry:1[before] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces entry:2 1`] = `
+exports[`reducer stack traces entry:2 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces entry:2 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  entry:2[value] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces entry:3 1`] = `
+exports[`reducer stack traces entry:3 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces entry:3 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  entry:3[after] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces entry:4 1`] = `
+exports[`reducer stack traces entry:4 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces entry:4 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerEntity
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces entry:type-check-1 1`] = `
+exports[`reducer stack traces entry:type-check-1 1`] = `[Error: entry:type-check-1 did not pass type check, type expected: string but recevied: object. The value received is: { x: 1 }]`;
+
+exports[`reducer stack traces entry:type-check-1 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  entry:type-check-1[inputType] -> ReducerFunction[isString]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces entry:type-check-2 1`] = `
+exports[`reducer stack traces entry:type-check-2 1`] = `[Error: entry:type-check-2 did not pass type check, type expected: string but recevied: number. The value received is: 500]`;
+
+exports[`reducer stack traces entry:type-check-2 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  entry:type-check-2[outputType] -> ReducerFunction[isString]
-with the following input:
+
+
+Value:
 500",
   ],
 ]
 `;
 
 exports[`reducer stack traces entry:type-check-3 1`] = `
+[InvalidSchema: Errors Found:
+ - should have required property 'foo']
+`;
+
+exports[`reducer stack traces entry:type-check-3 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  entry:type-check-3[inputType] -> schema:a.1.0[value]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
 exports[`reducer stack traces entry:type-check-4 1`] = `
+[InvalidSchema: Errors Found:
+ - should be object]
+`;
+
+exports[`reducer stack traces entry:type-check-4 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- entry:type-check-4[inputType] -> schema:a.1.0[value]
-with the following input:
-{}",
+ entry:type-check-4[outputType] -> schema:a.1.0[value]
+
+
+Value:
+500",
   ],
 ]
 `;
 
-exports[`reducer stack traces model:1 1`] = `
+exports[`reducer stack traces model:1 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces model:1 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  model:1[before] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces model:2 1`] = `
+exports[`reducer stack traces model:2 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces model:2 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  model:2[value] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces model:3 1`] = `
+exports[`reducer stack traces model:3 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces model:3 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  model:3[after] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces model:4 1`] = `
+exports[`reducer stack traces model:4 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces model:4 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  ReducerEntity
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces request:1 1`] = `
+exports[`reducer stack traces request:1 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces request:1 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  request:1[value] -> ReducerList[1] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces request:2 1`] = `
+exports[`reducer stack traces request:2 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces request:2 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  request:2[beforeRequest] -> ReducerList[1] -> ReducerFunction[throwError]
-with the following input:
+
+
+Value:
 {
   \\"method\\": \\"GET\\",
   \\"json\\": true,
@@ -462,34 +664,50 @@ with the following input:
 ]
 `;
 
-exports[`reducer stack traces request:3 1`] = `
+exports[`reducer stack traces request:3 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces request:3 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- request:3[options][y:] -> ReducerList[1] -> ReducerFunction[throwError]
-with the following input:
-{}",
+ request:3[options] -> ReducerObject[y] -> ReducerList[1] -> ReducerFunction[throwError]
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces request:4 1`] = `
+exports[`reducer stack traces request:4 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces request:4 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  request:4[before] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces request:5 1`] = `
+exports[`reducer stack traces request:5 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces request:5 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  request:5[after] -> ReducerFunction[throwError]
-with the following input:
+
+
+Value:
 {
   \\"ok\\": true
 }",
@@ -497,12 +715,43 @@ with the following input:
 ]
 `;
 
+exports[`reducer stack traces request:6 1`] = `[StatusCodeError: 404 - "not found"]`;
+
+exports[`reducer stack traces request:6 2`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ request:6[request] -> ReducerFunction[request-promise#request]
+
+
+Request options:
+{
+  \\"method\\": \\"GET\\",
+  \\"json\\": true,
+  \\"url\\": \\"http://remote.test/source1\\"
+}
+
+Response info:
+  - message: '404 - \\"not found\\"'
+  - statusCode: 404
+",
+  ],
+]
+`;
+
 exports[`reducer stack traces schema:a.1.0 1`] = `
+[InvalidSchema: Errors Found:
+ - should have required property 'bar']
+`;
+
+exports[`reducer stack traces schema:a.1.0 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  schema:a.1.0[value]
-with the following input:
+
+
+Value:
 {
   \\"foo\\": 1,
   \\"baaaaaar\\": \\"1\\"
@@ -511,46 +760,74 @@ with the following input:
 ]
 `;
 
-exports[`reducer stack traces schema:with-value-prop 1`] = `
+exports[`reducer stack traces schema:with-value-prop 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces schema:with-value-prop 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  schema:with-value-prop[value] -> ReducerFunction[throwError]
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces transform:1 1`] = `
+exports[`reducer stack traces transform:1 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces transform:1 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  transform:1 -> ReducerFunction
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces transform:2 1`] = `
+exports[`reducer stack traces transform:1 with debug.silent 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces transform:1 with debug.silent 2`] = `Array []`;
+
+exports[`reducer stack traces transform:2 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces transform:2 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  transform:2 -> transform:1 -> ReducerFunction
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;
 
-exports[`reducer stack traces transform:3 1`] = `
+exports[`reducer stack traces transform:3 1`] = `[Error: test error]`;
+
+exports[`reducer stack traces transform:3 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
  transform:3 -> transform:2 -> transform:1 -> ReducerFunction
-with the following input:
-{}",
+
+
+Value:
+{
+  \\"x\\": 1
+}",
   ],
 ]
 `;

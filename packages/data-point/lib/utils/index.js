@@ -76,12 +76,13 @@ module.exports.inspect = inspect
 function inspectProperties (obj, props, indent = '') {
   return props.reduce((acc, key) => {
     const val = obj[key]
-    if (typeof val !== 'undefined') {
-      return `${acc}${indent}- ${key}: ${util.inspect(obj[key], {
-        breakLength: 0
-      })}\n`
+    if (typeof val === 'undefined') {
+      return acc
     }
-    return acc
+
+    return `${acc}${indent}- ${key}: ${util.inspect(val, {
+      breakLength: 0
+    })}\n`
   }, '')
 }
 
