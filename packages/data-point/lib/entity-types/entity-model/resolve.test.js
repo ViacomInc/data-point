@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-const Resolve = require('./resolve')
+const resolveModelEntity = require('./resolve').resolve
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 
@@ -20,7 +20,7 @@ function transform (entityId, value, options) {
       options
     )
   )
-  return Resolve.resolve(accumulator, resolveReducerBound)
+  return resolveModelEntity(accumulator, resolveReducerBound, [])
 }
 
 beforeAll(() => {

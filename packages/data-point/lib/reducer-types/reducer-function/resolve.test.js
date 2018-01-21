@@ -23,7 +23,7 @@ describe('resolve#filter.resolve', () => {
     )
 
     return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
+      .resolve(dataPoint, resolveReducer, accumulator, reducer, [])
       .then(result => {
         expect(result.value).toBe('testnode')
       })
@@ -37,7 +37,7 @@ describe('resolve#filter.resolve', () => {
     const reducer = reducerFactory.create(acc => `${acc.value}sync`)
 
     return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
+      .resolve(dataPoint, resolveReducer, accumulator, reducer, [])
       .then(result => {
         expect(result.value).toBe('testsync')
       })
@@ -53,7 +53,7 @@ describe('resolve#filter.resolve', () => {
     )
 
     return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
+      .resolve(dataPoint, resolveReducer, accumulator, reducer, [])
       .then(result => {
         expect(result.value).toBe('testpromise')
       })
@@ -69,7 +69,7 @@ describe('resolve#filter.resolve', () => {
     })
 
     return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
+      .resolve(dataPoint, resolveReducer, accumulator, reducer, [])
       .catch(err => err)
       .then(err => {
         expect(err).toHaveProperty('message', 'Test')

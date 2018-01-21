@@ -23,7 +23,13 @@ describe('ReducerPath#resolve', () => {
     })
 
     const reducer = reducerPath.create(createReducer, reducerSource)
-    return reducerPath.resolve(dataPoint, resolveReducer, accumulator, reducer)
+    return reducerPath.resolve(
+      dataPoint,
+      resolveReducer,
+      accumulator,
+      reducer,
+      []
+    )
   }
 
   test('resolve current value', () => {

@@ -69,6 +69,7 @@ function createReducer (source) {
   // NOTE: recursive call
   const reducer = reducerType.create(createReducer, source)
   reducer[REDUCER_SYMBOL] = true
+
   return Object.freeze(reducer)
 }
 

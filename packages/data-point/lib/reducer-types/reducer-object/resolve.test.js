@@ -31,7 +31,8 @@ describe('resolve#reducerObject.resolve', () => {
       dataPoint,
       resolveReducer,
       accumulator,
-      reducer
+      reducer,
+      []
     ).then(result => {
       expect(result.value).toEqual(accumulator.value)
     })
@@ -57,7 +58,8 @@ describe('resolve#reducerObject.resolve', () => {
       dataPoint,
       resolveReducer,
       accumulator,
-      reducer
+      reducer,
+      []
     ).then(result => {
       expect(result.value).toEqual({
         y: {
@@ -93,7 +95,8 @@ describe('resolve#reducerObject.resolve', () => {
       dataPoint,
       resolveReducer,
       accumulator,
-      reducer
+      reducer,
+      []
     ).then(result => {
       expect(result.value).toEqual({
         x: 'X',
@@ -135,7 +138,8 @@ describe('resolve#reducerObject.resolve', () => {
       dataPoint,
       resolveReducer,
       accumulator,
-      reducer
+      reducer,
+      []
     ).then(result => {
       expect(result.value).toEqual({
         x: {

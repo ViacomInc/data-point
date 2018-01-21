@@ -251,7 +251,8 @@ describe('ResolveEntity.resolve', () => {
       resolveReducer,
       racc,
       reducer,
-      resolver
+      resolver,
+      []
     )
   }
 

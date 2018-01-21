@@ -1,5 +1,7 @@
 const Promise = require('bluebird')
 
+const { stackPush } = require('../../reducer-stack')
+
 /**
  *
  * @param {Array} caseStatements
@@ -21,7 +23,7 @@ function getMatchingCaseIndex (caseStatements, acc, resolveReducer, stack) {
         return Promise.reject(err)
       }
 
-      const _stack = stack ? [...stack, index, ['case']] : stack
+      const _stack = stack ? stackPush(stack, ['case']) : stack
       return resolveReducer(acc, statement.case, _stack).then(res => {
         return res.value ? index : null
       })
@@ -55,12 +57,12 @@ function resolve (acc, resolveReducer, stack) {
     index => {
       if (index === null) {
         const _index = caseStatements.length
-        const _stack = stack ? [...stack, _index, ['default']] : stack
+        const _stack = stack ? stackPush(stack, _index, ['default']) : stack
         return resolveReducer(acc, defaultTransform, _stack)
       }
 
       const caseStatement = caseStatements[index]
-      const _stack = stack ? [...stack, index, ['do']] : stack
+      const _stack = stack ? stackPush(stack, index, ['do']) : stack
       return resolveReducer(acc, caseStatement.do, _stack)
     }
   )

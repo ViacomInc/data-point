@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const Util = require('util')
 
 const utils = require('../../utils')
+const { stackPush } = require('../../reducer-stack')
 
 /**
  * @param {Accumulator} accumulator
@@ -16,7 +17,7 @@ function resolveCompose (accumulator, composeReducer, resolveReducer, stack) {
     return Promise.resolve(accumulator)
   }
 
-  const _stack = stack ? [...stack, 'compose'] : stack
+  const _stack = stack ? stackPush(stack, 'compose') : stack
   return resolveReducer(accumulator, composeReducer, _stack)
 }
 

@@ -21,7 +21,7 @@ function transform (entityId, value, options) {
       options
     )
   )
-  return resolveControlEntity(accumulator, resolveReducerBound)
+  return resolveControlEntity(accumulator, resolveReducerBound, [])
 }
 
 beforeAll(() => {

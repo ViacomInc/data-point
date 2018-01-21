@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 
 const utils = require('../../../utils')
+const { stackPush } = require('../../../reducer-stack')
 
 /**
  * @param {Object} manager
@@ -20,7 +21,7 @@ function resolve (manager, resolveReducer, accumulator, reducerFind, stack) {
     accumulator.value,
     (result, itemValue, index) => {
       const itemContext = utils.set(accumulator, 'value', itemValue)
-      const _stack = stack ? [...stack, index] : stack
+      const _stack = stack ? stackPush(stack, index) : stack
       return (
         result ||
         resolveReducer(manager, itemContext, reducer, _stack).then(res => {

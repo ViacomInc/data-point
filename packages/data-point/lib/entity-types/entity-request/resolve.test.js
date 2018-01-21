@@ -25,7 +25,7 @@ function transform (entityId, value, options) {
     values
   })
   const acc = Object.assign({}, accumulator, options)
-  return Resolve.resolve(acc, resolveReducerBound)
+  return Resolve.resolve(acc, resolveReducerBound, [])
 }
 
 let locals
@@ -108,7 +108,7 @@ describe('resolveOptions', () => {
       },
       transformOptionKeys: []
     })
-    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
+    return Resolve.resolveOptions(acc, resolveReducerBound, []).then(result => {
       expect(result.options).toEqual({
         port: 80
       })
@@ -136,7 +136,7 @@ describe('resolveOptions', () => {
         }
       }
     }
-    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
+    return Resolve.resolveOptions(acc, resolveReducerBound, []).then(result => {
       expect(result.options).toEqual({
         port: 80,
         qs: {

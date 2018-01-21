@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const middleware = require('../../middleware')
 
 const utils = require('../../utils')
+const { stackPush } = require('../../reducer-stack')
 
 /**
  * @param {Object} manager
@@ -158,23 +159,23 @@ function resolveEntity (
     })
     .then(acc => {
       const inputType = acc.reducer.spec.inputType
-      const _stack = stack ? [...stack, ['inputType']] : stack
+      const _stack = stack ? stackPush(stack, ['inputType']) : stack
       return typeCheck(manager, acc, inputType, resolveReducer, _stack)
     })
     .then(acc => {
-      const _stack = stack ? [...stack, ['before']] : stack
+      const _stack = stack ? stackPush(stack, ['before']) : stack
       return resolveReducer(manager, acc, acc.reducer.spec.before, _stack)
     })
     .then(acc => {
       return mainResolver(acc, resolveReducerBound, stack)
     })
     .then(acc => {
-      const _stack = stack ? [...stack, ['after']] : stack
+      const _stack = stack ? stackPush(stack, ['after']) : stack
       return resolveReducer(manager, acc, acc.reducer.spec.after, _stack)
     })
     .then(acc => {
       const outputType = acc.reducer.spec.outputType
-      const _stack = stack ? [...stack, ['outputType']] : stack
+      const _stack = stack ? stackPush(stack, ['outputType']) : stack
       return typeCheck(manager, acc, outputType, resolveReducer, _stack)
     })
     .then(acc => {
@@ -256,7 +257,7 @@ function resolve (
       return Promise.resolve(itemCtx)
     }
 
-    const _stack = stack ? [...stack, index] : stack
+    const _stack = stack ? stackPush(stack, index) : stack
     return resolveEntity(
       manager,
       resolveReducer,

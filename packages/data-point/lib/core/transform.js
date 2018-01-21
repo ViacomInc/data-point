@@ -3,7 +3,7 @@ const Promise = require('bluebird')
 
 const Reducer = require('../reducer-types')
 const AccumulatorFactory = require('../accumulator/factory')
-const { stringifyReducerStack } = require('../reducer-types/reducer-stack')
+const { stringifyReducerStack } = require('../reducer-stack')
 
 function getOptions (spec) {
   return _.defaults({}, spec, {

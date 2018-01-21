@@ -1,3 +1,5 @@
+const { stackPush } = require('../../reducer-stack')
+
 /**
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
@@ -5,7 +7,7 @@
  * @return {Promise<Accumulator>}
  */
 function resolve (accumulator, resolveReducer, stack) {
-  const _stack = stack ? [...stack, ['value']] : stack
+  const _stack = stack ? stackPush(stack, ['value']) : stack
   return resolveReducer(accumulator, accumulator.reducer.spec.value, _stack)
 }
 

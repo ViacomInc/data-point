@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 const set = require('lodash/set')
 
 const utils = require('../../utils')
+const { stackPush } = require('../../reducer-stack')
 
 /**
  * @param {Object} manager
@@ -17,7 +18,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   }
 
   const props = Promise.map(reducer.props, ({ path, reducer }) => {
-    const _stack = stack ? [...stack, path] : stack
+    const _stack = stack ? stackPush(stack, path) : stack
     return resolveReducer(manager, accumulator, reducer, _stack).then(
       ({ value }) => ({
         path,

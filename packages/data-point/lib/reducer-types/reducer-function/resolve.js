@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 
 const utils = require('../../utils')
-const { onReducerError } = require('../reducer-stack')
+const { stackPush, onReducerError } = require('../../reducer-stack')
 
 /**
  * @param {Object} manager
@@ -12,10 +12,13 @@ const { onReducerError } = require('../reducer-stack')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
-  let _stack = stack
+  let _stack
   // TODO should we actually modify the function name in the factory?
+  // TODO refactor this
   if (stack && reducer.body.name && reducer.body.prototype) {
-    _stack = [...stack, [reducer.body.name]]
+    _stack = stack ? stackPush(stack, [reducer.body.name]) : stack
+  } else {
+    _stack = stack ? stack.concat() : stack
   }
 
   return Promise.try(() => reducer.body(accumulator))

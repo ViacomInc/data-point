@@ -24,11 +24,15 @@ describe('ReducerPick#resolve', () => {
     ]
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, [])
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result.value).toEqual(value)
-      }
-    )
+    return Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer,
+      []
+    ).then(result => {
+      expect(result.value).toEqual(value)
+    })
   })
 
   test('It should pick the given keys', () => {
@@ -39,12 +43,16 @@ describe('ReducerPick#resolve', () => {
     }
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, ['c', 'q'])
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result.value).toEqual({
-          c: 3
-        })
-      }
-    )
+    return Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer,
+      []
+    ).then(result => {
+      expect(result.value).toEqual({
+        c: 3
+      })
+    })
   })
 })

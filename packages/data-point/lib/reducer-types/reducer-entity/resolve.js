@@ -1,5 +1,7 @@
 const BaseEntity = require('../../entity-types/base-entity/resolve')
 
+const { stackPush } = require('../../reducer-stack')
+
 /**
  * Resolve an Entity Reducer, actual entity resolution is delegated
  * to each Entity.resolve method
@@ -13,7 +15,8 @@ const BaseEntity = require('../../entity-types/base-entity/resolve')
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   const reducerEntityType = reducer.entityType
   const EntityType = manager.entityTypes.get(reducerEntityType)
-  const _stack = stack ? [...stack.slice(0, -1), reducer.id] : stack
+  // replace the 'ReducerEntity' string with the entity's id
+  const _stack = stack ? stackPush(stack.slice(0, -1), reducer.id) : stack
   return BaseEntity.resolve(
     manager,
     resolveReducer,

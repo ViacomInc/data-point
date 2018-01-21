@@ -24,11 +24,15 @@ describe('ReducerMap#resolve', () => {
     ]
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, [])
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result.value).toEqual(value)
-      }
-    )
+    return Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer,
+      []
+    ).then(result => {
+      expect(result.value).toEqual(value)
+    })
   })
 
   test('It should map an array of objects', () => {
@@ -42,10 +46,14 @@ describe('ReducerMap#resolve', () => {
     ]
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, ['$a', acc => acc.value + 1])
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result.value).toEqual([2, 3])
-      }
-    )
+    return Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer,
+      []
+    ).then(result => {
+      expect(result.value).toEqual([2, 3])
+    })
   })
 })
