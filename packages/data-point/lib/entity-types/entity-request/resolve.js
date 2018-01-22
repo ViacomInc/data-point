@@ -14,11 +14,21 @@ const REQUEST_DEFAULT_OPTIONS = {
 }
 
 /**
+ * @param {string} url
  * @param {Object} specOptions
  * @return {Object}
  */
-function getRequestOptions (specOptions) {
-  return _.defaults({}, specOptions, REQUEST_DEFAULT_OPTIONS)
+function getRequestOptions (url, specOptions) {
+  const options = _.defaults({}, specOptions, REQUEST_DEFAULT_OPTIONS)
+  // this makes it possible to modify
+  // the url in the options reducer
+  options.url = options.url || url
+  if (options.baseUrl) {
+    options.uri = options.uri || options.url
+    options.url = ''
+  }
+
+  return options
 }
 
 module.exports.getRequestOptions = getRequestOptions
@@ -30,15 +40,11 @@ module.exports.getRequestOptions = getRequestOptions
  * @return {Promise<Accumulator>}
  */
 function resolveOptions (accumulator, resolveReducer) {
-  const options = accumulator.reducer.spec.options
-  return resolveReducer(accumulator, options).then(acc => {
-    const resolvedOptions = getRequestOptions(acc.value)
-    if (resolvedOptions.baseUrl && !resolvedOptions.uri) {
-      resolvedOptions.uri = acc.url
-      resolvedOptions.url = ''
-    }
-
-    return utils.set(accumulator, 'options', resolvedOptions)
+  accumulator = resolveUrl(accumulator)
+  const specOptions = accumulator.reducer.spec.options
+  return resolveReducer(accumulator, specOptions).then(acc => {
+    const options = getRequestOptions(acc.url, acc.value)
+    return utils.assign(accumulator, { options })
   })
 }
 
@@ -69,7 +75,7 @@ module.exports.resolveUrlInjections = resolveUrlInjections
 function resolveUrl (acc) {
   const entity = acc.reducer.spec
   const url = resolveUrlInjections(entity.url, acc)
-  return utils.set(acc, 'url', url)
+  return utils.assign(acc, { url })
 }
 
 module.exports.resolveUrl = resolveUrl
@@ -87,22 +93,6 @@ function inspect (acc) {
 }
 
 module.exports.inspect = inspect
-
-/**
- * @param {Accumulator} acc
- * @param {Function} resolveReducer
- * @return {Promise<Accumulator>}
- */
-function resolveBeforeRequest (acc, resolveReducer) {
-  const entity = acc.reducer.spec
-  const options = utils.set(acc.options, 'url', acc.url)
-  const beforeRequestAcc = utils.set(acc, 'value', options)
-  return resolveReducer(beforeRequestAcc, entity.beforeRequest).then(result =>
-    utils.set(acc, 'options', result.value)
-  )
-}
-
-module.exports.resolveBeforeRequest = resolveBeforeRequest
 
 /**
  * @param {Accumulator} acc
@@ -150,8 +140,6 @@ function resolve (acc, resolveReducer) {
   return Promise.resolve(acc)
     .then(itemContext => resolveReducer(itemContext, entity.value))
     .then(itemContext => resolveOptions(itemContext, resolveReducer))
-    .then(itemContext => resolveUrl(itemContext))
-    .then(itemContext => resolveBeforeRequest(itemContext, resolveReducer))
     .then(itemContext => resolveRequest(itemContext, resolveReducer))
 }
 

@@ -33,19 +33,15 @@ module.exports = {
   },
   'request:a2': {
     url: 'http://remote.test',
-    beforeRequest: (acc, done) => {
-      const options = acc.value
-      options.url = options.url + '/source1'
-      done(null, options)
+    options: {
+      url: acc => acc.url + '/source1'
     }
   },
   'request:a3': {
-    url: 'http://remote.test',
-    beforeRequest: (acc, done) => {
-      const options = acc.value
-      options.url = options.url + acc.initialValue.itemPath
-      done(null, options)
-    }
+    options: {
+      url: acc => acc.url + acc.initialValue.itemPath
+    },
+    url: 'http://remote.test'
   },
   'request:a3.2': {
     url: 'http://remote.test{locals.itemPath}'

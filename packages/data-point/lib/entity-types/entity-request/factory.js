@@ -6,7 +6,6 @@ const createReducer = require('../../reducer-types').create
  * @class
  * @property {string} url
  * @property {reducer} options
- * @property {reducer} beforeRequest
  */
 function EntityRequest () {
   this.url = undefined
@@ -33,10 +32,6 @@ module.exports.defaultOptions = defaultOptions
 function create (spec, id) {
   const entity = createBaseEntity(EntityRequest, spec, id)
   entity.url = _.defaultTo(spec.url, '')
-  if (spec.beforeRequest) {
-    entity.beforeRequest = createReducer(spec.beforeRequest)
-  }
-
   entity.options = createReducer(spec.options || defaultOptions)
 
   return Object.freeze(entity)
