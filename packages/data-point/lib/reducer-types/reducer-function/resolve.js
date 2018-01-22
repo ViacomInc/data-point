@@ -12,6 +12,9 @@ const { stackPush, onReducerError } = require('../../reducer-stack')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
+  // do not add the name for arrow functions (which do not have a prototype)
+  // some arrow functions have inferred names, which might be confusing
+  // if they show up in the reducer stack trace
   if (stack && reducer.body.name && reducer.body.prototype) {
     stack = stackPush(stack, [reducer.body.name])
   }

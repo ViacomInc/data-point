@@ -1,20 +1,25 @@
 const reducers = require('../utils/reducers')
+const { assign } = require('../../lib').helpers
 
 module.exports = {
   'request:a0.1': {
     url: 'http://some.path',
-    options: {
-      dataType: () => 'json',
-      method: () => 'POST',
-      timeout: () => 1000,
-      username: () => '$username$',
-      password: (acc, next) => next(null, '$password$'),
-      qs: {
-        varKey1: (acc, next) => next(null, 'someValue'),
-        varKey2: () => 1,
-        varKey3: () => true
-      }
-    }
+    options: [
+      () => ({
+        dataType: 'json',
+        method: 'POST',
+        timeout: 1000,
+        username: '$username$'
+      }),
+      assign({
+        password: (acc, next) => next(null, '$password$'),
+        qs: {
+          varKey1: (acc, next) => next(null, 'someValue'),
+          varKey2: () => 1,
+          varKey3: () => true
+        }
+      })
+    ]
   },
   'request:a1': {
     url: 'http://remote.test/source1'
@@ -33,19 +38,15 @@ module.exports = {
   },
   'request:a2': {
     url: 'http://remote.test',
-    beforeRequest: (acc, done) => {
-      const options = acc.value
-      options.url = options.url + '/source1'
-      done(null, options)
+    options: {
+      url: acc => acc.url + '/source1'
     }
   },
   'request:a3': {
-    url: 'http://remote.test',
-    beforeRequest: (acc, done) => {
-      const options = acc.value
-      options.url = options.url + acc.initialValue.itemPath
-      done(null, options)
-    }
+    options: {
+      url: acc => acc.url + acc.initialValue.itemPath
+    },
+    url: 'http://remote.test'
   },
   'request:a3.2': {
     url: 'http://remote.test{locals.itemPath}'

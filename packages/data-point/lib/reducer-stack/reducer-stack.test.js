@@ -61,25 +61,21 @@ const dataPoint = DataPoint.create({
       url: 'http://remote.test'
     },
     'request:2': {
-      beforeRequest: [identity, throwError],
-      url: 'http://remote.test'
-    },
-    'request:3': {
       options: {
         x: () => 'apples',
         y: [identity, throwError]
       },
       url: 'http://remote.test'
     },
-    'request:4': {
+    'request:3': {
       before: throwError,
       url: 'http://remote.test'
     },
-    'request:5': {
+    'request:4': {
       url: 'http://remote.test',
       after: throwError
     },
-    'request:6': {
+    'request:5': {
       url: 'http://remote.test/source1'
     },
 
@@ -196,18 +192,15 @@ describe('reducer stack traces', () => {
     return testError('request:1', { x: 1 })
   })
   test('request:2', () => {
-    return testError('request:2', { x: 1 })
-  })
-  test('request:3', () => {
     return testError('request:3', { x: 1 })
   })
-  test('request:4', () => {
+  test('request:3', () => {
     return testError('request:4', { x: 1 })
   })
-  test('request:5', () => {
+  test('request:4', () => {
     return testError('request:5', { x: 1 })
   })
-  test('request:6', () => {
+  test('request:5', () => {
     return testError('request:6', { x: 1 })
   })
 

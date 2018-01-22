@@ -17,7 +17,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
     return Promise.resolve(accumulator)
   }
 
-  const props = Promise.map(reducer.props, ({ path, reducer }) => {
+  return Promise.map(reducer.props, ({ path, reducer }) => {
     const _stack = stack ? stackPush(stack, path) : stack
     return resolveReducer(manager, accumulator, reducer, _stack).then(
       ({ value }) => ({
@@ -25,11 +25,13 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
         value
       })
     )
+  }).then(result => {
+    const value = result.reduce(
+      (acc, { path, value }) => set(acc, path, value),
+      {}
+    )
+    return utils.set(accumulator, 'value', value)
   })
-
-  return props
-    .reduce((acc, { path, value }) => set(acc, path, value), {})
-    .then(value => utils.set(accumulator, 'value', value))
 }
 
 module.exports.resolve = resolve

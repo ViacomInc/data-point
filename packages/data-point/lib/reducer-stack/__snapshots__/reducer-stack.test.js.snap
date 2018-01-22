@@ -651,14 +651,12 @@ exports[`reducer stack traces request:2 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- request:2[beforeRequest] -> ReducerList[1] -> ReducerFunction[throwError]
+ request:3[before] -> ReducerFunction[throwError]
 
 
 Value:
 {
-  \\"method\\": \\"GET\\",
-  \\"json\\": true,
-  \\"url\\": \\"http://remote.test\\"
+  \\"x\\": 1
 }",
   ],
 ]
@@ -670,41 +668,7 @@ exports[`reducer stack traces request:3 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- request:3[options] -> ReducerObject[y] -> ReducerList[1] -> ReducerFunction[throwError]
-
-
-Value:
-{
-  \\"x\\": 1
-}",
-  ],
-]
-`;
-
-exports[`reducer stack traces request:4 1`] = `[Error: test error]`;
-
-exports[`reducer stack traces request:4 2`] = `
-Array [
-  Array [
-    "The following reducer failed to execute:
- request:4[before] -> ReducerFunction[throwError]
-
-
-Value:
-{
-  \\"x\\": 1
-}",
-  ],
-]
-`;
-
-exports[`reducer stack traces request:5 1`] = `[Error: test error]`;
-
-exports[`reducer stack traces request:5 2`] = `
-Array [
-  Array [
-    "The following reducer failed to execute:
- request:5[after] -> ReducerFunction[throwError]
+ request:4[after] -> ReducerFunction[throwError]
 
 
 Value:
@@ -715,13 +679,13 @@ Value:
 ]
 `;
 
-exports[`reducer stack traces request:6 1`] = `[StatusCodeError: 404 - "not found"]`;
+exports[`reducer stack traces request:4 1`] = `[StatusCodeError: 404 - "not found"]`;
 
-exports[`reducer stack traces request:6 2`] = `
+exports[`reducer stack traces request:4 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- request:6[request] -> ReducerFunction[request-promise#request]
+ request:5[request] -> ReducerFunction[request-promise#request]
 
 
 Request options:
@@ -738,6 +702,10 @@ Response info:
   ],
 ]
 `;
+
+exports[`reducer stack traces request:5 1`] = `[InvalidId: Entity id 'request:6' is not defined]`;
+
+exports[`reducer stack traces request:5 2`] = `Array []`;
 
 exports[`reducer stack traces schema:a.1.0 1`] = `
 [InvalidSchema: Errors Found:

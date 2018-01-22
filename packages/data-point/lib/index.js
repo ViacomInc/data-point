@@ -11,5 +11,4 @@ module.exports = {
   reducify: helpers.reducify,
   reducifyAll: helpers.reducifyAll,
   createReducerResolver: helpers.reducifyAll
-  // createTransform: require('./reducer-types').create
 }
