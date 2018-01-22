@@ -1,6 +1,5 @@
 const _ = require('lodash')
-
-const REDUCER_SYMBOL = require('../reducer-symbol')
+const Promise = require('bluebird')
 
 const REDUCER_FUNCTION = 'ReducerFunction'
 
@@ -15,7 +14,6 @@ module.exports.type = REDUCER_FUNCTION
  * @property {Function} body - actual function body
  */
 function ReducerFunction () {
-  this[REDUCER_SYMBOL] = true
   this.type = REDUCER_FUNCTION
   this.body = undefined
 }
@@ -57,9 +55,15 @@ module.exports.validateFunction = validateFunction
 function create (createReducer, source) {
   validateFunction(source)
   const reducer = new ReducerFunction()
-  reducer.body = source
+  // if the arity is 2, we expect a Node Style
+  // callback function with the form of (acc, done)
+  if (source.length === 2) {
+    reducer.body = Promise.promisify(source)
+  } else {
+    reducer.body = source
+  }
 
-  return Object.freeze(reducer)
+  return reducer
 }
 
 module.exports.create = create

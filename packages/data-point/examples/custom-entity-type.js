@@ -33,10 +33,12 @@ function resolve (accumulator, resolveReducer) {
   return resolveReducer(accumulator, spec.value).then(acc => {
     // execute lodash template against
     // accumulator value
-    const output = spec.template(acc.value)
+    const value = spec.template(acc.value)
     // set new accumulator.value
     // this method creates a new acc object
-    return DataPoint.set(acc, 'value', output)
+    return Object.assign({}, acc, {
+      value
+    })
   })
 }
 

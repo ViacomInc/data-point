@@ -1,3 +1,14 @@
 /* eslint global-require: 0 */
 
-module.exports = Object.assign({}, require('./core'), require('./helpers'))
+const core = require('./core')
+const helpers = require('./helpers')
+
+module.exports = {
+  create: core.create,
+  helpers: helpers.helpers,
+  createEntity: helpers.createEntity,
+  resolveEntity: helpers.resolveEntity,
+  reducify: helpers.reducify,
+  reducifyAll: helpers.reducifyAll,
+  createReducerResolver: helpers.reducifyAll
+}

@@ -11,6 +11,7 @@ const storeMiddleware = require('../stores/middleware')
 const EntityTransform = require('../entity-types/entity-transform')
 const EntityEntry = require('../entity-types/entity-entry')
 const EntityHash = require('../entity-types/entity-hash')
+const EntityModel = require('../entity-types/entity-model')
 const EntityCollection = require('../entity-types/entity-collection')
 const EntityRequest = require('../entity-types/entity-request')
 const EntityControl = require('../entity-types/entity-control')
@@ -62,8 +63,11 @@ function create (spec) {
 
   // add single item (singular)
   manager.addValue = manager.values.add
+
   manager.addEntityType = manager.entityTypes.add
+  // add multiple entity types
   manager.addEntityTypes = _.partial(addToStore, manager.entityTypes)
+
   manager.use = manager.middleware.use
 
   // add collection of items (plural)
@@ -75,7 +79,7 @@ function create (spec) {
   manager.addEntityType('transform', EntityTransform)
   manager.addEntityType('entry', EntityEntry)
   // alias to entry, may be used to process any object type
-  manager.addEntityType('model', EntityEntry)
+  manager.addEntityType('model', EntityModel)
   manager.addEntityType('hash', EntityHash)
   manager.addEntityType('collection', EntityCollection)
   manager.addEntityType('request', EntityRequest)
@@ -84,10 +88,9 @@ function create (spec) {
   manager.addEntityType('control', EntityControl)
   manager.addEntityType('schema', EntitySchema)
 
-  manager.addEntityTypes(options.entityTypes, true)
-
   addToStore(manager.values, options.values, true)
 
+  manager.addEntityTypes(options.entityTypes, true)
   manager.addEntities(options.entities)
 
   return manager

@@ -21,4 +21,18 @@ test('Factory#create', () => {
   expect(obj).not.toHaveProperty('after')
   expect(obj).not.toHaveProperty('error')
   expect(obj).toHaveProperty('params')
+
+  expect(() =>
+    Factory.create({
+      schema: { type: null }
+    })
+  ).toThrowErrorMatchingSnapshot()
+})
+
+test('Factory#validateSchema', () => {
+  expect(Factory.validateSchema({}, {})).toBe(true)
+  expect(() => Factory.validateSchema(42, {})).toThrowErrorMatchingSnapshot()
+  expect(() =>
+    Factory.validateSchema({ type: null }, {})
+  ).toThrowErrorMatchingSnapshot()
 })
