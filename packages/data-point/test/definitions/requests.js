@@ -1,20 +1,25 @@
 const reducers = require('../utils/reducers')
+const { assign } = require('../../lib').helpers
 
 module.exports = {
   'request:a0.1': {
     url: 'http://some.path',
-    options: {
-      dataType: () => 'json',
-      method: () => 'POST',
-      timeout: () => 1000,
-      username: () => '$username$',
-      password: (acc, next) => next(null, '$password$'),
-      qs: {
-        varKey1: (acc, next) => next(null, 'someValue'),
-        varKey2: () => 1,
-        varKey3: () => true
-      }
-    }
+    options: [
+      () => ({
+        dataType: 'json',
+        method: 'POST',
+        timeout: 1000,
+        username: '$username$'
+      }),
+      assign({
+        password: (acc, next) => next(null, '$password$'),
+        qs: {
+          varKey1: (acc, next) => next(null, 'someValue'),
+          varKey2: () => 1,
+          varKey3: () => true
+        }
+      })
+    ]
   },
   'request:a1': {
     url: 'http://remote.test/source1'
