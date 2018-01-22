@@ -161,7 +161,7 @@ describe('resolveOptions', () => {
   })
 })
 
-describe.only('getRequestOptions', () => {
+describe('getRequestOptions', () => {
   test('set defaults', () => {
     expect(Resolve.getRequestOptions('http://foo.com', {})).toEqual({
       method: 'GET',
