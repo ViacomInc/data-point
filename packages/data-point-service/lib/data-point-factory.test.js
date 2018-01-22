@@ -47,7 +47,7 @@ describe('createDataPoint', () => {
 })
 
 describe('create', () => {
-  test('It should create a new DataPoint Instance through a promise', () => {
+  test('It should create a new DataPoint Instance', () => {
     return DataPointFactory.create({
       DataPoint,
       entities: {

@@ -88,7 +88,7 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
       foo: 'bar'
     })
   })
-  test('It should initialValue acc.params', () => {
+  test('It should set an initialValue for acc.params', () => {
     expect(acc).toHaveProperty('params', {
       base: true
     })

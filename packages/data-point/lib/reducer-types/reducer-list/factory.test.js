@@ -45,7 +45,7 @@ describe('factory#create', () => {
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 
-  test('factory#create context with reducers | using array reducer', () => {
+  test('It should create a ReducerList with reducers using an array of reducers', () => {
     const result = factory.create(createReducer, [
       '$foo.bar',
       'reducer:add',
