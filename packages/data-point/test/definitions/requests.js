@@ -8,9 +8,9 @@ module.exports = {
       method: 'POST',
       timeout: 1000,
       username: '$username$',
-      $password: (acc, next) => next(null, '$password$'),
+      $password: value => '$password$',
       qs: {
-        $varKey1: (acc, next) => next(null, 'someValue'),
+        $varKey1: value => 'someValue',
         varKey2: 1,
         varKey3: true
       }
@@ -33,18 +33,16 @@ module.exports = {
   },
   'request:a2': {
     url: 'http://remote.test',
-    beforeRequest: (acc, done) => {
-      const options = acc.value
+    beforeRequest: options => {
       options.url = options.url + '/source1'
-      done(null, options)
+      return options
     }
   },
   'request:a3': {
     url: 'http://remote.test',
-    beforeRequest: (acc, done) => {
-      const options = acc.value
+    beforeRequest: (options, acc) => {
       options.url = options.url + acc.initialValue.itemPath
-      done(null, options)
+      return options
     }
   },
   'request:a3.2': {

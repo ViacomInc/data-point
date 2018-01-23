@@ -20,7 +20,7 @@ function createService () {
   return DataPointService.create({
     DataPoint,
     entities: {
-      'entry:HelloWorld': acc => 'Hello World!!'
+      'entry:HelloWorld': () => 'Hello World!!'
     }
   }).then(service => {
     return service.dataPoint

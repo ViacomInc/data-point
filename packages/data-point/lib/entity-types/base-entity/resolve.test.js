@@ -49,7 +49,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       {},
       {
         context: {
-          error: createReducer((acc, next) => next(null, 'pass'))
+          error: createReducer((value, acc, next) => next(null, 'pass'))
         }
       }
     )

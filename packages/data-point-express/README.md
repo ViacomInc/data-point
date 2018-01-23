@@ -32,7 +32,7 @@ const app = new express()
 Service.create({
   // add DataPoint entities
   entities: {
-    'entry:hello-world': (acc) => 'Hello World!!'
+    'entry:hello-world': () => 'Hello World!!'
   }
 })
 .then((service) => {
@@ -102,8 +102,8 @@ const app = new express()
 Service.create({
   // add DataPoint entities
   entities: {
-    'entry:HelloWorld': (acc) => 'Hello World!!',
-    'entry:Greet': (acc) => `Hello ${acc.locals.params.person}!!`
+    'entry:HelloWorld': (value, acc) => 'Hello World!!',
+    'entry:Greet': (value, acc) => `Hello ${acc.locals.params.person}!!`
   }
 })
 .then(service => {
@@ -269,7 +269,7 @@ You must pass a string that points to a valid DataPoint entity id; this maps the
 // data point entities:
 {
   'entry:HelloWorld': {
-    value: (acc) => 'hello ${acc.locals.params.person}!'
+    value: (value, acc) => 'hello ${acc.locals.params.person}!'
   }
 }
 
@@ -295,7 +295,7 @@ One caveat is that you may only pass one entity id and it must be the last middl
 // data point entities:
 {
   'entry:HelloWorld': {
-    value: (acc) => 'hello ${acc.locals.params.person}!'
+    value: (value, acc) => 'hello ${acc.locals.params.person}!'
   }
 }
 
@@ -333,7 +333,7 @@ const app = new express()
 Service.create({
   // DataPoint entities
   entities: {
-    'entry:hello-world': (acc) => 'Hello World!!'
+    'entry:hello-world': (value, acc) => 'Hello World!!'
   }
 })
 .then((service) => {
@@ -370,9 +370,9 @@ When an entity executes through a DataPoint Middleware, it appends some useful i
 [DataPoint Reducer](https://github.com/ViacomInc/data-point#function-reducer) that prints out the `acc.locals.url` to the console.
 
 ```js
-const reducer = (acc) => {
+const reducer = (value, acc) => {
   console.log('url that originated this call:', acc.locals.url)
-  return acc.value
+  return value
 }
 ```
 

@@ -18,6 +18,20 @@
     return acc.locals
   }
 
+  // not a reducer either
+  d.transform(1,2).then(acc => {
+    return {
+      a: acc.value,
+      b: acc.value[0],
+      c: acc.value.message.array[0].a,
+      d: `${acc.value.a}`
+    };
+  })
+
+  d.transform(1,2).then(acc => {
+    acc.value
+  })
+
   // only references acc.value
   function reducer(acc) {
     return {

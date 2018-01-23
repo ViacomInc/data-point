@@ -24,7 +24,7 @@ module.exports = (file, api, options) => {
     const newParams = [
       {
         type: 'Identifier',
-        name: 'value'
+        name: 'input'
       }
     ]
 
@@ -49,7 +49,7 @@ module.exports = (file, api, options) => {
       .forEach(node => {
         node.value.object = {
           type: 'Identifier',
-          name: 'value'
+          name: 'input'
         }
       })
 
@@ -66,7 +66,7 @@ module.exports = (file, api, options) => {
       .forEach(node => {
         replaceWith(node.value, {
           type: 'Identifier',
-          name: 'value'
+          name: 'input'
         })
       })
 
@@ -133,8 +133,23 @@ module.exports = (file, api, options) => {
     return false
   }
 
+  function filterNonReducers (nodePath) {
+    // we want to filter out any function that is called by dataPoint.transform(a,b).then(acc => {})
+    const grandParent = _.get(nodePath, 'parentPath.parentPath.value', {})
+    const isThenHandlerFromTransform =
+      grandParent.type === 'CallExpression' &&
+      _.get(grandParent, 'callee.object.callee.property.name') ===
+        'transform' &&
+      _.get(grandParent, 'callee.property.name') === 'then'
+
+    return !isThenHandlerFromTransform
+  }
+
   function refactorReducerMatches (nodeType) {
-    root.find(nodeType, isReducer).forEach(refactorReducer)
+    root
+      .find(nodeType, isReducer)
+      .filter(filterNonReducers)
+      .forEach(refactorReducer)
   }
 
   refactorReducerMatches(j.FunctionDeclaration)

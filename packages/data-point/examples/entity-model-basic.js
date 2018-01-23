@@ -10,12 +10,12 @@ const input = {
   }
 }
 
-const getMax = acc => {
-  return Math.max.apply(null, acc.value)
+const getMax = input => {
+  return Math.max.apply(null, input)
 }
 
-const multiplyBy = number => acc => {
-  return acc.value * number
+const multiplyBy = number => input => {
+  return input * number
 }
 
 dataPoint.addEntities({
@@ -24,6 +24,6 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('model:foo', input).then(acc => {
-  assert.equal(acc.value, 30)
+dataPoint.resolve('model:foo', input).then(output => {
+  assert.equal(output, 30)
 })

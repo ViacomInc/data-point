@@ -5,15 +5,12 @@ const assert = require('assert')
 dataPoint.addEntities({
   'request:getRemoteService': {
     url: 'http://remote.test/',
-    beforeRequest: acc => {
-      // acc.value holds reference to request.options
-      const options = Object.assign({}, acc.value, {
+    beforeRequest: options => {
+      return Object.assign({}, options, {
         headers: {
           'User-Agent': 'DataPoint'
         }
       })
-
-      return options
     }
   }
 })
@@ -33,7 +30,7 @@ const expectedResult = {
   ok: true
 }
 
-dataPoint.transform('request:getRemoteService', {}).then(acc => {
-  assert.deepEqual(acc.value, expectedResult)
-  console.log(acc.value)
+dataPoint.resolve('request:getRemoteService', {}).then(output => {
+  assert.deepEqual(output, expectedResult)
+  console.log(output)
 })

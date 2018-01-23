@@ -36,8 +36,12 @@ data-point-codemods --help
 
 **Upgrading 1.x &rarr; 2.x**
 
-- Refactor ReducerFunctions for value as first parameter eg. `(acc)` &rarr; `(value, acc)`
+- ([codemod](transforms/reducer-args-acc-to-val-acc.js)) Refactor ReducerFunctions for value as first parameter eg. `(acc)` &rarr; `(input, acc)`. For more info please look at the [input](transforms/__testfixtures__/reducer-args-acc-to-val-acc.input.js)/[output](transforms/__testfixtures__/reducer-args-acc-to-val-acc.output.js) tests.
 
+
+## WARNING
+
+Make sure you backup your files, these tests will overwrite their content. The codemods try to cover the most use cases possible, but there might be cases where they end up breaking your code
 
 ## Example of how a run may look: 
 

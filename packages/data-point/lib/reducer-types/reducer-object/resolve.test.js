@@ -40,7 +40,7 @@ describe('resolve#reducerObject.resolve', () => {
   it('should resolve a reducer object', () => {
     const reducer = createReducerObject(createReducer, {
       y: '$x.y',
-      zPlusOne: ['$x.y.z', acc => acc.value + 1]
+      zPlusOne: ['$x.y.z', value => value + 1]
     })
 
     const accumulator = AccumulatorFactory.create({

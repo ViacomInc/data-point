@@ -75,19 +75,18 @@ const input = {
 // mock actual calls to server
 mocks()
 
-dataPoint.transform('model:Planet', input).then(acc => {
-  const result = acc.value
-  assert.equal(result.name, 'Tatooine')
-  assert.equal(result.population, '200000')
-  assert.ok(result.residents.length > 0)
+dataPoint.resolve('model:Planet', input).then(output => {
+  assert.equal(output.name, 'Tatooine')
+  assert.equal(output.population, '200000')
+  assert.ok(output.residents.length > 0)
 
-  assert.deepEqual(result.residents[0], {
+  assert.deepEqual(output.residents[0], {
     name: 'Luke Skywalker',
     gender: 'male',
     birthYear: '19BBY'
   })
 
-  console.dir(acc.value, { colors: true })
+  console.dir(output, { colors: true })
 
   /*
   { name: 'Tatooine',

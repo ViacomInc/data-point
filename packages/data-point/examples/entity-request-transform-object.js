@@ -20,10 +20,10 @@ mock()
 
 // second parameter to transform is the initial acc value
 dataPoint
-  .transform('request:searchPeople', {
+  .resolve('request:searchPeople', {
     personName: 'r2'
   })
-  .then(acc => {
-    assert.equal(acc.value.results[0].name, 'R2-D2')
-    console.dir(acc.value, { colors: true })
+  .then(output => {
+    assert.equal(output.results[0].name, 'R2-D2')
+    console.dir(output, { colors: true })
   })

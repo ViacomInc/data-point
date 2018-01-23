@@ -18,35 +18,49 @@
     return acc.locals
   }
 
-  // only references acc.value
-  function reducer(value) {
+  // not a reducer either
+  d.transform(1,2).then(acc => {
     return {
-      a: value,
-      b: value[0],
-      c: value.message.array[0].a,
-      d: `${value.a}`
+      a: acc.value,
+      b: acc.value[0],
+      c: acc.value.message.array[0].a,
+      d: `${acc.value.a}`
+    };
+  })
+
+  d.transform(1,2).then(acc => {
+    acc.value
+  })
+
+  // only references acc.value
+  function reducer(input) {
+    return {
+      a: input,
+      b: input[0],
+      c: input.message.array[0].a,
+      d: `${input.a}`
     };
   }
 
-  const exp1 = function reducer(value) {
-    return value;
+  const exp1 = function reducer(input) {
+    return input;
   }
 
-  const exp2 = value => {
-    return value;
+  const exp2 = input => {
+    return input;
   }
 
-  const exp3 = a => b => value => {
-    return value;
+  const exp3 = a => b => input => {
+    return input;
   }
 
   // references any other property under acc
-  function reducerPromise(value, acc) {
+  function reducerPromise(input, acc) {
     return acc.locals
   }
 
   // references any other property under acc
-  function reducerNodeStyle(value, acc, next) {
-    next(value)
+  function reducerNodeStyle(input, acc, next) {
+    next(input)
   }
 }

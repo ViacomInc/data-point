@@ -12,17 +12,11 @@ const {
 
 function testTypeChecker (typeCheck, goodValue, badValue, type) {
   test('It should return true if type match', () => {
-    const acc = {
-      value: goodValue
-    }
-    expect(typeCheck(acc)).toBe(goodValue)
+    expect(typeCheck(goodValue)).toBe(goodValue)
   })
   test(`It should throw error when not matched`, () => {
-    const acc = {
-      value: badValue
-    }
     expect(() => {
-      typeCheck(acc)
+      typeCheck(badValue)
     }).toThrowErrorMatchingSnapshot()
   })
 }
