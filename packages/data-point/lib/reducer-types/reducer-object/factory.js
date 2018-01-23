@@ -15,9 +15,9 @@ module.exports.type = REDUCER_OBJECT
  */
 function ReducerObject () {
   this.type = REDUCER_OBJECT
+  this.isEmpty = undefined
   this.source = undefined
   this.reducers = undefined
-  this.isEmpty = undefined
 }
 
 module.exports.ReducerObject = ReducerObject

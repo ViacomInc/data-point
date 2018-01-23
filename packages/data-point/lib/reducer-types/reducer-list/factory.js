@@ -12,8 +12,8 @@ module.exports.type = REDUCER_LIST
  */
 function ReducerList () {
   this.type = 'ReducerList'
-  this.reducers = []
   this.isEmpty = undefined
+  this.reducers = []
 }
 
 module.exports.ReducerList = ReducerList
