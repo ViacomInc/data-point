@@ -2,11 +2,11 @@ module.exports = {
   'transform:HelloWorld': () => {
     return 'Hello World!!'
   },
-  'transform:greet': (value, acc) => {
+  'transform:greet': (input, acc) => {
     return `Hello ${acc.locals.params.name}!!`
   },
   'entry:getPerson': {
-    before: (value, acc) => {
+    before: (input, acc) => {
       // check params is not missing
       if (!acc.locals.params.personId) {
         throw new Error('missing params.personId')
@@ -15,7 +15,7 @@ module.exports = {
     value: '$..locals.params.personId | request:getPersonById | hash:Person',
     params: {
       ttl: '5m',
-      cacheKey: (value, acc) => `entry:getPerson:${acc.locals.params.personId}`
+      cacheKey: (input, acc) => `entry:getPerson:${acc.locals.params.personId}`
     }
   },
   'request:getPersonById': {

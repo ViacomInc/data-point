@@ -75,16 +75,16 @@ const dataPoint = DataPoint.create()
 
 // reducer function that concatenates 
 // accumulator.value with 'World'
-const reducer = (value) => {
-  return value + ' World'
+const reducer = (input) => {
+  return input + ' World'
 }
 
 // applies reducer to input
 dataPoint
   .resolve(reducer, 'Hello')
-  .then((value) => {
+  .then((output) => {
     // 'Hello World'
-    console.log(value) 
+    console.log(output) 
   })
 ```
 
@@ -175,9 +175,9 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
   }
 
   dataPoint.resolve('model:Planet', input)
-    .then((value) => {
+    .then((output) => {
       /*
-      value -> 
+      output -> 
       { 
         name: 'Tatooine',
         population: 200000,
@@ -248,8 +248,8 @@ DataPoint instance.
         foo: 'bar'
       },
       entities: {
-        'transform:HelloWorld': (value) => {
-          return `hello ${value}!!`
+        'transform:HelloWorld': (input) => {
+          return `hello ${input}!!`
         }
       }
     })
@@ -390,8 +390,8 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 
   dataPoint
     .resolve('$', input)
-    .then((value) => {
-      assert.equal(value, input)
+    .then((output) => {
+      assert.equal(output, input)
     })
   ```
 </details>
@@ -416,8 +416,8 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 
   dataPoint
     .resolve('$..value', input)
-    .then((value) => {
-      assert.equal(value, input)
+    .then(output => {
+      assert.equal(output input)
     })
   ```
 </details>
@@ -442,8 +442,8 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
   
   dataPoint
     .resolve('$a.b[0]', input)
-    .then((value) => {
-      assert.equal(value, 'Hello World')
+    .then(output => {
+      assert.equal(output, 'Hello World')
     })
   ```
 </details>
@@ -480,8 +480,8 @@ Example at: [examples/reducer-path.js](examples/reducer-path.js)
   
   dataPoint
     .resolve('$a.b[]', input)
-    .then((value) => {
-      assert.deepEqual(value, ['Hello World', 'Hello Solar System', 'Hello Universe'])
+    .then(output => {
+      assert.deepEqual(output, ['Hello World', 'Hello Solar System', 'Hello Universe'])
     })
   ```
 </details>
@@ -505,7 +505,7 @@ The returned value is used as the new value of the transformation.
 **SYNOPSIS**
 
 ```js
-const name = (value:*, acc:Accumulator) => {
+const name = (input:*, acc:Accumulator) => {
   return newValue
 }
 ```
@@ -514,21 +514,21 @@ const name = (value:*, acc:Accumulator) => {
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *value* | `*` |  Reference to acc.value |
+| *input* | `*` |  Reference to acc.value |
 | *acc* | [Accumulator](#accumulator) | Current reducer's accumulator Object. The main property is `value`, which is the current reducer's value. |
 
 <details>
   <summary>Reducer Function Example</summary>
   
   ```js
-   const reducer = (value) => {
-    return value + ' World'
+   const reducer = (input, acc) => {
+    return input + ' World'
   }
   
   dataPoint
     .resolve(reducer, 'Hello')
-    .then((value) => {
-      assert.equal(value, 'Hello World')
+    .then((output) => {
+      assert.equal(output, 'Hello World')
     })
   ```
 </details>
@@ -543,7 +543,7 @@ If you return a Promise its resolution will be used as the new value of the tran
 **SYNOPSIS**
 
 ```js
-const name = (value:*, acc:Accumulator) => {
+const name = (input:*, acc:Accumulator) => {
   return Promise.resolve(newValue)
 }
 ```
@@ -552,22 +552,22 @@ const name = (value:*, acc:Accumulator) => {
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *value* | `*` |  Reference to acc.value |
+| *input* | `*` |  Reference to acc.value |
 | *acc* | [Accumulator](#accumulator) |  Current reducer's accumulator Object. The main property is `acc.value`, which is the current reducer's value. |
 
 <details>
   <summary>Example</summary>
   
   ```js
-  const reducer = (value, acc) => {
-    // value is a reference to acc.value
+  const reducer = (input, acc) => {
+    // input is a reference to acc.value
     return Promise.resolve(acc.value + ' World')
   }
   
   dataPoint
     .resolve(reducer, 'Hello')
-    .then((value) => {
-      assert.equal(value, 'Hello World')
+    .then((output) => {
+      assert.equal(output, 'Hello World')
     })
   ```
 </details>
@@ -582,7 +582,7 @@ Accepting a third parameter as a **callback** allows you to execute an asynchron
 **SYNOPSIS**
 
 ```js
-const name = (value:*, acc:Accumulator, next:function) => {
+const name = (input:*, acc:Accumulator, next:function) => {
   next(error:Error, newValue:*)
 }
 ```
@@ -591,7 +591,7 @@ const name = (value:*, acc:Accumulator, next:function) => {
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *value* | `*` |  Reference to acc.value |
+| *input* | `*` |  Reference to acc.value |
 | *acc* | [Accumulator](#accumulator) |  Current reducer's accumulator Object. The main property is `acc.value`, which is the current reducer's value. |
 | *next* | `Function(error,value)` | [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks), where `value` is the value to be passed to the next reducer.
 
@@ -599,14 +599,14 @@ const name = (value:*, acc:Accumulator, next:function) => {
   <summary>Example</summary>
   
   ```js
-  const reducer = (value, acc, next) => {
-    next(null, value + ' World')
+  const reducer = (input, acc, next) => {
+    next(null, input + ' World')
   }
   
   dataPoint
     .resolve(reducer, 'Hello')
-    .then((value) => {
-      assert.equal(value, 'Hello World')
+    .then((output) => {
+      assert.equal(output, 'Hello World')
     })
   ```
 </details>
@@ -618,7 +618,7 @@ Example at: [examples/reducer-function-with-callback.js](examples/reducer-functi
   <summary>Throw an error from the reducer</summary>
   
   ```js
-  const throwError = (value, acc, next) => {
+  const throwError = (error, acc, next) => {
     // passing first argument will be
     // handled as an error by the transform
     next(new Error('oh noes!!'))
@@ -654,7 +654,7 @@ ObjectReducers are plain objects where the values are reducers. They're used to 
   
   const objectReducer = {
     y: '$x.y',
-    zPlusOne: ['$x.y.z', (value) => value + 1]
+    zPlusOne: ['$x.y.z', (input) => input + 1]
   }
   
   // output from dataPoint.transform(objectReducer, inputData):
@@ -692,7 +692,7 @@ ObjectReducers are plain objects where the values are reducers. They're used to 
   }
   
   dataPoint.resolve(objectReducer, planetIds)
-    .then(value => {
+    .then(output => {
       // do something with the aggregated planet data!
     })
   
@@ -816,8 +816,8 @@ For information about supported (built-in) entities, see the [Entities](#entitie
     }
   }
   
-  const toUpperCase = (value) => {
-    return value.toUpperCase()
+  const toUpperCase = (input) => {
+    return input.toUpperCase()
   }
   
   dataPoint.addEntities({
@@ -829,8 +829,8 @@ For information about supported (built-in) entities, see the [Entities](#entitie
   // pipe value to `transform:toUpperCase`
   dataPoint
     .resolve(['transform:getGreeting | transform:toUpperCase'], input)
-    .then((value) => {
-      assert.equal(value, 'HELLO WORLD')
+    .then((output) => {
+      assert.equal(output, 'HELLO WORLD')
     })
   ```
 </details>
@@ -841,8 +841,8 @@ A ListReducer is an array of reducers where the result of each reducer becomes t
 
 | ListReducer | Description |
 |:---|:---|
-| `['$a.b', (value) => { ... }]` | Get path `a.b`, pipe value to function reducer |
-| `['$a.b', (value) => { ... }, 'hash:Foo']` | Get path `a.b`, pipe value to function reducer, pipe result to `hash:Foo` |
+| `['$a.b', (input) => { ... }]` | Get path `a.b`, pipe value to function reducer |
+| `['$a.b', (input) => { ... }, 'hash:Foo']` | Get path `a.b`, pipe value to function reducer, pipe result to `hash:Foo` |
 
 ### <a name="reducer-conditional-operator">Conditionally execute an entity</a>
 
@@ -878,8 +878,8 @@ dataPoint.addEntities({
 
 dataPoint
   .resolve('transform:getPerson[]', people)
-  .then((value) => {
-    assert.deepEqual(value, [
+  .then((output) => {
+    assert.deepEqual(output, [
       {
         name: 'Luke Skywalker',
         birthYear: '19BBY'
@@ -913,8 +913,8 @@ Adding `[]` at the end of an entity reducer will map the given entity to each re
     ]
   }
   
-  const toUpperCase = (value) => {
-    return value.toUpperCase()
+  const toUpperCase = (input) => {
+    return input.toUpperCase()
   }
   
   dataPoint.addEntities({
@@ -923,11 +923,11 @@ Adding `[]` at the end of an entity reducer will map the given entity to each re
   
   dataPoint
     .resolve(['$a | transform:toUpperCase[]'], input)
-    .then((value) => {
-      assert.equal(value[0], 'HELLO WORLD')
-      assert.equal(value[1], 'HELLO LAIA')
-      assert.equal(value[2], 'HELLO DAREK')
-      assert.equal(value[3], 'HELLO ITALY')
+    .then((output) => {
+      assert.equal(output[0], 'HELLO WORLD')
+      assert.equal(output[1], 'HELLO LAIA')
+      assert.equal(output[2], 'HELLO DAREK')
+      assert.equal(output[3], 'HELLO ITALY')
     })
   ```
 </details>
@@ -971,7 +971,7 @@ assign(reducer:Reducer):Object
     assign
   } = DataPoint.helpers
 
-  const value = {
+  const input = {
     a: 1
   }
 
@@ -982,10 +982,10 @@ assign(reducer:Reducer):Object
   })
 
   dataPoint
-    .resolve(reducer, value)
-    .then(value => {
+    .resolve(reducer, input)
+    .then(output => {
       /*
-       value --> {
+       output --> {
         a: 1,
         b: {
           c: 2
@@ -1026,7 +1026,7 @@ map(reducer:Reducer):Array
     map
   } = DataPoint.helpers
 
-  const value = [{
+  const input = [{
     a: 1
   }, {
     a: 2
@@ -1034,13 +1034,13 @@ map(reducer:Reducer):Array
 
   // get path `a` then multiply by 2
   const reducer = map(
-    ['$a', (value) => value * 2]
+    ['$a', (input) => input * 2]
   )
 
   dataPoint
-    .resolve(reducer, value)
-    .then(value => {
-      // value -> [2, 4]
+    .resolve(reducer, input)
+    .then(output => {
+      // output -> [2, 4]
     })
   ```
 
@@ -1074,18 +1074,18 @@ filter(reducer:Reducer):Array
     map
   } = DataPoint.helpers
 
-  const value = [{ a: 1 }, { a: 2 }]
+  const input = [{ a: 1 }, { a: 2 }]
 
   // filters array elements that are not
   // truthy for the given reducer list
   const reducer = filter(
-    ['$a', (value) => value > 1]
+    ['$a', (input) => input > 1]
   )
 
   dataPoint
-    .resolve(reducer, value) 
-    .then(value => {
-      // value ->  [{ a: 2 }]
+    .resolve(reducer, input) 
+    .then(output => {
+      // output ->  [{ a: 2 }]
     })  
   ```
 </details>
@@ -1126,8 +1126,8 @@ find(reducer:Reducer):*
 
   dataPoint
     .resolve(reducer, input) 
-    .then(value => {
-      // value -> { b: 2 }
+    .then(output => {
+      // output -> { b: 2 }
     })
   ```
 </details>
@@ -1248,8 +1248,8 @@ To use built-in type checks you may set the value of **inputType**/**outputType*
   }
 
   dataPoint.resolve('model:getName', input)
-    .then(value => {
-      // value -> 'DataPoint'
+    .then(output => {
+      // output -> 'DataPoint'
     })
   ```
 
@@ -1285,8 +1285,8 @@ To customize type checking you may use a [Reducer](#reducers). If the reducer th
   }
 
   dataPoint.resolve('model:getName', input)
-    .then(value => {
-      // value -> 'DataPoint'
+    .then(output => {
+      // output -> 'DataPoint'
     })
   ```
 
@@ -1315,8 +1315,8 @@ To customize type checking you may use a [Reducer](#reducers). If the reducer th
   }
 
   dataPoint.resolve('model:getName', input)
-    .then(value => {
-      // value -> DataPoint
+    .then(output => {
+      // output -> DataPoint
     })
   ```
 
@@ -1351,12 +1351,12 @@ dataPoint.addEntities({
     }
   }
   
-  const getMax = (value) => {
-    return Math.max.apply(null, value)
+  const getMax = (input) => {
+    return Math.max.apply(null, input)
   }
   
-  const multiplyBy = (number) => (value) => {
-    return value * number
+  const multiplyBy = (number) => (input) => {
+    return input * number
   }
   
   dataPoint.addEntities({
@@ -1365,8 +1365,8 @@ dataPoint.addEntities({
   
   dataPoint
     .resolve('transform:foo', input)
-    .then((value) => {
-      assert.equal(value, 30)
+    .then((output) => {
+      assert.equal(output, 30)
     })
   ```
 </details>
@@ -1417,12 +1417,12 @@ dataPoint.addEntities({
     }
   }
   
-  const getMax = (value) => {
-    return Math.max.apply(null, value)
+  const getMax = (input) => {
+    return Math.max.apply(null, input)
   }
   
-  const multiplyBy = (number) => (value) => {
-    return value * number
+  const multiplyBy = (number) => (input) => {
+    return input * number
   }
   
   dataPoint.addEntities({
@@ -1433,8 +1433,8 @@ dataPoint.addEntities({
   
   dataPoint
     .resolve('model:foo', input)
-    .then((value) => {
-      assert.equal(value, 30)
+    .then((output) => {
+      assert.equal(output, 30)
     })
   ```
 </details>
@@ -1448,10 +1448,10 @@ Example at: [examples/entity-model-basic.js](examples/entity-model-basic.js)
   <summary>Checking whether the value passed to an entity is an array</summary>
   
   ```js
-  const toArray = (value) => {
-    return Array.isArray(value)
-      ? value
-      : [value]
+  const toArray = (input) => {
+    return Array.isArray(input)
+      ? input
+      : [input]
   }
   
   dataPoint.addEntities({
@@ -1463,8 +1463,8 @@ Example at: [examples/entity-model-basic.js](examples/entity-model-basic.js)
   
   dataPoint
     .resolve('model:foo', 100)
-    .then((value) => {
-      assert.deepEqual(value, [100])
+    .then((output) => {
+      assert.deepEqual(output, [100])
     })
   ```
 </details>
@@ -1478,10 +1478,10 @@ Example at: [examples/entity-model-before.js](examples/entity-model-before.js)
   <summary>Using `after` transform</summary>
   
   ```js
-  const toArray = (value) => {
-    return Array.isArray(value)
-      ? value
-      : [value]
+  const toArray = (input) => {
+    return Array.isArray(input)
+      ? input
+      : [input]
   }
   
   dataPoint.addEntities({
@@ -1499,8 +1499,8 @@ Example at: [examples/entity-model-before.js](examples/entity-model-before.js)
   
   dataPoint
     .resolve('model:foo', input)
-    .then((value) => {
-      assert.deepEqual(value, [3, 15])
+    .then((output) => {
+      assert.deepEqual(output, [3, 15])
     })
   ```
 </details>
@@ -1550,8 +1550,8 @@ Passing a value as the second argument will stop the propagation of the error.
 
   dataPoint
     .resolve('model:getArray', input)
-    .then((value) => {
-      assert.deepEqual(value, [])
+    .then((output) => {
+      assert.deepEqual(output, [])
     })
   ```
 </details>
@@ -1601,8 +1601,8 @@ The params object is used to pass custom data to your entity. This Object is exp
   <summary>On a FunctionReducer</summary>
   
   ```js
-  const multiplyValue = (value, acc) => {
-    return value * acc.params.multiplier
+  const multiplyValue = (input, acc) => {
+    return input * acc.params.multiplier
   }
   
   dataPoint.addEntities({
@@ -1616,8 +1616,8 @@ The params object is used to pass custom data to your entity. This Object is exp
   
   dataPoint
     .resolve('model:multiply', 200)
-    .then((value) => {
-      assert.deepEqual(value, 20000)
+    .then((output) => {
+      assert.deepEqual(output, 20000)
     })
   ```
 </details>
@@ -1637,8 +1637,8 @@ The params object is used to pass custom data to your entity. This Object is exp
   })
   
   dataPoint.resolve('model:getParam')
-    .then((value) => {
-      assert.deepEqual(value, 100)
+    .then((output) => {
+      assert.deepEqual(output, 100)
     })
   ```
 </details>
@@ -1726,9 +1726,9 @@ Sets the url to be requested.
   })
 
   dataPoint.resolve('request:getLuke', {})
-    .then(value => {
+    .then(output => {
       /*
-      value -> 
+      output -> 
       {
         name: 'Luke Skywalker',
         height: '172',
@@ -1764,9 +1764,9 @@ Using `acc.value` property to make the url dynamic.
   }
 
   dataPoint.resolve('request:getLuke', input)
-    .then(value => {
+    .then(output => {
       /*
-      value -> 
+      output -> 
       {
         name: 'Luke Skywalker',
         height: '172',
@@ -1799,9 +1799,9 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
   }
 
   dataPoint.resolve('request:getLuke', {}, options)
-    .then(value => {
+    .then(output => {
     /*
-    value -> 
+    output -> 
     {
       name: 'Luke Skywalker',
       height: '172',
@@ -1848,8 +1848,8 @@ When a TransformObject is to be resolved, all reducers are resolved in parallel.
     .resolve('request:searchPeople', {
       personName: 'r2'
     })
-    .then(value => {
-      // value.results[0].name -> 'R2-D2'
+    .then(output => {
+      // output.results[0].name -> 'R2-D2'
     })
   ```
 </details>
@@ -1870,24 +1870,21 @@ This example simply provides the header object through a reducer. One possible u
   dataPoint.addEntities({
     'request:getOrgInfo': {
       url: 'https://api.github.com/orgs/{value}',
-      beforeRequest: (value) => {
-        // value holds reference
-        // to request.options
-        const options = Object.assign({}, value, {
+      beforeRequest: (options) => {
+        // reference to request.options
+        return Object.assign({}, options, {
           headers: {
             'User-Agent': 'DataPoint'
           }
         })
-  
-        return options
       }
     }
   })
   
   dataPoint
     .resolve('request:getOrgInfo', 'nodejs')
-    .then((value) => {
-      console.log(value)
+    .then((output) => {
+      console.log(output)
       // entire result from https://api.github.com/orgs/nodejs
     })
   ```
@@ -2000,8 +1997,8 @@ dataPoint.addEntities({
   
   dataPoint
     .resolve('hash:helloWorld', input)
-    .then((value) => {
-      assert.deepEqual(value, {
+    .then((output) => {
+      assert.deepEqual(output, {
         c: 'Hello',
         d: ' World!!'
       })
@@ -2035,8 +2032,8 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
         // a ReducerFunction
         url: [
           '$name',
-          value => {
-            return `https://github.com/ViacomInc/${_.kebabCase(value)}`
+          input => {
+            return `https://github.com/ViacomInc/${_.kebabCase(input)}`
           }
         ]
       }
@@ -2047,8 +2044,8 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
     name: 'DataPoint'
   }
 
-  dataPoint.resolve('hash:mapKeys', input).then(value => {
-    assert.deepEqual(value, {
+  dataPoint.resolve('hash:mapKeys', input).then(output => {
+    assert.deepEqual(output, {
       name: 'DataPoint',
       url: 'https://github.com/ViacomInc/data-point'
     })
@@ -2072,7 +2069,7 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
   dataPoint.addEntities({
     'hash:addKeys': {
       addKeys: {
-        nameLowerCase: ['$name', value => value.toLowerCase()],
+        nameLowerCase: ['$name', input => input.toLowerCase()],
         url: () => 'https://github.com/ViacomInc/data-point'
       }
     }
@@ -2082,8 +2079,8 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
     name: 'DataPoint'
   }
 
-  dataPoint.resolve('hash:addKeys', input).then(value => {
-    assert.deepEqual(value, {
+  dataPoint.resolve('hash:addKeys', input).then(output => {
+    assert.deepEqual(output, {
       name: 'DataPoint',
       nameLowerCase: 'datapoint',
       url: 'https://github.com/ViacomInc/data-point'
@@ -2116,10 +2113,10 @@ The next example is similar to the previous example. However, instead of mapping
     url: 'https://github.com/ViacomInc/data-point'
   }
 
-  dataPoint.resolve('hash:pickKeys', input).then(value => {
+  dataPoint.resolve('hash:pickKeys', input).then(output => {
     // notice how name is no longer 
     // in the object
-    assert.deepEqual(value, {
+    assert.deepEqual(output, {
       url: 'https://github.com/ViacomInc/data-point'
     })
   })
@@ -2155,8 +2152,8 @@ This example will only **omit** some keys, and let the rest pass through:
     url: 'https://github.com/ViacomInc/data-point'
   }
 
-  dataPoint.resolve('hash:omitKeys', input).then(value => {
-    assert.deepEqual(value, expectedResult)
+  dataPoint.resolve('hash:omitKeys', input).then(output => {
+    assert.deepEqual(output, expectedResult)
   })
   ```
 </details>
@@ -2198,8 +2195,8 @@ Sometimes you just want to add a hard-coded value to your current `acc.value`.
   
   dataPoint
     .resolve('hash:addValues')
-    .then((value) => {
-      assert.deepEqual(value, expectedResult)
+    .then((output) => {
+      assert.deepEqual(output, expectedResult)
     })
   ```
 </details>
@@ -2213,8 +2210,8 @@ You can add multiple reducers to your Hash spec.
   <summary>Hash Multiple Reducers Example</summary>
 
   ```js
-  const toUpperCase = (value) => {
-    return value.toUpperCase()
+  const toUpperCase = (input) => {
+    return input.toUpperCase()
   }
   
   dataPoint.addEntities({
@@ -2248,8 +2245,8 @@ You can add multiple reducers to your Hash spec.
   
   dataPoint
     .resolve('entry:orgInfo', { org: 'nodejs' })
-    .then((value) => {
-      assert.deepEqual(value, expectedResult)
+    .then((output) => {
+      assert.deepEqual(output, expectedResult)
     })
   ```
 </details>
@@ -2337,8 +2334,8 @@ Now that we have the result of the fetch, let's now map each item, and then extr
   
   dataPoint
     .resolve('request:getOrgRepositories | collection:getRepositoryTagsUrl', {})
-    .then((value) => {
-      console.log(value)
+    .then((output) => {
+      console.log(output)
       /*
       [
         https://api.github.com/repos/nodejs/http-parser/tags,
@@ -2383,8 +2380,8 @@ _For the purpose of this example, let's imagine that GitHub does not provide the
     }
   })
   
-  dataPoint.resolve('request:getOrgRepositories | collection:getRepositoryLatestTag', {}).then((value) => {
-    console.log(value)
+  dataPoint.resolve('request:getOrgRepositories | collection:getRepositoryLatestTag', {}).then((output) => {
+    console.log(output)
     /*
     [
       [  // repo
@@ -2439,8 +2436,8 @@ dataPoint.addEntities({
 
 dataPoint
   .resolve('request:getOrgRepositories | collection:getRepositoryLatestTag')
-  .then((value) => {
-    console.log(value)
+  .then((output) => {
+    console.log(output)
     /*
     [
       "v2.7.1",
@@ -2476,16 +2473,16 @@ The following example filters the data to identify all the repos that have more 
     },
     'collection:getRepositoryUrl': {
       map: '$url',
-      filter: (value) => {
-        return value.stargazers_count > 100
+      filter: (input) => {
+        return input.stargazers_count > 100
       }
     }
   })
   
   dataPoint
     .resolve(['request:getOrgRepositories', 'collection:getRepositoryUrl'])
-    .then((value) => {
-      console.log(value)
+    .then((output) => {
+      console.log(output)
       /*
       [
         https://api.github.com/repos/nodejs/http-parser,
@@ -2526,8 +2523,8 @@ The following example gets all the repos that are actually forks. In this case, 
   
   dataPoint
     .resolve(['request:getOrgRepositories', 'collection:getRepositoryUrl'])
-    .then((value) => {
-      console.log(value)
+    .then((output) => {
+      console.log(output)
       /*
       [
         {
@@ -2570,17 +2567,17 @@ Returns the value of the first element in the array that satisfies the provided 
     },
     'collection:getNodeRepo': {
       before: 'request:repos',
-      find: (value) => {
+      find: (input) => {
         // notice we are checking against the property -name- 
-        return value.name === 'node'
+        return input.name === 'node'
       }
     }
   })
   
   dataPoint
     .resolve('request:repos | collection:getNodeRepo')
-    .then((value) => {
-      console.log(value)
+    .then((output) => {
+      console.log(output)
       /*
       {
         "id": 27193779,
@@ -2608,8 +2605,8 @@ Returns the value of the first element in the array that satisfies the provided 
   <summary>Basic `Collection.find` with `compose` example</summary>
   
   ```js
-  const isEqualTo = (match) => (value) => {
-    return value === match
+  const isEqualTo = (match) => (input) => {
+    return input === match
   }
   
   dataPoint.addEntities({
@@ -2633,8 +2630,8 @@ Returns the value of the first element in the array that satisfies the provided 
   
   dataPoint
     .resolve('request:repos | collection:getNodeRepo')
-    .then((value) => {
-      console.log(value)
+    .then((output) => {
+      console.log(output)
       /*
       {
         "id": 27193779,
@@ -2656,8 +2653,8 @@ Returns the value of the first element in the array that satisfies the provided 
   <summary>Get all forks and map them to a Hash entity</summary>
   
   ```js
-  const isEqualTo = (match) => (value) => {
-    return value === match
+  const isEqualTo = (match) => (input) => {
+    return input === match
   }
   
   dataPoint.addEntities({
@@ -2682,8 +2679,8 @@ Returns the value of the first element in the array that satisfies the provided 
   
   dataPoint
     .resolve('request:repos | collection:forkedReposSummary')
-    .then((value) => {
-      console.log(value)
+    .then((output) => {
+      console.log(output)
       /*
       [
         {
@@ -2755,15 +2752,15 @@ If no case statement resolves to `truthy`, then the default statement will be us
 
 ```js
 
-const isEqual = (compareTo) => (value) => {
-  return value === compareTo
+const isEqual = (compareTo) => (input) => {
+  return input === compareTo
 }
 
-const resolveTo = (newValue) => (value) => {
-  return newValue
+const resolveTo = (newValue) => (input) => {
+  return input
 }
 
-const throwError = (message) => (value) => {
+const throwError = (message) => (input) => {
   throw new Error(message)
 }
 
@@ -2779,12 +2776,12 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.resolve('control:fruitPrices', 'apples').then((value) => {
-  console.log(value) // 0.32
+dataPoint.resolve('control:fruitPrices', 'apples').then((output) => {
+  console.log(output) // 0.32
 });
 
-dataPoint.resolve('control:fruitPrices', 'cherries').then((value) => {
-  console.log(value) // 3.00 expensive!! 
+dataPoint.resolve('control:fruitPrices', 'cherries').then((output) => {
+  console.log(output) // 3.00 expensive!! 
 });
 
 dataPoint.resolve('control:fruitPrices', 'plum')
@@ -2902,10 +2899,10 @@ Extending entities is **not a deep merge of properties** from one entity to the 
     }
   }
   
-  dataPoint.resolve('entry:getReposWithAllTags', null, options).then((value) => {
+  dataPoint.resolve('entry:getReposWithAllTags', null, options).then((output) => {
     // returns all the repos
     // for nodejs org
-    console.log(value) 
+    console.log(output) 
   })
   ```
 </details>
@@ -2925,7 +2922,7 @@ Example at: [examples/extend-entity-keys.js](examples/extend-entity-keys.js)
       }
     },
     'model:multiplyBy': {
-      value: (value, acc) => value * acc.params.multiplicand,
+      value: (input, acc) => input * acc.params.multiplicand,
       params: {
         multiplicand: 1
       }
@@ -2940,8 +2937,8 @@ Example at: [examples/extend-entity-keys.js](examples/extend-entity-keys.js)
     }
   })
 
-  dataPoint.resolve('hash:multiply', {multiplier: 5}).then((value) => {
-    console.log(value)
+  dataPoint.resolve('hash:multiply', {multiplier: 5}).then((output) => {
+    console.log(output)
     /*
     {
       multiplyByFactor: 5,
@@ -3165,16 +3162,16 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
     }
   })
 
-  const data = {
+  const input = {
     user: {
       name: 'World'
     }
   }
 
   dataPoint
-    .resolve('render:HelloWorld', data)
-    .then((value) => {
-      assert.equal(value, '<h1>Hello World!!</h1>')
+    .resolve('render:HelloWorld', input)
+    .then((output) => {
+      assert.equal(output, '<h1>Hello World!!</h1>')
     })
   ```
 </details>
@@ -3195,19 +3192,20 @@ const dataPoint = DataPoint.create({
   /* data-point options */
 })
 
-app.get('/api/:entry', (req, res, next) =>{
+app.get('/api/:entry', (req, res, next) => {
   const {entry} = req.params
-  dataPoint.resolve(`entry:${entry}`, req.query, (err, res) => {
-    if (err) {
+  dataPoint.resolve(`entry:${entry}`, req.query)
+    .then((output) => {
+      res.send((output)
+    })
+    .catch((error) => {
       console.error('entry: %s failed!', entry)
       console.error(error.stack)
       next(err) // pass error to middleware chain
       return
-    }
-    // respond with result from data-point
-    res.send(result.value)
-  }))
+    })    
 })
+
 
 app.listen(3000, function () {
   console.log('listening on port 3000!')
@@ -3224,15 +3222,15 @@ You may use a [higher order function](https://medium.com/javascript-scene/higher
 
 ```js
 // sync
-const name = (param1, param2, ...) => (acc:Accumulator) => {
+const name = (param1, param2, ...) => (input:*, acc:Accumulator) => {
   return newValue
 }
 // async via promise
-const name = (param1, param2, ...) => (acc:Accumulator) => {
+const name = (param1, param2, ...) => (input:*, acc:Accumulator) => {
   return Promise.resolve(newValue)
 }
 // async via callback
-const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
+const name = (param1, param2, ...) => (input:*, acc:Accumulator, next:function) => {
   next(error:Error, newValue:*)
 }
 ```
@@ -3241,14 +3239,14 @@ const name = (param1, param2, ...) => (acc:Accumulator, next:function) => {
   <summary>Higher Order Reducer Example</summary>
   
   ```js
-  const addStr = (newString) => (value) => {
-    return `${value}${newString}`
+  const addStr = (newString) => (input) => {
+    return `${input}${newString}`
   }
   
   dataPoint
     .resolve(addStr(' World!!'), 'Hello')
-    .then((value) => {
-      assert.equal(value, 'Hello World!!')
+    .then((output) => {
+      assert.equal(output, 'Hello World!!')
     })
   ```
 </details>
@@ -3266,29 +3264,29 @@ In the context of a [FunctionReducer](#function-reducer) it means you should nev
   <summary>Example</summary>
 
   ```js
-  const badReducer = () => (value) => {
+  const badReducer = () => (input) => {
     // never ever modify the value object.
-    value[1].username = 'foo'
+    input[1].username = 'foo'
 
     // keep in mind JS is by reference
     // so this means this is also
     // modifying the value object
-    const image = value[1]
+    const image = input[1]
     image.username = 'foo'
 
     // pass value to next reducer
-    return value
+    return input
   }
 
   // this is better
   const fp = require('lodash/fp')
-  const goodReducer = () => (value) => {
+  const goodReducer = () => (input) => {
     // https://github.com/lodash/lodash/wiki/FP-Guide
     // this will cause no side effects
-    const value = fp.set('[1].username', 'foo', value)
+    const newValue = fp.set('[1].username', 'foo', input)
 
     // pass value to next reducer
-    return value
+    return newValue
   }
   ```
 </details>

@@ -6,8 +6,8 @@ function server (dataPoint) {
   const app = express()
 
   app.get('/api/hello-world', (req, res) => {
-    dataPoint.transform(`entry:HelloWorld`, req.query).then(result => {
-      res.send(result.value)
+    dataPoint.transform(`entry:HelloWorld`, req.query).then(acc => {
+      res.send(acc.value)
     })
   })
 
