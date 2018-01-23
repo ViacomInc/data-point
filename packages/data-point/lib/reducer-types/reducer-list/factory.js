@@ -8,10 +8,12 @@ module.exports.type = REDUCER_LIST
  * @class
  * @property {string} type
  * @property {Array<reducer>} reducers
+ * @property {boolean} isEmpty
  */
 function ReducerList () {
   this.type = 'ReducerList'
   this.reducers = []
+  this.isEmpty = undefined
 }
 
 module.exports.ReducerList = ReducerList
@@ -79,10 +81,10 @@ module.exports.parse = parse
  */
 function create (createReducer, source = []) {
   const tokens = parse(source)
-
   const reducers = tokens.map(token => createReducer(token))
 
   const reducer = new ReducerList()
+  reducer.isEmpty = _.isEmpty(reducers)
   reducer.reducers = reducers
 
   return reducer

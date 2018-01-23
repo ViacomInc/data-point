@@ -6,6 +6,7 @@ const createReducer = require('../index').create
 const resolveReducer = require('../index').resolve
 const AccumulatorFactory = require('../../accumulator/factory')
 const FixtureStore = require('../../../test/utils/fixture-store')
+const constant = require('../..').helpers.constant
 
 let dataPoint
 
@@ -39,7 +40,16 @@ describe('resolve#reducerObject.resolve', () => {
 
   it('should resolve a reducer object', () => {
     const reducer = createReducerObject(createReducer, {
-      y: '$x.y',
+      x: constant([1, 2]),
+      y: {
+        a: constant({
+          p1: 1,
+          p2: {
+            p3: 2
+          }
+        }),
+        b: '$x.y'
+      },
       zPlusOne: ['$x.y.z', acc => acc.value + 1]
     })
 
@@ -60,8 +70,17 @@ describe('resolve#reducerObject.resolve', () => {
       reducer
     ).then(result => {
       expect(result.value).toEqual({
+        x: [1, 2],
         y: {
-          z: 2
+          a: {
+            p1: 1,
+            p2: {
+              p3: 2
+            }
+          },
+          b: {
+            z: 2
+          }
         },
         zPlusOne: 3
       })
@@ -74,7 +93,14 @@ describe('resolve#reducerObject.resolve', () => {
       y: '$c.y',
       z: {
         a: '$a',
-        b: '$b'
+        b: '$b',
+        c: constant({
+          x: '$c.x',
+          y: {
+            y2: '$c.y'
+          },
+          z: ['$c.z']
+        })
       }
     })
 
@@ -100,7 +126,14 @@ describe('resolve#reducerObject.resolve', () => {
         y: 'Y',
         z: {
           a: 'A',
-          b: 'B'
+          b: 'B',
+          c: {
+            x: '$c.x',
+            y: {
+              y2: '$c.y'
+            },
+            z: ['$c.z']
+          }
         }
       })
     })

@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
 const set = require('lodash/set')
+
 const utils = require('../../utils')
 
 /**
@@ -10,11 +11,11 @@ const utils = require('../../utils')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
-  if (reducer.props.length === 0) {
+  if (utils.reducerIsEmpty(reducer)) {
     return Promise.resolve(accumulator)
   }
 
-  return Promise.map(reducer.props, ({ path, reducer }) => {
+  return Promise.map(reducer.reducers, ({ reducer, path }) => {
     return resolveReducer(manager, accumulator, reducer).then(({ value }) => ({
       path,
       value
@@ -22,8 +23,9 @@ function resolve (manager, resolveReducer, accumulator, reducer) {
   }).then(result => {
     const value = result.reduce(
       (acc, { path, value }) => set(acc, path, value),
-      {}
+      reducer.source()
     )
+
     return utils.set(accumulator, 'value', value)
   })
 }
