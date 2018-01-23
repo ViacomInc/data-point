@@ -102,45 +102,59 @@ describe('resolveUrl', () => {
 
 describe('resolveOptions', () => {
   test('It should set acc.options', () => {
-    const acc = _.set({}, 'reducer.spec', {
-      options: {
-        port: 80
+    const acc = {
+      value: {
+        subdomain: 'bar'
       },
-      transformOptionKeys: []
-    })
+      reducer: {
+        spec: {
+          url: 'http://foo.com/{value.subdomain}',
+          options: ReducerFactory.create({
+            port: () => 80
+          })
+        }
+      }
+    }
+
     return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
       expect(result.options).toEqual({
+        method: 'GET',
+        json: true,
+        url: 'http://foo.com/bar',
         port: 80
       })
     })
   })
 
-  test('It should resolve transformOptionKeys', () => {
+  test('It should set acc.options and override defaults', () => {
     const acc = {
       value: {
-        foo: {
-          bar: 'test'
-        }
+        method: 'POST',
+        testProp: 1,
+        subdomain: 'bar'
       },
       reducer: {
         spec: {
-          options: {
-            port: 80
-          },
-          transformOptionKeys: [
-            {
-              path: 'qs.key',
-              transform: ReducerFactory.create('$foo.bar')
+          url: 'http://foo.com/{value.subdomain}',
+          options: ReducerFactory.create({
+            method: '$method',
+            port: () => 80,
+            qs: {
+              testProp: '$testProp'
             }
-          ]
+          })
         }
       }
     }
+
     return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
       expect(result.options).toEqual({
+        method: 'POST',
+        json: true,
         port: 80,
+        url: 'http://foo.com/bar',
         qs: {
-          key: 'test'
+          testProp: 1
         }
       })
     })
@@ -149,25 +163,57 @@ describe('resolveOptions', () => {
 
 describe('getRequestOptions', () => {
   test('set defaults', () => {
-    expect(Resolve.getRequestOptions({})).toEqual({
+    expect(Resolve.getRequestOptions('http://foo.com', {})).toEqual({
       method: 'GET',
-      json: true
+      json: true,
+      url: 'http://foo.com'
     })
-
     expect(
-      Resolve.getRequestOptions({
+      Resolve.getRequestOptions('http://foo.com', {
         json: false
-      }).json
-    ).toBe(false)
-
+      })
+    ).toEqual({
+      method: 'GET',
+      json: false,
+      url: 'http://foo.com'
+    })
     expect(
-      Resolve.getRequestOptions({
+      Resolve.getRequestOptions('http://foo.com', { url: 'http://foo.com/bar' })
+    ).toEqual({
+      method: 'GET',
+      json: true,
+      url: 'http://foo.com/bar'
+    })
+    expect(
+      Resolve.getRequestOptions('http://foo.com', {
         timeout: 100
       })
     ).toEqual({
       method: 'GET',
       json: true,
-      timeout: 100
+      timeout: 100,
+      url: 'http://foo.com'
+    })
+    expect(
+      Resolve.getRequestOptions('http://foo.com', { baseUrl: 'BASE_URL' })
+    ).toEqual({
+      method: 'GET',
+      json: true,
+      baseUrl: 'BASE_URL',
+      uri: 'http://foo.com',
+      url: ''
+    })
+    expect(
+      Resolve.getRequestOptions('http://foo.com', {
+        baseUrl: 'BASE_URL',
+        uri: 'URI'
+      })
+    ).toEqual({
+      method: 'GET',
+      json: true,
+      baseUrl: 'BASE_URL',
+      uri: 'URI',
+      url: ''
     })
   })
 })
@@ -282,20 +328,6 @@ describe('resolve', () => {
       })
 
     return transform('request:a1.0', {}).then(result => {
-      expect(result.value).toEqual({
-        ok: true
-      })
-    })
-  })
-
-  test('beforeRequest', () => {
-    nock('http://remote.test')
-      .get('/source1')
-      .reply(200, {
-        ok: true
-      })
-
-    return transform('request:a2', {}).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
