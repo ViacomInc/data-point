@@ -74,5 +74,4 @@ All commit messages **must** use [commitizen](http://commitizen.github.io/cz-cli
 If your pull request includes a breaking change, please submit it with a [codemod](https://github.com/facebook/jscodeshift) under
 data-point-codemods that will help users upgrade their codebase.
 
-Breaking changes without a codemod will not be accepted unless a codemod is not
-viable or does not apply to the specific situation.
+Breaking changes without a codemod will not be accepted unless a codemod is not viable or does not apply to the specific situation.
