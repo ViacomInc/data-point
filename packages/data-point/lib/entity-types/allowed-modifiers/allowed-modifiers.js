@@ -6,12 +6,12 @@ function allowedProperties (id, spec, validKeys) {
   if (differentKeys.length > 0) {
     throw new Error(
       Util.format(
-        'Entity "%s" did not recognize the following properties: %s, valid properties are: %s.\nPlease review your entity and make any corrections so it can be parsed:\n\'%s\': %O',
+        'Entity "%s" did not recognize the following properties: %s, valid properties are: %s.\nPlease review your entity and make any corrections so it can be parsed:\n\'%s\': %s',
         id,
         differentKeys.join(', '),
         validKeys.join(', '),
         id,
-        spec
+        Util.inspect(spec)
       )
     )
   }
