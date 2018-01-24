@@ -41,7 +41,9 @@ data-point-codemods --help
 
 ## WARNING
 
-Make sure you backup your files, these tests will overwrite their content. The codemods try to cover the most use cases possible, but there might be cases where they end up breaking your code
+Make sure you backup your files, these tests will overwrite their content. The codemods try to cover the most use cases possible, but there might be cases where they end up breaking your code.
+
+codemods might change your formatting.
 
 ## Example of how a run may look: 
 
