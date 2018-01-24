@@ -22,6 +22,7 @@
   "devDependencies": {
     "all-contributors-cli": "^4.10.1",
     "commitizen": "latest",
+    "coveralls": "2",
     "cz-conventional-changelog": "latest",
     "jest": "latest",
     "lerna": "^2.5.1",
