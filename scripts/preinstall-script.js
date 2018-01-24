@@ -1,12 +1,11 @@
-/**
- * Do NOT allow using `npm` as package manager for npm install.
- */
+#!/usr/bin/env node
 
 if (process.env.npm_execpath.indexOf('yarn') === -1) {
   console.error(
     '\x1b[41m',
-    'Error: You must use Yarn to install dependencies\n',
-    '\x1b[0m'
+    'Error: You must use yarn to install dependencies',
+    '\x1b[0m',
+    '\n'
   )
   process.exit(1)
 }

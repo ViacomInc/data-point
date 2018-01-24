@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "node preinstall-script.js",
+    "preinstall": "scripts/preinstall-script.js",
     "precommit": "lint-staged",
     "commit": "git-cz",
     "test": "jest --coverage",
