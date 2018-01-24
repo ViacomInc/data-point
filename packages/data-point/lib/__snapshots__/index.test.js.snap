@@ -6,6 +6,7 @@ Object {
   "createEntity": [Function],
   "createReducerResolver": [Function],
   "helpers": Object {
+    "asArray": [Function],
     "assign": [Function],
     "filter": [Function],
     "find": [Function],
