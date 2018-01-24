@@ -73,10 +73,10 @@ module.exports = (file, api, options) => {
     return node.value
   }
 
-  function checkValueVariable (node) {
+  function checkInputVariable (node) {
     j(node)
       .find(j.Identifier, {
-        name: 'value'
+        name: 'input'
       })
       .forEach(nodePath => {
         const parentNode = nodePath.parentPath.value
@@ -84,11 +84,11 @@ module.exports = (file, api, options) => {
           const nodeStart = parentNode.loc.start
           throw Error(
             util.format(
-              'Refactor Reducer arguments (acc) -> (acc, value) Failed.',
-              '\nA variable with name `value` already exists in the scope of a reducer function.',
+              'Refactor Reducer arguments (acc) -> (input, acc) Failed.',
+              '\nA variable with name `input` already exists in the scope of a reducer function.',
               `\n\n${j(node).toSource()}`,
               `\n^------- ${file.path}:${nodeStart.line}:${nodeStart.column}`,
-              "\n\nTry refactoring this block of code to remove any variable of name 'value' before running the codemod.\n\n"
+              "\n\nTry refactoring this block of code to remove any variable of name 'input' before running the codemod.\n\n"
             )
           )
         }
@@ -96,7 +96,7 @@ module.exports = (file, api, options) => {
   }
 
   function refactorReducer (node) {
-    checkValueVariable(node)
+    checkInputVariable(node)
     replaceAccValueReferences(node)
     addValueParam(node)
   }
