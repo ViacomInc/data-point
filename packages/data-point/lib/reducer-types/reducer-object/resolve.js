@@ -14,16 +14,18 @@ function resolve (manager, resolveReducer, accumulator, reducer) {
     return Promise.resolve(accumulator)
   }
 
-  const props = Promise.map(reducer.props, ({ path, reducer }) => {
+  return Promise.map(reducer.props, ({ path, reducer }) => {
     return resolveReducer(manager, accumulator, reducer).then(({ value }) => ({
       path,
       value
     }))
+  }).then(result => {
+    const value = result.reduce(
+      (acc, { path, value }) => set(acc, path, value),
+      {}
+    )
+    return utils.set(accumulator, 'value', value)
   })
-
-  return props
-    .reduce((acc, { path, value }) => set(acc, path, value), {})
-    .then(value => utils.set(accumulator, 'value', value))
 }
 
 module.exports.resolve = resolve

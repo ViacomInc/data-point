@@ -4,6 +4,8 @@ const requests = require('../../../test/definitions/requests')
 
 const requestFactory = require('./factory')
 
+const { isReducer } = require('../../reducer-types')
+
 describe('create', () => {
   let request
   beforeAll(() => {
@@ -17,29 +19,21 @@ describe('create', () => {
     expect(request).not.toHaveProperty('error')
     expect(request).toHaveProperty('params')
   })
-  test('It should have url', () => {
+  test('It should have a url', () => {
     expect(request).toHaveProperty('url')
   })
-  test('It should have options with out any transform keys', () => {
-    expect(request).toHaveProperty('options')
-    expect(request.options).toEqual({
-      dataType: 'json',
-      method: 'POST',
-      qs: {
-        varKey2: 1,
-        varKey3: true
-      },
-      timeout: 1000,
-      username: '$username$'
-    })
+  test('It should have an options reducer', () => {
+    expect(isReducer(request.options)).toBe(true)
   })
-  test('It should have transformOptionKeys', () => {
-    expect(request).toHaveProperty('transformOptionKeys')
-    expect(request.transformOptionKeys).toHaveLength(2)
-    request.transformOptionKeys.forEach(element => {
-      expect(element).toHaveProperty('path')
-      expect(element).toHaveProperty('transform')
-      expect(element.transform).toHaveProperty('type', 'ReducerFunction')
-    }, this)
+  test('It should have the default options reducer', () => {
+    const newRequest = requestFactory.create(requests['request:a1.0'])
+    expect(isReducer(newRequest.options)).toBe(true)
+    expect(newRequest.options.body).toEqual(requestFactory.defaultOptions)
+  })
+})
+
+describe('factory#defaultOptions', () => {
+  test('It should return an empty object', () => {
+    expect(requestFactory.defaultOptions()).toEqual({})
   })
 })

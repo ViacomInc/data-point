@@ -88,7 +88,7 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
       foo: 'bar'
     })
   })
-  test('It should initialValue acc.value', () => {
+  test('It should set an initialValue for acc.params', () => {
     expect(acc).toHaveProperty('params', {
       base: true
     })
@@ -112,7 +112,7 @@ describe('ResolveEntity.resolveMiddleware', () => {
     })
   })
 
-  test('It should execute a middleware', () => {
+  test('It should execute a middleware that forces an error to bypass the promise chain', () => {
     dataPoint.middleware.use('request:before', (acc, next) => {
       acc.resolve('bar')
       next(null)
@@ -186,7 +186,7 @@ describe('ResolveEntity.resolveEntity', () => {
     })
   })
 
-  test('It should resolve through bypass', () => {
+  test('it should catch errors from middleware', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
       const err = new Error('test')
       throw err
@@ -195,6 +195,49 @@ describe('ResolveEntity.resolveEntity', () => {
       .catch(err => err)
       .then(err => {
         expect(err).toHaveProperty('message', 'test')
+      })
+  })
+
+  test('inputType - throws error if inputType does not pass', () => {
+    return resolveEntity('model:c.0', 'foo')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
+  test('inputType - if typeCheck passes then resolve normal', () => {
+    return resolveEntity('model:c.0', 1).then(ac => {
+      expect(ac.value).toEqual(1)
+    })
+  })
+
+  test('outputType - throws error if outputType does not pass', () => {
+    return resolveEntity('model:c.1', 1)
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
+  test('outputType - if typeCheck passes then resolve normal', () => {
+    return resolveEntity('model:c.1', 'foo').then(ac => {
+      expect(ac.value).toEqual('foo')
+    })
+  })
+
+  test('typeCheck should not be able to change acc.value', () => {
+    return resolveEntity('model:c.2', 'my string').then(result => {
+      expect(result.value).toEqual('my string')
+    })
+  })
+
+  test('if custom typeCheck throws then fail', () => {
+    return resolveEntity('model:c.3', 123)
+      .catch(e => e)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
+        expect(result).toMatchSnapshot()
       })
   })
 })
