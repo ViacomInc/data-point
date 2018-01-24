@@ -1,6 +1,4 @@
-const set = require('lodash/set')
-const isEmpty = require('lodash/isEmpty')
-const isPlainObject = require('lodash/isPlainObject')
+const _ = require('lodash')
 
 const REDUCER_OBJECT = 'ReducerObject'
 
@@ -27,7 +25,7 @@ module.exports.ReducerObject = ReducerObject
  * @returns {boolean}
  */
 function isType (source) {
-  return isPlainObject(source)
+  return _.isPlainObject(source)
 }
 
 module.exports.isType = isType
@@ -55,7 +53,7 @@ function getProps (createReducer, source, stack = [], props = newProps()) {
   for (let key of Object.keys(source)) {
     const path = stack.concat(key)
     const value = source[key]
-    if (isPlainObject(value)) {
+    if (_.isPlainObject(value)) {
       // NOTE: recursive call
       getProps(createReducer, value, path, props)
       continue
@@ -63,7 +61,7 @@ function getProps (createReducer, source, stack = [], props = newProps()) {
 
     const reducer = createReducer(value)
     if (reducer.type === 'ReducerConstant') {
-      set(props.constants, path, reducer.value)
+      _.set(props.constants, path, reducer.value)
     } else {
       props.reducers.push({ path, reducer })
     }
@@ -75,6 +73,24 @@ function getProps (createReducer, source, stack = [], props = newProps()) {
 module.exports.getProps = getProps
 
 /**
+ * @param {Object} source
+ * @return {Function}
+ */
+function getSourceFunction (source) {
+  let fn
+  if (_.isPlainObject(source)) {
+    fn = () => _.merge({}, source)
+  } else {
+    fn = () => source
+  }
+
+  Object.defineProperty(fn, 'name', { value: 'source' })
+  return fn
+}
+
+module.exports.getSourceFunction = getSourceFunction
+
+/**
  * @param {Function} createReducer
  * @param {Object} source
  * @returns {reducer}
@@ -83,9 +99,8 @@ function create (createReducer, source = {}) {
   const props = getProps(createReducer, source)
 
   const reducer = new ReducerObject()
-  reducer.isEmpty = isEmpty(props.constants) && isEmpty(props.reducers)
-  reducer.source = Function(`return ${JSON.stringify(props.constants)}`) // eslint-disable-line no-new-func
-  Object.defineProperty(reducer.source, 'name', { value: 'source' })
+  reducer.isEmpty = _.isEmpty(props.constants) && _.isEmpty(props.reducers)
+  reducer.source = getSourceFunction(props.constants)
   reducer.reducers = props.reducers
 
   return reducer

@@ -43,6 +43,32 @@ describe('ReducerObject.factory#getProps', () => {
   })
 })
 
+describe('ReducerObject.factory#getSourceFunction', () => {
+  it('creates a function that returns a number', () => {
+    const fn = factory.getSourceFunction(5)
+
+    expect(fn.name).toBe('source')
+    expect(fn()).toBe(5)
+  })
+
+  it('creates a function that returns a new object', () => {
+    const input = {
+      a: 1,
+      b: {
+        c: '1',
+        d: () => true
+      }
+    }
+    const fn = factory.getSourceFunction(input)
+    const output = fn()
+
+    expect(fn.name).toBe('source')
+    expect(input === output).toBe(false)
+    expect(input).toEqual(output)
+    expect(output.b.d()).toBe(true)
+  })
+})
+
 describe('ReducerObject.factory#create', () => {
   it('reducer object with no props argument', () => {
     const reducer = factory.create(createReducer)
