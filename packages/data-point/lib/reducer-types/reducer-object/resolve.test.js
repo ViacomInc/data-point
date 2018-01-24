@@ -38,7 +38,7 @@ describe('resolve#reducerObject.resolve', () => {
     })
   })
 
-  it('should resolve a reducer object', () => {
+  it('should resolve a nested reducer object #1', () => {
     const reducer = createReducerObject(createReducer, {
       x: constant([1, 2]),
       y: {
@@ -87,7 +87,7 @@ describe('resolve#reducerObject.resolve', () => {
     })
   })
 
-  it('should resolve a reducer object', () => {
+  it('should resolve a nested reducer object #2', () => {
     const reducer = createReducerObject(createReducer, {
       x: '$c.x',
       y: '$c.y',
@@ -138,8 +138,16 @@ describe('resolve#reducerObject.resolve', () => {
       })
     })
   })
+  it('should move object values to different levels of nesting', () => {
+    const accumulator = AccumulatorFactory.create({
+      value: {
+        a: {
+          a: 1,
+          b: 2
+        }
+      }
+    })
 
-  it('should resolve a reducer object', () => {
     const reducer = createReducerObject(createReducer, {
       x: [
         '$a',
@@ -153,15 +161,6 @@ describe('resolve#reducerObject.resolve', () => {
         },
         '$a'
       ]
-    })
-
-    const accumulator = AccumulatorFactory.create({
-      value: {
-        a: {
-          a: 1,
-          b: 2
-        }
-      }
     })
 
     return resolveReducerObject(
