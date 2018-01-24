@@ -12,4 +12,4 @@ script:
   - "yarn run lint"
   - "yarn test -- --maxWorkers=4"
 after_script:
-  - "test -e ./coverage/lcov.info && npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"
+  - "test -e ./coverage/lcov.info && yarn add coveralls@2 && cat ./coverage/lcov.info | coveralls"
