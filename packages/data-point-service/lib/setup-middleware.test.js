@@ -37,7 +37,7 @@ describe('before', () => {
     expect(next).toBeCalled()
   })
 
-  test('It should call next if there is no ttl', () => {
+  test('It should call next if there is no ttl | case where local.resetCache is false', () => {
     const ctx = {}
     _.set(ctx, 'locals.resetCache', false)
     _.set(ctx, 'context.params.ttl', null)
@@ -77,7 +77,7 @@ describe('after', () => {
     }
   }
 
-  test('It should call next if there is no ttl', done => {
+  test('SetupMiddleware is called and returns next if there is no ttl', done => {
     const ctx = {}
     _.set(ctx, 'context.params.ttl', null)
 
