@@ -63,4 +63,10 @@
   function reducerNodeStyle(input, acc, next) {
     next(input)
   }
+
+  // valid reducer
+  const f = input = input => {
+    // should change value, and not throw error finding input as an identifier
+    return input.input;
+  }
 }

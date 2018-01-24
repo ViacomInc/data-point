@@ -56,7 +56,6 @@ Array [
             "id": "transform:entity-name",
             "name": "entity-name",
             "type": "ReducerEntity",
-            "withEmptyConditional": false,
             Symbol(reducer): true,
           },
         },

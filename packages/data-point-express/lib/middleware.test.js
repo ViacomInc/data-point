@@ -120,7 +120,7 @@ describe('buildTransformOptions', () => {
 })
 
 describe('getErrorOwnKeys', () => {
-  test('It should get own keys from object', () => {
+  test('It should get own keys from object | where error is an error object, should omit name and message', () => {
     const err = new Error('message')
     err.name = 'name'
     err.test = 'test'
@@ -128,7 +128,7 @@ describe('getErrorOwnKeys', () => {
       test: 'test'
     })
   })
-  test('It should get own keys from object', () => {
+  test('It should get own keys from object | where error is an regular object should pass enumerable keys ', () => {
     expect(
       Middleware.getErrorOwnKeys({
         a: 1,
@@ -139,7 +139,7 @@ describe('getErrorOwnKeys', () => {
       b: 2
     })
   })
-  test('It should handle circular references', () => {
+  test('It should handle circular references, bad keys contain its error instance', () => {
     const object = {
       a: 1,
       b: 2

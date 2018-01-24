@@ -1687,8 +1687,7 @@ dataPoint.addEntities({
     inputType: String | Reducer,
     before: Reducer,
     url: StringTemplate,
-    options: TransformObject,
-    beforeRequest: Reducer,
+    options: Reducer,
     after: Reducer,
     outputType: String | Reducer,
     error: Reducer,
@@ -1701,14 +1700,13 @@ dataPoint.addEntities({
 
 | Key | Type | Description |
 |:---|:---|:---|
-| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check). |
+| *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check) |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *url*   | [StringTemplate](#string-template) | String value to resolve the request's url |
-| *options* | [TransformObject](#transform-object) | Request's options. These map directly to [request.js](https://github.com/request/request) options
-| *beforeRequest* | [Reducer](#reducers) | `acc.value` at this point will be the request options object being passed to the final request. You may do any modifications here, and then pass to the next reducer |
+| *options* | [Reducer](#reducers) | reducer that should return an object to use as request options. These map directly to [request.js](https://github.com/request/request) options
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
-| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
+| *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check) |
 | *params*    | `Object` | User defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
 ##### <a name="request-url">Request.url</a>
@@ -1816,6 +1814,7 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
 
 Example at: [examples/entity-request-string-template.js](examples/entity-request-options-locals.js)
 
+<<<<<<< HEAD
 ##### <a name="transform-object">TransformObject</a>
 
 A TransformObject is a Object where any property (at any level), that its key starts with the character `$` is treated as a [Reducer](#reducers). Properties that do not start with a `$` character will be left untouched.
@@ -1894,6 +1893,9 @@ This example simply provides the header object through a reducer. One possible u
 Example at: [examples/entity-request-before-request.js](examples/entity-request-before-request.js)
 
 For more examples of request entities, see the [Examples](examples), the unit tests: [Request Definitions](test/definitions/sources.js), and [Integration Examples](test/definitions/integrations.js)
+=======
+For more examples of request entities, see the [Examples](examples), the [Integration Examples](test/definitions/integrations.js), and the unit tests: [Request Definitions](test/definitions/sources.js).
+>>>>>>> upstream/master
 
 ### <a name="request-inspect">Inspecting Request</a>
 
@@ -2220,7 +2222,7 @@ You can add multiple reducers to your Hash spec.
     },
     'request:getOrgInfo': {
       url: 'https://api.github.com/orgs/{value.org}',
-      options: { headers: { 'User-Agent': 'DataPoint' } }
+      options: () => ({ headers: { 'User-Agent': 'DataPoint' } })
     },
     'hash:OrgInfo': {
       pickKeys: ['repos_url', 'name'],
@@ -2321,11 +2323,11 @@ Now that we have the result of the fetch, let's now map each item, and then extr
   dataPoint.addEntities({
     'request:getOrgRepositories': {
       url: 'https://api.github.com/orgs/nodejs/repos',
-      options: {
+      options: () => ({
         headers: {
           'User-Agent': 'request'
         }
-      }
+      })
     },
     'collection:getRepositoryTagsUrl': {
       map: '$tags_url'
@@ -2365,13 +2367,13 @@ _For the purpose of this example, let's imagine that GitHub does not provide the
   dataPoint.addEntities({
     'request:getOrgRepositories': {
       url: 'https://api.github.com/orgs/nodejs/repos',
-      options: { headers: { 'User-Agent': 'request' } }
+      options: () => ({ headers: { 'User-Agent': 'request' } })
     },
     'request:getLatestTag': {
       // here we are injecting the current acc.value 
       // that was passed to the request
       url: 'https://api.github.com/repos/nodejs/{value}/tags',
-      options: { headers: { 'User-Agent': 'request' } }
+      options: () => ({ headers: { 'User-Agent': 'request' } })
     },
     'collection:getRepositoryLatestTag': {
       // magic!! here we are telling it to map each 
@@ -2422,8 +2424,7 @@ dataPoint.addEntities({
   'request:getLatestTag': {
     // here we are injecting the current acc.value 
     // that was passed to the request
-    url: 'https://api.github.com/repos/nodejs/{value}/tags',
-    options
+    url: 'https://api.github.com/repos/nodejs/{value}/tags'
   },
   'collection:getRepositoryLatestTag': {
     // notice similar to previous example, BUT
@@ -2465,11 +2466,11 @@ The following example filters the data to identify all the repos that have more 
   dataPoint.addEntities({
     'request:getOrgRepositories': {
       url: 'https://api.github.com/orgs/nodejs/repos',
-      options: {
+      options: () => ({
         headers: {
           'User-Agent': 'request'
         }
-      }
+      })
     },
     'collection:getRepositoryUrl': {
       map: '$url',
@@ -2510,11 +2511,11 @@ The following example gets all the repos that are actually forks. In this case, 
   dataPoint.addEntities({
     'request:getOrgRepositories': {
       url: 'https://api.github.com/orgs/nodejs/repos',
-      options: {
+      options: () => ({
         headers: {
           'User-Agent': 'request'
         }
-      }
+      })
     },
     'collection:getRepositoryUrl': {
       filter: '$fork'
@@ -2559,11 +2560,11 @@ Returns the value of the first element in the array that satisfies the provided 
   dataPoint.addEntities({
     'request:repos': {
       url: 'https://api.github.com/orgs/nodejs/repos',
-      options: {
+      options: () => ({
         headers: {
           'User-Agent': 'request'
         }
-      }
+      })
     },
     'collection:getNodeRepo': {
       before: 'request:repos',
@@ -2612,11 +2613,11 @@ Returns the value of the first element in the array that satisfies the provided 
   dataPoint.addEntities({
     'request:repos': {
       url: 'https://api.github.com/orgs/nodejs/repos',
-      options: {
+      options: () => ({
         headers: {
           'User-Agent': 'request'
         }
-      }
+      })
     },
     'collection:getNodeRepo': {
       before: 'request:repos',
@@ -2660,11 +2661,11 @@ Returns the value of the first element in the array that satisfies the provided 
   dataPoint.addEntities({
     'request:repos': {
       url: 'https://api.github.com/orgs/nodejs/repos',
-      options: {
+      options: () => ({
         headers: {
           'User-Agent': 'request'
         }
-      }
+      })
     },
     'hash:repositorySummary': {
       pickKeys: ['id', 'name', 'homepage', 'description']
@@ -2884,7 +2885,7 @@ Extending entities is **not a deep merge of properties** from one entity to the 
       value: 'request:repositories'
     },
     'request:githubBase': {
-      options: { headers: { 'User-Agent': 'DataPoint' } }
+      options: () => ({ headers: { 'User-Agent': 'DataPoint' } })
     },
     'request:repositories -> request:githubBase': {
       // options object is provided 

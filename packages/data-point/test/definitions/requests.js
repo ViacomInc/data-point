@@ -1,20 +1,25 @@
 const reducers = require('../utils/reducers')
+const { assign } = require('../../lib').helpers
 
 module.exports = {
   'request:a0.1': {
     url: 'http://some.path',
-    options: {
-      dataType: 'json',
-      method: 'POST',
-      timeout: 1000,
-      username: '$username$',
-      $password: value => '$password$',
-      qs: {
-        $varKey1: value => 'someValue',
-        varKey2: 1,
-        varKey3: true
-      }
-    }
+    options: [
+      () => ({
+        dataType: 'json',
+        method: 'POST',
+        timeout: 1000,
+        username: '$username$'
+      }),
+      assign({
+        password: value => '$password$',
+        qs: {
+          varKey1: value => 'someValue',
+          varKey2: () => 1,
+          varKey3: () => true
+        }
+      })
+    ]
   },
   'request:a1': {
     url: 'http://remote.test/source1'
@@ -33,16 +38,14 @@ module.exports = {
   },
   'request:a2': {
     url: 'http://remote.test',
-    beforeRequest: options => {
-      options.url = options.url + '/source1'
-      return options
+    options: {
+      url: options => options.url + '/source1'
     }
   },
   'request:a3': {
     url: 'http://remote.test',
-    beforeRequest: (options, acc) => {
-      options.url = options.url + acc.initialValue.itemPath
-      return options
+    options: {
+      url: (options, acc) => acc.url + acc.initialValue.itemPath
     }
   },
   'request:a3.2': {
@@ -54,7 +57,7 @@ module.exports = {
   'request:a4': {
     url: 'source1',
     options: {
-      baseUrl: 'http://remote.test'
+      baseUrl: () => 'http://remote.test'
     }
   },
   'request:a5': {
@@ -62,7 +65,7 @@ module.exports = {
     before: reducers.addQueryVar('varKey2', 'someValue2'),
     options: {
       query: {
-        varKey1: 'someValue1'
+        varKey1: () => 'someValue1'
       }
     }
   },
@@ -81,7 +84,7 @@ module.exports = {
   'request:a8.1': {
     url: 'source1',
     options: {
-      baseUrl: 'http://remote.test'
+      baseUrl: () => 'http://remote.test'
     }
   }
 }
