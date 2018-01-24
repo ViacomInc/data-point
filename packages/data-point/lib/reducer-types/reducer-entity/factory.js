@@ -16,7 +16,7 @@ function ReducerEntity () {
   this.name = ''
   this.entityType = null
   this.asCollection = false
-  this.withEmptyConditional = false
+  this.hasEmptyConditional = false
 }
 
 module.exports.ReducerEntity = ReducerEntity
