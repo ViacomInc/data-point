@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const createReducer = require('../../reducer-types').create
 const createBaseEntity = require('../base-entity').create
-const { allowedModifiers } = require('../allowed-modifiers')
+const { validateModifiers } = require('../validate-modifiers')
 
 /**
  * @class
@@ -44,9 +44,7 @@ function parseDefaultStatement (id, select) {
   })
   if (!defaultCase) {
     throw new Error(
-      `It seems ${
-        id
-      } is missing its default case, All entities must have their default case handled.`
+      `It seems ${id} is missing its default case, All entities must have their default case handled.`
     )
   }
   return defaultCase.default
@@ -74,7 +72,7 @@ module.exports.parseSwitch = parseSwitch
  * @return {EntityControl} Entity Object
  */
 function create (spec, id) {
-  allowedModifiers(id, spec, ['select'])
+  validateModifiers(id, spec, ['select'])
   const entity = createBaseEntity(EntityControl, spec, id)
   entity.select = parseSwitch(spec)
   return Object.freeze(entity)

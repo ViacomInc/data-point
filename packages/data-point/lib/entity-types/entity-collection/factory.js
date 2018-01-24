@@ -2,7 +2,7 @@ const parseCompose = require('../parse-compose')
 const createReducer = require('../../reducer-types').create
 const createBaseEntity = require('../base-entity').create
 const reducerHelpers = require('../../reducer-types/reducer-helpers')
-const { allowedModifiers } = require('../allowed-modifiers')
+const { validateModifiers } = require('../validate-modifiers')
 
 /**
  * @class
@@ -39,7 +39,7 @@ function createCompose (composeSpec) {
  * @return {EntityCollection} Entity Object
  */
 function create (spec, id) {
-  allowedModifiers(id, spec, modifierKeys.concat('compose'))
+  validateModifiers(id, spec, modifierKeys.concat('compose'))
   parseCompose.validateComposeModifiers(id, spec, modifierKeys)
 
   const entity = createBaseEntity(EntityCollection, spec, id)

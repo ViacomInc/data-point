@@ -1,5 +1,5 @@
 const createBaseEntity = require('../base-entity').create
-const { allowedModifiers } = require('../allowed-modifiers')
+const { validateModifiers } = require('../validate-modifiers')
 
 /**
  * @class
@@ -15,7 +15,7 @@ module.exports.EntityEntry = EntityEntry
  * @return {EntityEntry} Entity Object
  */
 function create (spec, id) {
-  allowedModifiers(id, spec, [])
+  validateModifiers(id, spec, [])
   const entity = createBaseEntity(EntityEntry, spec, id)
   return Object.freeze(entity)
 }

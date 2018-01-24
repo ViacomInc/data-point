@@ -1,7 +1,7 @@
 const Util = require('util')
 const _ = require('lodash')
 
-function allowedProperties (id, spec, validKeys) {
+function validateProperties (id, spec, validKeys) {
   const differentKeys = _.difference(Object.keys(spec), validKeys)
   if (differentKeys.length > 0) {
     throw new Error(
@@ -19,7 +19,7 @@ function allowedProperties (id, spec, validKeys) {
   return true
 }
 
-module.exports.allowedProperties = allowedProperties
+module.exports.validateProperties = validateProperties
 
 const baseModifiers = [
   'inputType',
@@ -30,9 +30,9 @@ const baseModifiers = [
   'error',
   'params'
 ]
-function allowedModifiers (id, spec, validKeys) {
+function validateModifiers (id, spec, validKeys) {
   const modifierKeys = baseModifiers.concat(validKeys)
-  return allowedProperties(id, spec, modifierKeys)
+  return validateProperties(id, spec, modifierKeys)
 }
 
-module.exports.allowedModifiers = allowedModifiers
+module.exports.validateModifiers = validateModifiers

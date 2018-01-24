@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`allowedModifiers It should include base modifiers 1`] = `
+exports[`validateModifiers It should include base modifiers 1`] = `
 "Entity \\"foo:test\\" did not recognize the following properties: foo, valid properties are: inputType, before, value, after, outputType, error, params, bar.
 Please review your entity and make any corrections so it can be parsed:
 'foo:test': { inputType: true,
@@ -12,13 +12,13 @@ Please review your entity and make any corrections so it can be parsed:
   foo: true }"
 `;
 
-exports[`allowedProperties It should throw error if keys dont match 1`] = `
+exports[`validateProperties It should throw error if keys dont match 1`] = `
 "Entity \\"foo:test\\" did not recognize the following properties: foo, valid properties are: bar.
 Please review your entity and make any corrections so it can be parsed:
 'foo:test': { foo: true }"
 `;
 
-exports[`allowedProperties It should throw error if keys dont match 2`] = `
+exports[`validateProperties It should throw error if keys dont match 2`] = `
 "Entity \\"foo:test\\" did not recognize the following properties: foo, valid properties are: bar.
 Please review your entity and make any corrections so it can be parsed:
 'foo:test': { bar: true, foo: true }"

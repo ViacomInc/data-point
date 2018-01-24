@@ -1,14 +1,17 @@
 /* eslint-env jest */
 
-const { allowedProperties, allowedModifiers } = require('./allowed-modifiers')
+const {
+  validateProperties,
+  validateModifiers
+} = require('./validate-modifiers')
 
-describe('allowedProperties', () => {
+describe('validateProperties', () => {
   test('It should throw error if keys dont match', () => {
     expect(() => {
       const spec = {
         foo: true
       }
-      allowedProperties('foo:test', spec, ['bar'])
+      validateProperties('foo:test', spec, ['bar'])
     }).toThrowErrorMatchingSnapshot()
 
     expect(() => {
@@ -16,7 +19,7 @@ describe('allowedProperties', () => {
         bar: true,
         foo: true
       }
-      allowedProperties('foo:test', spec, ['bar'])
+      validateProperties('foo:test', spec, ['bar'])
     }).toThrowErrorMatchingSnapshot()
   })
 
@@ -24,14 +27,14 @@ describe('allowedProperties', () => {
     let spec = {
       bar: true
     }
-    expect(allowedProperties('foo:test', spec, ['bar'])).toBeTruthy()
+    expect(validateProperties('foo:test', spec, ['bar'])).toBeTruthy()
 
     spec = {}
-    expect(allowedProperties('foo:test', spec, ['bar'])).toBeTruthy()
+    expect(validateProperties('foo:test', spec, ['bar'])).toBeTruthy()
   })
 })
 
-describe('allowedModifiers', () => {
+describe('validateModifiers', () => {
   test('It should include base modifiers', () => {
     expect(() => {
       const spec = {
@@ -43,7 +46,7 @@ describe('allowedModifiers', () => {
         value: true,
         foo: true
       }
-      allowedModifiers('foo:test', spec, ['bar'])
+      validateModifiers('foo:test', spec, ['bar'])
     }).toThrowErrorMatchingSnapshot()
   })
 })
