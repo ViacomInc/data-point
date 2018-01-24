@@ -57,10 +57,22 @@ We will only be supporting node 6 and above, please make sure the code you use i
 
 1. Fork it
 2. Create your feature branch `git checkout -b feature/my-new-feature`
-3. Commit your changes through `npm run commit`
+3. Commit your changes through `yarn run commit`
 4. Push to the branch `git push origin feature/my-new-feature`
 5. Create a new [Pull Request](https://github.com/ViacomInc/data-point/compare)
 
+### Updating Documentation
+
 Please update the respective README.md files with details of changes to the interface.
 
-**Note on commit messages**: All commit messages **must** use [commitizen](http://commitizen.github.io/cz-cli/) format to be accepted, to ensure you use this format, only commit through `yarn run commit`.
+### Commit message format
+
+All commit messages **must** use [commitizen](http://commitizen.github.io/cz-cli/) format to be accepted, to ensure you use this format, only commit through `yarn run commit`.
+
+### Breaking changes
+
+If your pull request includes a breaking change, please submit it with a [codemod](https://github.com/facebook/jscodeshift) under
+data-point-codemods that will help users upgrade their codebase.
+
+Breaking changes without a codemod will not be accepted unless a codemod is not
+viable or does not apply to the specific situation.
