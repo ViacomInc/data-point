@@ -11,7 +11,7 @@ const request = require('supertest')
 const logger = require('./logger')
 logger.clear()
 
-describe.only('create - inspect middleware', () => {
+describe('create - inspect middleware', () => {
   let dataPoint
   beforeAll(() => {
     dataPoint = DataPoint.create({

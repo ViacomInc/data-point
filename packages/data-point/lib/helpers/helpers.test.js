@@ -31,7 +31,7 @@ describe('helpers.reducifyAll', () => {
     expect(rLodash.pick(input)(value)).toEqual({ a: 1, c: 3 })
   })
 
-  test('reducify specificy keys', () => {
+  test('reducify specific keys', () => {
     const rLodash = helpers.reducifyAll(_, ['pick', 'map', 'find'])
     const input = ['a', 'c']
     const value = { a: 1, b: 2, c: 3 }

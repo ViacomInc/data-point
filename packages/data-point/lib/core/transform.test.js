@@ -189,7 +189,7 @@ describe('resolve', () => {
     )
   })
 
-  test('transform - execute with 3 argumennts', () => {
+  test('transform - execute with 3 arguments', () => {
     const value = {
       foo: 'bar'
     }
