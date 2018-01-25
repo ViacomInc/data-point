@@ -8,7 +8,7 @@ dataPoint.addEntities({
     }
   },
   'model:multiplyBy': {
-    value: acc => acc.value * acc.params.multiplicand,
+    value: (input, acc) => input * acc.params.multiplicand,
     params: {
       multiplicand: 1
     }
@@ -22,8 +22,8 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('hash:multiply', { multiplier: 5 }).then(acc => {
-  console.log(acc.value)
+dataPoint.resolve('hash:multiply', { multiplier: 5 }).then(output => {
+  console.log(output)
   /*
   {
     multiplyByFactor: 5,

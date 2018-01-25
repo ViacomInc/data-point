@@ -1,10 +1,9 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
 
-const logError = acc => {
-  // acc.value holds the actual Error Object
-  console.log(acc.value.toString())
-  throw acc.value
+const logError = error => {
+  console.log(error.toString())
+  throw error
 }
 
 dataPoint.addEntities({
@@ -22,7 +21,7 @@ const input = {
 }
 
 dataPoint
-  .transform('model:getArray', input)
+  .resolve('model:getArray', input)
   .then(() => {
     // should not execute
     assert.ok(false)

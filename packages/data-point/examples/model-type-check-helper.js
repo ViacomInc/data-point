@@ -13,7 +13,7 @@ const input = {
   name: 'DataPoint'
 }
 
-dataPoint.transform('model:string', input).then(acc => {
-  assert.equal(acc.value, 'DataPoint')
-  console.log(acc.value)
+dataPoint.resolve('model:string', input).then(output => {
+  assert.equal(output, 'DataPoint')
+  console.log(output)
 })
