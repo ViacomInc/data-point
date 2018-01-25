@@ -4,4 +4,4 @@ exports[`factory#parse composed modifiers throw error if compose and loose modif
 
 exports[`factory#parse composed modifiers throw error if compose non array 1`] = `"Entity hash:invalid compose property is expected to be an instance of Array, but found [object Object]"`;
 
-exports[`factory#parse composed modifiers throw error if modifier is invalid 1`] = `"Modifier 'invalidKey' in undefined doesn't match any of the registered Modifiers: omitKeys,pickKeys,mapKeys,addValues,addKeys"`;
+exports[`factory#parse composed modifiers throw error if modifier is invalid 1`] = `"Modifier 'invalidKey' in hash:invalid doesn't match any of the registered Modifiers: omitKeys,pickKeys,mapKeys,addValues,addKeys"`;
