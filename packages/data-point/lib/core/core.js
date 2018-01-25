@@ -1,7 +1,7 @@
 const _ = require('lodash')
 
 const normalizeEntities = require('./normalize-entities')
-const transform = require('./transform')
+const Transform = require('./transform')
 
 const storeValues = require('../stores/values')
 const storeEntities = require('../stores/entities')
@@ -59,8 +59,6 @@ function create (spec) {
     entityTypes
   }
 
-  manager.transform = _.partial(transform, manager)
-
   // add single item (singular)
   manager.addValue = manager.values.add
 
@@ -72,8 +70,6 @@ function create (spec) {
 
   // add collection of items (plural)
   manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
-
-  // using options to initialize dataPoint
 
   // built-in entity types
   manager.addEntityType('transform', EntityTransform)
@@ -92,6 +88,11 @@ function create (spec) {
 
   manager.addEntityTypes(options.entityTypes, true)
   manager.addEntities(options.entities)
+
+  // supports currying
+  manager.resolve = Transform.resolve(manager)
+  // does not support currying
+  manager.transform = _.partial(Transform.transform, manager)
 
   return manager
 }

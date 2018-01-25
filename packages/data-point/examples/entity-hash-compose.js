@@ -12,9 +12,8 @@ dataPoint.addEntities({
       },
       {
         addKeys: {
-          urls: acc => {
-            const value = acc.value
-            return [value.reposUrl, value.eventsUrl]
+          urls: input => {
+            return [input.reposUrl, input.eventsUrl]
           }
         }
       },
@@ -34,9 +33,9 @@ const expectedResult = {
   urls: ['/orgs/nodejs/repos', '/orgs/nodejs/events']
 }
 
-dataPoint.transform('hash:composeExmple', input).then(acc => {
-  console.log(acc.value)
-  assert.deepEqual(acc.value, expectedResult)
+dataPoint.resolve('hash:composeExmple', input).then(output => {
+  console.log(output)
+  assert.deepEqual(output, expectedResult)
   /*
   {
     orgName: 'Node.js Foundation',

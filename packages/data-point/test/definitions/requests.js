@@ -12,9 +12,9 @@ module.exports = {
         username: '$username$'
       }),
       assign({
-        password: (acc, next) => next(null, '$password$'),
+        password: value => '$password$',
         qs: {
-          varKey1: (acc, next) => next(null, 'someValue'),
+          varKey1: value => 'someValue',
           varKey2: () => 1,
           varKey3: () => true
         }
@@ -39,14 +39,14 @@ module.exports = {
   'request:a2': {
     url: 'http://remote.test',
     options: {
-      url: acc => acc.url + '/source1'
+      url: options => options.url + '/source1'
     }
   },
   'request:a3': {
+    url: 'http://remote.test',
     options: {
-      url: acc => acc.url + acc.initialValue.itemPath
-    },
-    url: 'http://remote.test'
+      url: (options, acc) => acc.url + acc.initialValue.itemPath
+    }
   },
   'request:a3.2': {
     url: 'http://remote.test{locals.itemPath}'

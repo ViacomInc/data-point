@@ -172,11 +172,11 @@ describe('resolveReducer', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:string': acc => `Test`,
-        'transform:object': acc => ({
+        'transform:string': () => `Test`,
+        'transform:object': () => ({
           test: `Test`
         }),
-        'transform:value': acc => `Test ${acc.value}`
+        'transform:value': value => `Test ${value}`
       }
     })
   })
