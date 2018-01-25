@@ -77,13 +77,7 @@ module.exports.getProps = getProps
  * @return {Function}
  */
 function getSourceFunction (source) {
-  let fn
-  if (_.isPlainObject(source)) {
-    fn = () => _.cloneDeep(source)
-  } else {
-    fn = () => source
-  }
-
+  const fn = () => _.cloneDeep(source)
   Object.defineProperty(fn, 'name', { value: 'source' })
   return fn
 }

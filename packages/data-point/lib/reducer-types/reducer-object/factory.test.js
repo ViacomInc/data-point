@@ -44,13 +44,6 @@ describe('ReducerObject.factory#getProps', () => {
 })
 
 describe('ReducerObject.factory#getSourceFunction', () => {
-  it('creates a function that returns a number', () => {
-    const fn = factory.getSourceFunction(5)
-
-    expect(fn.name).toBe('source')
-    expect(fn()).toBe(5)
-  })
-
   it('creates a function that returns a new object', () => {
     const input = {
       a: 1,
