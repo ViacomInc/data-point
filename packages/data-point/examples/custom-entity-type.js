@@ -73,6 +73,6 @@ const data = {
   }
 }
 
-dataPoint.transform('render:HelloWorld', data).then(acc => {
-  console.log(acc.value) // '<h1>Hello World!!</h1>'
+dataPoint.resolve('render:HelloWorld', data).then(output => {
+  console.log(output) // '<h1>Hello World!!</h1>'
 })

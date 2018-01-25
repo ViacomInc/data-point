@@ -4,67 +4,47 @@ const _ = require('lodash')
 const helpers = require('./helpers')
 
 describe('helpers.reducify', () => {
-  test('pass simple', done => {
+  test('pass simple', () => {
     const rpick = helpers.reducify(_.pick)
     const input = ['a', 'c']
-    const acc = {
-      value: { a: 1, b: 2, c: 3 }
-    }
-    rpick(input)(acc, (err, value) => {
-      /* eslint handle-callback-err: 0 */
-      expect(value).toEqual({ a: 1, c: 3 })
-      done()
-    })
+    const value = { a: 1, b: 2, c: 3 }
+    expect(rpick(input)(value)).toEqual({ a: 1, c: 3 })
   })
 
-  test('pass error', done => {
+  test('pass error', () => {
     const rTest = helpers.reducify(() => {
-      return new Error('testerror')
+      throw new Error('testerror')
     })
-    rTest()({}, (err, value) => {
-      /* eslint handle-callback-err: 0 */
-      expect(err).toBeInstanceOf(Error)
-      done()
-    })
+    expect(() => {
+      rTest()({})
+    }).toThrow()
   })
 })
 
 describe('helpers.reducifyAll', () => {
-  test('reducify all keys', done => {
+  test('reducify all keys', () => {
     const rLodash = helpers.reducifyAll(_)
     const input = ['a', 'c']
-    const acc = {
-      value: { a: 1, b: 2, c: 3 }
-    }
+    const value = { a: 1, b: 2, c: 3 }
     const keys = Object.keys(rLodash)
     expect(keys.length).toBeGreaterThan(10)
-    rLodash.pick(input)(acc, (err, value) => {
-      /* eslint handle-callback-err: 0 */
-      expect(value).toEqual({ a: 1, c: 3 })
-      done()
-    })
+    expect(rLodash.pick(input)(value)).toEqual({ a: 1, c: 3 })
   })
 
-  test('reducify specificy keys', done => {
+  test('reducify specific keys', () => {
     const rLodash = helpers.reducifyAll(_, ['pick', 'map', 'find'])
     const input = ['a', 'c']
-    const acc = {
-      value: { a: 1, b: 2, c: 3 }
-    }
+    const value = { a: 1, b: 2, c: 3 }
     const keys = Object.keys(rLodash)
     expect(keys).toEqual(['pick', 'map', 'find'])
-    rLodash.pick(input)(acc, (err, value) => {
-      /* eslint handle-callback-err: 0 */
-      expect(value).toEqual({ a: 1, c: 3 })
-      done()
-    })
+    expect(rLodash.pick(input)(value)).toEqual({ a: 1, c: 3 })
   })
 })
 
 describe('helpers.mockReducer', () => {
   test('test reducerTest', () => {
-    const reducerTest = a => (acc, done) => {
-      done(null, acc.value * a)
+    const reducerTest = a => (value, acc, done) => {
+      done(null, value * a)
     }
 
     return helpers.mockReducer(reducerTest(2), { value: 100 }).then(result => {

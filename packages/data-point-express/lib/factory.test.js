@@ -16,7 +16,7 @@ describe('create - all middleware', () => {
   beforeAll(() => {
     const options = {
       entities: {
-        'transform:hello': acc => ({
+        'transform:hello': (value, acc) => ({
           message: `Hello ${acc.locals.params.name}`
         })
       }

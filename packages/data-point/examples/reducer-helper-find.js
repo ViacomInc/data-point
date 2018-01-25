@@ -19,8 +19,8 @@ const value = [
 // second element in the array
 const reducer = find('$b')
 
-dataPoint.transform(reducer, value).then(acc => {
-  assert.deepEqual(acc.value, {
+dataPoint.resolve(reducer, value).then(output => {
+  assert.deepEqual(output, {
     b: 2
   })
 })

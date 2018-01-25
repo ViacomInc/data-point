@@ -16,11 +16,11 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('hash:helloWorld', input).then(acc => {
-  assert.deepEqual(acc.value, {
+dataPoint.resolve('hash:helloWorld', input).then(output => {
+  assert.deepEqual(output, {
     c: 'Hello',
     d: ' World!!'
   })
-  console.log('result:', acc.value)
+  console.log('result:', output)
   // result: { c: 'Hello', d: ' World!!' }
 })
