@@ -9,5 +9,13 @@ const entities = {
   'transform:d': "$.",
   'transform:e': "$. | foo",
   'transform:f': "$. | $. | $.",
-  'transform:g': "foo | bar | baz"
+  'transform:g': "foo | bar | baz",
+  nested: {
+    object: {
+      a: "$. | $."
+    },
+    array: ["$.", "'$.", "$."]
+  }
 }
+
+dataPoint.transform('foo | $. | baz | $.')
