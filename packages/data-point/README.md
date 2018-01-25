@@ -36,6 +36,7 @@ npm install --save data-point
   - [map](#reducer-map)
   - [filter](#reducer-filter)
   - [find](#reducer-find)
+  - [constant](#reducer-constant)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
@@ -638,7 +639,7 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 
 ### <a name="object-reducer">ObjectReducer</a>
 
-ObjectReducers are plain objects where the values are reducers. They're used to aggregate data or transform objects.
+ObjectReducers are plain objects where the values are reducers. They're used to aggregate data or transform objects. For values that should be constants instead of reducers, you can use the [constant](#reducer-constant) reducer helper.
 
 <details>
   <summary>Transforming an object</summary>
@@ -1133,6 +1134,59 @@ find(reducer:Reducer):*
 </details>
 
 Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
+
+### <a name="reducer-constant">constant</a>
+
+The **constant** reducer always returns the given value.
+
+**SYNOPSIS**
+
+```
+constant(value:*):*
+```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *value* | * | The value the reducer should return |
+
+**EXAMPLE:**
+
+<details>
+  <summary>returning an object constant</summary>
+
+  ```js
+  const { constant } = DataPoint.helpers
+
+  const input = {
+    a: 1,
+    b: 2
+  }
+
+  const reducer = {
+    a: '$a',
+    b: constant({
+      a: '$a',
+      b: 3
+    })
+  }
+
+  dataPoint
+    .resolve(reducer, input) 
+    .then(output => {
+      // output ->
+      // {
+      //   a: 1,
+      //   b: {
+      //     a: '$a',
+      //     b: 3
+      //   }
+      // }
+      }
+    })
+  ```
+</details>
 
 ## <a name="entities">Entities</a>
 
