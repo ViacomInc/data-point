@@ -1141,7 +1141,7 @@ The **constant** reducer always returns the given value.
 
 **SYNOPSIS**
 
-```
+```js
 constant(value:*):*
 ```
 
