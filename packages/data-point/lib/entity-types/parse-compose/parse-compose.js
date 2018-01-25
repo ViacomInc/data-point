@@ -1,6 +1,7 @@
 const intersection = require('lodash/intersection')
 
 /**
+ * @param {string} id - Entity's Id
  * @param {Object} spec
  * @param {Array<string>} validKeys
  * @throws if the spec is not valid
@@ -13,9 +14,7 @@ function validateComposeModifiers (id, spec, validKeys) {
 
   if (!(spec.compose instanceof Array)) {
     throw new Error(
-      `Entity ${
-        id
-      } compose property is expected to be an instance of Array, but found ${
+      `Entity ${id} compose property is expected to be an instance of Array, but found ${
         spec.compose
       }`
     )
@@ -25,9 +24,7 @@ function validateComposeModifiers (id, spec, validKeys) {
   const invalidKeys = intersection(validKeys, specKeys)
   if (invalidKeys.length !== 0) {
     throw new Error(
-      `Entity ${
-        id
-      } is invalid; when 'compose' is defined the keys: '${invalidKeys.join(
+      `Entity ${id} is invalid; when 'compose' is defined the keys: '${invalidKeys.join(
         ', '
       )}' should be inside compose.`
     )
@@ -49,9 +46,9 @@ function validateCompose (entityId, compose, validKeys) {
   compose.forEach(modifier => {
     if (validKeys.indexOf(modifier.type) === -1) {
       throw new Error(
-        `Modifier '${modifier.type}' in ${
-          entityId
-        } doesn't match any of the registered Modifiers: ${validKeys}`
+        `Modifier '${
+          modifier.type
+        }' in ${entityId} doesn't match any of the registered Modifiers: ${validKeys}`
       )
     }
   })

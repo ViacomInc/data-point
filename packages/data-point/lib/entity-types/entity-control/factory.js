@@ -44,7 +44,7 @@ function parseDefaultStatement (id, select) {
   })
   if (!defaultCase) {
     throw new Error(
-      `It seems ${id} is missing its default case, All entities must have their default case handled.`
+      `It seems ${id} is missing its default case, Control entities must have their default case handled.`
     )
   }
   return defaultCase.default
