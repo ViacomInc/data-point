@@ -62,17 +62,15 @@ describe('factory#parse loose modifiers', () => {
 describe('factory#parse composed modifiers', () => {
   test('throw error if compose non array', () => {
     const spec = {
-      id: 'hash:invalid',
       compose: {}
     }
     expect(() => {
-      factory.create(spec)
+      factory.create(spec, 'hash:invalid')
     }).toThrowErrorMatchingSnapshot()
   })
 
   test('throw error if compose and loose modifiers are mixed', () => {
     const spec = {
-      id: 'hash:invalid',
       mapKeys: {},
       compose: [
         {
@@ -81,13 +79,12 @@ describe('factory#parse composed modifiers', () => {
       ]
     }
     expect(() => {
-      factory.create(spec)
+      factory.create(spec, 'hash:invalid')
     }).toThrowErrorMatchingSnapshot()
   })
 
   test('throw error if modifier is invalid', () => {
     const spec = {
-      id: 'hash:invalid',
       compose: [
         {
           invalidKey: {}
@@ -95,7 +92,7 @@ describe('factory#parse composed modifiers', () => {
       ]
     }
     expect(() => {
-      factory.create(spec)
+      factory.create(spec, 'hash:invalid')
     }).toThrowErrorMatchingSnapshot()
   })
 
