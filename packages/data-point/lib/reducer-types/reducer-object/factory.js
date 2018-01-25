@@ -79,7 +79,7 @@ module.exports.getProps = getProps
 function getSourceFunction (source) {
   let fn
   if (_.isPlainObject(source)) {
-    fn = () => _.merge({}, source)
+    fn = () => _.cloneDeep(source)
   } else {
     fn = () => source
   }
