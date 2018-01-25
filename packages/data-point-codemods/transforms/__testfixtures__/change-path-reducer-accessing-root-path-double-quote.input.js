@@ -18,4 +18,5 @@ const entities = {
   }
 }
 
-dataPoint.transform('foo | $. | baz | $.')
+// prettier-ignore
+dataPoint.transform("foo | $. | baz | $.")
