@@ -17,9 +17,8 @@ const options = {
   }
 }
 
-dataPoint.transform('request:getLuke', {}, options).then(acc => {
-  const result = acc.value
-  assert.equal(result.name, 'Luke Skywalker')
-  assert.equal(result.height, '172')
-  console.dir(acc.value, { colors: true })
+dataPoint.resolve('request:getLuke', {}, options).then(output => {
+  assert.equal(output.name, 'Luke Skywalker')
+  assert.equal(output.height, '172')
+  console.dir(output, { colors: true })
 })

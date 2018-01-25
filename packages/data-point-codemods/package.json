@@ -1,0 +1,25 @@
+{
+  "name": "data-point-codemods",
+  "version": "1.7.0",
+  "description": "DataPoint Codemods",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=6"
+  },
+  "author": {
+    "name": "Acatl Pacheco",
+    "email": "acatl.pacheco@viacom.com"
+  },
+  "bin":{
+    "data-point-codemods": "data-point-codemods.js"
+  },
+  "dependencies": {
+    "jscodeshift": "0.x",
+    "lodash": "4.x",
+    "lib-upgrader": "1.x"
+  },
+  "keywords": [
+    "data-point",
+    "codemods"
+  ]
+}

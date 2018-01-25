@@ -1,8 +1,8 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
 
-const toArray = acc => {
-  return Array.isArray(acc.value) ? acc.value : [acc.value]
+const toArray = input => {
+  return Array.isArray(input) ? input : [input]
 }
 
 dataPoint.addEntities({
@@ -12,6 +12,6 @@ dataPoint.addEntities({
   }
 })
 
-dataPoint.transform('model:foo', 100).then(acc => {
-  assert.deepEqual(acc.value, [100])
+dataPoint.resolve('model:foo', 100).then(output => {
+  assert.deepEqual(output, [100])
 })

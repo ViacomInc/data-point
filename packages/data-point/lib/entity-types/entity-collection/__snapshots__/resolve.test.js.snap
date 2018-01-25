@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CollectionReducer.resolve entity.collection - throw error if value not array 1`] = `[Error: collection:ObjectsNotAllowed received acc.value = { c: [ 1, 2, 3 ] } of type object, this entity only resolves Array values. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#collection-entity]`;
+exports[`CollectionReducer.resolve entity.collection - throw error if value not array 1`] = `[Error: collection:ObjectsNotAllowed received value = { c: [ 1, 2, 3 ] } of type object, this entity only resolves Array values. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#collection-entity]`;

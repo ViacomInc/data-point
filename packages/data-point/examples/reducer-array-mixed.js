@@ -7,11 +7,11 @@ const input = {
   }
 }
 
-const toUpperCase = acc => {
-  return acc.value.toUpperCase()
+const toUpperCase = input => {
+  return input.toUpperCase()
 }
 
-dataPoint.transform(['$a.b', toUpperCase], input).then(acc => {
-  assert.equal(acc.value, 'HELLO WORLD')
-  console.log(acc.value)
+dataPoint.resolve(['$a.b', toUpperCase], input).then(output => {
+  assert.equal(output, 'HELLO WORLD')
+  console.log(output)
 })

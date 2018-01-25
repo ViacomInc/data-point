@@ -4,7 +4,7 @@ const assert = require('assert')
 dataPoint.addEntities({
   'hash:addKeys': {
     addKeys: {
-      nameLowerCase: ['$name', acc => acc.value.toLowerCase()],
+      nameLowerCase: ['$name', input => input.toLowerCase()],
       url: () => 'https://github.com/ViacomInc/data-point'
     }
   }
@@ -20,7 +20,7 @@ const input = {
   name: 'DataPoint'
 }
 
-dataPoint.transform('hash:addKeys', input).then(acc => {
-  assert.deepEqual(acc.value, expectedResult)
-  console.log(acc.value)
+dataPoint.resolve('hash:addKeys', input).then(output => {
+  assert.deepEqual(output, expectedResult)
+  console.log(output)
 })

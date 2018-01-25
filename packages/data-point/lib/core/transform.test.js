@@ -5,7 +5,7 @@ const core = require('./core')
 const reducers = require('../../test/utils/reducers')
 const entities = require('../../test/definitions/entities')
 
-const transform = require('./transform')
+const Transform = require('./transform')
 const TestData = require('../../test/data.json')
 
 let dataPoint
@@ -23,7 +23,7 @@ beforeAll(() => {
 })
 
 test('transform - throw error in invalid id(promise)', () => {
-  return transform(dataPoint, 'INVALID', TestData, {})
+  return Transform.transform(dataPoint, 'INVALID', TestData, {})
     .catch(err => err)
     .then(res => {
       expect(res).toBeInstanceOf(Error)
@@ -33,86 +33,86 @@ test('transform - throw error in invalid id(promise)', () => {
 
 describe('transform - should attach input value to accumulator', () => {
   test('passing undefined', () => {
-    return transform(dataPoint, acc => {
-      expect(acc.value).toBe(undefined)
+    return Transform.transform(dataPoint, value => {
+      expect(value).toBe(undefined)
     })
   })
 
   test('passing 0', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toBe(0)
+      value => {
+        expect(value).toBe(0)
       },
       0
     )
   })
 
   test('passing 1', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toBe(1)
+      value => {
+        expect(value).toBe(1)
       },
       1
     )
   })
 
   test('passing empty string', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toBe('')
+      value => {
+        expect(value).toBe('')
       },
       ''
     )
   })
 
   test('passing a string', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toBe('Hello World')
+      value => {
+        expect(value).toBe('Hello World')
       },
       'Hello World'
     )
   })
 
   test('passing false', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toBe(false)
+      value => {
+        expect(value).toBe(false)
       },
       false
     )
   })
 
   test('passing true', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toBe(true)
+      value => {
+        expect(value).toBe(true)
       },
       true
     )
   })
 
   test('passing an array', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toEqual(['Hello World'])
+      value => {
+        expect(value).toEqual(['Hello World'])
       },
       ['Hello World']
     )
   })
 
   test('passing an object', () => {
-    return transform(
+    return Transform.transform(
       dataPoint,
-      acc => {
-        expect(acc.value).toEqual({ message: 'Hello World' })
+      value => {
+        expect(value).toEqual({ message: 'Hello World' })
       },
       { message: 'Hello World' }
     )
@@ -120,47 +120,42 @@ describe('transform - should attach input value to accumulator', () => {
 })
 
 test('transform - single reducer', () => {
-  const reducer = (acc, next) => {
-    next(null, acc.value + ' World')
+  const reducer = value => {
+    return value + ' World'
   }
-  return transform(dataPoint, reducer, 'Hello').then(res => {
+  return Transform.transform(dataPoint, reducer, 'Hello').then(res => {
     expect(res.value).toEqual('Hello World')
   })
 })
 
 test('transform - reducer chain', () => {
-  const reducers = [
-    (acc, next) => {
-      next(null, acc.value + ' World')
-    },
-    (acc, next) => {
-      next(null, acc.value + '!!')
-    }
-  ]
-  return transform(dataPoint, reducers, 'Hello').then(res => {
+  const reducers = [value => value + ' World', value => value + '!!']
+  return Transform.transform(dataPoint, reducers, 'Hello').then(res => {
     expect(res.value).toEqual('Hello World!!')
   })
 })
 
 test('transform - reducer path', () => {
-  return transform(dataPoint, '$a.b.c', TestData).then(res => {
+  return Transform.transform(dataPoint, '$a.b.c', TestData).then(res => {
     expect(res.value).toEqual([1, 2, 3])
   })
 })
 
 test('transform - reducer mixed', () => {
-  const getMax = (acc, next) => {
-    next(null, Math.max.apply(null, acc.value))
+  const getMax = value => {
+    return Math.max.apply(null, value)
   }
-  return transform(dataPoint, ['$a.b.c', getMax], TestData).then(res => {
-    expect(res.value).toEqual(3)
-  })
+  return Transform.transform(dataPoint, ['$a.b.c', getMax], TestData).then(
+    res => {
+      expect(res.value).toEqual(3)
+    }
+  )
 })
 
 describe('options argument', () => {
   test('passing locals', () => {
-    const reducer = (acc, next) => {
-      next(null, acc.locals.greeting + ' World')
+    const reducer = (value, acc) => {
+      return acc.locals.greeting + ' World'
     }
 
     const options = {
@@ -169,8 +164,39 @@ describe('options argument', () => {
       }
     }
 
-    return transform(dataPoint, reducer, {}, options).then(res => {
+    return Transform.transform(dataPoint, reducer, {}, options).then(res => {
       expect(res.value).toEqual('Hello World')
     })
+  })
+})
+
+describe('resolve', () => {
+  test('transform - resolve', () => {
+    return Transform.resolve(dataPoint, '$a.b.c', TestData).then(value => {
+      expect(value).toEqual([1, 2, 3])
+    })
+  })
+  test('transform - options is last argument', () => {
+    const options = {
+      locals: {
+        foo: 'bar'
+      }
+    }
+    return Transform.resolve(dataPoint, '$..locals.foo', {}, options).then(
+      value => {
+        expect(value).toEqual('bar')
+      }
+    )
+  })
+
+  test('transform - execute with 3 arguments', () => {
+    const value = {
+      foo: 'bar'
+    }
+    return Promise.resolve(value)
+      .then(Transform.resolve(dataPoint, '$foo'))
+      .then(value => {
+        expect(value).toEqual('bar')
+      })
   })
 })

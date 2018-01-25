@@ -21,6 +21,10 @@ beforeAll(() => {
   })
 })
 
+test('api', () => {
+  expect(Object.keys(instance)).toMatchSnapshot()
+})
+
 test('setup', () => {
   expect(instance.middleware.use).toBeTruthy()
   expect(_.isFunction(instance.use)).toBeTruthy()

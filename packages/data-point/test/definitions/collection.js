@@ -2,7 +2,7 @@ const reducers = require('../utils/reducers')
 
 module.exports = {
   'collection:noValue': {
-    value: (acc, next) => {
+    value: (value, acc, next) => {
       return next(null, 'invalid')
     }
   },
@@ -26,9 +26,7 @@ module.exports = {
   },
   'collection:c.2': {
     value: '$a.b.c',
-    filter: (acc, next) => {
-      next(null, acc.value % 2)
-    }
+    filter: value => value % 2
   },
   'collection:c.3': {
     value: '$a.b.c',
@@ -36,15 +34,11 @@ module.exports = {
   },
   'collection:d.1': {
     value: '$a.b.c',
-    find: (acc, next) => {
-      next(null, acc.value % 2)
-    }
+    find: value => value % 2
   },
   'collection:d.2': {
     value: '$a.b.c',
-    find: (acc, next) => {
-      next(null, acc.value === 0)
-    }
+    find: value => value === 0
   },
   'collection:d.3': {
     value: '$a.b.c',

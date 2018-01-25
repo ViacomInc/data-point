@@ -50,7 +50,7 @@ describe('resolve#reducerObject.resolve', () => {
 
     const reducer = createReducerObject(createReducer, {
       y: '$x.y',
-      zPlusOne: ['$x.y.z', acc => acc.value + 1]
+      zPlusOne: ['$x.y.z', input => input + 1]
     })
 
     return resolveReducerObject(
