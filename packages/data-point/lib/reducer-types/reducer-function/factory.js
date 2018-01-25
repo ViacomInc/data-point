@@ -36,8 +36,8 @@ module.exports.isType = isType
  * @returns {boolean}
  */
 function validateFunction (fn) {
-  if (fn.length > 2) {
-    const e = new Error(`Reducer functions must have an arity of 2 at most`)
+  if (fn.length > 3) {
+    const e = new Error(`Reducer functions must have an arity of 3 at most`)
     e.name = 'InvalidArity'
     throw e
   }
@@ -55,9 +55,9 @@ module.exports.validateFunction = validateFunction
 function create (createReducer, source) {
   validateFunction(source)
   const reducer = new ReducerFunction()
-  // if the arity is 2, we expect a Node Style
-  // callback function with the form of (acc, done)
-  if (source.length === 2) {
+  // if the arity is 3, we expect a Node Style
+  // callback function with the form of (value, acc, done)
+  if (source.length === 3) {
     reducer.body = Promise.promisify(source)
   } else {
     reducer.body = source

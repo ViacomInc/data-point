@@ -1,11 +1,11 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
 
-const reducer = acc => {
-  return Promise.resolve(acc.value + ' World')
+const reducer = input => {
+  return Promise.resolve(input + ' World')
 }
 
-dataPoint.transform(reducer, 'Hello').then(acc => {
-  console.log(acc.value)
-  assert.equal(acc.value, 'Hello World')
+dataPoint.resolve(reducer, 'Hello').then(output => {
+  console.log(output)
+  assert.equal(output, 'Hello World')
 })

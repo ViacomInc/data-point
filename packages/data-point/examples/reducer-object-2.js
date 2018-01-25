@@ -18,6 +18,6 @@ const data = {
   }
 }
 
-dataPoint.transform(reducer, data).then(acc => {
-  console.log(acc.value)
+dataPoint.resolve(reducer, data).then(output => {
+  console.log(output)
 })

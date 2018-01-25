@@ -40,15 +40,15 @@ The Service Object holds a reference to a dataPoint instance.
 ```js
 const options = {
   entities: {
-    'transform:foo': (acc) => 'bar'
+    'transform:foo': (input, acc) => 'bar'
   }
 }
 factory.create(options)
   .then((service) => {
     return service.dataPoint.transform('transform:foo')
   })
-  .then(acc => {
-    console.log(acc.value)
+  .then((output) => {
+    console.log(output)
     // bar
   })
 ```
@@ -64,9 +64,9 @@ function server (dataPoint) {
   const app = express()
 
   app.get('/api/hello-world', (req, res) => {
-    dataPoint.transform(`entry:HelloWorld`, req.query)
-      .then(result => {
-        res.send(result.value)
+    dataPoint.resolve(`entry:HelloWorld`, req.query)
+      .then((output) => {
+        res.send(output)
       })
   })
 
@@ -79,7 +79,7 @@ function createService () {
   return DataPointService.create({
     DataPoint,
     entities: {
-      'entry:HelloWorld': (acc) => 'Hello World!!'
+      'entry:HelloWorld': (input, acc) => 'Hello World!!'
     }
   }).then((service) => {
     return service.dataPoint

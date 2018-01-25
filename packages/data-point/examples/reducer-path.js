@@ -24,12 +24,12 @@ const input = {
   ]
 }
 
-dataPoint.transform('$a.b', input).then(acc => {
-  assert.equal(acc.value, 'Hello World')
-  console.log(acc.value)
+dataPoint.resolve('$a.b', input).then(output => {
+  assert.equal(output, 'Hello World')
+  console.log(output)
 })
 
-dataPoint.transform('$d.e[]', input.c).then(acc => {
-  assert.deepEqual(acc.value, [1, 2, 3])
-  console.log(acc.value)
+dataPoint.resolve('$d.e[]', input.c).then(output => {
+  assert.deepEqual(output, [1, 2, 3])
+  console.log(output)
 })

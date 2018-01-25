@@ -17,8 +17,8 @@ const value = [
 
 // filters array elements that are not
 // truthy for the given reducer list
-const reducer = filter(['$a', acc => acc.value > 1])
+const reducer = filter(['$a', input => input > 1])
 
-dataPoint.transform(reducer, value).then(acc => {
-  assert.deepEqual(acc.value, [{ a: 2 }])
+dataPoint.resolve(reducer, value).then(output => {
+  assert.deepEqual(output, [{ a: 2 }])
 })

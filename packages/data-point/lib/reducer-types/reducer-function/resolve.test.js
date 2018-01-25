@@ -18,8 +18,8 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create((acc, done) =>
-      done(null, `${acc.value}node`)
+    const reducer = reducerFactory.create((value, acc, done) =>
+      done(null, `${value}node`)
     )
 
     return resolveFunction
@@ -34,7 +34,7 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create(acc => `${acc.value}sync`)
+    const reducer = reducerFactory.create(value => `${value}sync`)
 
     return resolveFunction
       .resolve(dataPoint, resolveReducer, accumulator, reducer)
@@ -48,8 +48,8 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create(acc =>
-      Promise.resolve(`${acc.value}promise`)
+    const reducer = reducerFactory.create(value =>
+      Promise.resolve(`${value}promise`)
     )
 
     return resolveFunction
@@ -64,7 +64,7 @@ describe('resolve#filter.resolve', () => {
       value: 'test'
     })
 
-    const reducer = reducerFactory.create((acc, done) => {
+    const reducer = reducerFactory.create((value, acc, done) => {
       return done(new Error('Test'))
     })
 

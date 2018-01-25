@@ -5,8 +5,8 @@ const dataPoint = DataPoint.create()
 dataPoint.addEntities({
   'model:string': {
     value: '$name',
-    outputType: acc => {
-      const valid = typeof acc.value === 'string' && acc.value.length > 5
+    outputType: input => {
+      const valid = typeof input === 'string' && input.length > 5
       if (!valid) {
         throw new Error('string and length > 5')
       }
@@ -18,7 +18,7 @@ const input = {
   name: 'DataPoint'
 }
 
-dataPoint.transform('model:string', input).then(acc => {
-  assert.equal(acc.value, 'DataPoint')
-  console.log(acc.value)
+dataPoint.resolve('model:string', input).then(output => {
+  assert.equal(output, 'DataPoint')
+  console.log(output)
 })

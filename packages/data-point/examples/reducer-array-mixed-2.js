@@ -9,16 +9,16 @@ const input = {
   }
 }
 
-const multiplyBy = factor => acc => {
-  return acc.value * factor
+const multiplyBy = factor => input => {
+  return input * factor
 }
 
-const getMax = () => acc => {
-  const result = Math.max.apply(null, acc.value)
+const getMax = () => input => {
+  const result = Math.max.apply(null, input)
   return result
 }
 
-dataPoint.transform(['$a.b.c', getMax(), multiplyBy(10)], input).then(acc => {
-  assert.equal(acc.value, 30)
-  console.log(acc.value)
+dataPoint.resolve(['$a.b.c', getMax(), multiplyBy(10)], input).then(output => {
+  assert.equal(output, 30)
+  console.log(output)
 })

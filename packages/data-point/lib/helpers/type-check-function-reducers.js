@@ -2,52 +2,52 @@ const Util = require('util')
 const _ = require('lodash')
 const utils = require('../utils')
 
-function errorMessage (acc, expectedType) {
-  const entityId = _.get(acc, 'reducer.spec.id', 'value')
+function errorMessage (value, expectedType) {
+  const entityId = _.get(value, 'reducer.spec.id', 'value')
   return Util.format(
     '%s did not pass type check, type expected: %s but recevied: %s. The value received is: %s',
     entityId,
     expectedType,
-    utils.typeOf(acc.value),
-    _.truncate(Util.inspect(acc.value, { breakLength: Infinity }), {
+    utils.typeOf(value),
+    _.truncate(Util.inspect(value, { breakLength: Infinity }), {
       length: 30
     })
   )
 }
 
-function isString (acc) {
-  if (typeof acc.value === 'string') return acc.value
-  throw new Error(errorMessage(acc, 'string'))
+function isString (value) {
+  if (typeof value === 'string') return value
+  throw new Error(errorMessage(value, 'string'))
 }
 
-function isNumber (acc) {
-  if (typeof acc.value === 'number') return acc.value
-  throw new Error(errorMessage(acc, 'number'))
+function isNumber (value) {
+  if (typeof value === 'number') return value
+  throw new Error(errorMessage(value, 'number'))
 }
 
-function isBoolean (acc) {
-  if (typeof acc.value === 'boolean') return acc.value
-  throw new Error(errorMessage(acc, 'boolean'))
+function isBoolean (value) {
+  if (typeof value === 'boolean') return value
+  throw new Error(errorMessage(value, 'boolean'))
 }
 
-function isFunction (acc) {
-  if (typeof acc.value === 'function') return acc.value
-  throw new Error(errorMessage(acc, 'function'))
+function isFunction (value) {
+  if (typeof value === 'function') return value
+  throw new Error(errorMessage(value, 'function'))
 }
 
-function isError (acc) {
-  if (acc.value instanceof Error) return acc.value
-  throw new Error(errorMessage(acc, 'function'))
+function isError (value) {
+  if (value instanceof Error) return value
+  throw new Error(errorMessage(value, 'function'))
 }
 
-function isArray (acc) {
-  if (Array.isArray(acc.value)) return acc.value
-  throw new Error(errorMessage(acc, 'Array'))
+function isArray (value) {
+  if (Array.isArray(value)) return value
+  throw new Error(errorMessage(value, 'Array'))
 }
 
-function isObject (acc) {
-  if (_.isPlainObject(acc.value)) return acc.value
-  throw new Error(errorMessage(acc, 'Object'))
+function isObject (value) {
+  if (_.isPlainObject(value)) return value
+  throw new Error(errorMessage(value, 'Object'))
 }
 
 module.exports = {
