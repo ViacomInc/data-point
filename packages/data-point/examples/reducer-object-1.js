@@ -2,7 +2,7 @@ const dataPoint = require('../').create()
 
 const reducer = {
   y: '$x.y',
-  zPlusOne: ['$x.y.z', acc => acc.value + 1]
+  zPlusOne: ['$x.y.z', input => input + 1]
 }
 
 const data = {
@@ -13,6 +13,6 @@ const data = {
   }
 }
 
-dataPoint.transform(reducer, data).then(acc => {
-  console.log(acc.value)
+dataPoint.resolve(reducer, data).then(output => {
+  console.log(output)
 })

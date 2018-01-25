@@ -1,11 +1,11 @@
 const dataPoint = require('../').create()
 const assert = require('assert')
 
-const addStr = value => acc => {
-  return acc.value + value
+const addStr = value => input => {
+  return input + value
 }
 
-dataPoint.transform(addStr(' World!!'), 'Hello').then(acc => {
-  assert.equal(acc.value, 'Hello World!!')
-  console.log(acc.value)
+dataPoint.resolve(addStr(' World!!'), 'Hello').then(output => {
+  assert.equal(output, 'Hello World!!')
+  console.log(output)
 })

@@ -28,8 +28,8 @@ dataPoint.addEntities({
 
 mockRequests()
 
-dataPoint.transform('transform:getPerson[]', people).then(acc => {
-  assert.deepEqual(acc.value, [
+dataPoint.resolve('transform:getPerson[]', people).then(output => {
+  assert.deepEqual(output, [
     {
       name: 'Luke Skywalker',
       birthYear: '19BBY'
@@ -40,5 +40,5 @@ dataPoint.transform('transform:getPerson[]', people).then(acc => {
     }
   ])
 
-  console.dir(acc.value, { colors: true })
+  console.dir(output, { colors: true })
 })
