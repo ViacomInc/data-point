@@ -4,6 +4,28 @@ module.exports = (file, api) => {
 
   const root = j(file.source)
 
+  function detectQuoteStyle (j, root) {
+    let detectedQuoting = 'single'
+
+    root
+      .find(j.Literal, {
+        value: v => typeof v === 'string',
+        raw: v => typeof v === 'string'
+      })
+      .forEach(p => {
+        // The raw value is from the original babel source
+        if (p.value.raw[0] === "'") {
+          detectedQuoting = 'single'
+        }
+
+        if (p.value.raw[0] === '"') {
+          detectedQuoting = 'double'
+        }
+      })
+
+    return detectedQuoting
+  }
+
   // transforms a string from '$. | $. | $.' -> '$ | $ | $'
   function transformLiteral (node) {
     const originalValue = node.value.value
@@ -30,5 +52,11 @@ module.exports = (file, api) => {
   refactorReducerMatches(j.Literal, transformLiteral)
   refactorReducerMatches(j.TemplateElement, transformTemplateElement)
 
-  return root.toSource()
+  // As Recast is not preserving original quoting, we try to detect it,
+  // and default to something sane.
+  // See https://github.com/benjamn/recast/issues/171
+  // and https://github.com/facebook/jscodeshift/issues/143
+  // credit to @skovhus: https://github.com/avajs/ava-codemods/pull/28
+  const quote = detectQuoteStyle(j, root)
+  return root.toSource({ quote })
 }
