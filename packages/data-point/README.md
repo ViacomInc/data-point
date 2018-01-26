@@ -1176,7 +1176,6 @@ constant(value:*):*
   dataPoint
     .resolve(reducer, input) 
     .then(output => {
-      // output ->
       // {
       //   a: 1,
       //   b: {
@@ -1882,7 +1881,7 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
       // options is a Reducer, but values
       // at any level can be wrapped as
       // constants (or just wrap the whole
-      // object if all the values are static!)
+      // object if all the values are static)
       options: {
         method: '$method', // reducer
         'content-type': c('application/json'), // constant

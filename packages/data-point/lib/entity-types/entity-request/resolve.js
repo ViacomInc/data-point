@@ -101,9 +101,6 @@ module.exports.inspect = inspect
  */
 function resolveRequest (acc, resolveReducer) {
   inspect(acc)
-  console.log('acc.options')
-  console.log(acc.options)
-  // process.exit(1)
   return rp(acc.options)
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {

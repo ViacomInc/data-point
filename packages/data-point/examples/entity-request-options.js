@@ -12,7 +12,7 @@ dataPoint.addEntities({
     // options is a "ReducerObject", but
     // values at any level can be wrapped
     // as constants (or just wrap the whole
-    // object if all the values are static!)
+    // object if all the values are static)
     options: {
       method: '$method', // reducer
       'content-type': c('application/json'), // constant
