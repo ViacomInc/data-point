@@ -1874,6 +1874,7 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
   <summary>constants example</summary>
 
   ```js
+  const DataPoint = require('data-point')
   const c = DataPoint.helpers.constant
   const dataPoint = DataPoint.create()
 
@@ -1885,26 +1886,25 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
       // constants (or just wrap the whole
       // object if all the values are static)
       options: {
-        method: '$method', // reducer
         'content-type': c('application/json'), // constant
         qs: {
-          search: c('r2') // constant
+          // get path `searchTerm` from input
+          // to dataPoint.resolve
+          search: '$searchTerm'
         }
       }
     }
   })
 
-  // this will mock the remote service
-  mock()
+  const input = {
+    searchTerm: 'r2'
+  }
 
   // the second parameter to transform is the input value
   dataPoint
-    .transform('request:searchPeople', {
-      method: 'GET'
-    })
-    .then(acc => {
-      assert.equal(acc.value.results[0].name, 'R2-D2')
-      console.dir(acc.value, { colors: true })
+    .resolve('request:searchPeople', input)
+    .then(output => {
+      assert.equal(output.results[0].name, 'R2-D2')
     })
   ```
 </details>
