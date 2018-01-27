@@ -29,7 +29,7 @@ module.exports.stringifyReducerStack = stringifyReducerStack
  * @param {*} value
  * @param {Error} error
  * @param {string} header
- * @throws the given error
+ * @throws the given error with more properties added
  */
 function onReducerError (stack, value, error, header = 'Value') {
   if (stack && !error.rstack) {

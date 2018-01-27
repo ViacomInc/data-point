@@ -28,7 +28,8 @@ function testError (reducer, input, options) {
     .catch(err => err)
     .then(err => {
       expect(err).toBeInstanceOf(Error)
-      expect(err).toMatchSnapshot()
+      expect(err).toHaveProperty('rvalue')
+      expect(err).toHaveProperty('rstack')
       expect(consoleSpy.mock.calls).toMatchSnapshot()
       consoleSpy.mockClear()
     })
@@ -192,16 +193,16 @@ describe('reducer stack traces', () => {
     return testError('request:1', { x: 1 })
   })
   test('request:2', () => {
-    return testError('request:3', { x: 1 })
+    return testError('request:2', { x: 1 })
   })
   test('request:3', () => {
-    return testError('request:4', { x: 1 })
+    return testError('request:3', { x: 1 })
   })
   test('request:4', () => {
-    return testError('request:5', { x: 1 })
+    return testError('request:4', { x: 1 })
   })
   test('request:5', () => {
-    return testError('request:6', { x: 1 })
+    return testError('request:5', { x: 1 })
   })
 
   test('control:1', () => {

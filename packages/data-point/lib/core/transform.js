@@ -46,8 +46,7 @@ function onError (options, error) {
   if (error.rstack && !_.get(options, ['debug', 'silent'])) {
     const header = error.rvalue.header
     error.rstack = stringifyReducerStack(error.rstack)
-    // TODO remove space before it
-    let message = `The following reducer failed to execute:\n ${
+    let message = `The following reducer failed to execute:\n${
       error.rstack
     }\n\n${header}:\n${JSON.stringify(error.rvalue.value, null, 2)}`
 
@@ -58,8 +57,8 @@ function onError (options, error) {
 
     console.error(message)
   }
+
   throw error
-  // process.exit(1)
 }
 
 /**
@@ -71,19 +70,24 @@ function onError (options, error) {
  * @return {Promise}
  */
 function transform (manager, reducerSource, value, options, done) {
-  return Promise.try(() =>
-    reducerResolve(manager, reducerSource, value, options)
-  )
+  return Promise.resolve()
+    .then(() => reducerResolve(manager, reducerSource, value, options))
     .catch(error => onError(options, error))
     .asCallback(done)
 }
 
 module.exports.transform = transform
 
+/**
+ * @param {Object} manager
+ * @param {*} reducerSource
+ * @param {*} value
+ * @param {Object} options
+ * @return {Promise}
+ */
 function resolve (manager, reducerSource, value, options) {
-  return Promise.try(() =>
-    reducerResolve(manager, reducerSource, value, options)
-  )
+  return Promise.resolve()
+    .then(() => reducerResolve(manager, reducerSource, value, options))
     .then(acc => acc.value)
     .catch(error => onError(options, error))
 }

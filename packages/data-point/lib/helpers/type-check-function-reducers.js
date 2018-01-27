@@ -6,7 +6,7 @@ const utils = require('../utils')
 /**
  * @param {string} expectedType
  * @param {*} value
- * @return {string}
+ * @return {Error}
  */
 function reducerTypeError (expectedType, value) {
   const error = new Error()

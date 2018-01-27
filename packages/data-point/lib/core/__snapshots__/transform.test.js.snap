@@ -1,10 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`throw error with reducer stack attached error 1`] = `
+exports[`throw error with reducer stack attached resolve 1`] = `
+Object {
+  "header": "Value",
+  "value": Object {},
+}
+`;
+
+exports[`throw error with reducer stack attached resolve 2`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- ReducerFunction
+ReducerFunction
+
+Value:
+{}",
+  ],
+]
+`;
+
+exports[`throw error with reducer stack attached transform 1`] = `
+Object {
+  "header": "Value",
+  "value": Object {},
+}
+`;
+
+exports[`throw error with reducer stack attached transform 2`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ReducerFunction
 
 Value:
 {}",

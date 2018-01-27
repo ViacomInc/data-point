@@ -126,7 +126,7 @@ module.exports.requestReducer = requestReducer
 function resolveRequest (accumulator, resolveReducer, stack) {
   inspect(accumulator)
   const _stack = stack ? stackPush(stack, ['request']) : stack
-  // we do not overwrite the value until this
+  // we don't overwrite the value until this
   // point because we might need the previous
   // value when creating the url
   const acc = utils.set(accumulator, 'value', accumulator.options)

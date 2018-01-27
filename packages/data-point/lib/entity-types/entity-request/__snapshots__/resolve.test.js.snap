@@ -4,7 +4,7 @@ exports[`resolveRequest log errors when request fails 1`] = `
 Array [
   Array [
     "The following reducer failed to execute:
- request:a1[request] -> ReducerFunction[request-promise#request]
+request:a1[request] -> ReducerFunction[request-promise#request]
 
 Request options:
 {

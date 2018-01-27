@@ -171,33 +171,40 @@ describe('options argument', () => {
 })
 
 describe('throw error with reducer stack attached', () => {
-  test('error', () => {
-    const throwError = () => {
-      throw new Error('test error')
-    }
+  const throwError = () => {
+    throw new Error('test error')
+  }
+  const execute = resolver => {
     const consoleSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(foo => foo)
-
-    return Transform.transform(dataPoint, throwError, {}, { debug: true })
+    return resolver(dataPoint, throwError, {}, { debug: true })
       .catch(err => err)
       .then(result => {
         expect(result).toBeInstanceOf(Error)
         expect(result).toHaveProperty('rstack')
-        expect(result).toHaveProperty('rvalue')
+        expect(result.rvalue).toMatchSnapshot()
+        // error.rstack is stringified and passed to console.error
         expect(consoleSpy.mock.calls).toMatchSnapshot()
         consoleSpy.mockRestore()
       })
+  }
+
+  test('transform', () => {
+    return execute(Transform.transform)
+  })
+  test('resolve', () => {
+    return execute(Transform.resolve)
   })
 })
 
 describe('resolve', () => {
-  test('transform - resolve', () => {
+  test('transform#resolve', () => {
     return Transform.resolve(dataPoint, '$a.b.c', TestData).then(value => {
       expect(value).toEqual([1, 2, 3])
     })
   })
-  test('transform - options is last argument', () => {
+  test('transform#resolve - options is last argument', () => {
     const options = {
       locals: {
         foo: 'bar'
@@ -210,7 +217,7 @@ describe('resolve', () => {
     )
   })
 
-  test('transform - execute with 3 arguments', () => {
+  test('transform#resolve - execute with 3 arguments', () => {
     const value = {
       foo: 'bar'
     }

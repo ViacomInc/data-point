@@ -1,7 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ResolveEntity.resolveEntity if custom typeCheck throws then fail 1`] = `[Error: custom type error]`;
-
-exports[`ResolveEntity.resolveEntity inputType - throws error if inputType does not pass 1`] = `[Error: value did not pass type check, type expected: number but received: string. The value received is: 'foo']`;
-
-exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass 1`] = `[Error: value did not pass type check, type expected: string but received: number. The value received is: 1]`;

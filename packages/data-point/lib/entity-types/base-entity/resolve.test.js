@@ -202,7 +202,7 @@ describe('ResolveEntity.resolveEntity', () => {
     return resolveEntity('model:c.0', 'foo')
       .catch(e => e)
       .then(e => {
-        expect(e).toMatchSnapshot()
+        expect(e).toBeInstanceOf(Error)
       })
   })
 
@@ -216,7 +216,7 @@ describe('ResolveEntity.resolveEntity', () => {
     return resolveEntity('model:c.1', 1)
       .catch(e => e)
       .then(e => {
-        expect(e).toMatchSnapshot()
+        expect(e).toBeInstanceOf(Error)
       })
   })
 

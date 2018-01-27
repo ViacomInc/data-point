@@ -48,7 +48,7 @@ describe('entity-control#resolve', () => {
     })
   })
 
-  // README: reducer could skip it if not setup correctly
+  // README: reducer could skip it if not setup currectly
   test('test error gets rethrown', () => {
     return transform('control:a.2.0', testData, {}, [])
       .catch(err => err)

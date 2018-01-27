@@ -15,7 +15,8 @@ const { stackPush } = require('../../reducer-stack')
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   const reducerEntityType = reducer.entityType
   const EntityType = manager.entityTypes.get(reducerEntityType)
-  // replace the 'ReducerEntity' string with the entity's id
+  // replace the 'ReducerEntity' string from
+  // reducer-types#resolveReducer with the entity's id
   const _stack = stack ? stackPush(stack.slice(0, -1), reducer.id) : stack
   return BaseEntity.resolve(
     manager,
