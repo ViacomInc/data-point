@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`isArray It should throw error when not matched 1`] = `"value did not pass type check, type expected: Array but received: string. The value received is: 'foo'"`;
+exports[`isArray It should throw error when not matched 1`] = `"Type check failed: expected \\"Array\\" but received \\"string\\""`;
 
-exports[`isBoolean It should throw error when not matched 1`] = `"value did not pass type check, type expected: boolean but received: string. The value received is: 'foo'"`;
+exports[`isBoolean It should throw error when not matched 1`] = `"Type check failed: expected \\"boolean\\" but received \\"string\\""`;
 
-exports[`isBoolean It should throw error when not matched 2`] = `"value did not pass type check, type expected: boolean but received: string. The value received is: 'foo'"`;
+exports[`isBoolean It should throw error when not matched 2`] = `"Type check failed: expected \\"boolean\\" but received \\"string\\""`;
 
-exports[`isError It should throw error when not matched 1`] = `"value did not pass type check, type expected: function but received: string. The value received is: 'foo'"`;
+exports[`isError It should throw error when not matched 1`] = `"Type check failed: expected \\"error\\" but received \\"string\\""`;
 
-exports[`isFunction It should throw error when not matched 1`] = `"value did not pass type check, type expected: function but received: string. The value received is: 'foo'"`;
+exports[`isFunction It should throw error when not matched 1`] = `"Type check failed: expected \\"function\\" but received \\"string\\""`;
 
-exports[`isNumber It should throw error when not matched 1`] = `"value did not pass type check, type expected: number but received: string. The value received is: 'foo'"`;
+exports[`isNumber It should throw error when not matched 1`] = `"Type check failed: expected \\"number\\" but received \\"string\\""`;
 
-exports[`isObject It should throw error when not matched 1`] = `"value did not pass type check, type expected: Object but received: array. The value received is: []"`;
+exports[`isObject It should throw error when not matched 1`] = `"Type check failed: expected \\"Object\\" but received \\"array\\""`;
 
-exports[`isString It should throw error when not matched 1`] = `"value did not pass type check, type expected: string but received: number. The value received is: 1"`;
+exports[`isString It should throw error when not matched 1`] = `"Type check failed: expected \\"string\\" but received \\"number\\""`;

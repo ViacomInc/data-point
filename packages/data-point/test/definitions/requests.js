@@ -36,16 +36,15 @@ module.exports = {
   'request:a1.3': {
     url: 'http://remote.test/source4'
   },
-  // TODO clean up these two urls
   'request:a2': {
     url: 'http://remote.test',
     options: {
-      url: options => options.url + '/source1'
+      url: input => input.url + '/source1'
     }
   },
   'request:a3': {
     options: {
-      url: (options, acc) => acc.url + acc.initialValue.itemPath
+      url: (input, acc) => acc.url + acc.initialValue.itemPath
     },
     url: 'http://remote.test'
   },

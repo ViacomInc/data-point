@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`resolveRequest log errors when request fails 1`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ request:a1[request] -> ReducerFunction[request-promise#request]
+
+Request options:
+{
+  \\"method\\": \\"GET\\",
+  \\"json\\": true,
+  \\"url\\": \\"http://remote.test/source1\\"
+}
+
+Response info:
+  - message: '404 - \\"not found\\"'
+  - statusCode: 404
+",
+  ],
+]
+`;
