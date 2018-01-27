@@ -31,6 +31,8 @@ module.exports.createEntity = require('../entity-types/base-entity').create
 
 module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
 
+module.exports.validateEntityModifiers = require('../entity-types/validate-modifiers').validateModifiers
+
 function reducify (method) {
   return function () {
     const partialArguments = Array.prototype.slice.call(arguments)

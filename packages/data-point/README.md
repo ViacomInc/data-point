@@ -1798,7 +1798,7 @@ Example at: [examples/entity-request-basic.js](examples/entity-request-basic.js)
 
 StringTemplate is a string that supports a **minimal** templating system. You may inject any value into the string by enclosing it within `{ObjectPath}` curly braces. **The context of the string is the Request's [Accumulator](#accumulator) Object**, meaning you have access to any property within it. 
 
-Using `acc.value` property to make the url dynamic.
+Using `acc.value` property to make the url dynamic:
 
 <details>
   <summary>`acc.value` Example</summary>
@@ -1829,10 +1829,9 @@ Using `acc.value` property to make the url dynamic.
   ```
 </details>
 
+Example at: [examples/entity-request-string-template.js](examples/entity-request-options-locals.js)
 
 <a name="acc-locals-example" >Using `acc.locals` property to make the url dynamic:</a>
-
-For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
 
 <details>
   <summary>`acc.locals` example</summary>
@@ -1865,6 +1864,7 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
   ```
 </details>
 
+For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
 
 <a name="options-with-constants" >Using constants in the options reducer:</a>
 
