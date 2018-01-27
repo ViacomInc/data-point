@@ -2,55 +2,79 @@
 
 const factory = require('./factory')
 const createReducer = require('../index').create
+const constant = require('../..').helpers.constant
 
-test('reducer/reducer-function#isType', () => {
+test('ReducerObject.factory#isType', () => {
   expect(factory.isType('$foo')).toBe(false)
   expect(factory.isType(() => true)).toBe(false)
   expect(factory.isType([])).toBe(false)
   expect(factory.isType({})).toBe(true)
 })
 
-describe('reducer/reducer-function#getReducerProps', () => {
+describe('ReducerObject.factory#getProps', () => {
   it('should accept an empty object', () => {
-    const reducer = factory.getReducerProps(createReducer, {})
-    expect(reducer).toEqual([])
+    const reducer = factory.getProps(createReducer, {})
+    expect(reducer).toEqual({
+      constants: {},
+      reducers: []
+    })
   })
   it('should accept a non-empty object', () => {
-    const reducer = factory.getReducerProps(createReducer, {
+    const props = factory.getProps(createReducer, {
       a1: '$a[]',
       b1: {
         a2: ['$a2', () => false],
         b2: [
           {
             a3: 'transform:entity-name',
-            b3: '$b1.b2.b3'
+            b3: '$b1.b2.b3',
+            c3: constant('CONSTANT')
           }
-        ]
-      }
+        ],
+        c2: constant(1)
+      },
+      c1: constant({
+        a: 1,
+        b: 2
+      }),
+      d1: constant(5)
     })
-    expect(reducer).toMatchSnapshot()
+    expect(props).toMatchSnapshot()
   })
 })
 
-describe('reducer/reducer-path#create', () => {
+describe('ReducerObject.factory#getSourceFunction', () => {
+  it('creates a function that returns a new object', () => {
+    const input = {
+      a: 1,
+      b: {
+        c: '1',
+        d: () => true
+      }
+    }
+    const fn = factory.getSourceFunction(input)
+    const output = fn()
+
+    expect(fn.name).toBe('source')
+    expect(input === output).toBe(false)
+    expect(input).toEqual(output)
+    expect(output.b.d()).toBe(true)
+  })
+})
+
+describe('ReducerObject.factory#create', () => {
   it('reducer object with no props argument', () => {
     const reducer = factory.create(createReducer)
-    expect(reducer.type).toBe('ReducerObject')
-    expect(reducer.props).toBeInstanceOf(Array)
-  })
-  it('reducer object with empty props argument', () => {
-    const reducer = factory.create(createReducer, {})
-    expect(reducer.type).toBe('ReducerObject')
-    expect(reducer.props).toBeInstanceOf(Array)
+    expect(reducer).toMatchSnapshot()
+    expect(reducer.source()).toEqual({})
   })
   it('reducer object with props argument', () => {
     const reducer = factory.create(createReducer, {
       a: '$a',
       b: '$b',
-      c: '$c'
+      c: constant('c')
     })
-    expect(reducer.type).toBe('ReducerObject')
-    expect(reducer.props).toBeInstanceOf(Array)
-    expect(reducer.props).toHaveLength(3)
+    expect(reducer).toMatchSnapshot()
+    expect(reducer.source()).toEqual({ c: 'c' })
   })
 })

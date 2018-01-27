@@ -8,6 +8,7 @@ const typeCheckFunctionReducers = require('./type-check-function-reducers')
 
 module.exports.helpers = {
   assign: stubFactories.assign,
+  constant: stubFactories.constant,
   filter: stubFactories.filter,
   find: stubFactories.find,
   map: stubFactories.map,

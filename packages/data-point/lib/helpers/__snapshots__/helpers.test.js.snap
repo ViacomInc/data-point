@@ -8,6 +8,7 @@ Object {
   "createReducerResolver": [Function],
   "helpers": Object {
     "assign": [Function],
+    "constant": [Function],
     "filter": [Function],
     "find": [Function],
     "isArray": [Function],
