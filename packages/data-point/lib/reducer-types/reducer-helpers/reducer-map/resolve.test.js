@@ -45,15 +45,11 @@ describe('ReducerMap#resolve', () => {
       }
     ]
     const accumulator = AccumulatorFactory.create({ value })
-    const reducer = Factory.create(Reducer.create, ['$a', acc => acc.value + 1])
-    return Resolve.resolve(
-      manager,
-      Reducer.resolve,
-      accumulator,
-      reducer,
-      []
-    ).then(result => {
-      expect(result.value).toEqual([2, 3])
-    })
+    const reducer = Factory.create(Reducer.create, ['$a', value => value + 1])
+    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer, []).then(
+      result => {
+        expect(result.value).toEqual([2, 3])
+      }
+    )
   })
 })

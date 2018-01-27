@@ -1,14 +1,14 @@
 const _ = require('lodash')
 
-const isEqualTo = (pathFrom, compareTo) => (acc, done) => {
-  done(null, _.get(acc.value, pathFrom) === compareTo)
+const isEqualTo = (pathFrom, compareTo) => value => {
+  return _.get(value, pathFrom) === compareTo
 }
 
-const returnValue = value => (acc, done) => {
-  done(null, value)
+const returnValue = newValue => value => {
+  return newValue
 }
 
-const throwError = () => (acc, done) => {
+const throwError = () => value => {
   throw new Error('test')
 }
 

@@ -33,7 +33,7 @@ describe('factory#create', () => {
     expect(reducer.asCollection).toBe(true)
   })
 
-  test('factory#create context with reducers', () => {
+  test('it should create a ReducerList with reducers using a piped reducer', () => {
     const result = factory.create(createReducer, [
       '$foo.bar | reducer:add',
       () => true
@@ -45,7 +45,7 @@ describe('factory#create', () => {
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 
-  test('factory#create context with reducers', () => {
+  test('It should create a ReducerList with reducers using an array of reducers', () => {
     const result = factory.create(createReducer, [
       '$foo.bar',
       'reducer:add',
@@ -66,9 +66,7 @@ describe('factory#create', () => {
   })
 
   test('factory#create reducer from single function', () => {
-    const result = factory.create(createReducer, (acc, done) =>
-      done(null, acc.value)
-    )
+    const result = factory.create(createReducer, value => value)
     expect(result.reducers).toHaveLength(1)
     expect(result.reducers[0].type).toBe('ReducerFunction')
   })
@@ -98,7 +96,7 @@ describe('factory#create', () => {
     const result = factory.create(createReducer, [
       '$foo.bar',
       'reducer:add | $foo.bar.zeta',
-      (acc, done) => done(null, acc.value)
+      value => value
     ])
 
     expect(result.reducers).toHaveLength(4)

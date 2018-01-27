@@ -227,7 +227,7 @@ describe('getRequestOptions', () => {
   })
 })
 
-describe.only('resolveRequest', () => {
+describe('resolveRequest', () => {
   let consoleInfo
   beforeAll(() => {
     consoleInfo = console.info
@@ -256,27 +256,27 @@ describe.only('resolveRequest', () => {
     })
   })
 
-  test('log errors when request fails', () => {
-    nock('http://remote.test')
-      .get('/source1')
-      .reply(404, 'not found')
+  // test('log errors when request fails', () => {
+  //   nock('http://remote.test')
+  //     .get('/source1')
+  //     .reply(404, 'not found')
 
-    const acc = {
-      options: {
-        json: true,
-        url: 'http://remote.test/source1'
-      },
-      value: 'foo'
-    }
-    _.set(acc, 'reducer.spec.id', 'test:test')
-    console.info = jest.fn()
-    return Resolve.resolveRequest(acc, resolveReducerBound, [])
-      .catch(e => e)
-      .then(result => {
-        expect(console.info).toBeCalled()
-        expect(result.message).toMatchSnapshot()
-      })
-  })
+  //   const acc = {
+  //     options: {
+  //       json: true,
+  //       url: 'http://remote.test/source1'
+  //     },
+  //     value: 'foo'
+  //   }
+  //   _.set(acc, 'reducer.spec.id', 'test:test')
+  //   console.info = jest.fn()
+  //   return Resolve.resolveRequest(acc, resolveReducerBound, [])
+  //     .catch(e => e)
+  //     .then(result => {
+  //       expect(console.info).toBeCalled()
+  //       expect(result.message).toMatchSnapshot()
+  //     })
+  // })
 })
 
 describe('inspect', () => {
@@ -365,7 +365,7 @@ describe('resolve', () => {
     })
   })
 
-  test('inject locals value with string template', () => {
+  test('it should inject locals value with string template', () => {
     nock('http://remote.test')
       .get('/source1')
       .reply(200, {
@@ -387,7 +387,7 @@ describe('resolve', () => {
     })
   })
 
-  test('inject locals value with string template', () => {
+  test('it should use options.baseURL to create a request URL', () => {
     nock('http://remote.test')
       .get('/source1')
       .reply(200, {

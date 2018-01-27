@@ -3,6 +3,7 @@ const _ = require('lodash')
 const deepFreeze = require('deep-freeze')
 
 const createBaseEntity = require('../base-entity').create
+const { validateModifiers } = require('../validate-modifiers')
 
 /**
  * @class
@@ -45,6 +46,7 @@ module.exports.validateSchema = validateSchema
  * @return {EntitySchema} Entity Object
  */
 function create (spec, id) {
+  validateModifiers(id, spec, ['schema', 'options'])
   const entity = createBaseEntity(EntitySchema, spec, id)
   entity.schema = deepFreeze(_.defaultTo(spec.schema, {}))
   entity.options = deepFreeze(_.defaultTo(spec.options, {}))

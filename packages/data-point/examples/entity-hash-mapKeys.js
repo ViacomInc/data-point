@@ -8,8 +8,8 @@ dataPoint.addEntities({
       name: '$name',
       url: [
         '$name',
-        acc => {
-          return `https://github.com/ViacomInc/${_.kebabCase(acc.value)}`
+        input => {
+          return `https://github.com/ViacomInc/${_.kebabCase(input)}`
         }
       ]
     }
@@ -25,7 +25,7 @@ const input = {
   name: 'DataPoint'
 }
 
-dataPoint.transform('hash:mapKeys', input).then(acc => {
-  assert.deepEqual(acc.value, expectedResult)
-  console.log(acc.value)
+dataPoint.resolve('hash:mapKeys', input).then(output => {
+  assert.deepEqual(output, expectedResult)
+  console.log(output)
 })

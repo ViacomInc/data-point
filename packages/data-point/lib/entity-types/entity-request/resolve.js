@@ -99,11 +99,11 @@ function inspect (acc) {
 module.exports.inspect = inspect
 
 /**
- * @param {Accumulator} accumulator
+ * @param {Object} options
  * @return {Promise}
  */
-function _requestReducer (accumulator) {
-  return rp(accumulator.value)
+function _requestReducer (options) {
+  return rp(options)
 }
 
 // this name will appear in the stack trace when a request fails
@@ -148,7 +148,7 @@ module.exports.resolveRequest = resolveRequest
 /**
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
- * @param {Array}
+ * @param {Array} stack
  * @return {Promise<Accumulator>}
  */
 function resolve (accumulator, resolveReducer, stack) {

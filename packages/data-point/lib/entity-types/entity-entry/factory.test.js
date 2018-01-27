@@ -4,7 +4,7 @@ const Factory = require('./factory')
 
 test('Factory#create', () => {
   const obj = Factory.create({
-    value: ['$foo', (acc, done) => {}]
+    value: ['$foo', () => {}]
   })
 
   expect(obj).not.toHaveProperty('before')

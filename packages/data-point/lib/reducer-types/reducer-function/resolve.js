@@ -19,7 +19,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, stack) {
     stack = stackPush(stack, [reducer.body.name])
   }
 
-  return Promise.try(() => reducer.body(accumulator))
+  return Promise.try(() => reducer.body(accumulator.value, accumulator))
     .then(value => utils.set(accumulator, 'value', value))
     .catch(error => onReducerError(stack, accumulator.value, error))
 }

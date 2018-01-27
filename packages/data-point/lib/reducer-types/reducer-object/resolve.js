@@ -13,23 +13,22 @@ const utils = require('../../utils')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, stack) {
-  if (reducer.props.length === 0) {
+  if (utils.reducerIsEmpty(reducer)) {
     return Promise.resolve(accumulator)
   }
 
-  return Promise.map(reducer.props, ({ path, reducer }) => {
+  return Promise.map(reducer.reducers, ({ reducer, path }) => {
     const _stack = stack ? stackPush(stack, path) : stack
-    return resolveReducer(manager, accumulator, reducer, _stack).then(
-      ({ value }) => ({
-        path,
-        value
-      })
-    )
+    return resolveReducer(manager, accumulator, reducer, _stack).then(({ value }) => ({
+      path,
+      value
+    }))
   }).then(result => {
     const value = result.reduce(
       (acc, { path, value }) => set(acc, path, value),
-      {}
+      reducer.source()
     )
+
     return utils.set(accumulator, 'value', value)
   })
 }

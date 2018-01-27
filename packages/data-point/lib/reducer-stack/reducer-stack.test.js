@@ -13,7 +13,7 @@ const _true = () => true
 
 const _false = () => false
 
-const identity = acc => acc.value
+const identity = input => input
 
 const consoleSpy = jest.spyOn(console, 'error').mockImplementation(foo => foo)
 
@@ -34,8 +34,8 @@ function testError (reducer, input, options) {
     })
 }
 
-const throwIfEquals = v1 => acc => {
-  return v1 === acc.value ? throwError() : false
+const throwIfEquals = v1 => input => {
+  return v1 === input ? throwError() : false
 }
 
 nock('http://remote.test')
@@ -288,11 +288,11 @@ describe('ReducerList with errors', () => {
     return testError(reducer, 'input')
   })
   test('second item has error', () => {
-    const reducer = [acc => acc.value, throwError]
+    const reducer = [identity, throwError]
     return testError(reducer, 'input')
   })
   test('third item has error', () => {
-    const reducer = ['$a', '$b', acc => acc.value()]
+    const reducer = ['$a', '$b', input => input()]
     const input = {
       a: {
         b: throwError

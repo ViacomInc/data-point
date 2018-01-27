@@ -17,7 +17,7 @@ const input = {
   url: 'https://github.com/ViacomInc/data-point'
 }
 
-dataPoint.transform('hash:omitKeys', input).then(acc => {
-  assert.deepEqual(acc.value, expectedResult)
-  console.log(acc.value)
+dataPoint.resolve('hash:omitKeys', input).then(output => {
+  assert.deepEqual(output, expectedResult)
+  console.log(output)
 })

@@ -11,16 +11,18 @@ test('reducer/reducer-function#isType', () => {
 
 describe('reducer/reducer-function#validateFunction', () => {
   expect(factory.validateFunction(() => true)).toBe(true)
-  expect(factory.validateFunction(a => true)).toBe(true)
-  expect(factory.validateFunction((a, b) => true)).toBe(true)
+  expect(factory.validateFunction(value => true)).toBe(true)
+  expect(factory.validateFunction((value, acc) => true)).toBe(true)
+  expect(factory.validateFunction((value, acc, next) => true)).toBe(true)
   expect(() =>
-    factory.validateFunction((a, b, c) => true)
+    // 4 arguments is not a reducer
+    factory.validateFunction((a, b, c, d) => true)
   ).toThrowErrorMatchingSnapshot()
 })
 
 describe('reducer/reducer-function#create', () => {
   test('function body', () => {
-    const reducerFunction = () => (acc, done) => done(null, acc.value * 2)
+    const reducerFunction = () => value => value * 2
     const reducer = factory.create(createReducer, reducerFunction)
     expect(reducer.body).toEqual(reducerFunction)
   })

@@ -3,11 +3,11 @@ const assert = require('assert')
 
 dataPoint.addEntities({
   'entry:Base': {
-    before: acc => {
-      return acc.value + 'before'
+    before: input => {
+      return input + 'before'
     },
-    after: acc => {
-      return acc.value + 'after'
+    after: input => {
+      return input + 'after'
     }
   },
 
@@ -16,13 +16,13 @@ dataPoint.addEntities({
     // entry:Base's `before` and
     // `after` get merged with
     // this entity
-    value: acc => {
-      return acc.value + ' value '
+    value: input => {
+      return input + ' value '
     }
   }
 })
 
-dataPoint.transform('entry:Extended', '').then(acc => {
-  assert.equal(acc.value, 'before value after')
-  console.log(acc.value)
+dataPoint.resolve('entry:Extended', '').then(output => {
+  assert.equal(output, 'before value after')
+  console.log(output)
 })

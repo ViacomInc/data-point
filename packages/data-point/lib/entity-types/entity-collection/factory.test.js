@@ -5,7 +5,6 @@ const helpers = require('../../helpers')
 
 test('modelFactory#create default', () => {
   const result = modelFactory.create({})
-
   expect(result).not.toHaveProperty('error')
   expect(result).not.toHaveProperty('before')
   expect(result).not.toHaveProperty('after')
@@ -16,7 +15,7 @@ test('modelFactory#create default', () => {
 })
 
 describe('parse loose modifiers', () => {
-  test('modelFactory#create default', () => {
+  test('modelFactory#create default | checks that an entitiy containing one reducer has that respective property', () => {
     const result = modelFactory.create({
       map: '$a'
     })
@@ -26,7 +25,7 @@ describe('parse loose modifiers', () => {
     expect(result.compose.reducer).toHaveProperty('type', 'ReducerPath')
   })
 
-  test('modelFactory#create default', () => {
+  test('modelFactory#create default | checks multiple reducers in an entitiy to have matching properties', () => {
     const result = modelFactory.create({
       map: '$a',
       find: '$a',

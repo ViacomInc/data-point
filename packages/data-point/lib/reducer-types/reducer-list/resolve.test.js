@@ -84,7 +84,7 @@ describe('resolve#reducer.resolve - reducer model', () => {
     ).then(result => expect(result.value).toEqual(testData))
   })
 
-  test('multiple models', () => {
+  test('it returns original input after piping through hash:asIs', () => {
     const accumulator = AccumulatorFactory.create({
       value: testData
     })
@@ -128,7 +128,7 @@ describe('resolve#reducer.resolve - reducer request', () => {
     )
   })
 
-  test('multiple models', () => {
+  test('multiple models for reducer request', () => {
     nock('http://remote.test')
       .get('/source1')
       .reply(200, {
@@ -153,10 +153,10 @@ describe('resolve#reducer.resolve - reducer request', () => {
       accumulator,
       reducer,
       []
-    ).then(result =>
+    ).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
-    )
+    })
   })
 })

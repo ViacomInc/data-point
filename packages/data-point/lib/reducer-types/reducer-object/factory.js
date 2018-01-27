@@ -1,4 +1,4 @@
-const isPlainObject = require('lodash/isPlainObject')
+const _ = require('lodash')
 
 const REDUCER_OBJECT = 'ReducerObject'
 
@@ -7,11 +7,15 @@ module.exports.type = REDUCER_OBJECT
 /**
  * @class
  * @property {string} type - @see reducerType
- * @property {Array} props
+ * @property {Function} source
+ * @property {Array<Object>} reducers
+ * @property {boolean} isEmpty
  */
 function ReducerObject () {
   this.type = REDUCER_OBJECT
-  this.props = undefined
+  this.isEmpty = undefined
+  this.source = undefined
+  this.reducers = undefined
 }
 
 module.exports.ReducerObject = ReducerObject
@@ -21,38 +25,64 @@ module.exports.ReducerObject = ReducerObject
  * @returns {boolean}
  */
 function isType (source) {
-  return isPlainObject(source)
+  return _.isPlainObject(source)
 }
 
 module.exports.isType = isType
 
 /**
+ * @return {Object}
+ */
+function newProps () {
+  return {
+    constants: {},
+    reducers: []
+  }
+}
+
+module.exports.newProps = newProps
+
+/**
  * @param {Function} createReducer
  * @param {Object} source
- * @param {Array} path
- * @param {Array} props
+ * @param {Array} stack
+ * @param {Object} props
  * @returns {Array}
  */
-function getReducerProps (createReducer, source, path = [], props = []) {
+function getProps (createReducer, source, stack = [], props = newProps()) {
   for (let key of Object.keys(source)) {
+    const path = stack.concat(key)
     const value = source[key]
-    const fullPath = path.concat(key)
-    if (isPlainObject(value)) {
+    if (_.isPlainObject(value)) {
       // NOTE: recursive call
-      getReducerProps(createReducer, value, fullPath, props)
+      getProps(createReducer, value, path, props)
       continue
     }
 
-    props.push({
-      path: fullPath,
-      reducer: createReducer(value)
-    })
+    const reducer = createReducer(value)
+    if (reducer.type === 'ReducerConstant') {
+      _.set(props.constants, path, reducer.value)
+    } else {
+      props.reducers.push({ path, reducer })
+    }
   }
 
   return props
 }
 
-module.exports.getReducerProps = getReducerProps
+module.exports.getProps = getProps
+
+/**
+ * @param {Object} source
+ * @return {Function}
+ */
+function getSourceFunction (source) {
+  const fn = () => _.cloneDeep(source)
+  Object.defineProperty(fn, 'name', { value: 'source' })
+  return fn
+}
+
+module.exports.getSourceFunction = getSourceFunction
 
 /**
  * @param {Function} createReducer
@@ -60,8 +90,12 @@ module.exports.getReducerProps = getReducerProps
  * @returns {reducer}
  */
 function create (createReducer, source = {}) {
+  const props = getProps(createReducer, source)
+
   const reducer = new ReducerObject()
-  reducer.props = getReducerProps(createReducer, source)
+  reducer.isEmpty = _.isEmpty(props.constants) && _.isEmpty(props.reducers)
+  reducer.source = getSourceFunction(props.constants)
+  reducer.reducers = props.reducers
 
   return reducer
 }

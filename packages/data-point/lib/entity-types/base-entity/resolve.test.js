@@ -49,7 +49,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       {},
       {
         context: {
-          error: createReducer((acc, next) => next(null, 'pass'))
+          error: createReducer((value, acc, next) => next(null, 'pass'))
         }
       }
     )
@@ -88,7 +88,7 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
       foo: 'bar'
     })
   })
-  test('It should initialValue acc.value', () => {
+  test('It should set an initialValue for acc.params', () => {
     expect(acc).toHaveProperty('params', {
       base: true
     })
@@ -112,7 +112,7 @@ describe('ResolveEntity.resolveMiddleware', () => {
     })
   })
 
-  test('It should execute a middleware', () => {
+  test('It should execute a middleware that forces an error to bypass the promise chain', () => {
     dataPoint.middleware.use('request:before', (acc, next) => {
       acc.resolve('bar')
       next(null)
@@ -186,7 +186,7 @@ describe('ResolveEntity.resolveEntity', () => {
     })
   })
 
-  test('It should resolve through bypass', () => {
+  test('it should catch errors from middleware', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
       const err = new Error('test')
       throw err

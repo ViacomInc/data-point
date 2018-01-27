@@ -8,6 +8,7 @@ const typeCheckFunctionReducers = require('./type-check-function-reducers')
 
 module.exports.helpers = {
   assign: stubFactories.assign,
+  constant: stubFactories.constant,
   filter: stubFactories.filter,
   find: stubFactories.find,
   map: stubFactories.map,
@@ -30,16 +31,14 @@ module.exports.createEntity = require('../entity-types/base-entity').create
 
 module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
 
+module.exports.validateEntityModifiers = require('../entity-types/validate-modifiers').validateModifiers
+
 function reducify (method) {
   return function () {
     const partialArguments = Array.prototype.slice.call(arguments)
-    return function (acc, done) {
-      const methodArguments = [acc.value].concat(partialArguments)
-      const result = method.apply(null, methodArguments)
-      if (_.isError(result)) {
-        return done(result)
-      }
-      done(null, result)
+    return function (value) {
+      const methodArguments = [value].concat(partialArguments)
+      return method.apply(null, methodArguments)
     }
   }
 }
@@ -58,7 +57,7 @@ module.exports.reducifyAll = reducifyAll
 
 function mockReducer (reducer, acc) {
   const pcb = Promise.promisify(reducer)
-  return pcb(acc).then(val => ({ value: val }))
+  return pcb(acc.value, acc).then(val => ({ value: val }))
 }
 
 module.exports.mockReducer = mockReducer

@@ -45,18 +45,14 @@ describe('ReducerFind#resolve', () => {
       }
     ]
     const accumulator = AccumulatorFactory.create({ value })
-    const reducer = Factory.create(Reducer.create, ['$a', acc => acc.value > 1])
-    return Resolve.resolve(
-      manager,
-      Reducer.resolve,
-      accumulator,
-      reducer,
-      []
-    ).then(result => {
-      expect(result.value).toEqual({
-        a: 2
-      })
-    })
+    const reducer = Factory.create(Reducer.create, ['$a', value => value > 1])
+    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer, []).then(
+      result => {
+        expect(result.value).toEqual({
+          a: 2
+        })
+      }
+    )
   })
 
   test('It should return undefined when no match is found', () => {

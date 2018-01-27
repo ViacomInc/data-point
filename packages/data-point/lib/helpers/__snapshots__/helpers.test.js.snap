@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Helpers API 1`] = `
+Object {
+  "createAccumulator": [Function],
+  "createEntity": [Function],
+  "createReducer": [Function],
+  "createReducerResolver": [Function],
+  "helpers": Object {
+    "assign": [Function],
+    "constant": [Function],
+    "filter": [Function],
+    "find": [Function],
+    "isArray": [Function],
+    "isBoolean": [Function],
+    "isError": [Function],
+    "isFunction": [Function],
+    "isNumber": [Function],
+    "isObject": [Function],
+    "isString": [Function],
+    "map": [Function],
+    "omit": [Function],
+    "pick": [Function],
+  },
+  "isReducer": [Function],
+  "mockReducer": [Function],
+  "reducify": [Function],
+  "reducifyAll": [Function],
+  "resolveEntity": [Function],
+  "validateEntityModifiers": [Function],
+}
+`;

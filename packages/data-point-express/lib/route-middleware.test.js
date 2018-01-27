@@ -14,10 +14,10 @@ describe('create - entity middleware', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:my-test-query': acc => ({
+        'transform:my-test-query': (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         }),
-        'transform:my-test-params': acc => ({
+        'transform:my-test-params': (value, acc) => ({
           message: `Hello ${acc.locals.params.name}`
         })
       }

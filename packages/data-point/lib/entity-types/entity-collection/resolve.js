@@ -29,7 +29,7 @@ function validateAsArray (acc) {
     : Promise.reject(
         new Error(
           Util.format(
-            '%s received acc.value = %s of type %s,',
+            '%s received value = %s of type %s,',
             entity.id,
             _.truncate(Util.inspect(acc.value, { breakLength: Infinity }), {
               length: 30

@@ -39,7 +39,7 @@ describe('create - datapoint routes', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:Test': acc => ({
+        'transform:Test': (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         })
       }

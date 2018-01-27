@@ -22,7 +22,7 @@ function getOptions (spec) {
  * @param {Object} options
  * @return {Promise}
  */
-function resolve (manager, reducerSource, value, options) {
+function reducerResolve (manager, reducerSource, value, options) {
   const contextOptions = getOptions(options)
   const accumulator = AccumulatorFactory.create({
     value: value,
@@ -46,7 +46,7 @@ function resolve (manager, reducerSource, value, options) {
  * @return {Promise}
  */
 function transform (manager, reducerSource, value, options, done) {
-  return Promise.try(() => resolve(manager, reducerSource, value, options))
+  return Promise.try(() => reducerResolve(manager, reducerSource, value, options))
     .catch(error => {
       if (error.rstack && !_.get(options, ['debug', 'silent'])) {
         const header = error.rvalue.header
@@ -71,4 +71,11 @@ function transform (manager, reducerSource, value, options, done) {
     .asCallback(done)
 }
 
-module.exports = transform
+module.exports.transform = transform
+
+function resolve (manager, reducerSource, value, options) {
+  return Promise.try(() => reducerResolve(manager, reducerSource, value, options))
+    .then(acc => acc.value)
+}
+
+module.exports.resolve = _.curry(resolve, 3)

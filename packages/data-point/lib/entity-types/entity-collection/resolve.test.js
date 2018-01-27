@@ -94,14 +94,14 @@ describe('entity.collection.filter', () => {
     })
   })
 
-  test('should resolve filter Transform', () => {
+  test('it should resolve filter transform for collection containing filter property', () => {
     return transform('collection:c.2', testData).then(acc => {
       expect(acc.value).toEqual([1, 3])
     })
   })
 
   // NOTE: to skip map execution when filter is empty
-  test('should skip Filter Transform if empty', () => {
+  test('it should skip filter transform if empty', () => {
     return transform('collection:c.3', testData).then(acc => {
       expect(acc.value).toEqual([1, 2, 3])
     })

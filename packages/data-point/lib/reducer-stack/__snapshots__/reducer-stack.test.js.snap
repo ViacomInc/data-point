@@ -490,7 +490,7 @@ Value:
 ]
 `;
 
-exports[`reducer stack traces entry:type-check-1 1`] = `[Error: entry:type-check-1 did not pass type check, type expected: string but recevied: object. The value received is: { x: 1 }]`;
+exports[`reducer stack traces entry:type-check-1 1`] = `[Error: value did not pass type check, type expected: string but received: object. The value received is: { x: 1 }]`;
 
 exports[`reducer stack traces entry:type-check-1 2`] = `
 Array [
@@ -507,7 +507,7 @@ Value:
 ]
 `;
 
-exports[`reducer stack traces entry:type-check-2 1`] = `[Error: entry:type-check-2 did not pass type check, type expected: string but recevied: number. The value received is: 500]`;
+exports[`reducer stack traces entry:type-check-2 1`] = `[Error: value did not pass type check, type expected: string but received: number. The value received is: 500]`;
 
 exports[`reducer stack traces entry:type-check-2 2`] = `
 Array [
