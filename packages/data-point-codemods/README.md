@@ -38,6 +38,7 @@ data-point-codemods --help
 
 - ([codemod](transforms/reducer-args-acc-to-val-acc.js)) Refactor ReducerFunctions for value as first parameter eg. `(acc)` &rarr; `(input, acc)`. For more info please look at the [input](transforms/__testfixtures__/reducer-args-acc-to-val-acc.input.js)/[output](transforms/__testfixtures__/reducer-args-acc-to-val-acc.output.js) tests.
 
+- ([codemod](transforms/change-path-reducer-accessing-root-path.js)) Refactor PathReducers that access the root with `$.` to use `$`. For more info please look at the [input](transforms/__testfixtures__/change-path-reducer-accessing-root-path.input.js)/[output](transforms/__testfixtures__/change-path-reducer-accessing-root-path.output.js) tests.
 
 ## WARNING
 
