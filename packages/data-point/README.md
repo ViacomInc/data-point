@@ -1829,7 +1829,7 @@ Using `acc.value` property to make the url dynamic:
   ```
 </details>
 
-Example at: [examples/entity-request-string-template.js](examples/entity-request-options-locals.js)
+Example at: [examples/entity-request-string-template.js](examples/entity-request-string-template.js)
 
 <a name="acc-locals-example" >Using `acc.locals` property to make the url dynamic:</a>
 
@@ -1863,6 +1863,8 @@ Example at: [examples/entity-request-string-template.js](examples/entity-request
 
   ```
 </details>
+
+Example at: [examples/entity-request-options-locals.js](examples/entity-request-options-locals.js)
 
 For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
 
