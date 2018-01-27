@@ -4,6 +4,7 @@ const _ = require('lodash')
 const nock = require('nock')
 const Resolve = require('./resolve')
 
+const { transform } = require('../../core/transform')
 const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer-types/factory')
 const LocalsFactory = require('../../locals/factory')
@@ -17,7 +18,7 @@ const helpers = require('../../helpers')
 let dataPoint
 let resolveReducerBound
 
-function transform (entityId, value, options) {
+function resolveEntity (entityId, value, options) {
   const reducer = dataPoint.entities.get(entityId)
   const accumulator = helpers.createAccumulator(value, {
     context: reducer,
@@ -256,27 +257,27 @@ describe('resolveRequest', () => {
     })
   })
 
-  // test('log errors when request fails', () => {
-  //   nock('http://remote.test')
-  //     .get('/source1')
-  //     .reply(404, 'not found')
+  test('log errors when request fails', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(foo => foo)
 
-  //   const acc = {
-  //     options: {
-  //       json: true,
-  //       url: 'http://remote.test/source1'
-  //     },
-  //     value: 'foo'
-  //   }
-  //   _.set(acc, 'reducer.spec.id', 'test:test')
-  //   console.info = jest.fn()
-  //   return Resolve.resolveRequest(acc, resolveReducerBound, [])
-  //     .catch(e => e)
-  //     .then(result => {
-  //       expect(console.info).toBeCalled()
-  //       expect(result.message).toMatchSnapshot()
-  //     })
-  // })
+    nock('http://remote.test')
+      .get('/source1')
+      .reply(404, 'not found')
+
+    const value = {}
+    const options = { debug: true }
+    return transform(dataPoint, 'request:a1', value, options)
+      .catch(e => e)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
+        expect(result).toHaveProperty('rstack')
+        expect(result).toHaveProperty('rvalue')
+        expect(consoleSpy.mock.calls).toMatchSnapshot()
+        consoleSpy.mockRestore()
+      })
+  })
 })
 
 describe('inspect', () => {
@@ -300,7 +301,7 @@ describe('inspect', () => {
     Resolve.inspect(acc)
     expect(console.info).not.toBeCalled()
   })
-  test('It should not execute utils.inspect', () => {
+  test('It should execute utils.inspect', () => {
     console.info = jest.fn()
     Resolve.inspect(getAcc())
     expect(console.info.mock.calls[0]).toContain('test:test')
@@ -322,7 +323,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a1', null).then(result => {
+    return resolveEntity('request:a1', null).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
@@ -336,7 +337,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a1.0', {}).then(result => {
+    return resolveEntity('request:a1.0', {}).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
@@ -350,7 +351,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform(
+    return resolveEntity(
       'request:a3',
       {},
       {
@@ -372,7 +373,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform(
+    return resolveEntity(
       'request:a3.2',
       {},
       {
@@ -394,7 +395,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a4', {}).then(result => {
+    return resolveEntity('request:a4', {}).then(result => {
       expect(result.value).toEqual({
         ok: true
       })

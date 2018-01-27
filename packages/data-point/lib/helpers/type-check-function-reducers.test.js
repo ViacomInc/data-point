@@ -1,5 +1,7 @@
 /* eslint-env jest */
 
+const Promise = require('bluebird')
+
 const {
   isString,
   isNumber,
@@ -11,13 +13,16 @@ const {
 } = require('./type-check-function-reducers')
 
 function testTypeChecker (typeCheck, goodValue, badValue, type) {
-  test('It should return true if type match', () => {
+  test('It should return true if type matches', () => {
     expect(typeCheck(goodValue)).toBe(goodValue)
   })
   test(`It should throw error when not matched`, () => {
-    expect(() => {
-      typeCheck(badValue)
-    }).toThrowErrorMatchingSnapshot()
+    return Promise.try(() => typeCheck(badValue))
+      .catch(e => e)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
+        expect(result._message).toMatchSnapshot()
+      })
   })
 }
 

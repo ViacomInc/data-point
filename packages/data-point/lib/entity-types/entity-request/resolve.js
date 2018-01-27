@@ -136,7 +136,6 @@ function resolveRequest (accumulator, resolveReducer, stack) {
       utils.inspectProperties(error, ['message', 'statusCode', 'body'], '  ')
     ].join('')
 
-    // overwrite the header and _message
     error.rvalue.header = 'Request options'
     error._message = message
     throw error

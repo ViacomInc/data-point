@@ -1,54 +1,85 @@
 const Util = require('util')
 const _ = require('lodash')
+
 const utils = require('../utils')
 
-// TODO is the error message working correctly for stack trace?
-function errorMessage (value, expectedType) {
-  const entityId = _.get(value, 'reducer.spec.id', 'value')
-  return Util.format(
-    '%s did not pass type check, type expected: %s but received: %s. The value received is: %s',
-    entityId,
+/**
+ * @param {string} expectedType
+ * @param {*} value
+ * @return {string}
+ */
+function reducerTypeError (expectedType, value) {
+  const error = new Error()
+  error._message = Util.format(
+    'Type check failed: expected "%s" but received "%s"',
     expectedType,
-    utils.typeOf(value),
-    _.truncate(Util.inspect(value, { breakLength: Infinity }), {
-      length: 30
-    })
+    utils.typeOf(value)
   )
+
+  return error
 }
 
+/**
+ * @param {*} value
+ * @throws
+ */
 function isString (value) {
   if (typeof value === 'string') return value
-  throw new Error(errorMessage(value, 'string'))
+  throw reducerTypeError('string', value)
 }
 
+/**
+ * @param {*} value
+ * @throws
+ */
 function isNumber (value) {
   if (typeof value === 'number') return value
-  throw new Error(errorMessage(value, 'number'))
+  throw reducerTypeError('number', value)
 }
 
+/**
+ * @param {*} value
+ * @throws
+ */
 function isBoolean (value) {
   if (typeof value === 'boolean') return value
-  throw new Error(errorMessage(value, 'boolean'))
+  throw reducerTypeError('boolean', value)
 }
 
+/**
+ * @param {*} value
+ * @throws
+ */
 function isFunction (value) {
   if (typeof value === 'function') return value
-  throw new Error(errorMessage(value, 'function'))
+  throw reducerTypeError('function', value)
 }
 
+/**
+ * @param {*} value
+ * @throws
+ */
 function isError (value) {
   if (value instanceof Error) return value
-  throw new Error(errorMessage(value, 'function'))
+  throw reducerTypeError('error', value)
 }
 
+/**
+ * @param {*} value
+ * @throws
+ */
 function isArray (value) {
   if (Array.isArray(value)) return value
-  throw new Error(errorMessage(value, 'Array'))
+  throw reducerTypeError('Array', value)
 }
 
+/**
+ * @param {*} value
+ * @throws
+ */
 function isObject (value) {
   if (_.isPlainObject(value)) return value
-  throw new Error(errorMessage(value, 'Object'))
+  throw reducerTypeError('Object', value)
 }
 
 module.exports = {

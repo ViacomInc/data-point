@@ -38,6 +38,31 @@ function reducerResolve (manager, reducerSource, value, options) {
 }
 
 /**
+ * @param {Object} options
+ * @param {Error} error
+ * @throws
+ */
+function onError (options, error) {
+  if (error.rstack && !_.get(options, ['debug', 'silent'])) {
+    const header = error.rvalue.header
+    error.rstack = stringifyReducerStack(error.rstack)
+    // TODO remove space before it
+    let message = `The following reducer failed to execute:\n ${
+      error.rstack
+    }\n\n${header}:\n${JSON.stringify(error.rvalue.value, null, 2)}`
+
+    // reducers can add more information with the _message property
+    if (error._message) {
+      message += `\n\n${error._message}`
+    }
+
+    console.error(message)
+  }
+  throw error
+  // process.exit(1)
+}
+
+/**
  * @param {Object} manager
  * @param {*} reducerSource
  * @param {*} value
@@ -46,36 +71,21 @@ function reducerResolve (manager, reducerSource, value, options) {
  * @return {Promise}
  */
 function transform (manager, reducerSource, value, options, done) {
-  return Promise.try(() => reducerResolve(manager, reducerSource, value, options))
-    .catch(error => {
-      if (error.rstack && !_.get(options, ['debug', 'silent'])) {
-        const header = error.rvalue.header
-        error.rstack = stringifyReducerStack(error.rstack)
-        let message = `The following reducer failed to execute:\n ${
-          error.rstack
-        }\n\n${header ? `\n${header}:\n` : ''}${JSON.stringify(
-          error.rvalue.value,
-          null,
-          2
-        )}`
-
-        // reducers can add more information with the _message property
-        if (error._message) {
-          message += `\n\n${error._message}`
-        }
-
-        console.error(message)
-      }
-      throw error
-    })
+  return Promise.try(() =>
+    reducerResolve(manager, reducerSource, value, options)
+  )
+    .catch(error => onError(options, error))
     .asCallback(done)
 }
 
 module.exports.transform = transform
 
 function resolve (manager, reducerSource, value, options) {
-  return Promise.try(() => reducerResolve(manager, reducerSource, value, options))
+  return Promise.try(() =>
+    reducerResolve(manager, reducerSource, value, options)
+  )
     .then(acc => acc.value)
+    .catch(error => onError(options, error))
 }
 
 module.exports.resolve = _.curry(resolve, 3)

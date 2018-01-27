@@ -1866,9 +1866,6 @@ Example at: [examples/entity-request-string-template.js](examples/entity-request
 
 Example at: [examples/entity-request-options-locals.js](examples/entity-request-options-locals.js)
 
-<<<<<<< HEAD
-Example at: [examples/entity-request-string-template.js](examples/entity-request-options-locals.js)
-=======
 For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
 
 <a name="options-with-constants" >Using constants in the options reducer:</a>
@@ -1913,7 +1910,6 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
 </details>
 
 Example at: [examples/entity-request-options.js](examples/entity-request-options.js)
->>>>>>> constant-reducer-helper
 
 For more examples of request entities, see the [Examples](examples), the [Integration Examples](test/definitions/integrations.js), and the unit tests: [Request Definitions](test/definitions/sources.js).
 
