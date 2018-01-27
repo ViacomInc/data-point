@@ -34,7 +34,7 @@ module.exports.stringifyReducerStack = stringifyReducerStack
 function onReducerError (stack, value, error, header = 'Value') {
   if (stack && !error.rstack) {
     error.rstack = stack
-    error.rvalue = { header, value }
+    error.rvalue = { value, header }
   }
 
   throw error

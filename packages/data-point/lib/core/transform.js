@@ -43,7 +43,7 @@ function reducerResolve (manager, reducerSource, value, options) {
  * @throws
  */
 function onError (options, error) {
-  if (error.rstack && !_.get(options, ['debug', 'silent'])) {
+  if (error.rstack && _.get(options, ['debug', 'silent']) !== true) {
     const header = error.rvalue.header
     error.rstack = stringifyReducerStack(error.rstack)
     let message = `The following reducer failed to execute:\n${
