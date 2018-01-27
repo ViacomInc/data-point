@@ -140,8 +140,9 @@ describe('factory#parse composed modifiers', () => {
     )
 
     expect(result.compose.reducers[1]).toHaveProperty('type', 'ReducerObject')
-    expect(result.compose.reducers[1].props).toHaveLength(1)
-    expect(result.compose.reducers[1].props[0].reducer).toHaveProperty(
+    expect(result.compose.reducers[1].source()).toEqual({})
+    expect(result.compose.reducers[1].reducers).toHaveLength(1)
+    expect(result.compose.reducers[1].reducers[0].reducer).toHaveProperty(
       'type',
       'ReducerPath'
     )

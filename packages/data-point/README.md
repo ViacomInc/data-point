@@ -36,6 +36,7 @@ npm install --save data-point
   - [map](#reducer-map)
   - [filter](#reducer-filter)
   - [find](#reducer-find)
+  - [constant](#reducer-constant)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
@@ -283,6 +284,7 @@ This method returns a **Promise** with the final output value.
 
 - [Hello World](#hello-world) example.
 - [With options](#acc-locals-example) example.
+- [With constants in options](#options-with-constants) example.
 
 ### <a name="api-data-point-transform">dataPoint.transform()</a>
 
@@ -309,7 +311,7 @@ This method will return a **Promise** if `done` is omitted.
 |:---|:---|:---|
 | *reducer* | [Reducer](#reducers) | Reducer that manipulates the input. |
 | *input* | `*` | Input value that you want to transform. If **none**, pass `null` or empty object `{}`. |
-| *options* | [TransformOptions](#transform-options) | Options within the scope of the current transformation |
+| *options* | [Reducer](#reducers) | Request options. See this [example](#options-with-constants) for using constants in the reducer |
 | *done* | `function` _(optional)_ | Error-first callback [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks) that has the arguments `(error, result)`, where `result` contains the final resolved [Accumulator](#accumulator). The actual transformation result will be inside the `result.value` property. |
 
 **<a name="transform-options">TransformOptions</a>**
@@ -638,7 +640,7 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 
 ### <a name="object-reducer">ObjectReducer</a>
 
-ObjectReducers are plain objects where the values are reducers. They're used to aggregate data or transform objects.
+ObjectReducers are plain objects where the values are reducers. They're used to aggregate data or transform objects. For values that should be constants instead of reducers, you can use the [constant](#reducer-constant) reducer helper.
 
 <details>
   <summary>Transforming an object</summary>
@@ -1133,6 +1135,58 @@ find(reducer:Reducer):*
 </details>
 
 Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
+
+### <a name="reducer-constant">constant</a>
+
+The **constant** reducer always returns the given value.
+
+**SYNOPSIS**
+
+```js
+constant(value:*):*
+```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *value* | * | The value the reducer should return |
+
+**EXAMPLE:**
+
+<details>
+  <summary>returning an object constant</summary>
+
+  ```js
+  const { constant } = DataPoint.helpers
+
+  const input = {
+    a: 1,
+    b: 2
+  }
+
+  const reducer = {
+    a: '$a',
+    b: constant({
+      a: '$a',
+      b: 3
+    })
+  }
+
+  dataPoint
+    .resolve(reducer, input) 
+    .then(output => {
+      // {
+      //   a: 1,
+      //   b: {
+      //     a: '$a',
+      //     b: 3
+      //   }
+      // }
+      }
+    })
+  ```
+</details>
 
 ## <a name="entities">Entities</a>
 
@@ -1703,7 +1757,7 @@ dataPoint.addEntities({
 | *inputType*  | String, [Reducer](#reducers) | type checks the entity's input value, does not mutate value. [Entity Type checking](#entity-type-check) |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *url*   | [StringTemplate](#string-template) | String value to resolve the request's url |
-| *options* | [Reducer](#reducers) | reducer that should return an object to use as request options. These map directly to [request.js](https://github.com/request/request) options
+| *options* | [Reducer](#reducers) | reducer that returns an object to use as [request.js](https://github.com/request/request) options
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check) |
@@ -1744,7 +1798,7 @@ Example at: [examples/entity-request-basic.js](examples/entity-request-basic.js)
 
 StringTemplate is a string that supports a **minimal** templating system. You may inject any value into the string by enclosing it within `{ObjectPath}` curly braces. **The context of the string is the Request's [Accumulator](#accumulator) Object**, meaning you have access to any property within it. 
 
-Using `acc.value` property to make the url dynamic.
+Using `acc.value` property to make the url dynamic:
 
 <details>
   <summary>`acc.value` Example</summary>
@@ -1775,10 +1829,9 @@ Using `acc.value` property to make the url dynamic.
   ```
 </details>
 
+Example at: [examples/entity-request-string-template.js](examples/entity-request-string-template.js)
 
 <a name="acc-locals-example" >Using `acc.locals` property to make the url dynamic:</a>
-
-For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
 
 <details>
   <summary>`acc.locals` example</summary>
@@ -1811,8 +1864,52 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
   ```
 </details>
 
+Example at: [examples/entity-request-options-locals.js](examples/entity-request-options-locals.js)
 
-Example at: [examples/entity-request-string-template.js](examples/entity-request-options-locals.js)
+For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
+
+<a name="options-with-constants" >Using constants in the options reducer:</a>
+
+<details>
+  <summary>constants example</summary>
+
+  ```js
+  const DataPoint = require('data-point')
+  const c = DataPoint.helpers.constant
+  const dataPoint = DataPoint.create()
+
+  dataPoint.addEntities({
+    'request:searchPeople': {
+      url: 'https://swapi.co/api/people',
+      // options is a Reducer, but values
+      // at any level can be wrapped as
+      // constants (or just wrap the whole
+      // object if all the values are static)
+      options: {
+        'content-type': c('application/json'), // constant
+        qs: {
+          // get path `searchTerm` from input
+          // to dataPoint.resolve
+          search: '$searchTerm'
+        }
+      }
+    }
+  })
+
+  const input = {
+    searchTerm: 'r2'
+  }
+
+  // the second parameter to transform is the input value
+  dataPoint
+    .resolve('request:searchPeople', input)
+    .then(output => {
+      assert.equal(output.results[0].name, 'R2-D2')
+    })
+  ```
+</details>
+
+Example at: [examples/entity-request-options.js](examples/entity-request-options.js)
 
 For more examples of request entities, see the [Examples](examples), the [Integration Examples](test/definitions/integrations.js), and the unit tests: [Request Definitions](test/definitions/sources.js).
 
