@@ -44,11 +44,13 @@ function reducerResolve (manager, reducerSource, value, options) {
  */
 function onError (options, error) {
   if (error.rstack && _.get(options, ['debug', 'silent']) !== true) {
+    const value = error.rvalue.value
     const header = error.rvalue.header
+    error.rvalue = value
     error.rstack = stringifyReducerStack(error.rstack)
     let message = `The following reducer failed to execute:\n${
       error.rstack
-    }\n\n${header}:\n${JSON.stringify(error.rvalue.value, null, 2)}`
+    }\n\n${header}:\n${JSON.stringify(value, null, 2)}`
 
     // reducers can add more information with the _message property
     if (error._message) {

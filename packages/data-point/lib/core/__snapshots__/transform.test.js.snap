@@ -1,11 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`throw error with reducer stack attached resolve 1`] = `
-Object {
-  "header": "Value",
-  "value": Object {},
-}
-`;
+exports[`throw error with reducer stack attached resolve 1`] = `Object {}`;
 
 exports[`throw error with reducer stack attached resolve 2`] = `
 Array [
@@ -19,12 +14,7 @@ Value:
 ]
 `;
 
-exports[`throw error with reducer stack attached transform 1`] = `
-Object {
-  "header": "Value",
-  "value": Object {},
-}
-`;
+exports[`throw error with reducer stack attached transform 1`] = `Object {}`;
 
 exports[`throw error with reducer stack attached transform 2`] = `
 Array [
