@@ -3269,8 +3269,7 @@ app.get('/api/:entry', (req, res, next) => {
       console.error('entry: %s failed!', entry)
       console.error(error.stack)
       next(err) // pass error to middleware chain
-      return
-    })    
+    })
 })
 
 

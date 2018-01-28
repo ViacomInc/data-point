@@ -21,6 +21,7 @@ function reducerTypeError (expectedType, value) {
 
 /**
  * @param {*} value
+ * @return {*}
  * @throws
  */
 function isString (value) {
@@ -30,6 +31,7 @@ function isString (value) {
 
 /**
  * @param {*} value
+ * @return {*}
  * @throws
  */
 function isNumber (value) {
@@ -39,6 +41,7 @@ function isNumber (value) {
 
 /**
  * @param {*} value
+ * @return {*}
  * @throws
  */
 function isBoolean (value) {
@@ -48,6 +51,7 @@ function isBoolean (value) {
 
 /**
  * @param {*} value
+ * @return {*}
  * @throws
  */
 function isFunction (value) {
@@ -57,6 +61,7 @@ function isFunction (value) {
 
 /**
  * @param {*} value
+ * @return {*}
  * @throws
  */
 function isError (value) {
@@ -66,6 +71,7 @@ function isError (value) {
 
 /**
  * @param {*} value
+ * @return {*}
  * @throws
  */
 function isArray (value) {
@@ -75,6 +81,7 @@ function isArray (value) {
 
 /**
  * @param {*} value
+ * @return {*}
  * @throws
  */
 function isObject (value) {
