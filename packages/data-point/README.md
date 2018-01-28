@@ -325,7 +325,7 @@ The following table describes the properties of the `options` argument.
 |:---|:---|:---|
 | *locals* | `Object` | Hash with values you want exposed to every reducer. See [example](#acc-locals-example). |
 | *trace* | `boolean` | Set this to `true` to trace the entities and the time each one is taking to execute. **Use this option for debugging.** |
-| *debug* | `boolean|Object` | [debug settings](#debugging) |
+| *debug* | `boolean, Object` | [debug settings](#debugging) |
 
 ## <a name="reducers">Reducer</a>
 
