@@ -3203,14 +3203,14 @@ When `options.debug` is truthy,
 DataPoint will log "stack traces" when a reducer throws an error.
 It also adds two properties to the error that's thrown:
 
-- `rvalue:*` - the input value to the reducer that failed
-- `rstack:String` - the reducer stack trace (this is the same string that's logged)
+- `_value:*` - the input value to the reducer that failed
+- `_stack:String` - the reducer stack trace (this is the same string that's logged)
 
 `options.debug` can be either a boolean or an Object with settings:
 
 | Property | Type | Description |
 |:---|:---|:---|
-| *silent* | `boolean` | If true, suppresses `console.error` (but still attaches `rvalue` and `rstack` to the error) |
+| *silent* | `boolean` | If true, suppresses `console.error` (but still attaches `_value` and `_stack` to the error) |
 
 ```js
 dataPoint.addEntities({
@@ -3230,8 +3230,8 @@ const input = {
 
 dataPoint.resolve('model:with-error', input, { debug: true })
   .catch(e => {
-    assert.deepEqual(e.rvalue, { a: 1 })
-    assert.equal(e.rstack, 'model:with-error[value] -> ReducerObject[b] -> ReducerFunction')
+    assert.deepEqual(e._value, { a: 1 })
+    assert.equal(e._stack, 'model:with-error[value] -> ReducerObject[b] -> ReducerFunction')
   })
 
 // when 'model:with-error' throws an error, this

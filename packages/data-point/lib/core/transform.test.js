@@ -182,9 +182,9 @@ describe('throw error with reducer stack attached', () => {
       .catch(err => err)
       .then(result => {
         expect(result).toBeInstanceOf(Error)
-        expect(result).toHaveProperty('rstack')
-        expect(result.rvalue).toMatchSnapshot()
-        // error.rstack is stringified and passed to console.error
+        expect(result).toHaveProperty('_stack')
+        expect(result._value).toMatchSnapshot()
+        // error._stack is stringified and passed to console.error
         expect(consoleSpy.mock.calls).toMatchSnapshot()
         consoleSpy.mockRestore()
       })

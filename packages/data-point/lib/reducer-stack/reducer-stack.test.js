@@ -28,8 +28,8 @@ function testError (reducer, input, options) {
     .catch(err => err)
     .then(err => {
       expect(err).toBeInstanceOf(Error)
-      expect(err).toHaveProperty('rvalue')
-      expect(err).toHaveProperty('rstack')
+      expect(err).toHaveProperty('_value')
+      expect(err).toHaveProperty('_stack')
       expect(consoleSpy.mock.calls).toMatchSnapshot()
       consoleSpy.mockClear()
     })
@@ -413,8 +413,8 @@ describe('reducer-stack#onReducerError', () => {
     const e = attempt(Stack.onReducerError, stack, value, error)
 
     expect(e).toEqual(error)
-    expect(e).not.toHaveProperty('rstack')
-    expect(e).not.toHaveProperty('rvalue')
+    expect(e).not.toHaveProperty('_stack')
+    expect(e).not.toHaveProperty('_value')
   })
   it('should attach properties to the given error', () => {
     const stack = ['a', 'b']
@@ -423,11 +423,11 @@ describe('reducer-stack#onReducerError', () => {
     const e = attempt(Stack.onReducerError, stack, value, error)
 
     expect(e).toEqual(error)
-    expect(e.rstack).toEqual(stack)
-    expect(e.rvalue.value).toEqual(value)
-    expect(e.rvalue.header).toEqual('Value')
+    expect(e._stack).toEqual(stack)
+    expect(e._value.value).toEqual(value)
+    expect(e._value.header).toEqual('Value')
   })
-  it('should not overwrite existing rstack and rvalue properties', () => {
+  it('should not overwrite existing _stack and _value properties', () => {
     const stack1 = ['a', 'b']
     const value1 = { a: 1 }
     const stack2 = ['c', 'd']
@@ -437,9 +437,9 @@ describe('reducer-stack#onReducerError', () => {
     e = attempt(Stack.onReducerError, stack2, value2, e)
 
     expect(e).toEqual(error)
-    expect(e.rstack).toEqual(stack1)
-    expect(e.rvalue.value).toEqual(value1)
-    expect(e.rvalue.header).toEqual('Options')
+    expect(e._stack).toEqual(stack1)
+    expect(e._value.value).toEqual(value1)
+    expect(e._value.header).toEqual('Options')
   })
 })
 

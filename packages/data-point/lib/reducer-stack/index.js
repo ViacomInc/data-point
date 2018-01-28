@@ -32,9 +32,9 @@ module.exports.stringifyReducerStack = stringifyReducerStack
  * @throws the given error with more properties added
  */
 function onReducerError (stack, value, error, header = 'Value') {
-  if (stack && !error.rstack) {
-    error.rstack = stack
-    error.rvalue = { value, header }
+  if (stack && !error._stack) {
+    error._stack = stack
+    error._value = { value, header }
   }
 
   throw error

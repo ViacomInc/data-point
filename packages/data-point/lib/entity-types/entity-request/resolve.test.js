@@ -272,9 +272,9 @@ describe('resolveRequest', () => {
       .catch(e => e)
       .then(result => {
         expect(result).toBeInstanceOf(Error)
-        expect(result).toHaveProperty('rstack')
-        expect(result).toHaveProperty('rvalue')
-        // error.rstack is stringified and passed to console.error
+        expect(result).toHaveProperty('_stack')
+        expect(result).toHaveProperty('_value')
+        // error._stack is stringified and passed to console.error
         expect(consoleSpy.mock.calls).toMatchSnapshot()
         consoleSpy.mockRestore()
       })

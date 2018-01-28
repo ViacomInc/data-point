@@ -70,8 +70,8 @@ describe('entity-control#resolve', () => {
       .catch(err => err)
       .then(result => {
         expect(result).toBeInstanceOf(Error)
-        expect(result).not.toHaveProperty('rstack')
-        expect(result).not.toHaveProperty('rvalue')
+        expect(result).not.toHaveProperty('_stack')
+        expect(result).not.toHaveProperty('_value')
       })
   })
 
@@ -80,8 +80,8 @@ describe('entity-control#resolve', () => {
       .catch(err => err)
       .then(result => {
         expect(result).toBeInstanceOf(Error)
-        expect(result).not.toHaveProperty('rstack')
-        expect(result).not.toHaveProperty('rvalue')
+        expect(result).not.toHaveProperty('_stack')
+        expect(result).not.toHaveProperty('_value')
       })
   })
 })
