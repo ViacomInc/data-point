@@ -19,8 +19,8 @@ const reducer = assign({
   c: '$b.c'
 })
 
-dataPoint.transform(reducer, value).then(acc => {
-  assert.deepEqual(acc.value, {
+dataPoint.resolve(reducer, value).then(output => {
+  assert.deepEqual(output, {
     a: 1,
     b: {
       c: 2

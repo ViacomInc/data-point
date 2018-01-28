@@ -2,11 +2,11 @@ const _ = require('lodash')
 
 const utils = require('../../lib/utils')
 
-module.exports.passThrough = () => (context, next) => {
-  next(null, context.value)
+module.exports.passThrough = () => value => {
+  return value
 }
 
-module.exports.throwError = () => (context, next) => {
+module.exports.throwError = () => () => {
   throw new Error('unexpected')
 }
 
@@ -16,88 +16,78 @@ module.exports.invalidReducer = () => {
 }
 
 // invalid in arity, must be 2
-module.exports.invalidReducerArity = () => context => {
-  // return method should have context and callback as arguments
+module.exports.invalidReducerArity = () => value => {
+  // return method should have acc and callback as arguments
 }
 
-module.exports.isEqualTo = value => (context, next) => {
-  next(null, context.value === value)
+module.exports.isEqualTo = compareTo => value => {
+  return compareTo === value
 }
 
-module.exports.addKeyValue = (key, val) => (context, next) => {
-  const value = _.set(context.value, key, val)
-  next(null, value)
+module.exports.addKeyValue = (key, val) => value => {
+  // TODO: check why this is mutating object, dont believe it should
+  return _.set(value, key, val)
 }
 
-module.exports.getKeyValue = key => (context, next) => {
-  const value = _.get(context.value, key)
-  next(null, value)
+module.exports.getKeyValue = key => value => {
+  return _.get(value, key)
 }
 
-module.exports.addCollectionValues = () => (context, next) => {
-  const value = context.value.reduce(_.add)
-  next(null, value)
+module.exports.addCollectionValues = () => value => {
+  return value.reduce(_.add)
 }
 
-module.exports.timesArg1 = module.exports.multiplyBy = factor => (
-  context,
-  next
-) => {
-  next(null, context.value * factor)
+module.exports.timesArg1 = module.exports.multiplyBy = factor => value => {
+  return value * factor
 }
 
-module.exports.addString = string => (context, next) => {
-  next(null, context.value + string)
+module.exports.addString = string => value => {
+  return value + string
 }
 
-module.exports.useDataContext = () => (context, next) => {
-  next(null, context.value + context.initialValue.itemPath)
+module.exports.useDataacc = () => (value, acc) => {
+  return value + acc.initialValue.itemPath
 }
 
-module.exports.addQueryVar = (key, val) => (context, next) => {
-  const initialValue = context.value
-  const value = utils.set(initialValue, `qs.${key}`, val)
-  next(null, value)
+module.exports.addQueryVar = (key, val) => value => {
+  // TODO: check why this is mutating object, dont believe it should
+  return utils.set(value, `qs.${key}`, val)
 }
 
-module.exports.fromMetaToData = key => (context, next) => {
-  const initialValue = context.value
-  const value = _.get(context, `params.${key}`)
-  const result = utils.set(initialValue, key, value)
-  next(null, result)
+module.exports.fromMetaToData = key => (value, acc) => {
+  const initialValue = value
+  const val = _.get(acc, `params.${key}`)
+  const result = utils.set(initialValue, key, val)
+  return result
 }
 
-module.exports.addStringFromMeta = key => (context, next) => {
-  const value = _.get(context, `params.${key}`)
-  const result = context.value + value
-  next(null, result)
+module.exports.addStringFromMeta = key => (value, acc) => {
+  const val = _.get(acc, `params.${key}`)
+  return value + val
 }
 
-module.exports.setDataFromRequest = key => (context, next) => {
-  const initialValue = context.value
-  const value = _.get(context, `locals.${key}`)
-  const result = utils.set(initialValue, key, value)
-  next(null, result)
+module.exports.setDataFromRequest = key => (value, acc) => {
+  const initialValue = value
+  const val = _.get(acc, `locals.${key}`)
+  return utils.set(initialValue, key, val)
 }
 
-module.exports.addStringFromRequest = key => (context, next) => {
-  const value = _.get(context, `locals.${key}`)
-  const result = context.value + value
-  next(null, result)
+module.exports.addStringFromRequest = key => (value, acc) => {
+  const val = _.get(acc, `locals.${key}`)
+  return acc.value + val
 }
 
-module.exports.sourceErrorDoNothing = () => (context, next) => {
-  next(context.value)
+module.exports.sourceErrorDoNothing = () => value => {
+  return value
 }
 
-module.exports.sourceErrorGraceful = () => (context, next) => {
-  next(null, {
+module.exports.sourceErrorGraceful = () => value => {
+  return {
     noData: true
-  })
+  }
 }
 
-module.exports.addStringFromContextKey = key => (context, next) => {
-  const value = _.get(context, key)
-  const result = context.value + value
-  next(null, result)
+module.exports.addStringFromaccKey = key => (value, acc) => {
+  const val = _.get(acc, key)
+  return value + val
 }

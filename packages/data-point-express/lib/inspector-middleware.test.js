@@ -16,14 +16,14 @@ describe('create - inspect middleware', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:test-params': acc => ({
+        'transform:test-params': (value, acc) => ({
           message: `Hello ${acc.locals.params.name}`
         }),
-        'transform:test-query': acc => ({
+        'transform:test-query': (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         }),
-        'transform:test-value': acc => ({
-          message: `Hello ${acc.value}`
+        'transform:test-value': (value, acc) => ({
+          message: `Hello ${value}`
         })
       }
     })

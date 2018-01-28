@@ -24,7 +24,8 @@ describe('reducer#create', () => {
   test('create object', () => {
     const reducer = Factory.create({})
     expect(reducer.type).toBe(ReducerObject.type)
-    expect(reducer.props).toHaveLength(0)
+    expect(reducer.source()).toEqual({})
+    expect(reducer.reducers).toHaveLength(0)
   })
 
   test('create entity', () => {

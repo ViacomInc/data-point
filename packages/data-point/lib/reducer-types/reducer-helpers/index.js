@@ -2,6 +2,7 @@ const createStub = require('./reducer-stub').create
 
 const reducerAssign = require('./reducer-assign')
 const reducerAsArray = require('./reducer-as-array')
+const reducerConstant = require('./reducer-constant')
 const reducerFilter = require('./reducer-filter')
 const reducerFind = require('./reducer-find')
 const reducerMap = require('./reducer-map')
@@ -32,6 +33,7 @@ module.exports.isType = require('./reducer-stub').isType
 const reducers = {
   [reducerAssign.type]: reducerAssign,
   [reducerAsArray.type]: reducerAsArray,
+  [reducerConstant.type]: reducerConstant,
   [reducerFilter.type]: reducerFilter,
   [reducerFind.type]: reducerFind,
   [reducerMap.type]: reducerMap,
@@ -48,6 +50,7 @@ function bindStubFunction (reducerType) {
 const stubFactories = {
   [reducerAssign.name]: bindStubFunction(reducerAssign.type),
   [reducerAsArray.name]: bindStubFunction(reducerAsArray.type),
+  [reducerConstant.name]: bindStubFunction(reducerConstant.type),
   [reducerFilter.name]: bindStubFunction(reducerFilter.type),
   [reducerFind.name]: bindStubFunction(reducerFind.type),
   [reducerMap.name]: bindStubFunction(reducerMap.type),

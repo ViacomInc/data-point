@@ -1,81 +1,138 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`reducer/reducer-function#getReducerProps should accept a non-empty object 1`] = `
-Array [
-  Object {
-    "path": Array [
-      "a1",
-    ],
-    "reducer": ReducerPath {
-      "asCollection": true,
-      "body": [Function],
-      "name": "a",
-      "type": "ReducerPath",
-      Symbol(reducer): true,
-    },
-  },
-  Object {
-    "path": Array [
-      "b1",
-      "a2",
-    ],
-    "reducer": ReducerList {
-      "reducers": Array [
-        ReducerPath {
-          "asCollection": false,
-          "body": [Function],
-          "name": "a2",
-          "type": "ReducerPath",
-          Symbol(reducer): true,
-        },
-        ReducerFunction {
-          "body": [Function],
-          "type": "ReducerFunction",
-          Symbol(reducer): true,
-        },
+exports[`ReducerObject.factory#create reducer object with no props argument 1`] = `
+ReducerObject {
+  "isEmpty": true,
+  "reducers": Array [],
+  "source": [Function],
+  "type": "ReducerObject",
+}
+`;
+
+exports[`ReducerObject.factory#create reducer object with props argument 1`] = `
+ReducerObject {
+  "isEmpty": false,
+  "reducers": Array [
+    Object {
+      "path": Array [
+        "a",
       ],
-      "type": "ReducerList",
-      Symbol(reducer): true,
+      "reducer": ReducerPath {
+        "asCollection": false,
+        "body": [Function],
+        "name": "a",
+        "type": "ReducerPath",
+        Symbol(reducer): true,
+      },
     },
+    Object {
+      "path": Array [
+        "b",
+      ],
+      "reducer": ReducerPath {
+        "asCollection": false,
+        "body": [Function],
+        "name": "b",
+        "type": "ReducerPath",
+        Symbol(reducer): true,
+      },
+    },
+  ],
+  "source": [Function],
+  "type": "ReducerObject",
+}
+`;
+
+exports[`ReducerObject.factory#getProps should accept a non-empty object 1`] = `
+Object {
+  "constants": Object {
+    "b1": Object {
+      "c2": 1,
+    },
+    "c1": Object {
+      "a": 1,
+      "b": 2,
+    },
+    "d1": 5,
   },
-  Object {
-    "path": Array [
-      "b1",
-      "b2",
-    ],
-    "reducer": ReducerObject {
-      "props": Array [
-        Object {
-          "path": Array [
-            "a3",
-          ],
-          "reducer": ReducerEntity {
-            "asCollection": false,
-            "entityType": "transform",
-            "hasEmptyConditional": false,
-            "id": "transform:entity-name",
-            "name": "entity-name",
-            "type": "ReducerEntity",
-            "withEmptyConditional": false,
-            Symbol(reducer): true,
-          },
-        },
-        Object {
-          "path": Array [
-            "b3",
-          ],
-          "reducer": ReducerPath {
+  "reducers": Array [
+    Object {
+      "path": Array [
+        "a1",
+      ],
+      "reducer": ReducerPath {
+        "asCollection": true,
+        "body": [Function],
+        "name": "a",
+        "type": "ReducerPath",
+        Symbol(reducer): true,
+      },
+    },
+    Object {
+      "path": Array [
+        "b1",
+        "a2",
+      ],
+      "reducer": ReducerList {
+        "isEmpty": false,
+        "reducers": Array [
+          ReducerPath {
             "asCollection": false,
             "body": [Function],
-            "name": "b1.b2.b3",
+            "name": "a2",
             "type": "ReducerPath",
             Symbol(reducer): true,
           },
-        },
-      ],
-      "type": "ReducerObject",
-      Symbol(reducer): true,
+          ReducerFunction {
+            "body": [Function],
+            "type": "ReducerFunction",
+            Symbol(reducer): true,
+          },
+        ],
+        "type": "ReducerList",
+        Symbol(reducer): true,
+      },
     },
-  },
-]
+    Object {
+      "path": Array [
+        "b1",
+        "b2",
+      ],
+      "reducer": ReducerObject {
+        "isEmpty": false,
+        "reducers": Array [
+          Object {
+            "path": Array [
+              "a3",
+            ],
+            "reducer": ReducerEntity {
+              "asCollection": false,
+              "entityType": "transform",
+              "hasEmptyConditional": false,
+              "id": "transform:entity-name",
+              "name": "entity-name",
+              "type": "ReducerEntity",
+              Symbol(reducer): true,
+            },
+          },
+          Object {
+            "path": Array [
+              "b3",
+            ],
+            "reducer": ReducerPath {
+              "asCollection": false,
+              "body": [Function],
+              "name": "b1.b2.b3",
+              "type": "ReducerPath",
+              Symbol(reducer): true,
+            },
+          },
+        ],
+        "source": [Function],
+        "type": "ReducerObject",
+        Symbol(reducer): true,
+      },
+    },
+  ],
+}
 `;

@@ -5,6 +5,7 @@
     "packages/*"
   ],
   "scripts": {
+    "preinstall": "scripts/preinstall-script.js",
     "precommit": "lint-staged",
     "commit": "git-cz",
     "test": "jest --coverage",
@@ -51,5 +52,6 @@
       "standard",
       "jest --bail --findRelatedTests"
     ]
-  }
+  },
+  "dependencies": {}
 }

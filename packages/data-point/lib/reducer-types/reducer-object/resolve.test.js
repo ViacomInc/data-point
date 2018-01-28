@@ -6,6 +6,7 @@ const createReducer = require('../index').create
 const resolveReducer = require('../index').resolve
 const AccumulatorFactory = require('../../accumulator/factory')
 const FixtureStore = require('../../../test/utils/fixture-store')
+const constant = require('../..').helpers.constant
 
 let dataPoint
 
@@ -37,10 +38,19 @@ describe('resolve#reducerObject.resolve', () => {
     })
   })
 
-  it('should resolve a reducer object', () => {
+  it('should resolve a nested reducer object #1', () => {
     const reducer = createReducerObject(createReducer, {
-      y: '$x.y',
-      zPlusOne: ['$x.y.z', acc => acc.value + 1]
+      x: constant([1, 2]),
+      y: {
+        a: constant({
+          p1: 1,
+          p2: {
+            p3: 2
+          }
+        }),
+        b: '$x.y'
+      },
+      zPlusOne: ['$x.y.z', input => input + 1]
     })
 
     const accumulator = AccumulatorFactory.create({
@@ -60,21 +70,37 @@ describe('resolve#reducerObject.resolve', () => {
       reducer
     ).then(result => {
       expect(result.value).toEqual({
+        x: [1, 2],
         y: {
-          z: 2
+          a: {
+            p1: 1,
+            p2: {
+              p3: 2
+            }
+          },
+          b: {
+            z: 2
+          }
         },
         zPlusOne: 3
       })
     })
   })
 
-  it('should resolve a reducer object', () => {
+  it('should resolve a nested reducer object #2', () => {
     const reducer = createReducerObject(createReducer, {
       x: '$c.x',
       y: '$c.y',
       z: {
         a: '$a',
-        b: '$b'
+        b: '$b',
+        c: constant({
+          x: '$c.x',
+          y: {
+            y2: '$c.y'
+          },
+          z: ['$c.z']
+        })
       }
     })
 
@@ -100,13 +126,28 @@ describe('resolve#reducerObject.resolve', () => {
         y: 'Y',
         z: {
           a: 'A',
-          b: 'B'
+          b: 'B',
+          c: {
+            x: '$c.x',
+            y: {
+              y2: '$c.y'
+            },
+            z: ['$c.z']
+          }
         }
       })
     })
   })
+  it('should move object values to different levels of nesting', () => {
+    const accumulator = AccumulatorFactory.create({
+      value: {
+        a: {
+          a: 1,
+          b: 2
+        }
+      }
+    })
 
-  it('should resolve a reducer object', () => {
     const reducer = createReducerObject(createReducer, {
       x: [
         '$a',
@@ -120,15 +161,6 @@ describe('resolve#reducerObject.resolve', () => {
         },
         '$a'
       ]
-    })
-
-    const accumulator = AccumulatorFactory.create({
-      value: {
-        a: {
-          a: 1,
-          b: 2
-        }
-      }
     })
 
     return resolveReducerObject(
