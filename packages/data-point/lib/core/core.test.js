@@ -49,7 +49,7 @@ describe('addEntityType', () => {
   function createEntityFactory () {
     return {
       create (spec) {},
-      resolve (accumulator, resolveReducer) {}
+      resolve (accumulator, resolveReducer, stack) {}
     }
   }
 

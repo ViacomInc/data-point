@@ -1,19 +1,24 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const utils = require('../../utils')
 const Util = require('util')
+
+const { stackPush } = require('../../reducer-stack')
+const utils = require('../../utils')
 
 /**
  * @param {Accumulator} accumulator
  * @param {reducer} composeReducer
  * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @return {Promise<Accumulator>}
  */
-function resolveCompose (accumulator, composeReducer, resolveReducer) {
+function resolveCompose (accumulator, composeReducer, resolveReducer, stack) {
   if (utils.reducerIsEmpty(composeReducer)) {
     return Promise.resolve(accumulator)
   }
 
-  return resolveReducer(accumulator, composeReducer)
+  const _stack = stack ? stackPush(stack, 'compose') : stack
+  return resolveReducer(accumulator, composeReducer, _stack)
 }
 
 // NOTE: as expensive as this might be, this is to avoid 'surprises'
@@ -40,13 +45,15 @@ function validateAsObject (acc) {
 /**
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @returns {Promise<Accumulator>}
  */
-function resolve (accumulator, resolveReducer) {
+function resolve (accumulator, resolveReducer, stack) {
   const entity = accumulator.reducer.spec
 
-  return resolveReducer(accumulator, entity.value)
+  return resolveReducer(accumulator, entity.value, stack)
     .then(validateAsObject)
-    .then(acc => resolveCompose(acc, entity.compose, resolveReducer))
+    .then(acc => resolveCompose(acc, entity.compose, resolveReducer, stack))
 }
 
 module.exports.resolve = resolve

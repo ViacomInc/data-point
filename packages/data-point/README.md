@@ -54,6 +54,7 @@ npm install --save data-point
 - [dataPoint.use](#api-data-point-use)
 - [dataPoint.addValue](#api-data-point-add-value)
 - [Custom Entity Types](#custom-entity-types)
+- [Debugging](#debugging)
 - [Integrations](#integrations)
 - [Patterns and Best Practices](#patterns-best-practices)
 - [Contributing](#contributing)
@@ -324,6 +325,7 @@ The following table describes the properties of the `options` argument.
 |:---|:---|:---|
 | *locals* | `Object` | Hash with values you want exposed to every reducer. See [example](#acc-locals-example). |
 | *trace* | `boolean` | Set this to `true` to trace the entities and the time each one is taking to execute. **Use this option for debugging.** |
+| *debug* | `boolean, Object` | [debug settings](#debugging) |
 
 ## <a name="reducers">Reducer</a>
 
@@ -1886,18 +1888,17 @@ For more information on acc.locals: [TransformOptions](#transform-options) and [
       // constants (or just wrap the whole
       // object if all the values are static)
       options: {
+        method: '$method', // reducer
         'content-type': c('application/json'), // constant
         qs: {
-          // get path `searchTerm` from input
-          // to dataPoint.resolve
-          search: '$searchTerm'
+          search: c('r2') // constant
         }
       }
     }
   })
 
   const input = {
-    searchTerm: 'r2'
+    method: 'GET'
   }
 
   // the second parameter to transform is the input value
@@ -3196,6 +3197,55 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
 
 Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
 
+## <a name="debugging">Debugging</a>
+
+When `options.debug` is truthy,
+DataPoint will log "stack traces" when a reducer throws an error.
+It also adds two properties to the error that's thrown:
+
+- `_value:*` - the input value to the reducer that failed
+- `_stack:String` - the reducer stack trace (this is the same string that's logged)
+
+`options.debug` can be either a boolean or an Object with settings:
+
+| Property | Type | Description |
+|:---|:---|:---|
+| *silent* | `boolean` | If true, suppresses `console.error` (but still attaches `_value` and `_stack` to the error) |
+
+```js
+dataPoint.addEntities({
+  'model:with-error': {
+    value: {
+      a: '$a',
+      b: () => {
+        throw new Error()
+      }
+    }
+  }
+})
+
+const input = {
+  a: 1
+}
+
+dataPoint.resolve('model:with-error', input, { debug: true })
+  .catch(e => {
+    assert.deepEqual(e._value, { a: 1 })
+    assert.equal(e._stack, 'model:with-error[value] -> ReducerObject[b] -> ReducerFunction')
+  })
+
+// when 'model:with-error' throws an error, this
+// message will be logged using console.error:
+
+// The following reducer failed to execute:
+// model:with-error[value] -> ReducerObject[b] -> ReducerFunction
+
+// Value:
+// {
+//   "a": 1
+// }
+```
+
 ## <a name="integrations">Integrations</a>
 
 ### Basic Express Example
@@ -3219,8 +3269,7 @@ app.get('/api/:entry', (req, res, next) => {
       console.error('entry: %s failed!', entry)
       console.error(error.stack)
       next(err) // pass error to middleware chain
-      return
-    })    
+    })
 })
 
 

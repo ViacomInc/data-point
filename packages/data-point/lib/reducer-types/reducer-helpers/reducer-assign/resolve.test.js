@@ -29,11 +29,15 @@ describe('ReducerAssign#resolve', () => {
     })
 
     const reducer = Factory.create(Reducer.create, () => ({}))
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result.value).toEqual({})
-      }
-    )
+    return Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer,
+      []
+    ).then(result => {
+      expect(result.value).toEqual({})
+    })
   })
 
   test('It should work for valid input', () => {
@@ -45,15 +49,19 @@ describe('ReducerAssign#resolve', () => {
     })
 
     const reducer = Factory.create(Reducer.create, 'transform:a')
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result.value).toEqual({
-          a: 1,
-          b: 22,
-          c: 33
-        })
-      }
-    )
+    return Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer,
+      []
+    ).then(result => {
+      expect(result.value).toEqual({
+        a: 1,
+        b: 22,
+        c: 33
+      })
+    })
   })
 
   test('It should not merge nested objects', () => {
@@ -73,15 +81,19 @@ describe('ReducerAssign#resolve', () => {
       }
     }))
 
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result.value).toEqual({
-          a: 1,
-          b: {
-            b: 2
-          }
-        })
-      }
-    )
+    return Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer,
+      []
+    ).then(result => {
+      expect(result.value).toEqual({
+        a: 1,
+        b: {
+          b: 2
+        }
+      })
+    })
   })
 })

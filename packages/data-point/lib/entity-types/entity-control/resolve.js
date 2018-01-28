@@ -1,17 +1,20 @@
 const Promise = require('bluebird')
 
+const { stackPush } = require('../../reducer-stack')
+
 /**
  *
- * @param {any} caseStatements
- * @param {any} acc
- * @param {any} resolveReducer
- * @returns
+ * @param {Array} caseStatements
+ * @param {Accumulator} acc
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @returns {Promise}
  */
-function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
+function getMatchingCaseIndex (caseStatements, acc, resolveReducer, stack) {
   return Promise.reduce(
     caseStatements,
-    (result, statement) => {
-      if (result) {
+    (result, statement, index) => {
+      if (result !== null) {
         // doing this until proven wrong :)
         const err = new Error('bypassing')
         err.name = 'bypass'
@@ -20,8 +23,9 @@ function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
         return Promise.reject(err)
       }
 
-      return resolveReducer(acc, statement.case).then(res => {
-        return res.value ? statement : false
+      const _stack = stack ? stackPush(stack, ['case']) : stack
+      return resolveReducer(acc, statement.case, _stack).then(res => {
+        return res.value ? index : null
       })
     },
     null
@@ -34,20 +38,32 @@ function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
     throw error
   })
 }
-module.exports.getMatchingCaseStatement = getMatchingCaseStatement
 
-function resolve (acc, resolveReducer) {
+module.exports.getMatchingCaseIndex = getMatchingCaseIndex
+
+/**
+ * @param {Accumulator} acc
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @returns {Promise<Accumulator>}
+ */
+function resolve (acc, resolveReducer, stack) {
   const selectControl = acc.reducer.spec.select
   const caseStatements = selectControl.cases
   const defaultTransform = selectControl.default
 
-  return getMatchingCaseStatement(caseStatements, acc, resolveReducer).then(
-    caseStatement => {
-      if (caseStatement) {
-        return resolveReducer(acc, caseStatement.do)
+  stack = stack ? stackPush(stack, 'select') : stack
+  return getMatchingCaseIndex(caseStatements, acc, resolveReducer, stack).then(
+    index => {
+      if (index === null) {
+        const _index = caseStatements.length
+        const _stack = stack ? stackPush(stack, _index, ['default']) : stack
+        return resolveReducer(acc, defaultTransform, _stack)
       }
 
-      return resolveReducer(acc, defaultTransform)
+      const caseStatement = caseStatements[index]
+      const _stack = stack ? stackPush(stack, index, ['do']) : stack
+      return resolveReducer(acc, caseStatement.do, _stack)
     }
   )
 }

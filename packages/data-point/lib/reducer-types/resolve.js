@@ -1,4 +1,5 @@
 const Promise = require('bluebird')
+
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
 const ReducerList = require('./reducer-list')
@@ -6,6 +7,8 @@ const ReducerObject = require('./reducer-object')
 const ReducerPath = require('./reducer-path')
 
 const ReducerHelpers = require('./reducer-helpers').reducers
+
+const { stackPush, onReducerError } = require('../reducer-stack')
 
 const reducers = Object.assign({}, ReducerHelpers, {
   [ReducerEntity.type]: ReducerEntity,
@@ -20,9 +23,16 @@ const reducers = Object.assign({}, ReducerHelpers, {
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, accumulator, reducer) {
+function resolveReducer (
+  manager,
+  accumulator,
+  reducer,
+  stack,
+  resolve = resolveReducer
+) {
   // this conditional is here because BaseEntity#resolve
   // does not check that lifecycle methods are defined
   // before trying to resolve them
@@ -35,8 +45,12 @@ function resolve (manager, accumulator, reducer) {
     throw new Error(`Reducer type '${reducer.type}' was not recognized`)
   }
 
+  const _stack = stack ? stackPush(stack, reducer.type) : stack
+
   // NOTE: recursive call
-  return reducerType.resolve(manager, resolve, accumulator, reducer)
+  return reducerType
+    .resolve(manager, resolve, accumulator, reducer, _stack)
+    .catch(error => onReducerError(_stack, accumulator.value, error))
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolveReducer

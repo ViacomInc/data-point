@@ -34,10 +34,23 @@ module.exports = {
       { default: returnValue('c') }
     ]
   },
-  'control:a.2': {
+  'control:a.2.0': {
     select: [
       { case: throwError('foo', 2), do: returnValue('a') },
       { default: returnValue('c') }
+    ]
+  },
+  'control:a.2.1': {
+    select: [
+      { case: isEqualTo('foo', 1), do: throwError() },
+      { default: returnValue('c') }
+    ]
+  },
+  'control:a.2.2': {
+    select: [
+      { case: isEqualTo('foo', 2), do: returnValue('a') },
+      { case: isEqualTo('foo', 3), do: returnValue('b') },
+      { default: throwError() }
     ]
   }
 }

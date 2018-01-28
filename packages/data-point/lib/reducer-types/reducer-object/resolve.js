@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const set = require('lodash/set')
 
+const { stackPush } = require('../../reducer-stack')
 const utils = require('../../utils')
 
 /**
@@ -8,15 +9,17 @@ const utils = require('../../utils')
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerObject} reducer
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer) {
+function resolve (manager, resolveReducer, accumulator, reducer, stack) {
   if (utils.reducerIsEmpty(reducer)) {
     return Promise.resolve(accumulator)
   }
 
   return Promise.map(reducer.reducers, ({ reducer, path }) => {
-    return resolveReducer(manager, accumulator, reducer).then(({ value }) => ({
+    const _stack = stack ? stackPush(stack, path) : stack
+    return resolveReducer(manager, accumulator, reducer, _stack).then(({ value }) => ({
       path,
       value
     }))

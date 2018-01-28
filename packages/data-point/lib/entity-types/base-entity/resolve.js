@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 
 const middleware = require('../../middleware')
 
+const { stackPush } = require('../../reducer-stack')
 const utils = require('../../utils')
 
 /**
@@ -97,10 +98,18 @@ function resolveMiddleware (manager, name, acc) {
 
 module.exports.resolveMiddleware = resolveMiddleware
 
-function typeCheck (manager, acc, reducer, resolveReducer) {
+/**
+ * @param {Object} manager
+ * @param {Accumulator} acc
+ * @param {reducer} reducer
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @return {Promise<Accumulator>}
+ */
+function typeCheck (manager, acc, reducer, resolveReducer, stack) {
   // if no error returns original accumulator
   // this prevents typeCheckTransform from mutating the value
-  return resolveReducer(manager, acc, reducer).return(acc)
+  return resolveReducer(manager, acc, reducer, stack).return(acc)
 }
 
 /**
@@ -109,6 +118,7 @@ function typeCheck (manager, acc, reducer, resolveReducer) {
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @param {Function} mainResolver
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
 function resolveEntity (
@@ -116,7 +126,8 @@ function resolveEntity (
   resolveReducer,
   accumulator,
   reducer,
-  mainResolver
+  mainResolver,
+  stack
 ) {
   const currentAccumulator = createCurrentAccumulator(
     manager,
@@ -139,21 +150,39 @@ function resolveEntity (
   const resolveReducerBound = _.partial(resolveReducer, manager)
 
   return Promise.resolve(accUid)
-    .then(acc => resolveMiddleware(manager, `before`, acc))
-    .then(acc =>
-      resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
-    )
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.inputType, resolveReducer)
-    )
-    .then(acc => resolveReducer(manager, acc, acc.reducer.spec.before))
-    .then(acc => mainResolver(acc, resolveReducerBound))
-    .then(acc => resolveReducer(manager, acc, acc.reducer.spec.after))
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
-    )
-    .then(acc => resolveMiddleware(manager, `${reducer.entityType}:after`, acc))
-    .then(acc => resolveMiddleware(manager, `after`, acc))
+    .then(acc => {
+      return resolveMiddleware(manager, 'before', acc)
+    })
+    .then(acc => {
+      return resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
+    })
+    .then(acc => {
+      const inputType = acc.reducer.spec.inputType
+      const _stack = stack ? stackPush(stack, ['inputType']) : stack
+      return typeCheck(manager, acc, inputType, resolveReducer, _stack)
+    })
+    .then(acc => {
+      const _stack = stack ? stackPush(stack, ['before']) : stack
+      return resolveReducer(manager, acc, acc.reducer.spec.before, _stack)
+    })
+    .then(acc => {
+      return mainResolver(acc, resolveReducerBound, stack)
+    })
+    .then(acc => {
+      const _stack = stack ? stackPush(stack, ['after']) : stack
+      return resolveReducer(manager, acc, acc.reducer.spec.after, _stack)
+    })
+    .then(acc => {
+      const outputType = acc.reducer.spec.outputType
+      const _stack = stack ? stackPush(stack, ['outputType']) : stack
+      return typeCheck(manager, acc, outputType, resolveReducer, _stack)
+    })
+    .then(acc => {
+      return resolveMiddleware(manager, `${reducer.entityType}:after`, acc)
+    })
+    .then(acc => {
+      return resolveMiddleware(manager, 'after', acc)
+    })
     .catch(error => {
       // checking if this is an error to bypass the `then` chain
       if (error.bypass === true) {
@@ -188,9 +217,17 @@ module.exports.resolveEntity = resolveEntity
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @param {Function} mainResolver
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
+function resolve (
+  manager,
+  resolveReducer,
+  accumulator,
+  reducer,
+  mainResolver,
+  stack
+) {
   const hasEmptyConditional = reducer.hasEmptyConditional
 
   if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
@@ -203,7 +240,8 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
       resolveReducer,
       accumulator,
       reducer,
-      mainResolver
+      mainResolver,
+      stack
     )
   }
 
@@ -211,19 +249,21 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
     return Promise.resolve(utils.set(accumulator, 'value', undefined))
   }
 
-  return Promise.map(accumulator.value, itemValue => {
+  return Promise.map(accumulator.value, (itemValue, index) => {
     const itemCtx = utils.set(accumulator, 'value', itemValue)
 
     if (hasEmptyConditional && utils.isFalsy(itemValue)) {
       return Promise.resolve(itemCtx)
     }
 
+    const _stack = stack ? stackPush(stack, index) : stack
     return resolveEntity(
       manager,
       resolveReducer,
       itemCtx,
       reducer,
-      mainResolver
+      mainResolver,
+      _stack
     )
   }).then(mappedResults => {
     const value = mappedResults.map(acc => acc.value)

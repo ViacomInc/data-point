@@ -1,4 +1,5 @@
 const _ = require('lodash')
+
 const createBaseEntity = require('../base-entity').create
 const createReducer = require('../../reducer-types').create
 const { validateModifiers } = require('../validate-modifiers')

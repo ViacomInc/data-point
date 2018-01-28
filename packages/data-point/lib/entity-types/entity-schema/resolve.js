@@ -2,6 +2,12 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const Ajv = require('ajv')
 
+const { stackPush, onReducerError } = require('../../reducer-stack')
+
+/**
+ * @param {Accumulator} acc
+ * @returns {Promise<Accumulator>}
+ */
 function validateContext (acc) {
   const ajv = new Ajv(acc.reducer.spec.options)
   const validate = ajv.compile(acc.reducer.spec.schema)
@@ -22,11 +28,19 @@ function validateContext (acc) {
 
 module.exports.validateContext = validateContext
 
-function resolve (acc, resolveReducer) {
-  const value = acc.reducer.spec.value
-
-  return resolveReducer(acc, value).then(racc => {
-    return validateContext(racc)
+/**
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @param {Array} stack
+ * @returns {Promise<Accumulator>}
+ */
+function resolve (accumulator, resolveReducer, stack) {
+  const value = accumulator.reducer.spec.value
+  const _stack = stack ? stackPush(stack, ['value']) : stack
+  return resolveReducer(accumulator, value, _stack).then(racc => {
+    return validateContext(racc).catch(error => {
+      return onReducerError(_stack, accumulator.value, error)
+    })
   })
 }
 

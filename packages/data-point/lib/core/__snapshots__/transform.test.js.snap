@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`throw error with reducer stack attached resolve 1`] = `Object {}`;
+
+exports[`throw error with reducer stack attached resolve 2`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ReducerFunction
+
+Value:
+{}",
+  ],
+]
+`;
+
+exports[`throw error with reducer stack attached transform 1`] = `Object {}`;
+
+exports[`throw error with reducer stack attached transform 2`] = `
+Array [
+  Array [
+    "The following reducer failed to execute:
+ReducerFunction
+
+Value:
+{}",
+  ],
+]
+`;
+
 exports[`transform - throw error in invalid id(promise) 1`] = `
 [Error: Invalid reducer type. Could not find a matching reducer type while parsing the value:
  'INVALID'

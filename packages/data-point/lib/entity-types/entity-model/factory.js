@@ -9,7 +9,7 @@ module.exports.EntityModel = EntityModel
 
 /**
  * Creates new Entity Object
- * @param  {Object} spec - spec
+ * @param {Object} spec - spec
  * @param {string} id - Entity id
  * @return {EntityModel} Entity Object
  */

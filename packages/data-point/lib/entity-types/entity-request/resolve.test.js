@@ -4,6 +4,7 @@ const _ = require('lodash')
 const nock = require('nock')
 const Resolve = require('./resolve')
 
+const { transform } = require('../../core/transform')
 const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer-types/factory')
 const LocalsFactory = require('../../locals/factory')
@@ -17,7 +18,7 @@ const helpers = require('../../helpers')
 let dataPoint
 let resolveReducerBound
 
-function transform (entityId, value, options) {
+function resolveEntity (entityId, value, options) {
   const reducer = dataPoint.entities.get(entityId)
   const accumulator = helpers.createAccumulator(value, {
     context: reducer,
@@ -25,7 +26,7 @@ function transform (entityId, value, options) {
     values
   })
   const acc = Object.assign({}, accumulator, options)
-  return Resolve.resolve(acc, resolveReducerBound)
+  return Resolve.resolve(acc, resolveReducerBound, [])
 }
 
 let locals
@@ -52,6 +53,15 @@ beforeAll(() => {
 
 beforeEach(() => {
   dataPoint.middleware.clear()
+})
+
+describe('requestReducer', () => {
+  test('it is a reducer', () => {
+    expect(ReducerFactory.isReducer(Resolve.requestReducer)).toBe(true)
+  })
+  test('it has a custom function name', () => {
+    expect(Resolve.requestReducer.body.name).toBe('request-promise#request')
+  })
 })
 
 describe('resolveUrlInjections', () => {
@@ -116,7 +126,7 @@ describe('resolveOptions', () => {
       }
     }
 
-    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
+    return Resolve.resolveOptions(acc, resolveReducerBound, []).then(result => {
       expect(result.options).toEqual({
         method: 'GET',
         json: true,
@@ -147,7 +157,7 @@ describe('resolveOptions', () => {
       }
     }
 
-    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
+    return Resolve.resolveOptions(acc, resolveReducerBound, []).then(result => {
       expect(result.options).toEqual({
         method: 'POST',
         json: true,
@@ -240,7 +250,7 @@ describe('resolveRequest', () => {
       }
     }
 
-    return Resolve.resolveRequest(acc).then(result => {
+    return Resolve.resolveRequest(acc, resolveReducerBound, []).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
@@ -248,24 +258,25 @@ describe('resolveRequest', () => {
   })
 
   test('log errors when request fails', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(foo => foo)
+
     nock('http://remote.test')
       .get('/source1')
       .reply(404, 'not found')
 
-    const acc = {
-      options: {
-        json: true,
-        url: 'http://remote.test/source1'
-      },
-      value: 'foo'
-    }
-    _.set(acc, 'reducer.spec.id', 'test:test')
-    console.info = jest.fn()
-    return Resolve.resolveRequest(acc)
+    const value = {}
+    const options = { debug: true }
+    return transform(dataPoint, 'request:a1', value, options)
       .catch(e => e)
       .then(result => {
-        expect(console.info).toBeCalled()
-        expect(result.message).toMatchSnapshot()
+        expect(result).toBeInstanceOf(Error)
+        expect(result).toHaveProperty('_stack')
+        expect(result).toHaveProperty('_value')
+        // error._stack is stringified and passed to console.error
+        expect(consoleSpy.mock.calls).toMatchSnapshot()
+        consoleSpy.mockRestore()
       })
   })
 })
@@ -291,7 +302,7 @@ describe('inspect', () => {
     Resolve.inspect(acc)
     expect(console.info).not.toBeCalled()
   })
-  test('It should not execute utils.inspect', () => {
+  test('It should execute utils.inspect', () => {
     console.info = jest.fn()
     Resolve.inspect(getAcc())
     expect(console.info.mock.calls[0]).toContain('test:test')
@@ -313,7 +324,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a1', null).then(result => {
+    return resolveEntity('request:a1', null).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
@@ -327,7 +338,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a1.0', {}).then(result => {
+    return resolveEntity('request:a1.0', {}).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
@@ -341,7 +352,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform(
+    return resolveEntity(
       'request:a3',
       {},
       {
@@ -363,7 +374,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform(
+    return resolveEntity(
       'request:a3.2',
       {},
       {
@@ -385,7 +396,7 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a4', {}).then(result => {
+    return resolveEntity('request:a4', {}).then(result => {
       expect(result.value).toEqual({
         ok: true
       })

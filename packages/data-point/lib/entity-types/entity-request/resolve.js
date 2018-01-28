@@ -2,6 +2,8 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const rp = require('request-promise')
 
+const createReducer = require('../../reducer-types').create
+const { stackPush } = require('../../reducer-stack')
 const utils = require('../../utils')
 
 /**
@@ -37,12 +39,14 @@ module.exports.getRequestOptions = getRequestOptions
  * Resolve options object
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
+ * @param {Array} stack
  * @return {Promise<Accumulator>}
  */
-function resolveOptions (accumulator, resolveReducer) {
+function resolveOptions (accumulator, resolveReducer, stack) {
   accumulator = resolveUrl(accumulator)
   const specOptions = accumulator.reducer.spec.options
-  return resolveReducer(accumulator, specOptions).then(acc => {
+  const _stack = stack ? stackPush(stack, ['options']) : stack
+  return resolveReducer(accumulator, specOptions, _stack).then(acc => {
     const options = getRequestOptions(acc.url, acc.value)
     return utils.assign(accumulator, { options })
   })
@@ -95,52 +99,66 @@ function inspect (acc) {
 module.exports.inspect = inspect
 
 /**
- * @param {Accumulator} acc
+ * @param {Object} options
+ * @return {Promise}
+ */
+function _requestReducer (options) {
+  return rp(options)
+}
+
+// this name will appear in the stack trace when a request fails
+Object.defineProperty(_requestReducer, 'name', {
+  value: 'request-promise#request'
+})
+
+// this function is a reducer so we can spy on the input and
+// output to the resolveReducuer function when using debug mode
+const requestReducer = createReducer(_requestReducer)
+
+module.exports.requestReducer = requestReducer
+
+/**
+ * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
+ * @param {Array} stack
  * @return {Promise<Accumulator>}
  */
-function resolveRequest (acc, resolveReducer) {
-  inspect(acc)
-  return rp(acc.options)
-    .then(result => utils.set(acc, 'value', result))
-    .catch(error => {
-      const message = [
-        'Entity info:',
-        '\n  - Id: ',
-        _.get(acc, 'reducer.spec.id'),
-        '\n',
-        utils.inspectProperties(acc, ['options', 'params', 'value'], '  '),
-        '\n  Request:\n',
-        utils.inspectProperties(
-          error,
-          ['error', 'message', 'statusCode', 'options', 'body'],
-          '  '
-        )
-      ].join('')
+function resolveRequest (accumulator, resolveReducer, stack) {
+  inspect(accumulator)
+  const _stack = stack ? stackPush(stack, ['request']) : stack
+  // we don't overwrite the value until this
+  // point because we might need the previous
+  // value when creating the url
+  const acc = utils.set(accumulator, 'value', accumulator.options)
+  return resolveReducer(acc, requestReducer, _stack).catch(error => {
+    const message = [
+      'Response info:\n',
+      utils.inspectProperties(error, ['message', 'statusCode', 'body'], '  ')
+    ].join('')
 
-      // this is useful in the case the error itself is not logged by the
-      // implementation
-      console.info(error.toString(), message)
-
-      // attaching to error so it can be exposed by a handler outside datapoint
-      error.message = `${error.message}\n\n${message}`
-      throw error
-    })
+    error._value.header = 'Request options'
+    error._message = message
+    throw error
+  })
 }
 
 module.exports.resolveRequest = resolveRequest
 
 /**
- * @param {Accumulator} acc
+ * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
+ * @param {Array} stack
  * @return {Promise<Accumulator>}
  */
-function resolve (acc, resolveReducer) {
-  const entity = acc.reducer.spec
-  return Promise.resolve(acc)
-    .then(itemContext => resolveReducer(itemContext, entity.value))
-    .then(itemContext => resolveOptions(itemContext, resolveReducer))
-    .then(itemContext => resolveRequest(itemContext, resolveReducer))
+function resolve (accumulator, resolveReducer, stack) {
+  const entity = accumulator.reducer.spec
+  return Promise.resolve(accumulator)
+    .then(acc => {
+      const _stack = stack ? stackPush(stack, ['value']) : stack
+      return resolveReducer(acc, entity.value, _stack)
+    })
+    .then(acc => resolveOptions(acc, resolveReducer, stack))
+    .then(acc => resolveRequest(acc, resolveReducer, stack))
 }
 
 module.exports.resolve = resolve

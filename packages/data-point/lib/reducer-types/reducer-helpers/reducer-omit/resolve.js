@@ -8,9 +8,10 @@ const utils = require('../../../utils')
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerOmit} reducerOmit
+ * @param {Array} stack
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducerOmit) {
+function resolve (manager, resolveReducer, accumulator, reducerOmit, stack) {
   const keys = reducerOmit.keys
   if (keys.length === 0) {
     return Promise.resolve(accumulator)

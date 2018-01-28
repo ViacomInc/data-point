@@ -14,11 +14,10 @@ dataPoint.addEntities({
     // as constants (or just wrap the whole
     // object if all the values are static)
     options: {
+      method: '$method', // reducer
       'content-type': c('application/json'), // constant
       qs: {
-        // get path `searchTerm` from input
-        // to dataPoint.resolve
-        search: '$searchTerm'
+        search: c('r2') // constant
       }
     }
   }
@@ -28,7 +27,7 @@ dataPoint.addEntities({
 mock()
 
 const input = {
-  searchTerm: 'r2'
+  method: 'GET'
 }
 
 // the second parameter to transform is the input value

@@ -28,7 +28,8 @@ test('resolve#reducer.resolve - reducer empty', () => {
     manager,
     resolveReducer,
     accumulator,
-    reducerList
+    reducerList,
+    []
   ).then(result => expect(result.value).toEqual(testData.a.g))
 })
 
@@ -44,7 +45,8 @@ describe('resolve#reducer.resolve - with valid reducers', () => {
       manager,
       resolveReducer,
       accumulator,
-      reducerList
+      reducerList,
+      []
     ).then(result => expect(result.value).toEqual(testData.a.g))
   })
 
@@ -59,7 +61,8 @@ describe('resolve#reducer.resolve - with valid reducers', () => {
       manager,
       resolveReducer,
       accumulator,
-      reducerList
+      reducerList,
+      []
     ).then(result => expect(result.value).toBe(1))
   })
 })
@@ -76,7 +79,8 @@ describe('resolve#reducer.resolve - reducer model', () => {
       manager,
       resolveReducer,
       accumulator,
-      reducerList
+      reducerList,
+      []
     ).then(result => expect(result.value).toEqual(testData))
   })
 
@@ -91,10 +95,9 @@ describe('resolve#reducer.resolve - reducer model', () => {
       manager,
       resolveReducer,
       accumulator,
-      reducerList
-    ).then(result => {
-      expect(result.value).toEqual(testData.a.h)
-    })
+      reducerList,
+      []
+    ).then(result => expect(result.value).toEqual(testData.a.h))
   })
 })
 
@@ -116,7 +119,8 @@ describe('resolve#reducer.resolve - reducer request', () => {
       manager,
       resolveReducer,
       accumulator,
-      reducerList
+      reducerList,
+      []
     ).then(result =>
       expect(result.value).toEqual({
         ok: true
@@ -147,7 +151,8 @@ describe('resolve#reducer.resolve - reducer request', () => {
       manager,
       resolveReducer,
       accumulator,
-      reducer
+      reducer,
+      []
     ).then(result => {
       expect(result.value).toEqual({
         ok: true
