@@ -52,7 +52,7 @@ function resolve (acc, resolveReducer, stack) {
   const caseStatements = selectControl.cases
   const defaultTransform = selectControl.default
 
-  stack = stack ? [...stack, 'select'] : stack
+  stack = stack ? stackPush(stack, 'select') : stack
   return getMatchingCaseIndex(caseStatements, acc, resolveReducer, stack).then(
     index => {
       if (index === null) {
