@@ -1,8 +1,8 @@
-const REDUCER_AS_ARRAY = 'ReducerAsArray'
+const REDUCER_PARALLEL = 'ReducerParallel'
 
-module.exports.type = REDUCER_AS_ARRAY
+module.exports.type = REDUCER_PARALLEL
 
-const HELPER_NAME = 'asArray'
+const HELPER_NAME = 'parallel'
 
 module.exports.name = HELPER_NAME
 
@@ -11,12 +11,12 @@ module.exports.name = HELPER_NAME
  * @property {string} type
  * @property {Array<reducer>} reducers
  */
-function ReducerAsArray () {
-  this.type = 'ReducerAsArray'
+function ReducerParallel () {
+  this.type = 'ReducerParallel'
   this.reducers = []
 }
 
-module.exports.ReducerAsArray = ReducerAsArray
+module.exports.ReducerParallel = ReducerParallel
 
 /**
  * @param {Function} createReducer
@@ -26,7 +26,7 @@ module.exports.ReducerAsArray = ReducerAsArray
 function create (createReducer, source = []) {
   const reducers = source.map(token => createReducer(token))
 
-  const reducer = new ReducerAsArray()
+  const reducer = new ReducerParallel()
   reducer.reducers = reducers
 
   return reducer

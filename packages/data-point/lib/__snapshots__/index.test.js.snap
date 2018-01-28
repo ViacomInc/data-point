@@ -6,7 +6,6 @@ Object {
   "createEntity": [Function],
   "createReducerResolver": [Function],
   "helpers": Object {
-    "asArray": [Function],
     "assign": [Function],
     "constant": [Function],
     "filter": [Function],
@@ -20,6 +19,7 @@ Object {
     "isString": [Function],
     "map": [Function],
     "omit": [Function],
+    "parallel": [Function],
     "pick": [Function],
   },
   "reducify": [Function],

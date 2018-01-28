@@ -1,12 +1,12 @@
 const createStub = require('./reducer-stub').create
 
 const reducerAssign = require('./reducer-assign')
-const reducerAsArray = require('./reducer-as-array')
 const reducerConstant = require('./reducer-constant')
 const reducerFilter = require('./reducer-filter')
 const reducerFind = require('./reducer-find')
 const reducerMap = require('./reducer-map')
 const reducerOmit = require('./reducer-omit')
+const reducerParallel = require('./reducer-parallel')
 const reducerPick = require('./reducer-pick')
 
 /*
@@ -32,12 +32,12 @@ module.exports.isType = require('./reducer-stub').isType
 
 const reducers = {
   [reducerAssign.type]: reducerAssign,
-  [reducerAsArray.type]: reducerAsArray,
   [reducerConstant.type]: reducerConstant,
   [reducerFilter.type]: reducerFilter,
   [reducerFind.type]: reducerFind,
   [reducerMap.type]: reducerMap,
   [reducerOmit.type]: reducerOmit,
+  [reducerParallel.type]: reducerParallel,
   [reducerPick.type]: reducerPick
 }
 
@@ -49,12 +49,12 @@ function bindStubFunction (reducerType) {
 
 const stubFactories = {
   [reducerAssign.name]: bindStubFunction(reducerAssign.type),
-  [reducerAsArray.name]: bindStubFunction(reducerAsArray.type),
   [reducerConstant.name]: bindStubFunction(reducerConstant.type),
   [reducerFilter.name]: bindStubFunction(reducerFilter.type),
   [reducerFind.name]: bindStubFunction(reducerFind.type),
   [reducerMap.name]: bindStubFunction(reducerMap.type),
   [reducerOmit.name]: bindStubFunction(reducerOmit.type),
+  [reducerParallel.name]: bindStubFunction(reducerParallel.type),
   [reducerPick.name]: bindStubFunction(reducerPick.type)
 }
 

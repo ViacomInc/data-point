@@ -6,11 +6,11 @@ const utils = require('../../../utils')
  * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
- * @param {ReducerAsArray} reducerAsArray
+ * @param {ReducerParallel} reducerParallel
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducerAsArray) {
-  return Promise.map(reducerAsArray.reducers, reducer => {
+function resolve (manager, resolveReducer, accumulator, reducerParallel) {
+  return Promise.map(reducerParallel.reducers, reducer => {
     return resolveReducer(manager, accumulator, reducer)
   }).then(result => {
     const value = result.map(acc => acc.value)
