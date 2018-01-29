@@ -106,8 +106,8 @@ function resolveRequest (acc, resolveReducer) {
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {
       // remove auth objects from acc and error for printing to console
-      const redactedAcc = fp.set('options.auth')('[omitted]')(acc)
-      const redactedError = fp.set('options.auth')('[omitted]')(error)
+      const redactedAcc = fp.set('options.auth', '[omitted]', acc)
+      const redactedError = fp.set('options.auth', '[omitted]', error)
 
       const message = [
         'Entity info:',
