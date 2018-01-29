@@ -1197,14 +1197,14 @@ this contrasts with `ListReducer`, which returns the output from the last reduce
 **SYNOPSIS**
 
 ```js
-parallel(reducers:Array):Array
+parallel(reducers:Array<Reducer>):Array
 ```
 
 **Reducer's arguments**
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *reducers* | Array | Source data to create an array of reducers |
+| *reducers* | Array<Reducer> | Source data to create an array of [reducers](#reducers) |
 
 <details>
   <summary>resolving an array of reducers with parallel</summary>
