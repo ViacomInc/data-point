@@ -1191,9 +1191,8 @@ constant(value:*):*
 
 ### <a name="reducer-parallel">parallel</a>
 
-The **parallel** reducer takes an array of reducers and returns their output. Unlike a **ReducerList**,
-which returns the output from the last reducer in the array, **parallel** returns an array where each
-element is the output from a reducer.
+This resolves an array of reducers. The output is a new array where each element is the result of a reducer;
+this contrasts with `ListReducer`, which returns the output from the last reducer in the array.
 
 **SYNOPSIS**
 
