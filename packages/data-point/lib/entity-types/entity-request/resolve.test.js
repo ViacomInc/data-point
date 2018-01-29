@@ -391,4 +391,21 @@ describe('resolve', () => {
       })
     })
   })
+
+  test('it should omit options.auth when encountering an error', () => {
+    nock('http://remote.test')
+      .get('/source1')
+      .reply(404)
+
+    return transform('request:a9', {}).catch(err => {
+      expect(err.statusCode).toEqual(404)
+      expect(err.message).toMatchSnapshot()
+
+      // credentials are still available in the raw error.options
+      expect(err.options.auth).toEqual({
+        user: 'cool_user',
+        pass: 'super_secret!'
+      })
+    })
+  })
 })
