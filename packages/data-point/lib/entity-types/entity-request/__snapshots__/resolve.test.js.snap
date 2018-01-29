@@ -6,7 +6,8 @@ exports[`resolveRequest log errors when request fails 1`] = `
 Entity info:
   - Id: test:test
   - options: { json: true,
-  url: 'http://remote.test/source1' }
+  url: 'http://remote.test/source1',
+  auth: '[omitted]' }
   - value: 'foo'
 
   Request:
@@ -19,6 +20,7 @@ Entity info:
   transform: undefined,
   simple: true,
   resolveWithFullResponse: false,
-  transform2xxOnly: false }
+  transform2xxOnly: false,
+  auth: '[omitted]' }
 "
 `;

@@ -104,6 +104,10 @@ function resolveRequest (acc, resolveReducer) {
   return rp(acc.options)
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {
+      // remove auth objects from acc and error
+      _.set(acc, 'options.auth', '[omitted]')
+      _.set(error, 'options.auth', '[omitted]')
+
       const message = [
         'Entity info:',
         '\n  - Id: ',
