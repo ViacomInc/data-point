@@ -23,7 +23,7 @@ module.exports.ReducerParallel = ReducerParallel
  * @param {Array} source
  * @return {reducer}
  */
-function create (createReducer, source = []) {
+function create (createReducer, source) {
   const reducers = source.map(token => createReducer(token))
 
   const reducer = new ReducerParallel()
