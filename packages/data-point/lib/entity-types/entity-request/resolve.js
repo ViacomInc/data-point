@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const fp = require('lodash/fp')
 const Promise = require('bluebird')
 const rp = require('request-promise')
 
@@ -104,9 +105,9 @@ function resolveRequest (acc, resolveReducer) {
   return rp(acc.options)
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {
-      // remove auth objects from acc and error
-      const redactedAcc = _.set(acc, 'options.auth', '[omitted]')
-      const redactedError = _.set(error, 'options.auth', '[omitted]')
+      // remove auth objects from acc and error for printing to console
+      const redactedAcc = fp.set('options.auth')('[omitted]')(acc)
+      const redactedError = fp.set('options.auth')('[omitted]')(error)
 
       const message = [
         'Entity info:',

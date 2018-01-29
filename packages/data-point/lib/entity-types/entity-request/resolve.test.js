@@ -399,7 +399,13 @@ describe('resolve', () => {
 
     return transform('request:a9', {}).catch(err => {
       expect(err.statusCode).toEqual(404)
-      expect(err.options.auth).toEqual('[omitted]')
+      expect(err.message).toMatchSnapshot()
+
+      // credentials are still available in the raw error.options
+      expect(err.options.auth).toEqual({
+        user: 'cool_user',
+        pass: 'super_secret!'
+      })
     })
   })
 })
