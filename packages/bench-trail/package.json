@@ -1,0 +1,22 @@
+{
+  "name": "bench-trail",
+  "version": "2.0.0",
+  "description": "Runs one or multiple benchmark tests",
+  "main": "./lib/index.js",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=6"
+  },
+  "bin": {
+    "bench-trail": "runner.js"
+  },
+  "author": {
+    "name": "Acatl Pacheco",
+    "email": "acatl.pacheco@viacom.com"
+  },
+  "devDependencies": {
+    "benchmark": "2.1.4",
+    "commander": "2.x",
+    "chalk": "2.x"
+  }
+}
