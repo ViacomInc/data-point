@@ -53,7 +53,6 @@ describe('ReducerPath getters', () => {
 
 describe('reducer/reducer-path#getPathReducerFunction', () => {
   it('should always return a function', () => {
-    expect(factory.getPathReducerFunction()).toBeInstanceOf(Function)
     expect(factory.getPathReducerFunction('')).toBeInstanceOf(Function)
     expect(factory.getPathReducerFunction('.')).toBeInstanceOf(Function)
     expect(factory.getPathReducerFunction('..')).toBeInstanceOf(Function)
@@ -63,36 +62,46 @@ describe('reducer/reducer-path#getPathReducerFunction', () => {
 })
 
 describe('reducer/reducer-path#create', () => {
-  it('basic path', () => {
-    const reducer = factory.create(createReducer, '$a')
-    expect(reducer.type).toBe('ReducerPath')
-    expect(reducer.name).toBe('a')
-    expect(reducer.asCollection).toBe(false)
-  })
-
   it('empty path', () => {
     const reducer = factory.create(createReducer, '$')
     expect(reducer.type).toBe('ReducerPath')
     expect(reducer.name).toBe('$')
     expect(reducer.asCollection).toBe(false)
+    expect(reducer.body).toBeInstanceOf(Function)
+    expect(reducer.body.name).toBe('$')
+  })
+
+  it('basic path', () => {
+    const reducer = factory.create(createReducer, '$a')
+    expect(reducer.type).toBe('ReducerPath')
+    expect(reducer.name).toBe('a')
+    expect(reducer.asCollection).toBe(false)
+    expect(reducer.body).toBeInstanceOf(Function)
+    expect(reducer.body.name).toBe('$a')
   })
 
   it('compound path', () => {
     const reducer = factory.create(createReducer, '$foo.bar')
     expect(reducer.name).toBe('foo.bar')
     expect(reducer.asCollection).toBe(false)
+    expect(reducer.body).toBeInstanceOf(Function)
+    expect(reducer.body.name).toBe('$foo.bar')
   })
 
   it('compound path', () => {
     const reducer = factory.create(createReducer, '$foo.bar[0]')
     expect(reducer.name).toBe('foo.bar[0]')
     expect(reducer.asCollection).toBe(false)
+    expect(reducer.body).toBeInstanceOf(Function)
+    expect(reducer.body.name).toBe('$foo.bar[0]')
   })
 
   it('path with asCollection', () => {
     const reducer = factory.create(createReducer, '$foo.bar[]')
     expect(reducer.name).toBe('foo.bar')
     expect(reducer.asCollection).toBe(true)
+    expect(reducer.body).toBeInstanceOf(Function)
+    expect(reducer.body.name).toBe('$foo.bar')
   })
 })
 
