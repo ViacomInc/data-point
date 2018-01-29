@@ -37,6 +37,7 @@ npm install --save data-point
   - [filter](#reducer-filter)
   - [find](#reducer-find)
   - [constant](#reducer-constant)
+  - [parallel](#reducer-parallel)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
@@ -1185,6 +1186,44 @@ constant(value:*):*
       // }
       }
     })
+  ```
+</details>
+
+### <a name="reducer-parallel">parallel</a>
+
+The **parallel** reducer takes an array of reducers and returns their output. Unlike a **ReducerList**,
+which returns the output from the last reducer in the array, **parallel** returns an array where each
+element is the output from a reducer.
+
+**SYNOPSIS**
+
+```js
+parallel(reducers:Array):Array
+```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *reducers* | Array | Source data to create an array of reducers |
+
+<details>
+  <summary>resolving an array of reducers with parallel</summary>
+
+  ```js
+  const { parallel } = DataPoint.helpers
+
+  const reducer = parallel([
+    '$a',
+    ['$b', (input) => input + 2] // ReducerList
+  ])
+
+  const input = {
+    a: 1,
+    b: 2
+  }
+
+  dataPoint.resolve(reducer, input) // => [1, 4]
   ```
 </details>
 
