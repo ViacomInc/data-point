@@ -105,18 +105,22 @@ function resolveRequest (acc, resolveReducer) {
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {
       // remove auth objects from acc and error
-      _.set(acc, 'options.auth', '[omitted]')
-      _.set(error, 'options.auth', '[omitted]')
+      const redactedAcc = _.set(acc, 'options.auth', '[omitted]')
+      const redactedError = _.set(error, 'options.auth', '[omitted]')
 
       const message = [
         'Entity info:',
         '\n  - Id: ',
-        _.get(acc, 'reducer.spec.id'),
+        _.get(redactedAcc, 'reducer.spec.id'),
         '\n',
-        utils.inspectProperties(acc, ['options', 'params', 'value'], '  '),
+        utils.inspectProperties(
+          redactedAcc,
+          ['options', 'params', 'value'],
+          '  '
+        ),
         '\n  Request:\n',
         utils.inspectProperties(
-          error,
+          redactedError,
           ['error', 'message', 'statusCode', 'options', 'body'],
           '  '
         )
@@ -124,7 +128,7 @@ function resolveRequest (acc, resolveReducer) {
 
       // this is useful in the case the error itself is not logged by the
       // implementation
-      console.info(error.toString(), message)
+      console.info(redactedError.toString(), message)
 
       // attaching to error so it can be exposed by a handler outside datapoint
       error.message = `${error.message}\n\n${message}`
