@@ -1,4 +1,4 @@
-const { test } = require('bench-trail')
+const { test } = require('bench-trial')
 
 const expected = true
 

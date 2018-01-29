@@ -1,4 +1,4 @@
-const { test } = require('bench-trail')
+const { test } = require('bench-trial')
 
 const array = Array(100).fill('foo')
 const expected = array.join('').length

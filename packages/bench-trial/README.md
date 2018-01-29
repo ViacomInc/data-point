@@ -1,17 +1,17 @@
-# Bench Trail
+# Bench trial
 
 > Runs one or multiple benchmark tests
 
 ## Install
 
 ```bash
-npm install -g bench-trail
+npm install -g bench-trial
 ```
 
 ## Usage
 
 ```bash
-bench-trail benchmarks/map-helper-vs-entity.js -i 5
+bench-trial benchmarks/map-helper-vs-entity.js -i 5
 ```
 
 ## TL;DR
@@ -33,7 +33,7 @@ While running [benchmarkjs](https://benchmarkjs.com) to compare different versio
 ## API
 
 ```bash
-bench-trail <file> [-i <iterations>] [-s]
+bench-trial <file> [-i <iterations>] [-s]
 ```
 
 - `-i --iterations <iteration>` iterations default to 10 iterations if not provided.
@@ -41,7 +41,7 @@ bench-trail <file> [-i <iterations>] [-s]
 
 ### Writing your benchmark suites
 
-The file you provide to bench-trail should export an `array` of suites, each suite is an object in the form of: 
+The file you provide to bench-trial should export an `array` of suites, each suite is an object in the form of: 
 
 ```
 {
@@ -60,11 +60,11 @@ The file you provide to bench-trail should export an `array` of suites, each sui
 #### Sync vs Async
 
 - Synchronous methods are simple methods that expect a return value.  
-- Asynchronous methods are a bit different to benchmarkjs async methods, bench-trail expects async methods to follow the [error-first callbacks](https://nodejs.org/api/errors.html#errors_error_first_callbacks).
+- Asynchronous methods are a bit different to benchmarkjs async methods, bench-trial expects async methods to follow the [error-first callbacks](https://nodejs.org/api/errors.html#errors_error_first_callbacks).
 
 #### Testing
 
-bench-trail provides a convenience method that accepts the function to execute and a value to check against the result of the code you are testing. It takes care of async vs async depending on how you set the `async` flag. 
+bench-trial provides a convenience method that accepts the function to execute and a value to check against the result of the code you are testing. It takes care of async vs async depending on how you set the `async` flag. 
 
 ```js
 test(test:function, value:*)
