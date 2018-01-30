@@ -3,6 +3,11 @@
 const _ = require('lodash')
 const helpers = require('./helpers')
 
+test('Helpers API', () => {
+  // To keep an eye on new methods added to the helpers module
+  expect(helpers).toMatchSnapshot()
+})
+
 describe('helpers.reducify', () => {
   test('pass simple', () => {
     const rpick = helpers.reducify(_.pick)

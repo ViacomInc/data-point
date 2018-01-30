@@ -1,9 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lib It should explicity expose set of methods 1`] = `
+exports[`Helpers API 1`] = `
 Object {
-  "create": [Function],
+  "createAccumulator": [Function],
   "createEntity": [Function],
+  "createReducer": [Function],
   "createReducerResolver": [Function],
   "helpers": Object {
     "assign": [Function],
@@ -22,8 +23,11 @@ Object {
     "parallel": [Function],
     "pick": [Function],
   },
+  "isReducer": [Function],
+  "mockReducer": [Function],
   "reducify": [Function],
   "reducifyAll": [Function],
   "resolveEntity": [Function],
+  "validateEntityModifiers": [Function],
 }
 `;

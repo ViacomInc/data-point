@@ -8,10 +8,12 @@ const typeCheckFunctionReducers = require('./type-check-function-reducers')
 
 module.exports.helpers = {
   assign: stubFactories.assign,
+  constant: stubFactories.constant,
   filter: stubFactories.filter,
   find: stubFactories.find,
   map: stubFactories.map,
   omit: stubFactories.omit,
+  parallel: stubFactories.parallel,
   pick: stubFactories.pick,
   isString: typeCheckFunctionReducers.isString,
   isNumber: typeCheckFunctionReducers.isNumber,
@@ -29,6 +31,8 @@ module.exports.createReducer = require('../reducer-types').create
 module.exports.createEntity = require('../entity-types/base-entity').create
 
 module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
+
+module.exports.validateEntityModifiers = require('../entity-types/validate-modifiers').validateModifiers
 
 function reducify (method) {
   return function () {

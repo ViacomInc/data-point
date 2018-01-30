@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const fp = require('lodash/fp')
 const Promise = require('bluebird')
 const rp = require('request-promise')
 
@@ -104,15 +105,23 @@ function resolveRequest (acc, resolveReducer) {
   return rp(acc.options)
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {
+      // remove auth objects from acc and error for printing to console
+      const redactedAcc = fp.set('options.auth', '[omitted]', acc)
+      const redactedError = fp.set('options.auth', '[omitted]', error)
+
       const message = [
         'Entity info:',
         '\n  - Id: ',
-        _.get(acc, 'reducer.spec.id'),
+        _.get(redactedAcc, 'reducer.spec.id'),
         '\n',
-        utils.inspectProperties(acc, ['options', 'params', 'value'], '  '),
+        utils.inspectProperties(
+          redactedAcc,
+          ['options', 'params', 'value'],
+          '  '
+        ),
         '\n  Request:\n',
         utils.inspectProperties(
-          error,
+          redactedError,
           ['error', 'message', 'statusCode', 'options', 'body'],
           '  '
         )
@@ -120,7 +129,7 @@ function resolveRequest (acc, resolveReducer) {
 
       // this is useful in the case the error itself is not logged by the
       // implementation
-      console.info(error.toString(), message)
+      console.info(redactedError.toString(), message)
 
       // attaching to error so it can be exposed by a handler outside datapoint
       error.message = `${error.message}\n\n${message}`
