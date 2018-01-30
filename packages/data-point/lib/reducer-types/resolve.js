@@ -28,6 +28,7 @@ module.exports.hasDefault = hasDefault
 
 /**
  * @param {Reducer} reducer
+ * @throws if reducer is not valid
  * @return {Function}
  */
 function getResolveFunction (reducer) {

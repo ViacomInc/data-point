@@ -22,5 +22,3 @@ describe('ReducerDefault#resolve', () => {
     expect(resolve({ value: undefined }, () => 5)).toEqual({ value: 5 })
   })
 })
-
-// TODO point out that it does not clone the object

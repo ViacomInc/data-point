@@ -5,7 +5,7 @@ const utils = require('../../../utils')
 /**
  * @param {Accumulator} accumulator
  * @param {*} _default
- * @returns {Promise<Accumulator>}
+ * @returns {Accumulator}
  */
 function resolve (accumulator, _default) {
   let value = accumulator.value
