@@ -37,6 +37,7 @@ npm install --save data-point
   - [filter](#reducer-filter)
   - [find](#reducer-find)
   - [constant](#reducer-constant)
+  - [withDefault](#reducer-default)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
@@ -1187,6 +1188,37 @@ constant(value:*):*
     })
   ```
 </details>
+
+### <a name="reducer-default">withDefault</a>
+
+The **withDefault** reducer adds a default value to any reducer type. If the reducer resolves to `null`, `undefined`, `NaN`, or an empty string, the default is returned instead.
+
+**SYNOPSIS**
+
+```js
+withDefault(source:*, value:*):*
+```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *source* | * | Source data for creating a [reducer](#reducers)  |
+| *value* | * | The default value to use |
+
+**EXAMPLE:**
+
+```js
+const { withDefault } = DataPoint.helpers
+
+const input = {
+  a: undefined
+}
+
+const r = withDefault('$a', 50)
+
+dataPoint.resolve(r, input) // => 50
+```
 
 ## <a name="entities">Entities</a>
 
