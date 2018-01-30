@@ -1215,7 +1215,7 @@ const input = {
   a: undefined
 }
 
-const r = withDefault('$a', 50)
+const r = withDefault('$a', 50) // adds a default to a PathReducer
 
 dataPoint.resolve(r, input) // => 50
 ```
