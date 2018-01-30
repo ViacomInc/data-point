@@ -20,6 +20,7 @@ Object {
     "isString": [Function],
     "map": [Function],
     "omit": [Function],
+    "parallel": [Function],
     "pick": [Function],
     "withDefault": [Function],
   },
