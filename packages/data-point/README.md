@@ -1191,7 +1191,7 @@ constant(value:*):*
 
 ### <a name="reducer-parallel">parallel</a>
 
-This resolves an array of reducers. The output is a new array where each element is the result of a reducer;
+This resolves an array of reducers. The output is a new array where each element is the output of a reducer;
 this contrasts with `ListReducer`, which returns the output from the last reducer in the array.
 
 **SYNOPSIS**
@@ -1205,6 +1205,8 @@ parallel(reducers:Array<Reducer>):Array
 | Argument | Type | Description |
 |:---|:---|:---|
 | *reducers* | Array<Reducer> | Source data to create an array of [reducers](#reducers) |
+
+**EXAMPLE:**
 
 <details>
   <summary>resolving an array of reducers with parallel</summary>
