@@ -20,6 +20,7 @@ Object {
     "map": [Function],
     "omit": [Function],
     "pick": [Function],
+    "withDefault": [Function],
   },
   "reducify": [Function],
   "reducifyAll": [Function],

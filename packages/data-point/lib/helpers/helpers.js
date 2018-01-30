@@ -14,6 +14,7 @@ module.exports.helpers = {
   map: stubFactories.map,
   omit: stubFactories.omit,
   pick: stubFactories.pick,
+  withDefault: stubFactories.withDefault,
   isString: typeCheckFunctionReducers.isString,
   isNumber: typeCheckFunctionReducers.isNumber,
   isBoolean: typeCheckFunctionReducers.isBoolean,

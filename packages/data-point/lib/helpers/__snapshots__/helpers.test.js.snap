@@ -21,6 +21,7 @@ Object {
     "map": [Function],
     "omit": [Function],
     "pick": [Function],
+    "withDefault": [Function],
   },
   "isReducer": [Function],
   "mockReducer": [Function],
