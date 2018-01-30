@@ -13,6 +13,7 @@ module.exports.helpers = {
   find: stubFactories.find,
   map: stubFactories.map,
   omit: stubFactories.omit,
+  parallel: stubFactories.parallel,
   pick: stubFactories.pick,
   isString: typeCheckFunctionReducers.isString,
   isNumber: typeCheckFunctionReducers.isNumber,
