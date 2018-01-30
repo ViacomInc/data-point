@@ -3200,7 +3200,12 @@ Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
 ## <a name="debugging">Debugging</a>
 
 When `options.debug` is truthy,
-DataPoint will log "stack traces" when a reducer throws an error.
+DataPoint will log "stack traces" when a reducer throws an error:
+
+```
+model:with-error[value] -> ReducerObject[b] -> ReducerFunction[myFunction]
+```
+
 It also adds two properties to the error that's thrown:
 
 - `_value:*` - the input value to the reducer that failed
@@ -3217,7 +3222,7 @@ dataPoint.addEntities({
   'model:with-error': {
     value: {
       a: '$a',
-      b: () => {
+      b: function myFunction () {
         throw new Error()
       }
     }
@@ -3230,8 +3235,14 @@ const input = {
 
 dataPoint.resolve('model:with-error', input, { debug: true })
   .catch(e => {
-    assert.deepEqual(e._value, { a: 1 })
-    assert.equal(e._stack, 'model:with-error[value] -> ReducerObject[b] -> ReducerFunction')
+    assert.deepEqual(
+      e._value,
+      { a: 1 }
+    )
+    assert.equal(
+      e._stack,
+      'model:with-error[value] -> ReducerObject[b] -> ReducerFunction[myFunction]'
+    )
   })
 
 // when 'model:with-error' throws an error, this
