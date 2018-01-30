@@ -6,6 +6,7 @@ const reducerFilter = require('./reducer-filter')
 const reducerFind = require('./reducer-find')
 const reducerMap = require('./reducer-map')
 const reducerOmit = require('./reducer-omit')
+const reducerParallel = require('./reducer-parallel')
 const reducerPick = require('./reducer-pick')
 
 /*
@@ -36,6 +37,7 @@ const reducers = {
   [reducerFind.type]: reducerFind,
   [reducerMap.type]: reducerMap,
   [reducerOmit.type]: reducerOmit,
+  [reducerParallel.type]: reducerParallel,
   [reducerPick.type]: reducerPick
 }
 
@@ -52,6 +54,7 @@ const stubFactories = {
   [reducerFind.name]: bindStubFunction(reducerFind.type),
   [reducerMap.name]: bindStubFunction(reducerMap.type),
   [reducerOmit.name]: bindStubFunction(reducerOmit.type),
+  [reducerParallel.name]: bindStubFunction(reducerParallel.type),
   [reducerPick.name]: bindStubFunction(reducerPick.type)
 }
 
