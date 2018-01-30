@@ -1,4 +1,3 @@
-
 const RedisClient = require('./redis-client')
 const InMemory = require('./in-memory')
 const Promise = require('bluebird')
