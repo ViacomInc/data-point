@@ -46,10 +46,10 @@ function start (suites) {
 }
 
 function runTest (suite) {
-  const isASync = !!suite.async
+  const isAsync = !!suite.async
 
   if (typeof suite.test === 'function') {
-    if (isASync) {
+    if (isAsync) {
       return Promise.fromCallback(suite.test)
     }
 
@@ -59,7 +59,7 @@ function runTest (suite) {
   if (typeof suite.test.test === 'function') {
     const { test, expected } = suite.test
 
-    if (isASync) {
+    if (isAsync) {
       return Promise.fromCallback(lib.test.async(test, expected))
     }
 
@@ -175,15 +175,15 @@ function runBenchmark (suiteBenchmark) {
       asyncLabel
     )
 
-    const isASync = !!suiteBenchmark.async
+    const isAsync = !!suiteBenchmark.async
     const benchmarkMethod =
-      isASync === true
+      isAsync === true
         ? lib.benchmark.async(suiteBenchmark.benchmark)
         : suiteBenchmark.benchmark
 
     for (let index = 0; index < iterations; index++) {
       suite.add(`${index + 1} ${suiteBenchmark.name}`, {
-        defer: isASync,
+        defer: isAsync,
         fn: benchmarkMethod
       })
     }

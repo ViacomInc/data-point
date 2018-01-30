@@ -78,10 +78,11 @@ Test synchronous code [example](examples/array-iteration.js)
 Test asynchronous code [example](examples/async-example.js)
 Write manual test sync/asynchronous code [example](examples/manual-tests.js)
 
-
 ## Acknowledgements
 
-This tool is only a wrapper of [benchmarkjs](https://benchmarkjs.com), so the credit really goes to them.
+This tool is a wrapper of [benchmarkjs](https://benchmarkjs.com), so all credit related to benchmarking itself really goes to them.
+
+Thanks to [Paul Molluzzo](https://github.com/paulmolluzzo) for coming up with the name **bench-trial**! 
 
 ## <a name="contributing">Contributing</a>
 
