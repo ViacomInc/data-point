@@ -86,5 +86,14 @@ module.exports = {
     options: {
       baseUrl: () => 'http://remote.test'
     }
+  },
+  'request:a9': {
+    url: 'http://remote.test/source1',
+    options: {
+      auth: {
+        user: () => 'cool_user',
+        pass: () => 'super_secret!'
+      }
+    }
   }
 }
