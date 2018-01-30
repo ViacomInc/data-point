@@ -3206,7 +3206,7 @@ It also adds two properties to the error that's thrown:
 - `_value:*` - the input value to the reducer that failed
 - `_stack:String` - the reducer stack trace (this is the same string that's logged)
 
-`options.debug` can be either a boolean or an Object with settings:
+`options.debug` can be either a boolean or a settings object:
 
 | Property | Type | Description |
 |:---|:---|:---|
