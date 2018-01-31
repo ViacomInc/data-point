@@ -22,14 +22,14 @@ Runs one (or more) BenchmarkJs test multiple times enough to get less ambiguous 
 
 While running [benchmarkjs](https://benchmarkjs.com) to compare different versions of code I found out a couple of things:
 
-- **Consistency**: I noticed that the same benchmark tests were returning different results every time they executed. If they were re-run consecutively, I would get more operations per second on each benchmark. I believe the reason may be related to the v8 engine warming up and optimizing the code the more it ran, since if I let some time to "cool off" the operations per second for each test would decrease. These ambiguous results meant having to repeat tests to ensure some consistency.
-- **Reliable Execution**: Occasionally I made changes to the benchmarked code and would overlook that it was not executing correctly, further compounding the issue of making the results unreliable.
+- **Ambiguous results**: I noticed that the same benchmark tests were returning different results every time they executed. If they were re-run consecutively, I would get more operations per second on each benchmark. I believe the reason may be related to the v8 engine warming up and optimizing the code the more it ran, since if I let some time to "cool off" the operations per second for each test would decrease. These ambiguous results meant having to repeat tests to ensure some consistency.
+- **Unreliable execution**: Occasionally I made changes to the benchmarked code and would overlook that it was not executing correctly, further compounding the issue of making the results unreliable.
 
 ## Solution
 
 - **Consistency**: By running benchmark tests more than once, we can get median and average results and get a bigger picture with less fluctuation. Because the tests will run multiple times in succession, the code will get optimized by the engine, and we can use the median time as a more consistent and stable metric.
  
-- **Tests for reliable execution**: By running simple assertion tests on each suite before the actual benchmark runs, we can be sure our tests are executing correctly. 
+- **Reliable execution**: By running simple assertion tests on each suite before the actual benchmark runs, we can be sure our tests are executing correctly. 
 
 ## API
 
@@ -75,9 +75,9 @@ To write your manual test see the manual test example below
 
 ## Examples
 
-Test synchronous code [example](examples/array-iteration.js)
-Test asynchronous code [example](examples/async-example.js)
-Write manual test sync/asynchronous code [example](examples/manual-tests.js)
+- Test synchronous code [example](examples/array-iteration.js)
+- Test asynchronous code [example](examples/async-example.js)
+- Write manual test sync/asynchronous code [example](examples/manual-tests.js)
 
 ## Acknowledgements
 
