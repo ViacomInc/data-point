@@ -1,4 +1,3 @@
-
 const logger = require('./logger')
 
 function set (cache, key, value, ttl) {
