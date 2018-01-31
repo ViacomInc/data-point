@@ -82,7 +82,7 @@ module.exports.mapFromAccumulatorValue = mapFromAccumulatorValue
  * @returns {Function}
  */
 function getPathReducerFunction (jsonPath, asCollection) {
-  if (jsonPath === '$' || _.isEmpty(jsonPath)) {
+  if (jsonPath === '$') {
     return getAccumulatorValue
   }
 
@@ -101,15 +101,16 @@ module.exports.getPathReducerFunction = getPathReducerFunction
 
 /**
  * @param {Function} createReducer
- * @param {string} source
+ * @param {string} source - must begin with $
  * @return {reducer}
  */
 function create (createReducer, source) {
   const reducer = new ReducerPath()
-
-  reducer.asCollection = source.slice(-2) === '[]'
-  reducer.name = (source.substr(1) || '$').replace(/\[]$/, '')
+  const value = source.replace(/\[]$/, '')
+  reducer.name = value.substr(1) || '$'
+  reducer.asCollection = source.endsWith('[]')
   reducer.body = getPathReducerFunction(reducer.name, reducer.asCollection)
+  Object.defineProperty(reducer.body, 'name', { value })
 
   return reducer
 }
