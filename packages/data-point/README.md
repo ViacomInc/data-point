@@ -38,6 +38,7 @@ npm install --save data-point
   - [find](#reducer-find)
   - [constant](#reducer-constant)
   - [parallel](#reducer-parallel)
+  - [withDefault](#reducer-default)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
@@ -1227,6 +1228,50 @@ parallel(reducers:Array<Reducer>):Array
   dataPoint.resolve(reducer, input) // => [1, 4]
   ```
 </details>
+
+### <a name="reducer-default">withDefault</a>
+
+The **withDefault** reducer adds a default value to any reducer type. If the reducer resolves to `null`, `undefined`, `NaN`, or `''`,
+the default is returned instead.
+
+**SYNOPSIS**
+
+```js
+withDefault(source:*, value:*):*
+```
+
+**Reducer's arguments**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *source* | * | Source data for creating a [reducer](#reducers)  |
+| *value* | * | The default value to use (or a function that returns the default value) |
+
+The default value is not cloned before it's returned, so it's good practice to wrap any Objects in a function.
+
+**EXAMPLE:**
+
+```js
+const { withDefault } = DataPoint.helpers
+
+const input = {
+  a: undefined
+}
+
+// adds a default to a PathReducer
+const r1 = withDefault('$a', 50)
+
+dataPoint.resolve(r1, input) // => 50
+
+// passing a function is useful when the default value is
+// an object, because it returns a new object every time
+const r2 = withDefault('$a', () => {
+  return { b: 1 }
+})
+
+dataPoint.resolve(r2, input) // => { b: 1 }
+
+```
 
 ## <a name="entities">Entities</a>
 

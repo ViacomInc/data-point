@@ -15,6 +15,7 @@ module.exports.helpers = {
   omit: stubFactories.omit,
   parallel: stubFactories.parallel,
   pick: stubFactories.pick,
+  withDefault: stubFactories.withDefault,
   isString: typeCheckFunctionReducers.isString,
   isNumber: typeCheckFunctionReducers.isNumber,
   isBoolean: typeCheckFunctionReducers.isBoolean,
