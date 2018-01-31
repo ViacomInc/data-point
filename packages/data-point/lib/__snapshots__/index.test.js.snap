@@ -21,6 +21,7 @@ Object {
     "omit": [Function],
     "parallel": [Function],
     "pick": [Function],
+    "withDefault": [Function],
   },
   "reducify": [Function],
   "reducifyAll": [Function],

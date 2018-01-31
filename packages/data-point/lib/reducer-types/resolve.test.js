@@ -16,14 +16,18 @@ beforeAll(() => {
   manager = fixtureStore.create()
 })
 
+function resolve (source, options, value) {
+  const reducer = Factory.create(source, options)
+  const accumulator = AccumulatorFactory.create({ value })
+  return Resolve.resolve(manager, accumulator, reducer).catch(e => e)
+}
+
 describe('reducer#resolve', () => {
   test('It should work for valid input', () => {
-    const accumulator = AccumulatorFactory.create({
-      value: testData.a.b.c
-    })
-
-    const reducer = Factory.create(reducers.addCollectionValues())
-    return Resolve.resolve(manager, accumulator, reducer).then(result => {
+    const source = reducers.addCollectionValues()
+    const value = testData.a.b.c
+    const options = {}
+    return resolve(source, options, value).then(result => {
       expect(result.value).toEqual(6)
     })
   })
@@ -37,5 +41,49 @@ describe('reducer#resolve', () => {
     expect(() => {
       Resolve.resolve(manager, accumulator, reducer)
     }).toThrowErrorMatchingSnapshot()
+  })
+
+  test('It should return undefined when no default is provided', () => {
+    const source = '$a'
+    const value = { a: undefined }
+    const options = {}
+    return resolve(source, options, value).then(result => {
+      expect(result.value).toBeUndefined()
+    })
+  })
+})
+
+describe('reducer#resolve with default value', () => {
+  test('do not overwrite false', () => {
+    const source = '$a'
+    const value = { a: false }
+    const options = { default: 500 }
+    return resolve(source, options, value).then(result => {
+      expect(result.value).toBe(false)
+    })
+  })
+  test('do not overwrite true', () => {
+    const source = '$a'
+    const value = { a: true }
+    const options = { default: 500 }
+    return resolve(source, options, value).then(result => {
+      expect(result.value).toBe(true)
+    })
+  })
+  test('overwrite undefined', () => {
+    const source = '$a'
+    const value = { a: undefined }
+    const options = { default: 500 }
+    return resolve(source, options, value).then(result => {
+      expect(result.value).toBe(500)
+    })
+  })
+  test('overwrite undefined with function as default', () => {
+    const source = '$a'
+    const value = { a: undefined }
+    const options = { default: () => 500 }
+    return resolve(source, options, value).then(result => {
+      expect(result.value).toBe(500)
+    })
   })
 })
