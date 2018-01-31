@@ -238,8 +238,8 @@ function sum (values) {
 }
 
 function middle (values) {
-  var len = values.length
-  var half = Math.floor(len / 2)
+  const len = values.length
+  const half = Math.floor(len / 2)
 
   if (len % 2) {
     return (values[half - 1] + values[half]) / 2.0

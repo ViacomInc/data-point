@@ -22,13 +22,14 @@ Runs one (or more) BenchmarkJs test multiple times enough to get less ambiguous 
 
 While running [benchmarkjs](https://benchmarkjs.com) to compare different versions of code I found out a couple of things:
 
-- **Ambiguous results**: tests would throw different results every time I ran the test, specially if the difference was minimal. If I ran the same test multiple times the numbers changed, as time went by I would get more and more operations per second on each benchmark. This would only happen if I ran the tests consecutively, the reason of this might be related to the v8 engine warming up and optimizing the code the more I ran it. If I let some time to cool off, the tests would go back down on operations per second.
-- **Reliable Execution**: more than once I made changes on the code being tested and never did I notice the change I had made was not even executing correctly. So the results I was getting were really unreliable.
+- **Consistency**: I noticed that the same benchmark tests were returning different results every time they executed. If they were re-run consecutively, I would get more operations per second on each benchmark. I believe the reason may be related to the v8 engine warming up and optimizing the code the more it ran, since if I let some time to "cool off" the operations per second for each test would decrease. These ambiguous results meant having to repeat tests to ensure some consistency.
+- **Reliable Execution**: Occasionally I made changes to the benchmarked code and would overlook that it was not executing correctly, further compounding the issue of making the results unreliable.
 
 ## Solution
 
-- **Ambiguous results**: Run benchmark more than once to get median and average results, because the test will run multiple times the code will get optimized, using the median we can get more reliable results. 
-- **Reliable Execution**: Run a simple assertion tests on each suite before the actual benchmark runs, this helps us make sure our test are executing correctly. 
+- **Consistency**: By running benchmark tests more than once, we can get median and average results and get a bigger picture with less fluctuation. Because the tests will run multiple times in succession, the code will get optimized by the engine, and we can use the median time as a more consistent and stable metric.
+ 
+- **Tests for reliable execution**: By running simple assertion tests on each suite before the actual benchmark runs, we can be sure our tests are executing correctly. 
 
 ## API
 
@@ -41,7 +42,7 @@ bench-trial <file> [-i <iterations>] [-s]
 
 ### Writing your benchmark suites
 
-The file you provide to bench-trial should export an `array` of suites, each suite is an object in the form of: 
+The file provided to **bench-trial** should export an `array` of test suites, each test suite is an object in the form of:
 
 ```
 {
@@ -70,7 +71,7 @@ bench-trial provides a convenience method that accepts the function to execute a
 test(test:function, value:*)
 ```
 
-to write your manual test see the manual test example below
+To write your manual test see the manual test example below
 
 ## Examples
 
