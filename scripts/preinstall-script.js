@@ -15,10 +15,3 @@ if (process.env.npm_execpath.indexOf('yarn') === -1) {
   )
   process.exit(1)
 }
-
-console.warn(
-  '\x1b[36m%s\x1b[0m',
-  '\nWe recommend using yarn for this project instead of npm.\n' +
-    '\nTo learn more about why we use yarn visit:\n' +
-    setup
-)
