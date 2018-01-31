@@ -55,16 +55,16 @@ function resolveReducer (manager, accumulator, reducer) {
     return Promise.resolve(accumulator)
   }
 
-  let resolve = getResolveFunction(reducer)
+  const resolve = getResolveFunction(reducer)
   // NOTE: recursive call
-  resolve = resolve(manager, resolveReducer, accumulator, reducer)
+  const result = resolve(manager, resolveReducer, accumulator, reducer)
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
     const resolveDefault = reducers.ReducerDefault.resolve
-    return resolve.then(acc => resolveDefault(acc, _default))
+    return result.then(acc => resolveDefault(acc, _default))
   }
 
-  return resolve
+  return result
 }
 
 module.exports.resolve = resolveReducer
