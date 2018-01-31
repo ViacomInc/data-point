@@ -60,8 +60,8 @@ function resolveReducer (manager, accumulator, reducer) {
   resolve = resolve(manager, resolveReducer, accumulator, reducer)
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
-    const afterResolve = reducers.ReducerDefault.resolve
-    return resolve.then(acc => afterResolve(acc, _default))
+    const resolveDefault = reducers.ReducerDefault.resolve
+    return resolve.then(acc => resolveDefault(acc, _default))
   }
 
   return resolve
