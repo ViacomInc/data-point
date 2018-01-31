@@ -1,4 +1,3 @@
-
 const IORedis = require('ioredis')
 const Promise = require('bluebird')
 const logger = require('./logger')
