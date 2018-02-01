@@ -33,5 +33,10 @@ module.exports = {
 
       return value
     }
+  },
+
+  'model:c.4': {
+    after: input => 1,
+    outputType: 'string'
   }
 }

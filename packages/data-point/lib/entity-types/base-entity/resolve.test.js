@@ -220,6 +220,14 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
+  test('outputType - throws error if outputType does not pass when after changes output', () => {
+    return resolveEntity('model:c.4', 'some string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
   test('outputType - if typeCheck passes then resolve normal', () => {
     return resolveEntity('model:c.1', 'foo').then(ac => {
       expect(ac.value).toEqual('foo')
