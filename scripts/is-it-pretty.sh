@@ -7,5 +7,6 @@ if [ -z "$(git status --porcelain)" ]; then
 else
   # Uncommitted changes
   echo 'There are javascript files in this project that do not follow the prettify standard!'
+  echo "$(git diff --name-only)"
   exit 1
 fi
