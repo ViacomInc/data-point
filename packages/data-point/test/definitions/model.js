@@ -38,5 +38,10 @@ module.exports = {
   'model:c.4': {
     after: input => 1,
     outputType: 'string'
+  },
+
+  'model:c.5': {
+    before: input => 1,
+    outputType: 'string'
   }
 }

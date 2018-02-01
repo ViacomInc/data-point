@@ -8,4 +8,12 @@ exports[`ResolveEntity.resolveEntity outputType - throws error if outputType doe
 
 exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass when after changes output 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 1]`;
 
+exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass when before changes output 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 1]`;
+
+exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass when global after middleware changes output 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 1]`;
+
+exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass when global before middleware changes output 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 1]`;
+
 exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass when model:after changes output 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 1]`;
+
+exports[`ResolveEntity.resolveEntity outputType - throws error if outputType does not pass when model:before changes output 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 1]`;

@@ -220,6 +220,40 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
+  test('outputType - throws error if outputType does not pass when before changes output', () => {
+    return resolveEntity('model:c.5', 'some string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
+  test('outputType - throws error if outputType does not pass when model:before changes output', () => {
+    dataPoint.middleware.use('model:before', (acc, next) => {
+      acc.resolve(1)
+      next(null)
+    })
+
+    return resolveEntity('model:c.1', 'some string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
+  test('outputType - throws error if outputType does not pass when global before middleware changes output', () => {
+    dataPoint.middleware.use('before', (acc, next) => {
+      acc.resolve(1)
+      next(null)
+    })
+
+    return resolveEntity('model:c.1', 'some string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
   test('outputType - throws error if outputType does not pass when after changes output', () => {
     return resolveEntity('model:c.4', 'some string')
       .catch(e => e)
@@ -230,6 +264,19 @@ describe('ResolveEntity.resolveEntity', () => {
 
   test('outputType - throws error if outputType does not pass when model:after changes output', () => {
     dataPoint.middleware.use('model:after', (acc, next) => {
+      acc.resolve(1)
+      next(null)
+    })
+
+    return resolveEntity('model:c.1', 'some string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
+  })
+
+  test('outputType - throws error if outputType does not pass when global after middleware changes output', () => {
+    dataPoint.middleware.use('after', (acc, next) => {
       acc.resolve(1)
       next(null)
     })
