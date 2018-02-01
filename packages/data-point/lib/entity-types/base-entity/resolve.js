@@ -151,14 +151,18 @@ function resolveEntity (
     .then(acc => resolveReducer(manager, acc, acc.reducer.spec.after))
     .then(acc => resolveMiddleware(manager, `${reducer.entityType}:after`, acc))
     .then(acc => resolveMiddleware(manager, `after`, acc))
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
-    )
     .catch(error => {
       // checking if this is an error to bypass the `then` chain
       if (error.bypass === true) {
         return error.bypassValue
       }
+
+      throw error
+    })
+    .then(acc =>
+      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
+    )
+    .catch(error => {
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
