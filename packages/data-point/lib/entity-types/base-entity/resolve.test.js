@@ -288,6 +288,24 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
+  test('outputType - typeCheck passes if error method returns value with correct type', () => {
+    return resolveEntity('model:c.6', 'string').then(acc => {
+      expect(acc.value).toBe('error string')
+    })
+  })
+
+  test('outputType - typeCheck fails if error method returns value with incorrect type', () => {
+    return resolveEntity('model:c.7', 'string').catch(e => {
+      expect(e).toMatchSnapshot()
+    })
+  })
+
+  test('outputType - typeCheck is bypassed if error method throws error', () => {
+    return resolveEntity('model:c.8', 'string').catch(e => {
+      expect(e).toMatchSnapshot()
+    })
+  })
+
   test('outputType - if typeCheck passes then resolve normal', () => {
     return resolveEntity('model:c.1', 'foo').then(ac => {
       expect(ac.value).toEqual('foo')
