@@ -4,7 +4,12 @@ const dataPoint = require('../').create()
 dataPoint.addEntities({
   'model:getArray': {
     // points to a NON Array value
-    value: '$a.b',
+    value: [
+      '$a.b',
+      () => {
+        throw new Error('error from value reducer')
+      }
+    ],
     outputType: 'array',
     error: input => {
       // prints out the error
