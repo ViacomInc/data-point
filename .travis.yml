@@ -11,5 +11,6 @@ script:
   # Run test script
   - "yarn run lint"
   - "yarn test -- --maxWorkers=4"
+  - "scripts/is-it-pretty.sh"
 after_script:
   - "test -e ./coverage/lcov.info && npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"
