@@ -156,13 +156,6 @@ function resolveEntity (
       if (error.bypass === true) {
         return error.bypassValue
       }
-
-      throw error
-    })
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
-    )
-    .catch(error => {
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
@@ -173,6 +166,9 @@ function resolveEntity (
         resolveReducer
       )
     })
+    .then(acc =>
+      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
+    )
     .then(resultContext => {
       if (trace === true) {
         console.timeEnd(timeId)
