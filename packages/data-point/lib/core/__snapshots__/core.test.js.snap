@@ -12,6 +12,7 @@ Array [
   "use",
   "addEntities",
   "resolve",
+  "reducer",
   "transform",
 ]
 `;
