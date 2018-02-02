@@ -311,15 +311,19 @@ describe('ResolveEntity.resolveEntity outputType', () => {
   })
 
   test('throws if error method does not return value with correct type', () => {
-    return resolveEntity('model:c.7', 'string').catch(e => {
-      expect(e).toMatchSnapshot()
-    })
+    return resolveEntity('model:c.7', 'string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
   })
 
   test('is bypassed if error throws error', () => {
-    return resolveEntity('model:c.8', 'string').catch(e => {
-      expect(e).toMatchSnapshot()
-    })
+    return resolveEntity('model:c.8', 'string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
   })
 
   test('passes if error method catches typeCheck errors and returns value', () => {
@@ -329,14 +333,16 @@ describe('ResolveEntity.resolveEntity outputType', () => {
   })
 
   test('fails if error method catches typeCheck errors and returns bad value', () => {
-    return resolveEntity('model:c.10', 'string').catch(error => {
-      expect(error).toMatchSnapshot()
-    })
+    return resolveEntity('model:c.10', 'string')
+      .catch(e => e)
+      .then(e => {
+        expect(e).toMatchSnapshot()
+      })
   })
 
   test('resolves normally if typeCheck passes', () => {
-    return resolveEntity('model:c.1', 'foo').then(ac => {
-      expect(ac.value).toEqual('foo')
+    return resolveEntity('model:c.1', 'foo').then(acc => {
+      expect(acc.value).toEqual('foo')
     })
   })
 
