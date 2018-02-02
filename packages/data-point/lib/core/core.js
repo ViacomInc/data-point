@@ -72,7 +72,7 @@ function create (spec) {
   manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
 
   // built-in entity types
-  manager.addEntityType('transform', EntityTransform)
+  manager.addEntityType('reducer', EntityTransform)
   manager.addEntityType('entry', EntityEntry)
   // alias to entry, may be used to process any object type
   manager.addEntityType('model', EntityModel)
@@ -80,6 +80,7 @@ function create (spec) {
   manager.addEntityType('collection', EntityCollection)
   manager.addEntityType('request', EntityRequest)
   // for backwards compatibility
+  manager.addEntityType('transform', EntityTransform)
   manager.addEntityType('source', EntityRequest)
   manager.addEntityType('control', EntityControl)
   manager.addEntityType('schema', EntitySchema)
@@ -92,6 +93,7 @@ function create (spec) {
   // supports currying
   manager.resolve = Transform.resolve(manager)
   // does not support currying
+  manager.reducer = _.partial(Transform.transform, manager)
   manager.transform = _.partial(Transform.transform, manager)
 
   return manager
