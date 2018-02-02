@@ -2,6 +2,8 @@
 
 exports[`ResolveEntity.resolveEntity inputType - throws error if inputType does not pass 1`] = `[Error: value did not pass type check, type expected: number but recevied: string. The value received is: 'foo']`;
 
+exports[`ResolveEntity.resolveEntity outputType fails if error method catches typeCheck errors and returns bad value 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 2]`;
+
 exports[`ResolveEntity.resolveEntity outputType is bypassed if error throws error 1`] = `[Error: error from before method]`;
 
 exports[`ResolveEntity.resolveEntity outputType throws error if after method returns value that does not pass typeCheck 1`] = `[Error: value did not pass type check, type expected: string but recevied: number. The value received is: 1]`;

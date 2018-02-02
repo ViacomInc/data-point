@@ -69,5 +69,17 @@ module.exports = {
       throw error
     },
     outputType: 'string'
+  },
+
+  'model:c.9': {
+    before: () => 1,
+    error: () => 'string from error',
+    outputType: 'string'
+  },
+
+  'model:c.10': {
+    before: () => 1,
+    error: () => 2,
+    outputType: 'string'
   }
 }

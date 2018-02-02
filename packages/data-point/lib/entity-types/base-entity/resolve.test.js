@@ -322,6 +322,18 @@ describe('ResolveEntity.resolveEntity outputType', () => {
     })
   })
 
+  test('passes if error method catches typeCheck errors and returns value', () => {
+    return resolveEntity('model:c.9', 'string').then(acc => {
+      expect(acc.value).toBe('string from error')
+    })
+  })
+
+  test('fails if error method catches typeCheck errors and returns bad value', () => {
+    return resolveEntity('model:c.10', 'string').catch(error => {
+      expect(error).toMatchSnapshot()
+    })
+  })
+
   test('resolves normally if typeCheck passes', () => {
     return resolveEntity('model:c.1', 'foo').then(ac => {
       expect(ac.value).toEqual('foo')
