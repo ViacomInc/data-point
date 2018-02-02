@@ -211,8 +211,24 @@ describe('ResolveEntity.resolveEntity', () => {
       expect(ac.value).toEqual(1)
     })
   })
+})
 
-  test('outputType - throws error if outputType does not pass', () => {
+describe('ResolveEntity.resolveEntity outputType', () => {
+  const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc)
+
+  const resolveEntity = (entityId, input, options, resolver) => {
+    const racc = helpers.createAccumulator.call(null, input, options)
+    const reducer = createReducerEntity(createReducer, entityId)
+    return ResolveEntity.resolveEntity(
+      dataPoint,
+      resolveReducer,
+      racc,
+      reducer,
+      resolver || defaultResolver
+    )
+  }
+
+  test('throws error if value does not pass typeCheck', () => {
     return resolveEntity('model:c.1', 1)
       .catch(e => e)
       .then(e => {
@@ -220,7 +236,7 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('outputType - throws error if outputType does not pass when before changes output', () => {
+  test('throws error if before method returns value that does not pass typeCheck', () => {
     return resolveEntity('model:c.5', 'some string')
       .catch(e => e)
       .then(e => {
@@ -228,7 +244,7 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('outputType - throws error if outputType does not pass when model:before changes output', () => {
+  test('throws error if middleware before returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('model:before', (acc, next) => {
       acc.resolve(1)
       next(null)
@@ -241,7 +257,7 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('outputType - throws error if outputType does not pass when global before middleware changes output', () => {
+  test('throws error if global before middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('before', (acc, next) => {
       acc.resolve(1)
       next(null)
@@ -254,7 +270,7 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('outputType - throws error if outputType does not pass when after changes output', () => {
+  test('throws error if after method returns value that does not pass typeCheck', () => {
     return resolveEntity('model:c.4', 'some string')
       .catch(e => e)
       .then(e => {
@@ -262,7 +278,7 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('outputType - throws error if outputType does not pass when model:after changes output', () => {
+  test('throws error if after middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('model:after', (acc, next) => {
       acc.resolve(1)
       next(null)
@@ -275,7 +291,7 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('outputType - throws error if outputType does not pass when global after middleware changes output', () => {
+  test('throws error if global after middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('after', (acc, next) => {
       acc.resolve(1)
       next(null)
@@ -288,37 +304,37 @@ describe('ResolveEntity.resolveEntity', () => {
       })
   })
 
-  test('outputType - typeCheck passes if error method returns value with correct type', () => {
+  test('passes if error method returns value with correct type', () => {
     return resolveEntity('model:c.6', 'string').then(acc => {
       expect(acc.value).toBe('error string')
     })
   })
 
-  test('outputType - typeCheck fails if error method returns value with incorrect type', () => {
+  test('throws if error method does not return value with correct type', () => {
     return resolveEntity('model:c.7', 'string').catch(e => {
       expect(e).toMatchSnapshot()
     })
   })
 
-  test('outputType - typeCheck is bypassed if error method throws error', () => {
+  test('is bypassed if error throws error', () => {
     return resolveEntity('model:c.8', 'string').catch(e => {
       expect(e).toMatchSnapshot()
     })
   })
 
-  test('outputType - if typeCheck passes then resolve normal', () => {
+  test('resolves normally if typeCheck passes', () => {
     return resolveEntity('model:c.1', 'foo').then(ac => {
       expect(ac.value).toEqual('foo')
     })
   })
 
-  test('typeCheck should not be able to change acc.value', () => {
+  test('does not change acc.value', () => {
     return resolveEntity('model:c.2', 'my string').then(result => {
       expect(result.value).toEqual('my string')
     })
   })
 
-  test('if custom typeCheck throws then fail', () => {
+  test('throws error if custom typeCheck fails', () => {
     return resolveEntity('model:c.3', 123)
       .catch(e => e)
       .then(result => {
