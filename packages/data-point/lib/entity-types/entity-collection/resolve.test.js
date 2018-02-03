@@ -73,7 +73,7 @@ describe('entity.collection.map', () => {
     })
   })
 
-  test('should return undefined values if map reducer is empty list', () => {
+  test('should return array with undefined elements if map reducer is empty list', () => {
     return transform('collection:b.2', testData).then(acc => {
       expect(acc.value).toEqual([undefined, undefined, undefined])
     })

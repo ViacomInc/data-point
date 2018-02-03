@@ -16,7 +16,7 @@ beforeAll(() => {
 })
 
 describe('ReducerMap#resolve', () => {
-  test('It should return undefined values when reducer is empty list', () => {
+  test('It should return array with undefined elements when reducer is empty list', () => {
     const value = [true, true]
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, [])
