@@ -33,5 +33,53 @@ module.exports = {
 
       return value
     }
+  },
+
+  'model:c.4': {
+    after: input => 1,
+    outputType: 'string'
+  },
+
+  'model:c.5': {
+    before: input => 1,
+    outputType: 'string'
+  },
+
+  'model:c.6': {
+    before: () => {
+      throw new Error()
+    },
+    error: () => 'error string',
+    outputType: 'string'
+  },
+
+  'model:c.7': {
+    before: () => {
+      throw new Error()
+    },
+    error: () => 1,
+    outputType: 'string'
+  },
+
+  'model:c.8': {
+    before: () => {
+      throw new Error('error from before method')
+    },
+    error: error => {
+      throw error
+    },
+    outputType: 'string'
+  },
+
+  'model:c.9': {
+    before: () => 1,
+    error: () => 'string from error',
+    outputType: 'string'
+  },
+
+  'model:c.10': {
+    before: () => 1,
+    error: () => 2,
+    outputType: 'string'
   }
 }
