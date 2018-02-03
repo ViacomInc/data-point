@@ -1,17 +1,5 @@
 const utils = require('../../../utils')
-
-/**
- * @param {*} value
- * @return {boolean}
- */
-function isFalsy (value) {
-  return (
-    value === null ||
-    typeof value === 'undefined' ||
-    Number.isNaN(value) ||
-    value === ''
-  )
-}
+const { reducerOutputIsFalsy } = require('../utils')
 
 /**
  * @param {Accumulator} accumulator
@@ -20,7 +8,7 @@ function isFalsy (value) {
  */
 function resolve (accumulator, _default) {
   let value = accumulator.value
-  if (isFalsy(value)) {
+  if (reducerOutputIsFalsy(value)) {
     value = typeof _default === 'function' ? _default() : _default
   }
 

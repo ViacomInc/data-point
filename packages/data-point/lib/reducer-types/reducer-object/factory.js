@@ -13,7 +13,6 @@ module.exports.type = REDUCER_OBJECT
  */
 function ReducerObject () {
   this.type = REDUCER_OBJECT
-  this.isEmpty = undefined
   this.source = undefined
   this.reducers = undefined
 }
@@ -93,7 +92,6 @@ function create (createReducer, source = {}) {
   const props = getProps(createReducer, source)
 
   const reducer = new ReducerObject()
-  reducer.isEmpty = _.isEmpty(props.constants) && _.isEmpty(props.reducers)
   reducer.source = getSourceFunction(props.constants)
   reducer.reducers = props.reducers
 

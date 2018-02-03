@@ -15,7 +15,7 @@ beforeAll(() => {
 })
 
 describe('resolve#reducerObject.resolve', () => {
-  it('should return the accumulator for an empty reducer object', () => {
+  it('should return an empty object when the reducer object is an empty', () => {
     const reducer = createReducerObject(createReducer, {})
 
     const accumulator = AccumulatorFactory.create({
@@ -34,7 +34,7 @@ describe('resolve#reducerObject.resolve', () => {
       accumulator,
       reducer
     ).then(result => {
-      expect(result.value).toEqual(accumulator.value)
+      expect(result.value).toEqual({})
     })
   })
 
