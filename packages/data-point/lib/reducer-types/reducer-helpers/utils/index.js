@@ -6,7 +6,7 @@ const last = require('lodash/last')
  * @param {*} value
  * @return {boolean}
  */
-function reducerOutputIsFalsy (value) {
+function isFalsy (value) {
   return (
     value === null ||
     typeof value === 'undefined' ||
@@ -15,27 +15,25 @@ function reducerOutputIsFalsy (value) {
   )
 }
 
-module.exports.reducerOutputIsFalsy = reducerOutputIsFalsy
+module.exports.isFalsy = isFalsy
 
 /**
- * used by ReducerFilter and ReducerFind
  * @param {Reducer} reducer
  * @param {*} output
  * @return {boolean}
  */
 function reducerPredicateIsTruthy (reducer, output) {
+  // this, combined with the second conditional, is needed
+  // when the last reducer in a list is a ReducerObject
   if (reducer.type === 'ReducerList') {
     reducer = last(reducer.reducers) || {}
   }
 
+  // when a ReducerObject is used as a predicate, the
+  // output is truthy when all the values are truthy
   if (reducer.type === 'ReducerObject') {
     const keys = Object.keys(output)
-    return (
-      !!keys.length &&
-      keys.every(key => {
-        return !reducerOutputIsFalsy(output[key])
-      })
-    )
+    return !!keys.length && keys.every(key => !isFalsy(output[key]))
   }
 
   return !!output

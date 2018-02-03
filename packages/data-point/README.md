@@ -642,7 +642,7 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 
 ### <a name="object-reducer">ObjectReducer</a>
 
-These are plain objects where the values are reducers. They're used to aggregate data or transform objects. For values that should be constants instead of reducers, you can use the [constant](#reducer-constant) reducer helper.
+These are plain objects where the value of each key is a [reducer](#reducers). They're used to aggregate data or transform objects. For values that should be constants instead of reducers, you can use the [constant](#reducer-constant) reducer helper.
 
 <details>
   <summary>Transforming an object</summary>
@@ -858,7 +858,7 @@ A ListReducer is an array of reducers where the result of each reducer becomes t
 | `['$a.b', (input) => { ... }]` | Get path `a.b`, pipe value to function reducer |
 | `['$a.b', (input) => { ... }, 'hash:Foo']` | Get path `a.b`, pipe value to function reducer, pipe result to `hash:Foo` |
 
-An empty `ListReducer` will resolve to `undefined`:
+**IMPORTANT**: an empty `ListReducer` will resolve to `undefined`. This mirrors the behavior of empty functions.
 
 ```js
 const reducer = []

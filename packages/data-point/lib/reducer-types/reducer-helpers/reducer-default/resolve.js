@@ -1,5 +1,5 @@
 const utils = require('../../../utils')
-const { reducerOutputIsFalsy } = require('../utils')
+const { isFalsy } = require('../utils')
 
 /**
  * @param {Accumulator} accumulator
@@ -8,7 +8,7 @@ const { reducerOutputIsFalsy } = require('../utils')
  */
 function resolve (accumulator, _default) {
   let value = accumulator.value
-  if (reducerOutputIsFalsy(value)) {
+  if (isFalsy(value)) {
     value = typeof _default === 'function' ? _default() : _default
   }
 

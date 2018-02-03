@@ -2,17 +2,17 @@
 
 const utils = require('./index')
 
-describe('utils#reducerOutputIsFalsy', () => {
-  expect(utils.reducerOutputIsFalsy(null)).toBe(true)
-  expect(utils.reducerOutputIsFalsy(undefined)).toBe(true)
-  expect(utils.reducerOutputIsFalsy(NaN)).toBe(true)
-  expect(utils.reducerOutputIsFalsy('')).toBe(true)
-  expect(utils.reducerOutputIsFalsy('undefined')).toBe(false)
-  expect(utils.reducerOutputIsFalsy({})).toBe(false)
-  expect(utils.reducerOutputIsFalsy([])).toBe(false)
-  expect(utils.reducerOutputIsFalsy(0)).toBe(false)
-  expect(utils.reducerOutputIsFalsy(false)).toBe(false)
-  expect(utils.reducerOutputIsFalsy(true)).toBe(false)
+describe('utils#isFalsy', () => {
+  expect(utils.isFalsy(null)).toBe(true)
+  expect(utils.isFalsy(undefined)).toBe(true)
+  expect(utils.isFalsy(NaN)).toBe(true)
+  expect(utils.isFalsy('')).toBe(true)
+  expect(utils.isFalsy('undefined')).toBe(false)
+  expect(utils.isFalsy({})).toBe(false)
+  expect(utils.isFalsy([])).toBe(false)
+  expect(utils.isFalsy(0)).toBe(false)
+  expect(utils.isFalsy(false)).toBe(false)
+  expect(utils.isFalsy(true)).toBe(false)
 })
 
 describe('utils#reducerPredicateIsTruthy', () => {

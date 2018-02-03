@@ -15,7 +15,7 @@ beforeAll(() => {
 })
 
 describe('resolve#reducerObject.resolve', () => {
-  it('should return an empty object when the reducer object is an empty', () => {
+  it('should return an empty object when the reducer object is empty', () => {
     const reducer = createReducerObject(createReducer, {})
 
     const accumulator = AccumulatorFactory.create({
