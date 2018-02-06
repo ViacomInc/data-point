@@ -1510,6 +1510,42 @@ dataPoint.addEntities({
   ```
 </details>
 
+Note: We recommend using reducer as an alias for transform
+
+The following example produces the same result as its reducer counterpart:
+
+<details>
+  <summary>Transform Entity Example using Reducer Alias</summary>
+  
+  ```js
+  const input = {
+    a: {
+      b: {
+        c: [1, 2, 3]
+      }
+    }
+  }
+  
+  const getMax = (input) => {
+    return Math.max.apply(null, input)
+  }
+  
+  const multiplyBy = (number) => (input) => {
+    return input * number
+  }
+  
+  dataPoint.addEntities({
+    'reducer:foo': ['$a.b.c', getMax, multiplyBy(10)]
+  })
+  
+  dataPoint
+    .resolve('reducer:foo', input)
+    .then((output) => {
+      assert.equal(output, 30)
+    })
+  ```
+</details>
+
 
 #### <a name="model-entity">Model Entity</a>
 
