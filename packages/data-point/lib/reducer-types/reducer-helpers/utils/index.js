@@ -26,12 +26,12 @@ function reducerPredicateIsTruthy (reducer, output) {
   // this, combined with the second conditional, is needed
   // when the last reducer in a list is a ReducerObject
   if (reducer.type === 'ReducerList') {
-    reducer = last(reducer.reducers) || {}
+    reducer = last(reducer.reducers)
   }
 
   // when a ReducerObject is used as a predicate, the
   // output is truthy when all the values are truthy
-  if (reducer.type === 'ReducerObject') {
+  if (reducer && reducer.type === 'ReducerObject') {
     const keys = Object.keys(output)
     return !!keys.length && keys.every(key => !isFalsy(output[key]))
   }
