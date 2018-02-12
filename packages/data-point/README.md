@@ -1510,9 +1510,9 @@ dataPoint.addEntities({
   ```
 </details>
 
-Note: We recommend using reducer as an alias for transform
+Note: We recommend using `reducer` as an alias for `transform`
 
-The following example produces the same result as its reducer counterpart:
+The following example produces the same result as its `reducer` counterpart:
 
 <details>
   <summary>Transform Entity Example using Reducer Alias</summary>
