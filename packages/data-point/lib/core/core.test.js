@@ -45,15 +45,6 @@ test('entry#transform - fail if id not found', done => {
   })
 })
 
-test('entry#reducer - fail if id not found', done => {
-  instance.reducer('entry:INVALID', {}, {}, (err, result) => {
-    /* eslint handle-callback-err: 0 */
-    expect(_.isError(err)).toBeTruthy()
-    expect(err.name).toBe('InvalidId')
-    done()
-  })
-})
-
 describe('addEntityType', () => {
   function createEntityFactory () {
     return {
