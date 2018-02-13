@@ -350,7 +350,7 @@ The `Accumulator.value` property is the data source from which you want to apply
 | *value*  | `Object` | Value to be transformed. |
 | *initialValue*  | `Object` | Initial value passed to the an entity. You can use this value as a reference to the initial value passed to your Entity before any reducer was applied. |
 | *values*  | `Object` | Access to the values stored via [dataPoint.addValue](#api-data-point-add-value). |
-| *params*  | `Object` | Value of the current Entity's params property. (for all entites except transform) |
+| *params*  | `Object` | Value of the current Entity's params property. (for all entities except [Reducer](#reducer-entity)) |
 | *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#api-data-point-transform). |
 | *reducer*  | `Object` | Information relative to the current [Reducer](#reducers) being executed. |
 
