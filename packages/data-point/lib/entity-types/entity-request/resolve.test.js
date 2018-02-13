@@ -261,7 +261,7 @@ describe('resolveRequest', () => {
     }
     _.set(acc, 'reducer.spec.id', 'test:test')
     console.info = jest.fn()
-    return Resolve.resolveRequest(acc, null, true)
+    return Resolve.resolveRequest(acc)
       .catch(e => e)
       .then(result => {
         expect(console.info).toBeCalled()

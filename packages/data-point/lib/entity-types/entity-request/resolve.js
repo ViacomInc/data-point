@@ -98,10 +98,10 @@ module.exports.inspect = inspect
 /**
  * @param {Accumulator} acc
  * @param {Function} resolveReducer
- * @param {boolean} showErr
+ * @param {boolean} omitLog
  * @return {Promise<Accumulator>}
  */
-function resolveRequest (acc, resolveReducer, showErr) {
+function resolveRequest (acc, resolveReducer, omitLog) {
   inspect(acc)
   return rp(acc.options)
     .then(result => utils.set(acc, 'value', result))
@@ -130,7 +130,7 @@ function resolveRequest (acc, resolveReducer, showErr) {
 
       // this is useful in the case the error itself is not logged by the
       // implementation
-      if (showErr) console.info(redactedError.toString(), message)
+      if (!omitLog) console.info(redactedError.toString(), message)
 
       // attaching to error so it can be exposed by a handler outside datapoint
       error.message = `${error.message}\n\n${message}`
