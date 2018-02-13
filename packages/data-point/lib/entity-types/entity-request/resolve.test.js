@@ -264,7 +264,6 @@ describe('resolveRequest', () => {
     return Resolve.resolveRequest(acc)
       .catch(e => e)
       .then(result => {
-        expect(console.info).toBeCalled()
         expect(result.message).toMatchSnapshot()
       })
   })
@@ -401,7 +400,6 @@ describe('resolve', () => {
     return transform('request:a9', {}).catch(err => {
       expect(err.statusCode).toEqual(404)
       expect(err.message).toMatchSnapshot()
-      expect(console.info).toBeCalled()
 
       // credentials are still available in the raw error.options
       expect(err.options.auth).toEqual({
