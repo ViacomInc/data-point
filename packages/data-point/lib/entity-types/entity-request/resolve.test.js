@@ -219,13 +219,6 @@ describe('getRequestOptions', () => {
 })
 
 describe('resolveRequest', () => {
-  let consoleInfo
-  beforeAll(() => {
-    consoleInfo = console.info
-  })
-  afterEach(() => {
-    console.info = consoleInfo
-  })
   test('resolve reducer locals', () => {
     nock('http://remote.test')
       .get('/source1')
@@ -260,47 +253,11 @@ describe('resolveRequest', () => {
       value: 'foo'
     }
     _.set(acc, 'reducer.spec.id', 'test:test')
-    console.info = jest.fn()
     return Resolve.resolveRequest(acc)
       .catch(e => e)
       .then(result => {
         expect(result.message).toMatchSnapshot()
       })
-  })
-})
-
-describe('inspect', () => {
-  let consoleInfo
-  function getAcc () {
-    const acc = {}
-    _.set(acc, 'reducer.spec.id', 'test:test')
-    _.set(acc, 'params.inspect', true)
-    return acc
-  }
-  beforeAll(() => {
-    consoleInfo = console.info
-  })
-  afterEach(() => {
-    console.info = consoleInfo
-  })
-  test('It should not execute utils.inspect', () => {
-    console.info = jest.fn()
-    const acc = getAcc()
-    acc.params.inspect = undefined
-    Resolve.inspect(acc)
-    expect(console.info).not.toBeCalled()
-  })
-  test('It should not execute utils.inspect', () => {
-    console.info = jest.fn()
-    Resolve.inspect(getAcc())
-    expect(console.info.mock.calls[0]).toContain('test:test')
-  })
-  test('It should output options', () => {
-    console.info = jest.fn()
-    const acc = getAcc()
-    _.set(acc, 'options', { options: 1 })
-    Resolve.inspect(acc)
-    expect(console.info.mock.calls[0]).toContain('\noptions:')
   })
 })
 
@@ -392,7 +349,6 @@ describe('resolve', () => {
   })
 
   test('it should omit options.auth when encountering an error', () => {
-    console.info = jest.fn()
     nock('http://remote.test')
       .get('/source1')
       .reply(404)
