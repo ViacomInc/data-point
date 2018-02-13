@@ -56,7 +56,6 @@ module.exports.parseTokenExpression = parseTokenExpression
  */
 function parseFromArray (source) {
   return _.chain(source)
-    .compact()
     .map(parseTokenExpression)
     .flatten()
     .value()
@@ -69,7 +68,7 @@ module.exports.parseFromArray = parseFromArray
  * @returns {Array}
  */
 function parse (source) {
-  return parseFromArray(source ? _.castArray(source) : [])
+  return parseFromArray(_.castArray(source))
 }
 
 module.exports.parse = parse
