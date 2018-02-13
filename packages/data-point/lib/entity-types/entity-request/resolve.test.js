@@ -261,6 +261,41 @@ describe('resolveRequest', () => {
   })
 })
 
+describe('inspect', () => {
+  let consoleInfo
+  function getAcc () {
+    const acc = {}
+    _.set(acc, 'reducer.spec.id', 'test:test')
+    _.set(acc, 'params.inspect', true)
+    return acc
+  }
+  beforeAll(() => {
+    consoleInfo = console.info
+  })
+  afterEach(() => {
+    console.info = consoleInfo
+  })
+  test('It should not execute utils.inspect', () => {
+    console.info = jest.fn()
+    const acc = getAcc()
+    acc.params.inspect = undefined
+    Resolve.inspect(acc)
+    expect(console.info).not.toBeCalled()
+  })
+  test('It should not execute utils.inspect', () => {
+    console.info = jest.fn()
+    Resolve.inspect(getAcc())
+    expect(console.info.mock.calls[0]).toContain('test:test')
+  })
+  test('It should output options', () => {
+    console.info = jest.fn()
+    const acc = getAcc()
+    _.set(acc, 'options', { options: 1 })
+    Resolve.inspect(acc)
+    expect(console.info.mock.calls[0]).toContain('\noptions:')
+  })
+})
+
 describe('resolve', () => {
   test('simplest json call', () => {
     nock('http://remote.test')
