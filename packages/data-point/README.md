@@ -269,7 +269,7 @@ Execute a [Reducer](#reducers) against an input value. This function supports cu
 **SYNOPSIS**
 
 ```js
-dataPoint.resolve(reducer:Reducer, input:*, options:TransformOptions):Promise(output:*)
+dataPoint.resolve(reducer:Reducer, input:*, options:Object):Promise(output:*)
 ```
 
 This method returns a **Promise** with the final output value.
@@ -280,7 +280,7 @@ This method returns a **Promise** with the final output value.
 |:---|:---|:---|
 | *reducer* | [Reducer](#reducers) | Reducer that manipulates the input. |
 | *input* | `*` | Input value that you want to transform. If **none**, pass `null` or empty object `{}`. |
-| *options* | [TransformOptions](#transform-options) | Options within the scope of the current transformation |
+| *options* | [Object](#transform-options) | Options within the scope of the current transformation |
 
 **EXAMPLES:**
 
@@ -300,9 +300,9 @@ This method is similar to [dataPoint.resolve()](#api-data-point-resolve). The di
 
 ```js
 // as promise
-dataPoint.transform(reducer:Reducer, input:*, options:TransformOptions):Promise(acc:*)
+dataPoint.transform(reducer:Reducer, input:*, options:Object):Promise(acc:*)
 // as nodejs callback function
-dataPoint.transform(reducer:Reducer, input:*, options:TransformOptions, done:Function)
+dataPoint.transform(reducer:Reducer, input:*, options:Object, done:Function)
 ```
 
 This method will return a **Promise** if `done` is omitted.
@@ -316,7 +316,7 @@ This method will return a **Promise** if `done` is omitted.
 | *options* | [Reducer](#reducers) | Request options. See this [example](#options-with-constants) for using constants in the reducer |
 | *done* | `function` _(optional)_ | Error-first callback [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks) that has the arguments `(error, result)`, where `result` contains the final resolved [Accumulator](#accumulator). The actual transformation result will be inside the `result.value` property. |
 
-**<a name="transform-options">TransformOptions</a>**
+**<a name="transform-options">Options</a>**
 
 Options within the scope of the current transformation.
 
@@ -1951,7 +1951,7 @@ Example at: [examples/entity-request-string-template.js](examples/entity-request
 
 Example at: [examples/entity-request-options-locals.js](examples/entity-request-options-locals.js)
 
-For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
+For more information on acc.locals: [Transform Options](#transform-options) and [Accumulator](#accumulator) Objects.
 
 <a name="options-with-constants" >Using constants in the options reducer:</a>
 
