@@ -1140,7 +1140,7 @@ Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
 
 ### <a name="reducer-constant">constant</a>
 
-The **constant** reducer always returns the given value.
+The **constant** reducer always returns the given value. Constants should not contain other reducers.
 
 **SYNOPSIS**
 
