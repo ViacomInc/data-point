@@ -42,7 +42,7 @@ npm install --save data-point
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
-    - [Transform](#transform-entity)
+    - [Reducer / Transform](#reducer-entity)
     - [Model](#model-entity)
     - [Entry](#entry-entity)
     - [Request](#request-entity)
@@ -1309,7 +1309,7 @@ dataPoint.addEntities({
 
 DataPoint comes with the following built-in entities: 
 
-- [Transform](#transform-entity)
+- [Reducer / Transform](#reducer-entity)
 - [Model](#model-entity)
 - [Entry](#entry-entity)
 - [Request](#request-entity)
@@ -1320,7 +1320,7 @@ DataPoint comes with the following built-in entities:
 
 #### <a name="entity-base-api">Entity Base API</a>
 
-All entities share a common API (except for [Transform](#transform-entity)).
+All entities share a common API (except for [Reducer](#reducer-entity)).
 
 ```js
 {
@@ -1462,15 +1462,21 @@ To customize type checking you may use a [Reducer](#reducers). If the reducer th
 </details>
 
 
-#### <a name="transform-entity">Transform Entity</a>
+#### <a name="reducer-entity">Reducer Entity</a>
 
-A Transform entity is meant to be used as a 'snippet' entity that you can re-use in other entities. It does not expose the before/after/error/params API that other entities have.
+A Reducer entity is a 'snippet' that you can re-use in other entities. It does not expose the before/after/error/params API that other entities have.
 
-The value of a Transform entity is a [Reducer](#reducers).
-
-IMPORTANT: Transform Entities **do not support** [extension](#extending-entities).
+IMPORTANT: Reducer Entities **do not support** [extension](#extending-entities).
 
 **SYNOPSIS**
+
+```js
+dataPoint.addEntities({
+  'reducer:<entityId>': Reducer
+})
+```
+
+For backwards compatibility, the keyword **transform** can be used in place of **reducer**:
 
 ```js
 dataPoint.addEntities({
@@ -1479,43 +1485,7 @@ dataPoint.addEntities({
 ```
 
 <details>
-  <summary>Transform Entity Example</summary>
-  
-  ```js
-  const input = {
-    a: {
-      b: {
-        c: [1, 2, 3]
-      }
-    }
-  }
-  
-  const getMax = (input) => {
-    return Math.max.apply(null, input)
-  }
-  
-  const multiplyBy = (number) => (input) => {
-    return input * number
-  }
-  
-  dataPoint.addEntities({
-    'transform:foo': ['$a.b.c', getMax, multiplyBy(10)]
-  })
-  
-  dataPoint
-    .resolve('transform:foo', input)
-    .then((output) => {
-      assert.equal(output, 30)
-    })
-  ```
-</details>
-
-Note: We recommend using `reducer` as an alias for `transform`
-
-The following example produces the same result as its `reducer` counterpart:
-
-<details>
-  <summary>Transform Entity Example using Reducer Alias</summary>
+  <summary>Reducer Entity Example</summary>
   
   ```js
   const input = {
