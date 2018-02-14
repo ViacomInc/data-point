@@ -11,10 +11,6 @@ const utils = require('../../utils')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
-  if (utils.reducerIsEmpty(reducer)) {
-    return Promise.resolve(accumulator)
-  }
-
   return Promise.map(reducer.reducers, ({ reducer, path }) => {
     return resolveReducer(manager, accumulator, reducer).then(({ value }) => ({
       path,

@@ -14,7 +14,7 @@ const utils = require('../../utils')
  */
 function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
   const errorReducer = accumulator.reducer.spec.error
-  if (utils.reducerIsEmpty(errorReducer)) {
+  if (!errorReducer) {
     return Promise.reject(error)
   }
 
@@ -139,19 +139,16 @@ function resolveEntity (
   const resolveReducerBound = _.partial(resolveReducer, manager)
 
   return Promise.resolve(accUid)
+    .then(acc =>
+      typeCheck(manager, acc, acc.reducer.spec.inputType, resolveReducer)
+    )
     .then(acc => resolveMiddleware(manager, `before`, acc))
     .then(acc =>
       resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
     )
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.inputType, resolveReducer)
-    )
     .then(acc => resolveReducer(manager, acc, acc.reducer.spec.before))
     .then(acc => mainResolver(acc, resolveReducerBound))
     .then(acc => resolveReducer(manager, acc, acc.reducer.spec.after))
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
-    )
     .then(acc => resolveMiddleware(manager, `${reducer.entityType}:after`, acc))
     .then(acc => resolveMiddleware(manager, `after`, acc))
     .catch(error => {
@@ -159,6 +156,13 @@ function resolveEntity (
       if (error.bypass === true) {
         return error.bypassValue
       }
+
+      throw error
+    })
+    .then(acc =>
+      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
+    )
+    .catch(error => {
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
@@ -167,6 +171,8 @@ function resolveEntity (
         error,
         currentAccumulator,
         resolveReducer
+      ).then(acc =>
+        typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
       )
     })
     .then(resultContext => {

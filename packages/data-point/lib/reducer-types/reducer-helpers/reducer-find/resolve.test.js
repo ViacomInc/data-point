@@ -16,17 +16,13 @@ beforeAll(() => {
 })
 
 describe('ReducerFind#resolve', () => {
-  test('It should return the accumulator when resolver is empty', () => {
-    const value = [
-      {
-        a: 1
-      }
-    ]
+  test('It should return undefined when input is an empty array', () => {
+    const value = []
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual(value)
+        expect(result.value).toBeUndefined()
       }
     )
   })
@@ -65,6 +61,61 @@ describe('ReducerFind#resolve', () => {
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
         expect(result.value).toBeUndefined()
+      }
+    )
+  })
+})
+
+describe('ReducerFind#resolve with reducer objects', () => {
+  test('it should not find a match when keys are null or undefined', () => {
+    const value = [
+      {
+        a: undefined,
+        b: undefined
+      },
+      {
+        a: null,
+        b: null
+      }
+    ]
+    const accumulator = AccumulatorFactory.create({ value })
+    const reducer = Factory.create(Reducer.create, {
+      a: '$a',
+      b: '$b'
+    })
+    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
+      result => {
+        expect(result.value).toBeUndefined()
+      }
+    )
+  })
+  test('it should match the item with truthy keys', () => {
+    const value = [
+      {
+        a: true,
+        b: undefined
+      },
+      {
+        a: true,
+        b: ''
+      },
+      {
+        a: null,
+        b: true
+      },
+      {
+        a: 'a truthy string',
+        b: true
+      }
+    ]
+    const accumulator = AccumulatorFactory.create({ value })
+    const reducer = Factory.create(Reducer.create, {
+      a: '$a',
+      b: '$b'
+    })
+    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
+      result => {
+        expect(result.value).toEqual(value[3])
       }
     )
   })

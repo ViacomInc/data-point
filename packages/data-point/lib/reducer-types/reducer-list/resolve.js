@@ -1,5 +1,7 @@
 const Promise = require('bluebird')
 
+const utils = require('../../utils')
+
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
@@ -10,7 +12,7 @@ const Promise = require('bluebird')
 function resolve (manager, resolveReducer, accumulator, reducerList) {
   const reducers = reducerList.reducers
   if (reducers.length === 0) {
-    return Promise.resolve(accumulator)
+    return Promise.resolve(utils.set(accumulator, 'value', undefined))
   }
 
   const result = Promise.reduce(

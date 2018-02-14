@@ -16,17 +16,13 @@ beforeAll(() => {
 })
 
 describe('ReducerFilter#resolve', () => {
-  test('It should return the accumulator when resolver is empty', () => {
-    const value = [
-      {
-        a: 1
-      }
-    ]
+  test('It should return empty array when reducer is empty reducer list', () => {
+    const value = [true, true]
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual(value)
+        expect(result.value).toEqual([])
       }
     )
   })
@@ -51,5 +47,73 @@ describe('ReducerFilter#resolve', () => {
         ])
       }
     )
+  })
+
+  describe('ReducerFind#resolve with reducer objects', () => {
+    test('it should filter values that resolve with falsy keys', () => {
+      const value = [
+        {
+          a: undefined
+        },
+        {
+          a: 'undefined'
+        },
+        {
+          a: null
+        },
+        {
+          a: ''
+        },
+        {
+          a: 0
+        },
+        {
+          a: 'hello'
+        },
+        {
+          a: 5
+        },
+        {
+          a: NaN
+        },
+        {
+          a: []
+        },
+        {
+          a: {}
+        }
+      ]
+      const accumulator = AccumulatorFactory.create({ value })
+      const reducer = Factory.create(Reducer.create, {
+        a: '$a'
+      })
+      return Resolve.resolve(
+        manager,
+        Reducer.resolve,
+        accumulator,
+        reducer
+      ).then(result => {
+        expect(result.value).toEqual([
+          {
+            a: 'undefined'
+          },
+          {
+            a: 0
+          },
+          {
+            a: 'hello'
+          },
+          {
+            a: 5
+          },
+          {
+            a: []
+          },
+          {
+            a: {}
+          }
+        ])
+      })
+    })
   })
 })
