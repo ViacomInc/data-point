@@ -21,7 +21,7 @@ const modifiers = {
 
 /**
  * @param {Array<Object>} composeSpec
- * @return {Array<Object>}
+ * @return {Reducer}
  */
 function createCompose (composeSpec) {
   const stubs = composeSpec.map(modifier => {

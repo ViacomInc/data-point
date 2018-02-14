@@ -24,11 +24,11 @@ const modifiers = {
 }
 
 /**
- * @param {Array<Object>} composeParse
+ * @param {Array<Object>} composeSpec
  * @return {Reducer}
  */
-function createCompose (composeParse) {
-  const specList = composeParse.map(modifier => {
+function createCompose (composeSpec) {
+  const specList = composeSpec.map(modifier => {
     let spec
     switch (modifier.type) {
       case 'omitKeys':

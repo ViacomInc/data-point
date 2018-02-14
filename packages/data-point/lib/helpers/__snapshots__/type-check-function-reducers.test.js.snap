@@ -1,17 +1,57 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`isArray It should throw error when not matched 1`] = `"value did not pass type check, type expected: Array but recevied: string. The value received is: 'foo'"`;
+exports[`isArray It should throw error when not matched 1`] = `
+"Entity type check failed!
+Expected type: array
+Actual type: string
+Input value: 'foo'"
+`;
 
-exports[`isBoolean It should throw error when not matched 1`] = `"value did not pass type check, type expected: boolean but recevied: string. The value received is: 'foo'"`;
+exports[`isBoolean It should throw error when not matched 1`] = `
+"Entity type check failed!
+Expected type: boolean
+Actual type: string
+Input value: 'foo'"
+`;
 
-exports[`isBoolean It should throw error when not matched 2`] = `"value did not pass type check, type expected: boolean but recevied: string. The value received is: 'foo'"`;
+exports[`isBoolean It should throw error when not matched 2`] = `
+"Entity type check failed!
+Expected type: boolean
+Actual type: string
+Input value: 'foo'"
+`;
 
-exports[`isError It should throw error when not matched 1`] = `"value did not pass type check, type expected: function but recevied: string. The value received is: 'foo'"`;
+exports[`isError It should throw error when not matched 1`] = `
+"Entity type check failed!
+Expected type: function
+Actual type: string
+Input value: 'foo'"
+`;
 
-exports[`isFunction It should throw error when not matched 1`] = `"value did not pass type check, type expected: function but recevied: string. The value received is: 'foo'"`;
+exports[`isFunction It should throw error when not matched 1`] = `
+"Entity type check failed!
+Expected type: function
+Actual type: string
+Input value: 'foo'"
+`;
 
-exports[`isNumber It should throw error when not matched 1`] = `"value did not pass type check, type expected: number but recevied: string. The value received is: 'foo'"`;
+exports[`isNumber It should throw error when not matched 1`] = `
+"Entity type check failed!
+Expected type: number
+Actual type: string
+Input value: 'foo'"
+`;
 
-exports[`isObject It should throw error when not matched 1`] = `"value did not pass type check, type expected: Object but recevied: array. The value received is: []"`;
+exports[`isObject It should throw error when not matched 1`] = `
+"Entity type check failed!
+Expected type: object
+Actual type: array
+Input value: []"
+`;
 
-exports[`isString It should throw error when not matched 1`] = `"value did not pass type check, type expected: string but recevied: number. The value received is: 1"`;
+exports[`isString It should throw error when not matched 1`] = `
+"Entity type check failed!
+Expected type: string
+Actual type: number
+Input value: 1"
+`;

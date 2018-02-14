@@ -1,7 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Hash entity type checking should execute the default outputType reducer before a custom outputType reducer  1`] = `[Error: value did not pass type check, type expected: Object but recevied: array. The value received is: []]`;
+exports[`Hash entity type checking should execute the default outputType reducer before a custom outputType reducer  1`] = `
+[Error: Entity type check failed!
+Expected type: object
+Actual type: array
+Input value: []]
+`;
 
 exports[`Hash entity type checking should throw error from a custom outputType reducer 1`] = `[Error: custom type check failed]`;
 
-exports[`Hash entity type checking should throw error from default outputType reducer when input is not valid 1`] = `[Error: value did not pass type check, type expected: Object but recevied: array. The value received is: [ { foo: 1, a: { b: [Object...]`;
+exports[`Hash entity type checking should throw error from default outputType reducer when input is not valid 1`] = `
+[Error: Entity type check failed!
+Expected type: object
+Actual type: array
+Input value: [ { foo: 1, a: { b: [Object...]
+`;
