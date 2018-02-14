@@ -42,6 +42,9 @@ function create (spec, id) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
   parseCompose.validateComposeModifiers(id, spec, modifierKeys)
 
+  const outputType = spec.outputType ? ['array', spec.outputType] : 'array'
+  spec = Object.assign({}, spec, { outputType })
+
   const entity = createBaseEntity(EntityCollection, spec, id)
 
   const composeSpec = parseCompose.parse(spec, modifierKeys)

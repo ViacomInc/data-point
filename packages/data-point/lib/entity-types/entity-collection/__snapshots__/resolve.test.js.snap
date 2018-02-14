@@ -1,3 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CollectionReducer.resolve entity.collection - throw error if value not array 1`] = `[Error: collection:ObjectsNotAllowed received value = { c: [ 1, 2, 3 ] } of type object, this entity only resolves Array values. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#collection-entity]`;
+exports[`Collection entity type checking should execute the default outputType reducer before a custom outputType reducer  1`] = `[Error: value did not pass type check, type expected: Array but recevied: object. The value received is: {}]`;
+
+exports[`Collection entity type checking should throw error from a custom outputType reducer 1`] = `[Error: custom type check failed]`;
+
+exports[`Collection entity type checking should throw error from default outputType reducer when input is not valid 1`] = `[Error: value did not pass type check, type expected: Array but recevied: object. The value received is: { c: [ 1, 2, 3 ] }]`;

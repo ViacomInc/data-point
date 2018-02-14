@@ -146,17 +146,17 @@ describe('ResolveEntity.resolveEntity', () => {
   }
 
   test('It should resolve entity', () => {
-    return resolveEntity('hash:asIs', 'foo').then(acc => {
+    return resolveEntity('model:asIs', 'foo').then(acc => {
       expect(acc).toHaveProperty('value', 'foo')
     })
   })
 
   test('It should attach entityId to error', () => {
     const rejectResolver = () => Promise.reject(new Error('test'))
-    return resolveEntity('hash:asIs', undefined, undefined, rejectResolver)
+    return resolveEntity('model:asIs', undefined, undefined, rejectResolver)
       .catch(error => error)
       .then(val => {
-        expect(val).toHaveProperty('entityId', 'hash:asIs')
+        expect(val).toHaveProperty('entityId', 'model:asIs')
       })
   })
 
@@ -165,7 +165,7 @@ describe('ResolveEntity.resolveEntity', () => {
     const consoleTimeEnd = console.timeEnd
     console.time = jest.fn()
     console.timeEnd = jest.fn()
-    return resolveEntity('hash:asIs', 'foo', {
+    return resolveEntity('model:asIs', 'foo', {
       trace: true
     }).then(acc => {
       expect(console.time).toBeCalled()
@@ -178,18 +178,17 @@ describe('ResolveEntity.resolveEntity', () => {
 
   test('It should resolve through bypass', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
-      acc.resolve('bar')
+      acc.resolve({ data: 'bar' })
       next(null)
     })
     return resolveEntity('hash:asIs', 'foo').then(acc => {
-      expect(acc).toHaveProperty('value', 'bar')
+      expect(acc.value).toEqual({ data: 'bar' })
     })
   })
 
   test('it should catch errors from middleware', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
-      const err = new Error('test')
-      throw err
+      throw new Error('test')
     })
     return resolveEntity('hash:asIs', 'foo')
       .catch(err => err)
@@ -380,7 +379,7 @@ describe('ResolveEntity.resolve', () => {
       const result = utils.set(acc, 'value', 'bar')
       return Promise.resolve(result)
     }
-    return resolve(resolver)('hash:asIs', 'foo').then(acc => {
+    return resolve(resolver)('model:asIs', 'foo').then(acc => {
       expect(acc).toHaveProperty('value', 'bar')
     })
   })
@@ -390,7 +389,7 @@ describe('ResolveEntity.resolve', () => {
       const result = utils.set(acc, 'value', 'bar')
       return Promise.resolve(result)
     }
-    return resolve(resolver)('hash:asIs[]', ['foo']).then(acc => {
+    return resolve(resolver)('model:asIs[]', ['foo']).then(acc => {
       expect(acc).toHaveProperty('value', ['bar'])
     })
   })
@@ -398,13 +397,13 @@ describe('ResolveEntity.resolve', () => {
     const resolver = (acc, resolveReducer) => {
       return Promise.resolve(acc)
     }
-    return resolve(resolver)('hash:asIs[]', {}).then(acc => {
+    return resolve(resolver)('model:asIs[]', {}).then(acc => {
       expect(acc.value).toBeUndefined()
     })
   })
   test('It should not execute resolver if flag hasEmptyConditional is true and value is empty', () => {
     const resolver = jest.fn()
-    return resolve(resolver)('?hash:asIs', undefined).then(acc => {
+    return resolve(resolver)('?model:asIs', undefined).then(acc => {
       expect(resolver).not.toHaveBeenCalled()
     })
   })
@@ -414,7 +413,7 @@ describe('ResolveEntity.resolve', () => {
       const result = utils.set(acc, 'value', 'bar')
       return Promise.resolve(result)
     }
-    return resolve(resolver)('?hash:asIs', 'foo').then(acc => {
+    return resolve(resolver)('?model:asIs', 'foo').then(acc => {
       expect(acc).toHaveProperty('value', 'bar')
     })
   })
@@ -425,7 +424,7 @@ describe('ResolveEntity.resolve', () => {
       const result = utils.set(acc, 'value', count++)
       return Promise.resolve(result)
     }
-    return resolve(resolver)('?hash:asIs[]', [
+    return resolve(resolver)('?model:asIs[]', [
       'a',
       undefined,
       'b',

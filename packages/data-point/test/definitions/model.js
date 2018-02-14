@@ -1,4 +1,7 @@
 module.exports = {
+  'model:asIs': {
+    value: '$'
+  },
   'model:lifecycles': {
     inputType: 'array',
     before: (input, context) => context.locals.before(input),

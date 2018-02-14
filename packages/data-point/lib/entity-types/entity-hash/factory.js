@@ -23,6 +23,10 @@ const modifiers = {
   assign: reducerHelpers.stubFactories.assign
 }
 
+/**
+ * @param {Array<Object>} composeParse
+ * @return {Reducer}
+ */
 function createCompose (composeParse) {
   const specList = composeParse.map(modifier => {
     let spec
@@ -60,6 +64,9 @@ function createCompose (composeParse) {
 function create (spec, id) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
   parseCompose.validateComposeModifiers(id, spec, modifierKeys)
+
+  const outputType = spec.outputType ? ['object', spec.outputType] : 'object'
+  spec = Object.assign({}, spec, { outputType })
 
   const entity = createBaseEntity(EntityHash, spec, id)
 

@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`entity.hash.resolve entity.hash - only process Plain Objects 1`] = `"hash:asIs received value = [ { foo: 1, a: { b: [Object... of type array, this entity only resolves plain Objects. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#hash-entity"`;
+exports[`Hash entity type checking should execute the default outputType reducer before a custom outputType reducer  1`] = `[Error: value did not pass type check, type expected: Object but recevied: array. The value received is: []]`;
 
-exports[`entity.hash.resolve entity.hash - throw error if value is not object 1`] = `[Error: hash:noValue received value = 'invalid' of type string, this entity only resolves plain Objects. More info https://github.com/ViacomInc/data-point/tree/master/packages/data-point#hash-entity]`;
+exports[`Hash entity type checking should throw error from a custom outputType reducer 1`] = `[Error: custom type check failed]`;
+
+exports[`Hash entity type checking should throw error from default outputType reducer when input is not valid 1`] = `[Error: value did not pass type check, type expected: Object but recevied: array. The value received is: [ { foo: 1, a: { b: [Object...]`;
