@@ -642,7 +642,7 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 
 ### <a name="object-reducer">ObjectReducer</a>
 
-ObjectReducers are plain objects where the values are reducers. They're used to aggregate data or transform objects. For values that should be constants instead of reducers, you can use the [constant](#reducer-constant) reducer helper.
+These are plain objects where the value of each key is a [reducer](#reducers). They're used to aggregate data or transform objects. For values that should be constants instead of reducers, you can use the [constant](#reducer-constant) reducer helper.
 
 <details>
   <summary>Transforming an object</summary>
@@ -790,6 +790,16 @@ Each of the reducers might contain more ObjectReducers (which might contain redu
   ```
 </details>
 
+An empty `ObjectReducer` will resolve to an empty object:
+
+```js
+const reducer = {}
+
+const input = { a: 1 }
+
+dataPoint.resolve(reducer, input) // => {}
+```
+
 ### <a name="entity-reducer">EntityReducer</a>
 
 An EntityReducer is the actual implementation of an entity. When implementing an EntityReducer, you are actually passing the current [Accumulator](#accumulator) Object to an entity spec, to become its current Accumulator object.
@@ -847,6 +857,16 @@ A ListReducer is an array of reducers where the result of each reducer becomes t
 |:---|:---|
 | `['$a.b', (input) => { ... }]` | Get path `a.b`, pipe value to function reducer |
 | `['$a.b', (input) => { ... }, 'hash:Foo']` | Get path `a.b`, pipe value to function reducer, pipe result to `hash:Foo` |
+
+**IMPORTANT**: an empty `ListReducer` will resolve to `undefined`. This mirrors the behavior of empty functions.
+
+```js
+const reducer = []
+
+const input = 'INPUT'
+
+dataPoint.resolve(reducer, input) // => undefined
+```
 
 ### <a name="reducer-conditional-operator">Conditionally execute an entity</a>
 

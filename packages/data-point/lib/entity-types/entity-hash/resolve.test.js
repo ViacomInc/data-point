@@ -68,9 +68,9 @@ describe('entity.hash.mapKeys', () => {
       expect(acc.value).toEqual({ h: 2 })
     })
   })
-  test('do nothing if mapKeys is empty', () => {
+  test('returns empty object if mapKeys is empty', () => {
     return transform('hash:b.2', testData).then(acc => {
-      expect(acc.value).toEqual({ g1: 1 })
+      expect(acc.value).toEqual({})
     })
   })
 })
@@ -117,9 +117,9 @@ describe('entity.hash.pickKeys', () => {
       })
     })
   })
-  test('it should do nothing if pickKeys is empty', () => {
+  test('returns empty object if pickKeys is empty', () => {
     return transform('hash:e.2', testData).then(acc => {
-      expect(acc.value).toEqual({ g1: 1 })
+      expect(acc.value).toEqual({})
     })
   })
 })

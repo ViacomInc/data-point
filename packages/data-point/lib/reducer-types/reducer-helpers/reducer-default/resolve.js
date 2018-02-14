@@ -1,17 +1,5 @@
 const utils = require('../../../utils')
-
-/**
- * @param {*} value
- * @return {boolean}
- */
-function isFalsy (value) {
-  return (
-    value === null ||
-    typeof value === 'undefined' ||
-    Number.isNaN(value) ||
-    value === ''
-  )
-}
+const { isFalsy } = require('../utils')
 
 /**
  * @param {Accumulator} accumulator
