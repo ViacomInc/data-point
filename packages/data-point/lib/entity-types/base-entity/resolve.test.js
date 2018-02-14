@@ -20,13 +20,13 @@ afterEach(() => {
 })
 
 describe('ResolveEntity.resolveErrorReducers', () => {
-  test('It should reject if no transform set', () => {
+  test('It should reject if no reducer is provided', () => {
     const err = new Error('Test')
     const accumulator = helpers.createAccumulator(
       {},
       {
         context: {
-          error: createReducer([])
+          error: null
         }
       }
     )
@@ -43,7 +43,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       })
   })
 
-  test('It should handle if transform set', () => {
+  test('It should handle error if reducer is provided', () => {
     const err = new Error('Test')
     const accumulator = helpers.createAccumulator(
       {},

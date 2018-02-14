@@ -11,8 +11,7 @@ test('factory#create default', () => {
   expect(result).not.toHaveProperty('after')
   expect(result).not.toHaveProperty('value')
   expect(result.params).toEqual({})
-
-  expect(helpers.isReducer(result.compose)).toBe(true)
+  expect(result.compose).toBeUndefined()
 })
 
 describe('factory#parse loose modifiers', () => {

@@ -5,19 +5,10 @@ const _ = require('lodash')
 const utils = require('../../utils')
 
 /**
- * @param {Accumulator} accumulator
- * @param {reducer} composeReducer
- * @param {Function} resolveReducer
+ * NOTE: as expensive as this might be, this is to avoid 'surprises'
+ * @param {Accumulator} acc
+ * @return {Promise<Accumulator>}
  */
-function resolveCompose (accumulator, composeReducer, resolveReducer) {
-  if (utils.reducerIsEmpty(composeReducer)) {
-    return Promise.resolve(accumulator)
-  }
-
-  return resolveReducer(accumulator, composeReducer)
-}
-
-// NOTE: as expensive as this might be, this is to avoid 'surprises'
 function validateAsArray (acc) {
   const entity = acc.reducer.spec
   return acc.value instanceof Array
@@ -46,7 +37,7 @@ function resolve (accumulator, resolveReducer) {
 
   return resolveReducer(accumulator, entity.value)
     .then(acc => validateAsArray(acc))
-    .then(acc => resolveCompose(acc, entity.compose, resolveReducer))
+    .then(acc => resolveReducer(acc, entity.compose))
 }
 
 module.exports.resolve = resolve

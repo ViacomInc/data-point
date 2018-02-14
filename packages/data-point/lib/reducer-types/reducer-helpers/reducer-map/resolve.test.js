@@ -16,17 +16,13 @@ beforeAll(() => {
 })
 
 describe('ReducerMap#resolve', () => {
-  test('It should return the accumulator when resolver is empty', () => {
-    const value = [
-      {
-        a: 1
-      }
-    ]
+  test('It should return array with undefined elements when reducer is empty list', () => {
+    const value = [true, true]
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual(value)
+        expect(result.value).toEqual([undefined, undefined])
       }
     )
   })
