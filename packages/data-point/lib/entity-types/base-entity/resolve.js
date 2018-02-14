@@ -14,7 +14,7 @@ const utils = require('../../utils')
  */
 function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
   const errorReducer = accumulator.reducer.spec.error
-  if (utils.reducerIsEmpty(errorReducer)) {
+  if (!errorReducer) {
     return Promise.reject(error)
   }
 

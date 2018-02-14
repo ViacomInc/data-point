@@ -65,7 +65,9 @@ function create (spec, id) {
 
   const compose = parseCompose.parse(spec, modifierKeys)
   parseCompose.validateCompose(entity.id, compose, modifierKeys)
-  entity.compose = createCompose(compose)
+  if (compose.length) {
+    entity.compose = createCompose(compose)
+  }
 
   return Object.freeze(entity)
 }

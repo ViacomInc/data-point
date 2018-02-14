@@ -17,22 +17,22 @@ beforeAll(() => {
   manager = fixtureStore.create()
 })
 
-test('resolve#reducer.resolve - reducer empty', () => {
-  const accumulator = AccumulatorFactory.create({
-    value: testData.a.g
+describe('resolve#reducer.resolve - with valid reducers', () => {
+  test('empty reducer list should return undefined', () => {
+    const accumulator = AccumulatorFactory.create({
+      value: true
+    })
+
+    const reducerList = createReducerList(createReducer, [])
+
+    return resolveReducerList(
+      manager,
+      resolveReducer,
+      accumulator,
+      reducerList
+    ).then(result => expect(result.value).toBeUndefined())
   })
 
-  const reducerList = createReducerList(createReducer, '')
-
-  return resolveReducerList(
-    manager,
-    resolveReducer,
-    accumulator,
-    reducerList
-  ).then(result => expect(result.value).toEqual(testData.a.g))
-})
-
-describe('resolve#reducer.resolve - with valid reducers', () => {
   test('one reducer', () => {
     const accumulator = AccumulatorFactory.create({
       value: testData

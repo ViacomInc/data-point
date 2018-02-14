@@ -12,10 +12,6 @@ const utils = require('../../../utils')
  */
 function resolve (manager, resolveReducer, accumulator, reducerOmit) {
   const keys = reducerOmit.keys
-  if (keys.length === 0) {
-    return Promise.resolve(accumulator)
-  }
-
   const value = omit(accumulator.value, keys)
   return Promise.resolve(utils.set(accumulator, 'value', value))
 }

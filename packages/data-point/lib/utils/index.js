@@ -87,16 +87,6 @@ function inspectProperties (obj, props, indent = '') {
 
 module.exports.inspectProperties = inspectProperties
 
-/**
- * @param {reducer} reducer
- * @returns {boolean}
- */
-function reducerIsEmpty (reducer) {
-  return !reducer || !!reducer.isEmpty
-}
-
-module.exports.reducerIsEmpty = reducerIsEmpty
-
 function isFalsy (val) {
   return val === null || val === false || typeof val === 'undefined'
 }

@@ -20,13 +20,13 @@ afterEach(() => {
 })
 
 describe('ResolveEntity.resolveErrorReducers', () => {
-  test('It should reject if no transform set', () => {
+  test('It should reject if no reducer is provided', () => {
     const err = new Error('Test')
     const accumulator = helpers.createAccumulator(
       {},
       {
         context: {
-          error: createReducer([])
+          error: null
         }
       }
     )
@@ -43,7 +43,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       })
   })
 
-  test('It should handle if transform set', () => {
+  test('It should handle error if reducer is provided', () => {
     const err = new Error('Test')
     const accumulator = helpers.createAccumulator(
       {},
@@ -134,7 +134,7 @@ describe('ResolveEntity.resolveEntity', () => {
   const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc)
 
   const resolveEntity = (entityId, input, options, resolver) => {
-    const racc = helpers.createAccumulator.call(null, input, options)
+    const racc = helpers.createAccumulator(input, options)
     const reducer = createReducerEntity(createReducer, entityId)
     return ResolveEntity.resolveEntity(
       dataPoint,
@@ -217,7 +217,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
   const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc)
 
   const resolveEntity = (entityId, input, options, resolver) => {
-    const racc = helpers.createAccumulator.call(null, input, options)
+    const racc = helpers.createAccumulator(input, options)
     const reducer = createReducerEntity(createReducer, entityId)
     return ResolveEntity.resolveEntity(
       dataPoint,
@@ -364,7 +364,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
 describe('ResolveEntity.resolve', () => {
   const resolve = resolver => (entityId, input, options) => {
-    const racc = helpers.createAccumulator.call(null, input, options)
+    const racc = helpers.createAccumulator(input, options)
     const reducer = createReducerEntity(createReducer, entityId)
     return ResolveEntity.resolve(
       dataPoint,
@@ -434,5 +434,89 @@ describe('ResolveEntity.resolve', () => {
     ]).then(acc => {
       expect(acc).toHaveProperty('value', [0, undefined, 1, null, 2])
     })
+  })
+})
+
+describe('entity lifecycle methods', () => {
+  // modifies the given stack by reference
+  function addMiddleware (stack) {
+    dataPoint.middleware.use('before', (acc, next) => {
+      stack.push('before [middleware]')
+      next(null)
+    })
+    dataPoint.middleware.use('model:before', (acc, next) => {
+      stack.push('model:before [middleware]')
+      next(null)
+    })
+    dataPoint.middleware.use('model:after', (acc, next) => {
+      stack.push('model:after [middleware]')
+      next(null)
+    })
+    dataPoint.middleware.use('after', (acc, next) => {
+      stack.push('after [middleware]')
+      next(null)
+    })
+  }
+
+  function pushToStack (stack, value) {
+    stack.push(value)
+    return stack
+  }
+
+  test('It should resolve methods in the correct order with no error', () => {
+    const stack = []
+
+    addMiddleware(stack)
+
+    return dataPoint
+      .resolve('model:lifecycles', [], {
+        locals: {
+          before: () => pushToStack(stack, 'before'),
+          value: () => pushToStack(stack, 'value'),
+          after: () => pushToStack(stack, 'after'),
+          error: () => pushToStack(stack, 'error')
+        }
+      })
+      .catch(err => err)
+      .then(output => {
+        expect(output).toEqual([
+          'before [middleware]',
+          'model:before [middleware]',
+          'before',
+          'value',
+          'after',
+          'model:after [middleware]',
+          'after [middleware]'
+        ])
+      })
+  })
+  test('It should resolve methods in the correct order when error is thrown', () => {
+    const stack = []
+
+    addMiddleware(stack)
+
+    dataPoint.middleware.use('model:before', (acc, next) => {
+      stack.push('model:before [middleware with error]')
+      throw new Error()
+    })
+
+    return dataPoint
+      .resolve('model:lifecycles', [], {
+        locals: {
+          before: () => pushToStack(stack, 'before'),
+          value: () => pushToStack(stack, 'value'),
+          after: () => pushToStack(stack, 'after'),
+          error: () => pushToStack(stack, 'error')
+        }
+      })
+      .catch(err => err)
+      .then(output => {
+        expect(output).toEqual([
+          'before [middleware]',
+          'model:before [middleware]',
+          'model:before [middleware with error]',
+          'error'
+        ])
+      })
   })
 })

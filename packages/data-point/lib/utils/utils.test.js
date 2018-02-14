@@ -2,7 +2,6 @@
 
 const _ = require('lodash')
 const utils = require('./index')
-const createReducer = require('../reducer-types/factory').create
 
 describe('utils.set', () => {
   const target = { b: 1 }
@@ -118,19 +117,6 @@ describe('inspectProperties', () => {
     expect(
       utils.inspectProperties(obj, ['a', 'b', 'c'], '  ')
     ).toMatchSnapshot()
-  })
-})
-
-describe('reducerIsEmpty', () => {
-  test('It should test for empty reducers', () => {
-    expect(utils.reducerIsEmpty()).toEqual(true)
-    expect(utils.reducerIsEmpty(null)).toEqual(true)
-    expect(utils.reducerIsEmpty(createReducer([]))).toEqual(true)
-    expect(utils.reducerIsEmpty(createReducer({}))).toEqual(true)
-    expect(utils.reducerIsEmpty(createReducer('$a'))).toEqual(false)
-    expect(utils.reducerIsEmpty(createReducer(['$a']))).toEqual(false)
-    expect(utils.reducerIsEmpty(createReducer(['$a', '$a']))).toEqual(false)
-    expect(utils.reducerIsEmpty(createReducer({ a: '$a' }))).toEqual(false)
   })
 })
 

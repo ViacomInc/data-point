@@ -17,11 +17,10 @@ beforeAll(() => {
 
 describe('ReducerOmit#resolve', () => {
   test('It should return the accumulator when no keys are provided', () => {
-    const value = [
-      {
-        a: 1
-      }
-    ]
+    const value = {
+      a: 1,
+      b: 2
+    }
     const accumulator = AccumulatorFactory.create({ value })
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
