@@ -8,9 +8,8 @@ const {
   isError,
   isArray,
   isObject
-} = require('./type-check-function-reducers')
+} = require('./type-check-functions')
 
-// TODO rename type-check-function-reducers to not say "reducers"
 function testTypeChecker (typeCheck, goodValue, badValue, type) {
   test('It should return true if type match', () => {
     expect(typeCheck(goodValue)).toBe(goodValue)

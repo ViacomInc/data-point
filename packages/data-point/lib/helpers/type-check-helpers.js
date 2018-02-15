@@ -1,4 +1,4 @@
-const typeCheckFunctions = require('./type-check-function-reducers')
+const typeCheckFunctions = require('./type-check-functions')
 
 const modifiers = {
   string: typeCheckFunctions.isString,
