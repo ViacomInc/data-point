@@ -11,7 +11,7 @@ const modifiers = {
 }
 
 /**
- * @param {*} source
+ * @param {*} source - for creating a reducer that does type checking
  * @return {*}
  */
 function normalizeTypeCheckSource (source) {
@@ -28,18 +28,20 @@ module.exports.normalizeTypeCheckSource = normalizeTypeCheckSource
  * @param {string} defaultType
  * @param {string} specType
  * @throws if specType !== defaultType but it's a key in the modifiers object
- * @return {string|Array<String>} TODO is this type correct?
+ * @return {*}
  */
-function getOutputTypeWithDefault (defaultType, specType) {
+function getTypeCheckSourceWithDefault (entityType, defaultType, specType) {
   if (!specType || specType === defaultType) {
     return defaultType
   }
 
   if (modifiers[specType]) {
-    throw new Error()
+    throw new Error(
+      `${entityType} entities do not support the "${specType}" outputType!`
+    )
   }
 
   return [defaultType, specType]
 }
 
-module.exports.getOutputTypeWithDefault = getOutputTypeWithDefault
+module.exports.getTypeCheckSourceWithDefault = getTypeCheckSourceWithDefault

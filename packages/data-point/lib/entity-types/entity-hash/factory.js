@@ -6,7 +6,9 @@ const reducerHelpers = require('../../reducer-types/reducer-helpers')
 const parseCompose = require('../parse-compose')
 const createBaseEntity = require('../base-entity').create
 const { validateModifiers } = require('../validate-modifiers')
-const { getOutputTypeWithDefault } = require('../../helpers/type-check-helpers')
+const {
+  getTypeCheckSourceWithDefault
+} = require('../../helpers/type-check-helpers')
 
 /**
  * @class
@@ -66,7 +68,11 @@ function create (spec, id) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
   parseCompose.validateComposeModifiers(id, spec, modifierKeys)
 
-  const outputType = getOutputTypeWithDefault('object', spec.outputType)
+  const outputType = getTypeCheckSourceWithDefault(
+    'hash',
+    'object',
+    spec.outputType
+  )
   spec = Object.assign({}, spec, { outputType })
 
   const entity = createBaseEntity(EntityHash, spec, id)
