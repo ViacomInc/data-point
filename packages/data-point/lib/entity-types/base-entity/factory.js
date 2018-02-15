@@ -1,32 +1,8 @@
 const deepFreeze = require('deep-freeze')
 const defaultTo = require('lodash/defaultTo')
-const typeCheckFunctionReducers = require('../../helpers/type-check-function-reducers')
+const { normalizeTypeCheckSource } = require('../../helpers/type-check-helpers')
 
 const createReducer = require('../../reducer-types').create
-
-const typeCheckModifiers = {
-  string: typeCheckFunctionReducers.isString,
-  number: typeCheckFunctionReducers.isNumber,
-  boolean: typeCheckFunctionReducers.isBoolean,
-  function: typeCheckFunctionReducers.isFunction,
-  error: typeCheckFunctionReducers.isError,
-  array: typeCheckFunctionReducers.isArray,
-  object: typeCheckFunctionReducers.isObject
-}
-
-/**
- * @param {*} source
- * @return {*}
- */
-function normalizeTypeCheckSource (source) {
-  if (Array.isArray(source)) {
-    return source.map(r => normalizeTypeCheckSource(r))
-  }
-
-  return typeCheckModifiers[source] || source
-}
-
-module.exports.normalizeTypeCheckSource = normalizeTypeCheckSource
 
 /**
  * @param {Function} Factory - factory function to create the entity
