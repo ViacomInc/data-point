@@ -2384,7 +2384,7 @@ For examples of hash entities, see the [Examples](examples), on the unit tests: 
 
 #### <a name="collection-entity">Collection Entity</a>
 
-A Collection entity enables you to operate over an array. It's API provides basic reducers to manipulate the elements in the array.
+A Collection entity enables you to operate over an array. Its API provides basic reducers to manipulate the elements in the array.
 
 Collection entities expose a set of reducers that you may apply to them: [map](#collection-map), [find](#collection-find), [filter](#collection-filter). These reducers are executed in a [specific order](#collection-reducers-order). If you want to have more control over the order of execution, use the [compose](#compose-reducer) reducer.
 
