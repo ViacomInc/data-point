@@ -16,7 +16,7 @@ function ReducerParallel () {
   this.reducers = []
 }
 
-module.exports.ReducerParallel = ReducerParallel
+module.exports.Constructor = ReducerParallel
 
 /**
  * @param {Function} createReducer
