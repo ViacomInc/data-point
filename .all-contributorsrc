@@ -82,6 +82,9 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/16357592?v=4",
       "profile": "https://github.com/victorsingh",
       "contributions": [
+        "code",
+        "doc",
+        "test",
         "bug"
       ]
     }

@@ -42,7 +42,7 @@ npm install --save data-point
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
   - [Built-in entities](#built-in-entities)
-    - [Transform](#transform-entity)
+    - [Reducer / Transform](#reducer-entity)
     - [Model](#model-entity)
     - [Entry](#entry-entity)
     - [Request](#request-entity)
@@ -270,7 +270,7 @@ Execute a [Reducer](#reducers) against an input value. This function supports cu
 **SYNOPSIS**
 
 ```js
-dataPoint.resolve(reducer:Reducer, input:*, options:TransformOptions):Promise(output:*)
+dataPoint.resolve(reducer:Reducer, input:*, options:Object):Promise(output:*)
 ```
 
 This method returns a **Promise** with the final output value.
@@ -281,7 +281,7 @@ This method returns a **Promise** with the final output value.
 |:---|:---|:---|
 | *reducer* | [Reducer](#reducers) | Reducer that manipulates the input. |
 | *input* | `*` | Input value that you want to transform. If **none**, pass `null` or empty object `{}`. |
-| *options* | [TransformOptions](#transform-options) | Options within the scope of the current transformation |
+| *options* | [Object](#transform-options) | Options within the scope of the current transformation |
 
 **EXAMPLES:**
 
@@ -301,9 +301,9 @@ This method is similar to [dataPoint.resolve()](#api-data-point-resolve). The di
 
 ```js
 // as promise
-dataPoint.transform(reducer:Reducer, input:*, options:TransformOptions):Promise(acc:*)
+dataPoint.transform(reducer:Reducer, input:*, options:Object):Promise(acc:*)
 // as nodejs callback function
-dataPoint.transform(reducer:Reducer, input:*, options:TransformOptions, done:Function)
+dataPoint.transform(reducer:Reducer, input:*, options:Object, done:Function)
 ```
 
 This method will return a **Promise** if `done` is omitted.
@@ -317,7 +317,7 @@ This method will return a **Promise** if `done` is omitted.
 | *options* | [Reducer](#reducers) | Request options. See this [example](#options-with-constants) for using constants in the reducer |
 | *done* | `function` _(optional)_ | Error-first callback [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks) that has the arguments `(error, result)`, where `result` contains the final resolved [Accumulator](#accumulator). The actual transformation result will be inside the `result.value` property. |
 
-**<a name="transform-options">TransformOptions</a>**
+**<a name="transform-options">Options</a>**
 
 Options within the scope of the current transformation.
 
@@ -351,7 +351,7 @@ The `Accumulator.value` property is the data source from which you want to apply
 | *value*  | `Object` | Value to be transformed. |
 | *initialValue*  | `Object` | Initial value passed to the an entity. You can use this value as a reference to the initial value passed to your Entity before any reducer was applied. |
 | *values*  | `Object` | Access to the values stored via [dataPoint.addValue](#api-data-point-add-value). |
-| *params*  | `Object` | Value of the current Entity's params property. (for all entites except transform) |
+| *params*  | `Object` | Value of the current Entity's params property. (for all entities except [Reducer](#reducer-entity)) |
 | *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#api-data-point-transform). |
 | *reducer*  | `Object` | Information relative to the current [Reducer](#reducers) being executed. |
 
@@ -1330,7 +1330,7 @@ dataPoint.addEntities({
 
 DataPoint comes with the following built-in entities: 
 
-- [Transform](#transform-entity)
+- [Reducer / Transform](#reducer-entity)
 - [Model](#model-entity)
 - [Entry](#entry-entity)
 - [Request](#request-entity)
@@ -1341,7 +1341,7 @@ DataPoint comes with the following built-in entities:
 
 #### <a name="entity-base-api">Entity Base API</a>
 
-All entities share a common API (except for [Transform](#transform-entity)).
+All entities share a common API (except for [Reducer](#reducer-entity)).
 
 ```js
 {
@@ -1483,15 +1483,21 @@ To customize type checking you may use a [Reducer](#reducers). If the reducer th
 </details>
 
 
-#### <a name="transform-entity">Transform Entity</a>
+#### <a name="reducer-entity">Reducer Entity</a>
 
-A Transform entity is meant to be used as a 'snippet' entity that you can re-use in other entities. It does not expose the before/after/error/params API that other entities have.
+A Reducer entity is a 'snippet' that you can re-use in other entities. It does not expose the before/after/error/params API that other entities have.
 
-The value of a Transform entity is a [Reducer](#reducers).
-
-IMPORTANT: Transform Entities **do not support** [extension](#extending-entities).
+IMPORTANT: Reducer Entities **do not support** [extension](#extending-entities).
 
 **SYNOPSIS**
+
+```js
+dataPoint.addEntities({
+  'reducer:<entityId>': Reducer
+})
+```
+
+For backwards compatibility, the keyword **transform** can be used in place of **reducer**:
 
 ```js
 dataPoint.addEntities({
@@ -1500,7 +1506,7 @@ dataPoint.addEntities({
 ```
 
 <details>
-  <summary>Transform Entity Example</summary>
+  <summary>Reducer Entity Example</summary>
   
   ```js
   const input = {
@@ -1520,11 +1526,11 @@ dataPoint.addEntities({
   }
   
   dataPoint.addEntities({
-    'transform:foo': ['$a.b.c', getMax, multiplyBy(10)]
+    'reducer:foo': ['$a.b.c', getMax, multiplyBy(10)]
   })
   
   dataPoint
-    .resolve('transform:foo', input)
+    .resolve('reducer:foo', input)
     .then((output) => {
       assert.equal(output, 30)
     })
@@ -1972,7 +1978,7 @@ Example at: [examples/entity-request-string-template.js](examples/entity-request
 
 Example at: [examples/entity-request-options-locals.js](examples/entity-request-options-locals.js)
 
-For more information on acc.locals: [TransformOptions](#transform-options) and [Accumulator](#accumulator) Objects.
+For more information on acc.locals: [Transform Options](#transform-options) and [Accumulator](#accumulator) Objects.
 
 <a name="options-with-constants" >Using constants in the options reducer:</a>
 
