@@ -153,10 +153,10 @@ describe('ResolveEntity.resolveEntity', () => {
 
   test('It should attach entityId to error', () => {
     const rejectResolver = () => Promise.reject(new Error('test'))
-    return resolveEntity('model:asIs', undefined, undefined, rejectResolver)
+    return resolveEntity('hash:asIs', undefined, undefined, rejectResolver)
       .catch(error => error)
       .then(val => {
-        expect(val).toHaveProperty('entityId', 'model:asIs')
+        expect(val).toHaveProperty('entityId', 'hash:asIs')
       })
   })
 
