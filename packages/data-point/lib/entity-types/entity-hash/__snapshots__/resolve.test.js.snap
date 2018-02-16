@@ -9,7 +9,7 @@ Input value: []]
 
 exports[`Hash entity type checking should throw error from a custom outputType reducer 1`] = `[Error: custom type check failed]`;
 
-exports[`Hash entity type checking should throw error from default outputType reducer when input is not valid 1`] = `
+exports[`Hash entity type checking should throw error from default outputType reducer when output is not valid 1`] = `
 [Error: Entity type check failed!
 Expected type: object
 Actual type: array

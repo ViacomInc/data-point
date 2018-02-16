@@ -43,7 +43,7 @@ describe('Collection entity type checking', () => {
         expect(result).toMatchSnapshot()
       })
   }
-  test('should throw error from default outputType reducer when input is not valid', () => {
+  test('should throw error from default outputType reducer when output is not valid', () => {
     return resolveInvalid('collection:ObjectsNotAllowed', testData)
   })
   test('should throw error from a custom outputType reducer', () => {
