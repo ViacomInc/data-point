@@ -49,6 +49,21 @@ We want DataPoint to be accessible to users from Node 6.x and above, because of 
 
 That said, for asynchronous code please rely on using BlueBird's promise api.
 
+**Testing Style**
+
+We want `DataPoint` to maintain 100% test coverage for a few reasons. It ensures the library is working as expected, and it documents the library with clear examples. If we run `jest --verbose`, we get a nice, readable list of what the library does:
+
+![](https://user-images.githubusercontent.com/737065/36062198-0cf4e4ba-0e35-11e8-96da-4b27426f338f.png)
+
+Here are a few tips for organizing your tests:
+
+* Use the `describe` blocks to split up logically related tests, and write clear descriptions of what the tests relate to. (See tests in the [`base-entity`](https://github.com/ViacomInc/data-point/blob/b60824509467af599ef12d730a1b6cf8778d0b9d/packages/data-point/lib/entity-types/base-entity/resolve.test.js#L216) for an example.)
+* Break up individual tests to have as few `expect`s in each test as possible. This way if a single `expect` fails for some reason, it immediately gets narrowed down to the one test that failed. Also when `jest` throws the error it'll write the description string in the console, so we'll be able to read the English description of what failed and not read any code to understand the problem. (See [these tests in `reducer-herlpers/utils`](https://github.com/ViacomInc/data-point/blob/b60824509467af599ef12d730a1b6cf8778d0b9d/packages/data-point/lib/reducer-types/reducer-helpers/utils/index.test.js#L5-L45) for an example.)
+* Write simple result expectations directly in the test. Use `toMatchSnapshot()` if there is a large, complex expected result.
+
+For more ideas when writing tests, check out this article: http://marclittlemore.com/how-to-write-high-quality-unit-tests/
+
+
 ## Supported Node Versions
 
 We will only be supporting node 6 and above, please make sure the code you use is supported by this version.
