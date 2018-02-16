@@ -1,4 +1,13 @@
 module.exports = {
+  'model:lifecycles': {
+    inputType: 'array',
+    before: (input, context) => context.locals.before(input),
+    value: (input, context) => context.locals.value(input),
+    after: (input, context) => context.locals.after(input),
+    error: (input, context) => context.locals.error(input),
+    outputType: 'array'
+  },
+
   'model:a.0': {},
   'model:a.1': {
     value: value => value + 5

@@ -8,5 +8,6 @@ module.exports = Object.assign(
   require('./collection'),
   require('./requests'),
   require('./control'),
-  require('./integrations')
+  require('./integrations'),
+  require('./reducer')
 )
