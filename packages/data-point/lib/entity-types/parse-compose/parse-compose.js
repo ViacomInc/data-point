@@ -1,83 +1,72 @@
 const intersection = require('lodash/intersection')
 
 /**
- * @param {string} id - Entity's Id
- * @param {Object} spec
+ * @param {string} entityId
  * @param {Array<string>} validKeys
+ * @param {Object} spec
  * @throws if the spec is not valid
- * @returns {boolean}
+ * @returns {Array<Object>}
  */
-function validateComposeModifiers (id, spec, validKeys) {
-  if (!spec.compose) {
-    return true
-  }
-
-  if (!(spec.compose instanceof Array)) {
+function parse (entityId, validKeys, spec) {
+  const specKeys = intersection(Object.keys(spec), validKeys)
+  if (specKeys.length > 1) {
     throw new Error(
-      `Entity ${id} compose property is expected to be an instance of Array, but found ${
-        spec.compose
-      }`
+      `Entity ${entityId} is invalid. When using multiple keys, they should be inside compose.`
     )
   }
 
-  const specKeys = Object.keys(spec)
-  const invalidKeys = intersection(validKeys, specKeys)
-  if (invalidKeys.length !== 0) {
-    throw new Error(
-      `Entity ${id} is invalid; when 'compose' is defined the keys: '${invalidKeys.join(
-        ', '
-      )}' should be inside compose.`
-    )
+  if (spec.compose) {
+    if (!Array.isArray(spec.compose)) {
+      throw new Error(
+        `Entity ${entityId} compose property is expected to be an instance of Array, but found ${
+          spec.compose
+        }`
+      )
+    }
+
+    if (specKeys.length !== 0) {
+      throw new Error(
+        `Entity ${entityId} is invalid; when 'compose' is defined the keys: '${specKeys.join(
+          ', '
+        )}' should be inside compose.`
+      )
+    }
+
+    return parseComposeSpec(entityId, validKeys, spec.compose)
   }
 
-  return true
+  if (specKeys.length === 1) {
+    const key = specKeys[0]
+    return [createComposeReducer(key, spec[key])]
+  }
+
+  return []
 }
 
-module.exports.validateComposeModifiers = validateComposeModifiers
+module.exports.parse = parse
 
 /**
  * @param {string} entityId
- * @param {Array<Object>} compose
+ * @param {Array<string>} modifierKeys
+ * @param {Array<Object>} composeSpec
+ * @returns {Array<Object>}
+ */
+function parseComposeSpec (entityId, modifierKeys, composeSpec) {
+  return composeSpec.map(modifierSpec =>
+    parseModifierSpec(entityId, modifierKeys, modifierSpec)
+  )
+}
+
+module.exports.parseComposeSpec = parseComposeSpec
+
+/**
+ * @param {string} entityId
  * @param {Array<string>} validKeys
- * @throws if compose contains an invalid modifier type
- * @returns {boolean}
- */
-function validateCompose (entityId, compose, validKeys) {
-  compose.forEach(modifier => {
-    if (validKeys.indexOf(modifier.type) === -1) {
-      throw new Error(
-        `Modifier '${
-          modifier.type
-        }' in ${entityId} doesn't match any of the registered Modifiers: ${validKeys}`
-      )
-    }
-  })
-
-  return true
-}
-
-module.exports.validateCompose = validateCompose
-
-/**
- * @param {string} type
- * @param {Object} spec
- * @returns {Object}
- */
-function createComposeReducer (type, spec) {
-  return {
-    type,
-    spec
-  }
-}
-
-module.exports.createComposeReducer = createComposeReducer
-
-/**
  * @param {Object} modifierSpec
- * @throws if the spec does not contain exactly one key
+ * @throws if the spec is not valid
  * @returns {Object}
  */
-function parseModifierSpec (modifierSpec) {
+function parseModifierSpec (entityId, validKeys, modifierSpec) {
   const keys = Object.keys(modifierSpec)
   if (keys.length !== 1) {
     throw new Error(
@@ -88,49 +77,24 @@ function parseModifierSpec (modifierSpec) {
   }
 
   const type = keys[0]
-  return createComposeReducer(keys[0], modifierSpec[type])
+  if (!validKeys.includes(type)) {
+    throw new Error(
+      `Modifier '${type}' in ${entityId} doesn't match any of the valid Modifiers: ${validKeys}`
+    )
+  }
+
+  return createComposeReducer(type, modifierSpec[type])
 }
 
 module.exports.parseModifierSpec = parseModifierSpec
 
 /**
- * @param {Array<Object>} composeSpec
- * @returns {Array<Object>}
+ * @param {string} type
+ * @param {Object} spec
+ * @returns {Object}
  */
-function parseComposeSpecProperty (composeSpec) {
-  return composeSpec.map(parseModifierSpec)
+function createComposeReducer (type, spec) {
+  return { type, spec }
 }
 
-module.exports.parseComposeSpecProperty = parseComposeSpecProperty
-
-/**
- * @param {Object} entitySpec
- * @param {Array<string>} modifierKeys
- * @returns {Array<Object>}
- */
-function parseComposeFromEntitySpec (entitySpec, modifierKeys) {
-  return modifierKeys.reduce((acc, modifierKey) => {
-    const modifierSpec = entitySpec[modifierKey]
-    if (modifierSpec) {
-      const modifier = createComposeReducer(modifierKey, modifierSpec)
-      acc.push(modifier)
-    }
-
-    return acc
-  }, [])
-}
-
-module.exports.parseComposeFromEntitySpec = parseComposeFromEntitySpec
-
-/**
- * @param {Object} entitySpec
- * @param {Array<string>} modifierKeys
- * @returns {Array<Object>}
- */
-function parse (entitySpec, modifierKeys) {
-  return entitySpec.compose
-    ? parseComposeSpecProperty(entitySpec.compose, modifierKeys)
-    : parseComposeFromEntitySpec(entitySpec, modifierKeys)
-}
-
-module.exports.parse = parse
+module.exports.createComposeReducer = createComposeReducer

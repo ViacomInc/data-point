@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parse should parse a single key 1`] = `
+Array [
+  Object {
+    "spec": "$a",
+    "type": "map",
+  },
+]
+`;
+
+exports[`parse should parse multiple keys inside of compose 1`] = `
+Array [
+  Object {
+    "spec": "$a",
+    "type": "map",
+  },
+  Object {
+    "spec": "$b",
+    "type": "find",
+  },
+]
+`;
+
+exports[`parse should throw error for invalid key inside compose 1`] = `"Modifier 'find' in id doesn't match any of the valid Modifiers: map"`;
+
+exports[`parse should throw error when multiple keys are not inside compose 1`] = `"Entity id is invalid. When using multiple keys, they should be inside compose."`;
+
+exports[`parse should throw error when the compose key and individual modifier keys are used together 1`] = `"Entity id is invalid; when 'compose' is defined the keys: 'map' should be inside compose."`;
+
+exports[`parseComposeSpec should throw error if contains more than 1 key 1`] = `"Compose Modifiers may only contain one key, but found 2 (map, filter)"`;
+
+exports[`parseComposeSpec should throw error if does not contain keys 1`] = `"Compose Modifiers may only contain one key, but found 0"`;

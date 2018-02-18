@@ -59,12 +59,9 @@ function createCompose (composeParse) {
  */
 function create (spec, id) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
-  parseCompose.validateComposeModifiers(id, spec, modifierKeys)
 
   const entity = createBaseEntity(EntityHash, spec, id)
-
-  const compose = parseCompose.parse(spec, modifierKeys)
-  parseCompose.validateCompose(entity.id, compose, modifierKeys)
+  const compose = parseCompose.parse(id, modifierKeys, spec)
   if (compose.length) {
     entity.compose = createCompose(compose)
   }

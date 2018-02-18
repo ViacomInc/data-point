@@ -2053,13 +2053,7 @@ A Hash entity transforms a _Hash_ like data structure. It enables you to manipul
 
 To prevent unexpected results, **Hash** can only process **Plain Objects**, which are objects created by the Object constructor. If [Hash.value](#hash-value) does not resolve to a Plain Object it will **throw** an error. 
 
-Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these reducers to a Hash entity. Keep in mind that those reducers will always be executed in a specific order:
-
-```js
-omitKeys -> pickKeys -> mapKeys -> addValues -> addKeys
-```
-
-If you want to have more control over the order of execution, you may use the [compose](#entity-compose-reducer) reducer.
+Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these reducers to a Hash entity.
 
 **NOTE**: The Compose reducer is meant to operate only on Hash-type objects. If its context resolves to a non-Hash type, it will **throw an error**.
 
@@ -2387,7 +2381,7 @@ For examples of hash entities, see the [Examples](examples), on the unit tests: 
 
 A Collection entity enables you to operate over an array. Its API provides basic reducers to manipulate the elements in the array.
 
-Collection entities expose a set of reducers that you may apply to them: [map](#collection-map), [find](#collection-find), [filter](#collection-filter). These reducers are executed in a [specific order](#collection-reducers-order). If you want to have more control over the order of execution, use the [compose](#compose-reducer) reducer.
+Collection entities expose a set of reducers that you may apply to them: [map](#collection-map), [find](#collection-find), [filter](#collection-filter).
 
 To prevent unexpected results, a **Collection Entity** can only process **Arrays**, if Collection.value does not resolve to an Array it will **throw** an error. 
 
@@ -2428,12 +2422,6 @@ dataPoint.addEntities({
 | *outputType*  | String, [Reducer](#reducers) | type checks the entity's output value, does not mutate value. [Entity Type checking](#entity-type-check). |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params* | `Object` | User-defined Hash that will be passed to every reducer within the context of the transform function's execution |
-
-<a name="collection-reducers-order">The order of execution of is:</a>
-
-```js
-filter -> map -> find
-```
 
 ##### <a name="collection-map">Collection.map</a>
 

@@ -63,15 +63,23 @@ module.exports = {
   },
   'hash:g.1': {
     value: '$a.g',
-    mapKeys: {
-      g: ['$g2', reducers.multiplyBy(2)]
-    },
-    addValues: {
-      g4: 4
-    },
-    addKeys: {
-      g4: ['$g1', reducers.multiplyBy(4)]
-    }
+    compose: [
+      {
+        mapKeys: {
+          g: ['$g2', reducers.multiplyBy(2)]
+        }
+      },
+      {
+        addValues: {
+          g4: 4
+        }
+      },
+      {
+        addKeys: {
+          g4: ['$g1', reducers.multiplyBy(4)]
+        }
+      }
+    ]
   },
   'hash:h.1': {
     value: '$a.e.e1',
