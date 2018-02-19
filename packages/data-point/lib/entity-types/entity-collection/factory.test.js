@@ -24,20 +24,6 @@ describe('parse loose modifiers', () => {
     expect(result.compose).toHaveProperty('type', 'ReducerMap')
     expect(result.compose.reducer).toHaveProperty('type', 'ReducerPath')
   })
-
-  //   test('modelFactory#create default | checks multiple reducers in an entity to have matching properties', () => {
-  //     const result = modelFactory.create({
-  //       map: '$a',
-  //       find: '$a',
-  //       filter: '$a'
-  //     })
-
-  //     expect(helpers.isReducer(result.compose)).toBe(true)
-  //     expect(result.compose).toHaveProperty('type', 'ReducerList')
-  //     expect(result.compose.reducers[0]).toHaveProperty('type', 'ReducerFilter')
-  //     expect(result.compose.reducers[1]).toHaveProperty('type', 'ReducerMap')
-  //     expect(result.compose.reducers[2]).toHaveProperty('type', 'ReducerFind')
-  //   })
 })
 
 describe('parse compose modifier', () => {
@@ -55,22 +41,22 @@ describe('parse compose modifier', () => {
     expect(() => {
       modelFactory.create({
         compose: { map: '$a' }
-      })
+      }, 'test-id')
     }).toThrowErrorMatchingSnapshot()
   })
 
-  // test('throw error if compose is mixed with inline modifiers (map, filter, ..) ', () => {
-  //   expect(() => {
-  //     modelFactory.create(
-  //       {
-  //         compose: [{ map: '$a' }],
-  //         map: '$a',
-  //         filter: '$a'
-  //       },
-  //       ['filter', 'map', 'find']
-  //     )
-  //   }).toThrow(/filter, map/)
-  // })
+  test('throw error if compose is mixed with inline modifiers (map, filter, ..) ', () => {
+    expect(() => {
+      modelFactory.create(
+        {
+          compose: [{ map: '$a' }],
+          map: '$a',
+          filter: '$a'
+        },
+        'test-id'
+      )
+    }).toThrowErrorMatchingSnapshot()
+  })
 
   test('parses multiple modifiers, respect order', () => {
     const result = modelFactory.create({

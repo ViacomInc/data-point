@@ -2053,7 +2053,7 @@ A Hash entity transforms a _Hash_ like data structure. It enables you to manipul
 
 To prevent unexpected results, **Hash** can only process **Plain Objects**, which are objects created by the Object constructor. If [Hash.value](#hash-value) does not resolve to a Plain Object it will **throw** an error. 
 
-Hash entities expose a set of reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), [addValues](#hash-addValues). You may apply one or more of these reducers to a Hash entity.
+Hash entities expose a set of optional reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), and [addValues](#hash-addValues). When using more than one of these reducers, they should be defined with the `compose` property.
 
 **NOTE**: The Compose reducer is meant to operate only on Hash-type objects. If its context resolves to a non-Hash type, it will **throw an error**.
 
@@ -2381,7 +2381,7 @@ For examples of hash entities, see the [Examples](examples), on the unit tests: 
 
 A Collection entity enables you to operate over an array. Its API provides basic reducers to manipulate the elements in the array.
 
-Collection entities expose a set of reducers that you may apply to them: [map](#collection-map), [find](#collection-find), [filter](#collection-filter).
+Collection entities expose a set of optional reducers: [map](#collection-map), [find](#collection-find), and [filter](#collection-filter). When using more than one of these reducers, they should be defined with the `compose` property.
 
 To prevent unexpected results, a **Collection Entity** can only process **Arrays**, if Collection.value does not resolve to an Array it will **throw** an error. 
 

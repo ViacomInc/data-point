@@ -52,9 +52,9 @@ module.exports.parse = parse
  * @returns {Array<Object>}
  */
 function parseComposeSpec (entityId, modifierKeys, composeSpec) {
-  return composeSpec.map(modifierSpec =>
-    parseModifierSpec(entityId, modifierKeys, modifierSpec)
-  )
+  return composeSpec.map(modifierSpec => {
+    return parseModifierSpec(entityId, modifierKeys, modifierSpec)
+  })
 }
 
 module.exports.parseComposeSpec = parseComposeSpec
