@@ -14,16 +14,19 @@ const typeCheckModifiers = {
   object: typeCheckFunctionReducers.isObject
 }
 
-function getTypeModifier (reducer) {
-  const typeCheckModifier = typeCheckModifiers[reducer]
-  if (typeCheckModifier) {
-    return typeCheckModifier
+/**
+ * @param {*} source
+ * @return {*}
+ */
+function normalizeTypeCheckSource (source) {
+  if (Array.isArray(source)) {
+    return source.map(r => normalizeTypeCheckSource(r))
   }
 
-  return reducer
+  return typeCheckModifiers[source] || source
 }
 
-module.exports.getTypeModifier = getTypeModifier
+module.exports.normalizeTypeCheckSource = normalizeTypeCheckSource
 
 /**
  * @param {Function} Factory - factory function to create the entity
@@ -52,12 +55,12 @@ function create (Factory, spec, id) {
   }
 
   if (spec.inputType) {
-    const inputType = getTypeModifier(spec.inputType)
+    const inputType = normalizeTypeCheckSource(spec.inputType)
     entity.inputType = createReducer(inputType)
   }
 
   if (spec.outputType) {
-    const outputType = getTypeModifier(spec.outputType)
+    const outputType = normalizeTypeCheckSource(spec.outputType)
     entity.outputType = createReducer(outputType)
   }
 
