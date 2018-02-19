@@ -39,9 +39,12 @@ describe('parse compose modifier', () => {
 
   test('throw error if compose is not an array', () => {
     expect(() => {
-      modelFactory.create({
-        compose: { map: '$a' }
-      }, 'test-id')
+      modelFactory.create(
+        {
+          compose: { map: '$a' }
+        },
+        'test-id'
+      )
     }).toThrowErrorMatchingSnapshot()
   })
 
