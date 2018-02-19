@@ -127,10 +127,6 @@ function resolveRequest (acc, resolveReducer) {
         )
       ].join('')
 
-      // this is useful in the case the error itself is not logged by the
-      // implementation
-      console.info(redactedError.toString(), message)
-
       // attaching to error so it can be exposed by a handler outside datapoint
       error.message = `${error.message}\n\n${message}`
       throw error
