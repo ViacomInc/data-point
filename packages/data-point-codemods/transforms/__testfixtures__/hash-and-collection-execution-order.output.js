@@ -11,8 +11,6 @@ e1 = {
         filter: '$a'
       }, {
         map: '$b'
-      }, {
-        find: '$c'
       }],
 
       after: () => true
@@ -23,12 +21,12 @@ e1 = {
 const e2 = {}
 
 // prettier-ignore
-e2['hash:options'] = {
+e2['hash:example'] = {
   'after': () => ({}),
   'error': () => ({}),
   'params': {},
   'before': () => ({}),
-  'value': {},
+  value: {},
   'inputType': 'object',
 
   compose: [{
@@ -48,7 +46,7 @@ e2['hash:options'] = {
 
 // prettier-ignore
 const e3 = {
-  'collection:options': {
+  'collection:example': {
     before: () => [],
     outputType: 'array',
     inputType: 'array',
@@ -78,7 +76,7 @@ e4['collection:example'] = {
 // should not be changed
 const e5 = {
   entities: {
-    'hash:options': {
+    'hash:example': {
       mapKeys: '$a'
     }
   }
@@ -86,7 +84,7 @@ const e5 = {
 
 // should not be changed
 const e6 = {
-  'collection:options': {
+  'collection:example': {
     before: () => [],
     inputType: 'array',
     find: '$find'
@@ -96,7 +94,7 @@ const e6 = {
 // should not be changed
 // prettier-ignore
 const e7 = {
-  'hash:options': {
+  'hash:example': {
     before: () => [],
     compose: [{
       invalidKey: '$invalidKey'

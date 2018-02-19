@@ -8,7 +8,6 @@ e1 = {
   entities: {
     'collection:nested': {
       map: '$b',
-      find: '$c',
       filter: '$a',
       after: () => true
     }
@@ -18,7 +17,7 @@ e1 = {
 const e2 = {}
 
 // prettier-ignore
-e2['hash:options'] = {
+e2['hash:example'] = {
   'after': () => ({}),
   addKeys: {},
   'error': () => ({}),
@@ -26,7 +25,7 @@ e2['hash:options'] = {
   'omitKeys': ['a', 'b'],
   'before': () => ({}),
   pickKeys: [],
-  'value': {},
+  value: {},
   'mapKeys': () => true,
   'inputType': 'object',
   'addValues': () => ({}),
@@ -35,7 +34,7 @@ e2['hash:options'] = {
 
 // prettier-ignore
 const e3 = {
-  'collection:options': {
+  'collection:example': {
     before: () => [],
     outputType: 'array',
     inputType: 'array',
@@ -59,7 +58,7 @@ e4['collection:example'] = {
 // should not be changed
 const e5 = {
   entities: {
-    'hash:options': {
+    'hash:example': {
       mapKeys: '$a'
     }
   }
@@ -67,7 +66,7 @@ const e5 = {
 
 // should not be changed
 const e6 = {
-  'collection:options': {
+  'collection:example': {
     before: () => [],
     inputType: 'array',
     find: '$find'
@@ -77,7 +76,7 @@ const e6 = {
 // should not be changed
 // prettier-ignore
 const e7 = {
-  'hash:options': {
+  'hash:example': {
     before: () => [],
     compose: [{
       invalidKey: '$invalidKey'

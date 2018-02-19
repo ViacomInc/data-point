@@ -8,11 +8,7 @@ function isMatchingKey (key, keys) {
     return keys.includes(key.name)
   }
 
-  if (key.type === 'Literal') {
-    return keys.includes(key.value)
-  }
-
-  return false
+  return keys.includes(key.value)
 }
 
 module.exports = (file, api, options) => {
@@ -29,10 +25,7 @@ module.exports = (file, api, options) => {
     }
 
     props = keys.reduce((acc, key) => {
-      const prop = props.find(prop => {
-        return isMatchingKey(prop.key, [key])
-      })
-
+      const prop = props.find(p => isMatchingKey(p.key, [key]))
       if (prop) {
         acc.push(prop)
       }
