@@ -106,11 +106,27 @@ describe('factory#create', () => {
     expect(result.reducers[3].type).toBe('ReducerFunction')
   })
 
-  test('factory#throw error if reducer is falsy and not a string', () => {
-    expect(() => factory.create(createReducer, false)).toThrow()
+  test('factory#throw error if reducer is false', () => {
     expect(() => factory.create(createReducer, [false])).toThrow()
-    expect(() => factory.create(createReducer, [0])).toThrow()
-    expect(() => factory.create(createReducer, [undefined])).toThrow()
+  })
+
+  test('factory#throw error if reducer is empty string', () => {
+    expect(() => factory.create(createReducer, '')).toThrow()
+  })
+
+  test('factory#throw error if reducer is non-empty string with no matching reducer', () => {
+    expect(() => factory.create(createReducer, 'asdf')).toThrow()
+  })
+
+  test('factory#throw error if one of two reducers is false', () => {
     expect(() => factory.create(createReducer, ['$foo.bar', false])).toThrow()
+  })
+
+  test('factory#throw error if reducer is undefined', () => {
+    expect(() => factory.create(createReducer, [undefined])).toThrow()
+  })
+
+  test('factory#throw error if reducer is zero', () => {
+    expect(() => factory.create(createReducer, [0])).toThrow()
   })
 })
