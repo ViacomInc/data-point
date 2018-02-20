@@ -12,6 +12,12 @@ module.exports = {
   'hash:asIs': {
     value: '$'
   },
+  'hash:CustomOutputType': {
+    value: input => input,
+    outputType: input => {
+      throw new Error('custom type check failed')
+    }
+  },
   'hash:a.1': {
     value: '$a.h'
   },

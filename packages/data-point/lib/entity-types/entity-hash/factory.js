@@ -6,6 +6,9 @@ const reducerHelpers = require('../../reducer-types/reducer-helpers')
 const parseCompose = require('../parse-compose')
 const createBaseEntity = require('../base-entity').create
 const { validateModifiers } = require('../validate-modifiers')
+const {
+  getTypeCheckSourceWithDefault
+} = require('../../helpers/type-check-helpers')
 
 /**
  * @class
@@ -23,8 +26,12 @@ const modifiers = {
   assign: reducerHelpers.stubFactories.assign
 }
 
-function createCompose (composeParse) {
-  const specList = composeParse.map(modifier => {
+/**
+ * @param {Array<Object>} composeSpec
+ * @return {Reducer}
+ */
+function createCompose (composeSpec) {
+  const specList = composeSpec.map(modifier => {
     let spec
     switch (modifier.type) {
       case 'omitKeys':
@@ -59,6 +66,13 @@ function createCompose (composeParse) {
  */
 function create (spec, id) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
+
+  const outputType = getTypeCheckSourceWithDefault(
+    'hash',
+    'object',
+    spec.outputType
+  )
+  spec = Object.assign({}, spec, { outputType })
 
   const entity = createBaseEntity(EntityHash, spec, id)
   const compose = parseCompose.parse(id, modifierKeys, spec)

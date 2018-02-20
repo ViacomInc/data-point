@@ -16,7 +16,7 @@ function ReducerAssign () {
   this.reducer = undefined
 }
 
-module.exports.ReducerAssign = ReducerAssign
+module.exports.Constructor = ReducerAssign
 
 /**
  * @param {Function} createReducer
