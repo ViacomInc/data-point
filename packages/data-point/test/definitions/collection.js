@@ -9,6 +9,12 @@ module.exports = {
   'collection:ObjectsNotAllowed': {
     value: '$a.b'
   },
+  'collection:CustomOutputType': {
+    value: input => input,
+    outputType: input => {
+      throw new Error('custom type check failed')
+    }
+  },
   'collection:a.1': {
     value: '$a.d'
   },
