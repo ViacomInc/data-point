@@ -4,11 +4,8 @@ const findLastIndex = require('lodash/findLastIndex')
 const { getEntityObjects } = require('./utils')
 
 function isMatchingKey (key, keys) {
-  if (key.type === 'Identifier') {
-    return keys.includes(key.name)
-  }
-
-  return keys.includes(key.value)
+  const id = key.type === 'Identifier' ? key.name : key.value
+  return keys.includes(id)
 }
 
 module.exports = (file, api, options) => {
