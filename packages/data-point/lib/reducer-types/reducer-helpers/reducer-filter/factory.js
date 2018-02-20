@@ -16,7 +16,7 @@ function ReducerFilter () {
   this.transform = undefined
 }
 
-module.exports.ReducerFilter = ReducerFilter
+module.exports.Constructor = ReducerFilter
 
 /**
  * @param {Function} createReducer

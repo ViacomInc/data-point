@@ -17,7 +17,7 @@ function ReducerPath () {
   this.asCollection = false
 }
 
-module.exports.ReducerPath = ReducerPath
+module.exports.Constructor = ReducerPath
 
 /**
  * @param {*} source
