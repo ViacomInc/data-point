@@ -219,13 +219,6 @@ describe('getRequestOptions', () => {
 })
 
 describe('resolveRequest', () => {
-  let consoleInfo
-  beforeAll(() => {
-    consoleInfo = console.info
-  })
-  afterEach(() => {
-    console.info = consoleInfo
-  })
   test('resolve reducer locals', () => {
     nock('http://remote.test')
       .get('/source1')
@@ -260,11 +253,9 @@ describe('resolveRequest', () => {
       value: 'foo'
     }
     _.set(acc, 'reducer.spec.id', 'test:test')
-    console.info = jest.fn()
     return Resolve.resolveRequest(acc)
       .catch(e => e)
       .then(result => {
-        expect(console.info).toBeCalled()
         expect(result.message).toMatchSnapshot()
       })
   })
@@ -393,7 +384,6 @@ describe('resolve', () => {
   })
 
   test('it should omit options.auth when encountering an error', () => {
-    console.info = jest.fn()
     nock('http://remote.test')
       .get('/source1')
       .reply(404)
@@ -401,7 +391,6 @@ describe('resolve', () => {
     return transform('request:a9', {}).catch(err => {
       expect(err.statusCode).toEqual(404)
       expect(err.message).toMatchSnapshot()
-      expect(console.info).toBeCalled()
 
       // credentials are still available in the raw error.options
       expect(err.options.auth).toEqual({

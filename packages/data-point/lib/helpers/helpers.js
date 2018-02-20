@@ -4,7 +4,7 @@ const resolveReducer = require('../reducer-types').resolve
 const AccumulatorFactory = require('../accumulator/factory')
 
 const { stubFactories } = require('../reducer-types/reducer-helpers')
-const typeCheckFunctionReducers = require('./type-check-function-reducers')
+const typeCheckFunctionReducers = require('./type-check-functions')
 
 module.exports.helpers = {
   assign: stubFactories.assign,
