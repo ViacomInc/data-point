@@ -16,7 +16,7 @@ function ReducerFind () {
   this.reducer = undefined
 }
 
-module.exports.ReducerFind = ReducerFind
+module.exports.Constructor = ReducerFind
 
 /**
  * @param {Function} createReducer

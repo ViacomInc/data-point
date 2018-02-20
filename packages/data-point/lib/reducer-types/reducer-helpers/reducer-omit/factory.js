@@ -16,7 +16,7 @@ function ReducerOmit () {
   this.keys = undefined
 }
 
-module.exports.ReducerOmit = ReducerOmit
+module.exports.Constructor = ReducerOmit
 
 /**
  * @param {Function} createReducer
