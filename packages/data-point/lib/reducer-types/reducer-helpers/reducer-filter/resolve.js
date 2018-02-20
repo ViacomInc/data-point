@@ -1,5 +1,7 @@
 const Promise = require('bluebird')
+
 const utils = require('../../../utils')
+const { reducerPredicateIsTruthy } = require('../utils')
 
 /**
  * @param {Object} manager
@@ -10,14 +12,10 @@ const utils = require('../../../utils')
  */
 function resolve (manager, resolveReducer, accumulator, reducerFilter) {
   const reducer = reducerFilter.reducer
-  if (utils.reducerIsEmpty(reducer)) {
-    return Promise.resolve(accumulator)
-  }
-
   return Promise.filter(accumulator.value, itemValue => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
     return resolveReducer(manager, itemContext, reducer).then(res => {
-      return !!res.value
+      return reducerPredicateIsTruthy(reducer, res.value)
     })
   }).then(result => utils.set(accumulator, 'value', result))
 }
