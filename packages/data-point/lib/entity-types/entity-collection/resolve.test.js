@@ -33,21 +33,24 @@ beforeEach(() => {
   dataPoint.middleware.clear()
 })
 
-describe('CollectionReducer.resolve', () => {
-  test('entity.collection - only process Plain Objects', () => {
-    return transform('collection:ObjectsNotAllowed', testData)
+describe('Collection entity type checking', () => {
+  function resolveInvalid (entity, data) {
+    return dataPoint
+      .resolve(entity, data)
       .catch(err => err)
       .then(result => {
         expect(result).toBeInstanceOf(Error)
-      })
-  })
-
-  test('entity.collection - throw error if value not array', () => {
-    return transform('collection:ObjectsNotAllowed', testData)
-      .catch(err => err)
-      .then(result => {
         expect(result).toMatchSnapshot()
       })
+  }
+  test('should throw error from default outputType reducer when output is not valid', () => {
+    return resolveInvalid('collection:ObjectsNotAllowed', testData)
+  })
+  test('should throw error from a custom outputType reducer', () => {
+    return resolveInvalid('collection:CustomOutputType', [])
+  })
+  test('should execute the default outputType reducer before a custom outputType reducer ', () => {
+    return resolveInvalid('collection:CustomOutputType', {})
   })
 })
 
