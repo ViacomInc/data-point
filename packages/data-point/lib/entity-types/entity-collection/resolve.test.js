@@ -36,9 +36,7 @@ beforeEach(() => {
 describe('CollectionReducer.resolve', () => {
   test('entity.collection - only process Plain Objects', () => {
     return transform('collection:ObjectsNotAllowed', testData)
-      .catch(result => {
-        return result
-      })
+      .catch(err => err)
       .then(result => {
         expect(result).toBeInstanceOf(Error)
       })
@@ -75,10 +73,9 @@ describe('entity.collection.map', () => {
     })
   })
 
-  // NOTE: to skip map execution when map is empty
-  test('should skip Map Transform if empty', () => {
+  test('should return array with undefined elements if map reducer is empty list', () => {
     return transform('collection:b.2', testData).then(acc => {
-      expect(acc.value).toEqual([1, 2, 3])
+      expect(acc.value).toEqual([undefined, undefined, undefined])
     })
   })
 })
@@ -100,10 +97,9 @@ describe('entity.collection.filter', () => {
     })
   })
 
-  // NOTE: to skip map execution when filter is empty
-  test('it should skip filter transform if empty', () => {
+  test('should return empty array if filter reducer is empty list', () => {
     return transform('collection:c.3', testData).then(acc => {
-      expect(acc.value).toEqual([1, 2, 3])
+      expect(acc.value).toEqual([])
     })
   })
 })
@@ -121,10 +117,9 @@ describe('entity.collection.find', () => {
     })
   })
 
-  // NOTE: to skip map execution when find is empty
-  test('should skip Find Transform if empty', () => {
+  test('should return undefined if find reducer is empty list', () => {
     return transform('collection:d.3', testData).then(acc => {
-      expect(acc.value).toEqual([1, 2, 3])
+      expect(acc.value).toEqual(undefined)
     })
   })
 })
@@ -144,7 +139,7 @@ describe('entity.collection.compose', () => {
 
   test('map should handle error and rethrow with appended information', () => {
     return transform('collection:j.3', testData)
-      .catch(acc => acc)
+      .catch(err => err)
       .then(acc => {
         expect(acc).toBeInstanceOf(Error)
       })
@@ -152,7 +147,7 @@ describe('entity.collection.compose', () => {
 
   test('find should handle error and rethrow with appended information', () => {
     return transform('collection:j.4', testData)
-      .catch(acc => acc)
+      .catch(err => err)
       .then(acc => {
         expect(acc).toBeInstanceOf(Error)
       })
@@ -160,7 +155,7 @@ describe('entity.collection.compose', () => {
 
   test('filter should handle error and rethrow with appended information', () => {
     return transform('collection:j.5', testData)
-      .catch(acc => acc)
+      .catch(err => err)
       .then(acc => {
         expect(acc).toBeInstanceOf(Error)
       })
