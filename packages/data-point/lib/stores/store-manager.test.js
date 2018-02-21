@@ -30,7 +30,7 @@ describe('add', () => {
     expect(error).toMatchSnapshot()
   })
 
-  test('It should throw error with information if item already exist | error containing spec will return and entitiy containing spec object', () => {
+  test('It should throw error with information if item already exist | error containing spec will return and entity containing spec object', () => {
     const mgr = createManager()
     const errorInfoCb = () => ({
       name: 'Foo',

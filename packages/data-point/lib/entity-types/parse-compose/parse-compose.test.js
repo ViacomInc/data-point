@@ -1,6 +1,5 @@
 /* eslint-env jest */
 const parseCompose = require('./parse-compose')
-const _ = require('lodash')
 
 function expectModifier (result) {
   expect(result).toHaveProperty('type')
@@ -16,55 +15,106 @@ describe('createComposeReducer', () => {
 
 describe('parseModifierSpec', () => {
   test('it should parse a modifier spec', () => {
-    const result = parseCompose.parseModifierSpec({
+    const result = parseCompose.parseModifierSpec('id', ['map'], {
       map: '$a'
     })
     expectModifier(result)
   })
 })
 
-describe('parseComposeSpecProperty', () => {
+describe('parseComposeSpec', () => {
   test('it should parse a single modifier spec', () => {
-    const result = parseCompose.parseComposeSpecProperty([
-      {
-        map: '$a'
-      }
-    ])
+    const result = parseCompose.parseComposeSpec(
+      'id',
+      ['map'],
+      [
+        {
+          map: '$a'
+        }
+      ]
+    )
 
     expect(result).toHaveLength(1)
     result.forEach(expectModifier)
   })
+
   test('should throw error if does not contain keys', () => {
     expect(() => {
-      parseCompose.parseComposeSpecProperty([{}])
-    }).toThrow(/found 0/)
+      parseCompose.parseComposeSpec('id', [], [{}])
+    }).toThrowErrorMatchingSnapshot()
   })
+
   test('should throw error if contains more than 1 key', () => {
     expect(() => {
-      parseCompose.parseComposeSpecProperty([
-        {
-          map: '$a',
-          filter: '$a'
-        }
-      ])
-    }).toThrow(/found 2/)
+      parseCompose.parseComposeSpec(
+        'id',
+        ['map', 'filter'],
+        [
+          {
+            map: '$a',
+            filter: '$a'
+          }
+        ]
+      )
+    }).toThrowErrorMatchingSnapshot()
   })
 })
 
-describe('parseComposeFromEntitySpec', () => {
-  test('should parse modifiers from entitySpec keys', () => {
-    const result = parseCompose.parseComposeFromEntitySpec(
-      {
-        shouldIgnore: '$a',
-        map: '$a',
-        filter: '$a'
-      },
-      ['filter', 'map']
-    )
+describe('parse', () => {
+  test('should parse a single key', () => {
+    return expect(
+      parseCompose.parse('id', ['map'], {
+        map: '$a'
+      })
+    ).toMatchSnapshot()
+  })
 
-    expect(result).toBeInstanceOf(Array)
-    expect(result).toHaveLength(2)
-    result.forEach(expectModifier)
-    expect(_.map(result, 'type')).toEqual(['filter', 'map'])
+  test('should parse multiple keys inside of compose', () => {
+    return expect(
+      parseCompose.parse('id', ['map', 'find'], {
+        compose: [
+          {
+            map: '$a'
+          },
+          {
+            find: '$b'
+          }
+        ]
+      })
+    ).toMatchSnapshot()
+  })
+
+  test('should throw error for invalid key inside compose', () => {
+    return expect(() =>
+      parseCompose.parse('id', ['map'], {
+        compose: [
+          {
+            find: '$a'
+          }
+        ]
+      })
+    ).toThrowErrorMatchingSnapshot()
+  })
+
+  test('should throw error when multiple keys are not inside compose', () => {
+    return expect(() =>
+      parseCompose.parse('id', ['map', 'find'], {
+        map: '$a',
+        find: '$a'
+      })
+    ).toThrowErrorMatchingSnapshot()
+  })
+
+  test('should throw error when the compose key and individual modifier keys are used together', () => {
+    return expect(() =>
+      parseCompose.parse('id', ['map', 'find'], {
+        map: '$a',
+        compose: [
+          {
+            find: '$a'
+          }
+        ]
+      })
+    ).toThrowErrorMatchingSnapshot()
   })
 })
