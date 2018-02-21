@@ -25,13 +25,17 @@ module.exports.helpers = {
   isObject: typeCheckFunctionReducers.isObject
 }
 
-module.exports.isReducer = require('../reducer-types').isReducer
+const createReducer = require('../reducer-types').create
 
-module.exports.createReducer = require('../reducer-types').create
+module.exports.createReducer = createReducer
 
-module.exports.createEntity = require('../entity-types/base-entity').create
+const createEntity = require('../entity-types/base-entity').create
+
+module.exports.createEntity = _.partial(createEntity, createReducer)
 
 module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
+
+module.exports.isReducer = require('../reducer-types').isReducer
 
 module.exports.validateEntityModifiers = require('../entity-types/validate-modifiers').validateModifiers
 

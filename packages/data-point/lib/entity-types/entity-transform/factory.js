@@ -9,12 +9,14 @@ module.exports.EntityTransform = EntityTransform
 
 /**
  * Creates new Entity Object
- * @param  {*} spec - spec
+ * @param {Function} createReducer
+ * @param {Object} spec - spec
  * @param {string} id - Entity id
  * @return {EntityTransform} Entity Object
  */
-function create (spec, id) {
+function create (createReducer, spec, id) {
   const entity = createBaseEntity(
+    createReducer,
     EntityTransform,
     {
       value: spec

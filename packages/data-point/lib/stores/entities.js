@@ -1,23 +1,26 @@
 const _ = require('lodash')
+
 const storeManager = require('./store-manager')
+const createReducer = require('../reducer-types').create
 
 /**
- * parse reducer
- * @param  {string} reducerRaw raw reducer path
- * @return {reducer}
+ * @param {StoreManager} entityTypes
+ * @param {Object} source
+ * @param {string} id
+ * @return {Reducer}
  */
 function createEntity (entityTypes, source, id) {
   const tokens = id.split(':')
   const entityType = tokens[0]
   const EntityType = entityTypes.get(entityType)
-  const entity = EntityType.create(source, id)
+  const entity = EntityType.create(createReducer, source, id)
   return entity
 }
 
 module.exports.createEntity = createEntity
 
 /**
- * @param  {string} id
+ * @param {string} id
  * @return {Object} Error Object properties
  */
 function errorInfoCbGet (id) {
@@ -28,7 +31,7 @@ function errorInfoCbGet (id) {
 }
 
 /**
- * @param  {string} id
+ * @param {string} id
  * @return {Object} Error Object properties
  */
 function errorInfoCbAdd (id) {
@@ -40,6 +43,7 @@ function errorInfoCbAdd (id) {
 
 /**
  * create instance
+ * @param {StoreManager} entityTypes
  * @return {Object}
  */
 function create (entityTypes) {

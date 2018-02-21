@@ -29,12 +29,13 @@ function addToStore (store, items, override) {
 }
 
 /**
- * setup store
+ * @param {Object} store
+ * @param {Object} entities
+ * @return {Object}
  */
 function addEntitiesToStore (store, entities) {
   const entitySpecs = _.defaultTo(entities, {})
   const specs = normalizeEntities.normalize(entitySpecs)
-
   _.forOwn(specs, specItem => {
     store.add(specItem.id, specItem.spec)
   })
@@ -42,6 +43,10 @@ function addEntitiesToStore (store, entities) {
   return store
 }
 
+/**
+ * @param {Object} spec
+ * @return {Object}
+ */
 function create (spec) {
   const options = _.defaultTo(spec, {
     values: {},

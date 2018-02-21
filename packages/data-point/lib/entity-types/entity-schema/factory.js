@@ -40,14 +40,15 @@ module.exports.validateSchema = validateSchema
 
 /**
  * Creates new Entity Object
+ * @param {Function} createReducer
  * @param {Object} spec - spec
  * @param {string} id - Entity id
  * @throws if spec.schema is not a valid ajv schema
  * @return {EntitySchema} Entity Object
  */
-function create (spec, id) {
+function create (createReducer, spec, id) {
   validateModifiers(id, spec, ['schema', 'options'])
-  const entity = createBaseEntity(EntitySchema, spec, id)
+  const entity = createBaseEntity(createReducer, EntitySchema, spec, id)
   entity.schema = deepFreeze(_.defaultTo(spec.schema, {}))
   entity.options = deepFreeze(_.defaultTo(spec.options, {}))
   validateSchema(entity.schema, entity.options)
