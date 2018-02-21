@@ -1,4 +1,9 @@
 const intersection = require('lodash/intersection')
+const _ = require('lodash')
+const { format, inspect } = require('util')
+
+const composeLink =
+  'https://github.com/ViacomInc/data-point/tree/master/packages/data-point#entity-compose-reducer'
 
 /**
  * @param {string} entityId
@@ -11,24 +16,37 @@ function parse (entityId, validKeys, spec) {
   const specKeys = intersection(Object.keys(spec), validKeys)
   if (specKeys.length > 1) {
     throw new Error(
-      `Entity ${entityId} is invalid. When using multiple keys, they should be inside compose.`
+      format(
+        'Entity "%s" has invalid modifiers, when using multiple keys they should be added through the "compose" property.\nValid modifiers: %s.\nFor more info: %s',
+        entityId,
+        specKeys.join(', '),
+        composeLink
+      )
     )
   }
 
   if (spec.compose) {
     if (!Array.isArray(spec.compose)) {
       throw new Error(
-        `Entity ${entityId} compose property is expected to be an instance of Array, but found ${
-          spec.compose
-        }`
+        format(
+          'Entity "%s" compose property is expected to be an instance of Array, but found: %s\nFor more info: %s',
+          entityId,
+          _.truncate(inspect(spec.compose, { breakLength: Infinity }), {
+            length: 30
+          }),
+          composeLink
+        )
       )
     }
 
     if (specKeys.length !== 0) {
       throw new Error(
-        `Entity ${entityId} is invalid; when 'compose' is defined the keys: '${specKeys.join(
-          ', '
-        )}' should be inside compose.`
+        format(
+          'Entity "%s" is invalid; when "compose" is defined the keys: %s should be inside compose.\nFor more info: %s',
+          entityId,
+          specKeys.join(', '),
+          composeLink
+        )
       )
     }
 
@@ -79,7 +97,9 @@ function parseModifierSpec (entityId, validKeys, modifierSpec) {
   const type = keys[0]
   if (!validKeys.includes(type)) {
     throw new Error(
-      `Modifier '${type}' in ${entityId} doesn't match any of the valid Modifiers: ${validKeys}`
+      `Modifier '${type}' in "${entityId}" does not match any of the valid modifiers: ${validKeys.join(
+        ', '
+      )}`
     )
   }
 

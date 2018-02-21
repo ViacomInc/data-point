@@ -2054,8 +2054,6 @@ A Hash entity transforms a _Hash_ like data structure. It enables you to manipul
 
 To prevent unexpected results, a **Hash** can only return **Plain Objects**, which are objects created by the Object constructor. If a hash resolves to a different type, it will throw an error. This type check occurs *before* the value is passed to the (optional) `outputType` reducer.
 
-Hash entities expose a set of optional reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), and [addValues](#hash-addValues). When using more than one of these reducers, they should be defined with the `compose` property.
-
 **SYNOPSIS**
 
 ```js
@@ -2095,6 +2093,11 @@ dataPoint.addEntities({
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it. Collection only supports custom outputType reducers, and not the built-in types like **string**, **number**, etc. |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params*    | `Object` | User-defined Hash that will be passed to every reducer within the context of the transform function's execution |
+
+##### <a name="hash-entity-reducers">Hash Reducers</a>
+
+Hash entities expose a set of optional reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), and [addValues](#hash-addValues). When using more than one of these reducers, they should be defined through the `compose` property.
+
 
 ##### <a name="hash-value">Hash.value</a>
 
@@ -2380,8 +2383,6 @@ For examples of hash entities, see the [Examples](examples), on the unit tests: 
 
 A Collection entity enables you to operate over an array. Its API provides basic reducers to manipulate the elements in the array.
 
-Collection entities expose a set of optional reducers: [map](#collection-map), [find](#collection-find), and [filter](#collection-filter). When using more than one of these reducers, they should be defined with the `compose` property.
-
 To prevent unexpected results, a **Collection** can only return arrays. If a collection resolves to a different type, it will throw an eror. This type check occurs *before* the value is passed to the (optional) `outputType` reducer.
 
 **IMPORTANT:** Keep in mind that in DataPoint, **all** operations are asynchronous. If your operations do NOT need to be asynchronous, iterating over a large array might result in slower execution. In such cases, consider using a reducer function where you can implement a synchronous solution.
@@ -2421,6 +2422,10 @@ dataPoint.addEntities({
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it. Hash only supports custom outputType reducers, and not the built-in types like **string**, **number**, etc. |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params* | `Object` | User-defined Hash that will be passed to every reducer within the context of the transform function's execution |
+
+##### <a name="collection-entity-reducers">Collection Reducers</a>
+
+Collection entities expose a set of optional reducers: [map](#collection-map), [find](#collection-find), and [filter](#collection-filter). When using more than one of these reducers, they should be defined with the `compose` property.
 
 ##### <a name="collection-map">Collection.map</a>
 
