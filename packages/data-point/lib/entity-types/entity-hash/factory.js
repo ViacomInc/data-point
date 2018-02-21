@@ -66,7 +66,6 @@ function createCompose (composeSpec) {
  */
 function create (spec, id) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
-  parseCompose.validateComposeModifiers(id, spec, modifierKeys)
 
   const outputType = getTypeCheckSourceWithDefault(
     'hash',
@@ -76,9 +75,7 @@ function create (spec, id) {
   spec = Object.assign({}, spec, { outputType })
 
   const entity = createBaseEntity(EntityHash, spec, id)
-
-  const compose = parseCompose.parse(spec, modifierKeys)
-  parseCompose.validateCompose(entity.id, compose, modifierKeys)
+  const compose = parseCompose.parse(id, modifierKeys, spec)
   if (compose.length) {
     entity.compose = createCompose(compose)
   }
