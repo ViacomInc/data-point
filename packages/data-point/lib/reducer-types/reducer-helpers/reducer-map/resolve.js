@@ -10,9 +10,9 @@ const utils = require('../../../utils')
  */
 function resolve (manager, resolveReducer, accumulator, reducerMap) {
   const reducer = reducerMap.reducer
-  return Promise.map(accumulator.value, itemValue => {
+  return Promise.map(accumulator.value, (itemValue, index) => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
-    return resolveReducer(manager, itemContext, reducer).then(res => {
+    return resolveReducer(manager, itemContext, reducer, index).then(res => {
       return res.value
     })
   }).then(result => utils.set(accumulator, 'value', result))

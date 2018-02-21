@@ -8,10 +8,7 @@ module.exports.type = REDUCER_FUNCTION
 /**
  * @class
  * @property {string} type - @see reducerType
- * @property {string} name - name of the reducer
- * @property {Array} parameters - collection of  @see {@link Parameter} items
- * @property {boolean} isFunction - true if reducer is already function
- * @property {Function} body - actual function body
+ * @property {Function} body - actual function
  */
 function ReducerFunction () {
   this.type = REDUCER_FUNCTION
@@ -63,6 +60,11 @@ function create (createReducer, source) {
     reducer.body = source
   }
 
+  // do not include the name for arrow functions (which do not have a prototype),
+  // because some arrow functions have inferred names, which might be confusing
+  // if they show up in the reducer stack traces for error messages
+  const name = (reducer.body.prototype && reducer.body.name) || ''
+  name && (reducer.name = name)
   return reducer
 }
 

@@ -10,8 +10,8 @@ const utils = require('../../../utils')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducerParallel) {
-  return Promise.map(reducerParallel.reducers, reducer => {
-    return resolveReducer(manager, accumulator, reducer)
+  return Promise.map(reducerParallel.reducers, (reducer, index) => {
+    return resolveReducer(manager, accumulator, reducer, index)
   }).then(result => {
     const value = result.map(acc => acc.value)
     return utils.assign(accumulator, { value })

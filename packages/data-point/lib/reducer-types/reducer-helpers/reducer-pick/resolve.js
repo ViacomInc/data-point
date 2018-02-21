@@ -10,8 +10,7 @@ const utils = require('../../../utils')
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducerPick) {
-  const keys = reducerPick.keys
-  const value = pick(accumulator.value, keys)
+  const value = pick(accumulator.value, reducerPick.keys)
   return Promise.resolve(utils.set(accumulator, 'value', value))
 }
 

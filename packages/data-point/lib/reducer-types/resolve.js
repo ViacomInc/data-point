@@ -1,4 +1,5 @@
 const Promise = require('bluebird')
+const castArray = require('lodash/castArray')
 
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
@@ -45,9 +46,10 @@ function getResolveFunction (reducer) {
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
+ * @param {Array|String|Number} key - id for reducer stack traces if an error is thrown
  * @returns {Promise<Accumulator>}
  */
-function resolveReducer (manager, accumulator, reducer) {
+function resolveReducer (manager, accumulator, reducer, key) {
   // this conditional is here because BaseEntity#resolve
   // does not check that lifecycle methods are defined
   // before trying to resolve them
@@ -55,6 +57,9 @@ function resolveReducer (manager, accumulator, reducer) {
     return Promise.resolve(accumulator)
   }
 
+  // storing this in case we need it for the catch block, since we
+  // can't trust it won't be overwritten in the accumulator object
+  const value = accumulator.value
   const resolve = getResolveFunction(reducer)
   // NOTE: recursive call
   const result = resolve(manager, resolveReducer, accumulator, reducer)
@@ -64,7 +69,42 @@ function resolveReducer (manager, accumulator, reducer) {
     return result.then(acc => resolveDefault(acc, _default))
   }
 
-  return result
+  return result.catch(error => onResolveMalfunction(reducer, key, value, error))
 }
 
 module.exports.resolve = resolveReducer
+
+/**
+ * @param {Reducer} reducer
+ * @param {Array|String|Number} key
+ * @param {*} value
+ * @param {Error} error
+ * @throws the given error with more data attached
+ */
+function onResolveMalfunction (reducer, key, value, error) {
+  if (!error.hasOwnProperty('_value')) {
+    error._value = value
+  }
+
+  let stack
+  if (typeof key === 'undefined') {
+    stack = []
+  } else {
+    stack = castArray(key)
+  }
+
+  if (reducer.type === 'ReducerFunction') {
+    stack.push(`${reducer.name || reducer.type}()`)
+  } else if (reducer.type === 'ReducerEntity') {
+    stack.push(reducer.id)
+  } else {
+    stack.push(reducer.type)
+  }
+
+  if (error._stack) {
+    stack = stack.concat(error._stack)
+  }
+
+  error._stack = stack
+  throw error
+}

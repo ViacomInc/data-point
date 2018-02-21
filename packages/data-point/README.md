@@ -1852,6 +1852,7 @@ dataPoint.addEntities({
   'request:<entityId>': {
     inputType: String | Reducer,
     before: Reducer,
+    value: Reducer,
     url: StringTemplate,
     options: Reducer,
     after: Reducer,
@@ -1867,13 +1868,14 @@ dataPoint.addEntities({
 | Key | Type | Description |
 |:---|:---|:---|
 | *inputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's input value, but does not mutate it |
-| *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
-| *url*   | [StringTemplate](#string-template) | String value to resolve the request's url |
-| *options* | [Reducer](#reducers) | reducer that returns an object to use as [request.js](https://github.com/request/request) options
-| *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
-| *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
-| *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |
-| *params*    | `Object` | User defined Hash that will be passed to every reducer within the context of the transform function's execution |
+| *before*     | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
+| *value*      | [Reducer](#reducers) | the result of this reducer is the input when resolving **url** and **options**
+| *url*        | [StringTemplate](#string-template) | String value to resolve the request's url |
+| *options*    | [Reducer](#reducers) | reducer that returns an object to use as [request.js](https://github.com/request/request) options
+| *after*      | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
+| *error*      | [Reducer](#reducers) | reducer to be resolved in case of an error |
+| *outputType* | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |
+| *params*     | `Object` | User defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
 ##### <a name="request-url">Request.url</a>
 

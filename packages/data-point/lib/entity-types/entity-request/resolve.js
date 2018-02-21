@@ -1,8 +1,8 @@
 const _ = require('lodash')
-const fp = require('lodash/fp')
 const Promise = require('bluebird')
 const rp = require('request-promise')
 
+const createReducer = require('../../reducer-types').create
 const utils = require('../../utils')
 
 /**
@@ -43,7 +43,7 @@ module.exports.getRequestOptions = getRequestOptions
 function resolveOptions (accumulator, resolveReducer) {
   accumulator = resolveUrl(accumulator)
   const specOptions = accumulator.reducer.spec.options
-  return resolveReducer(accumulator, specOptions).then(acc => {
+  return resolveReducer(accumulator, specOptions, 'options').then(acc => {
     const options = getRequestOptions(acc.url, acc.value)
     return utils.assign(accumulator, { options })
   })
@@ -96,41 +96,33 @@ function inspect (acc) {
 module.exports.inspect = inspect
 
 /**
- * @param {Accumulator} acc
+ * @param {Object} options
+ * @return {Promise}
+ */
+function _requestReducer (options) {
+  return rp(options)
+}
+
+// this name will appear in the stack trace when a request fails
+Object.defineProperty(_requestReducer, 'name', {
+  value: 'request-promise#request'
+})
+
+// this function is a reducer so that we can log
+// reducer stack traces if the request has an error
+const requestReducer = createReducer(_requestReducer)
+
+module.exports.requestReducer = requestReducer
+
+/**
+ * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
  * @return {Promise<Accumulator>}
  */
-function resolveRequest (acc, resolveReducer) {
-  inspect(acc)
-  return rp(acc.options)
-    .then(result => utils.set(acc, 'value', result))
-    .catch(error => {
-      // remove auth objects from acc and error for printing to console
-      const redactedAcc = fp.set('options.auth', '[omitted]', acc)
-      const redactedError = fp.set('options.auth', '[omitted]', error)
-
-      const message = [
-        'Entity info:',
-        '\n  - Id: ',
-        _.get(redactedAcc, 'reducer.spec.id'),
-        '\n',
-        utils.inspectProperties(
-          redactedAcc,
-          ['options', 'params', 'value'],
-          '  '
-        ),
-        '\n  Request:\n',
-        utils.inspectProperties(
-          redactedError,
-          ['error', 'message', 'statusCode', 'options', 'body'],
-          '  '
-        )
-      ].join('')
-
-      // attaching to error so it can be exposed by a handler outside datapoint
-      error.message = `${error.message}\n\n${message}`
-      throw error
-    })
+function resolveRequest (accumulator, resolveReducer) {
+  inspect(accumulator)
+  const acc = utils.set(accumulator, 'value', accumulator.options)
+  return resolveReducer(acc, requestReducer)
 }
 
 module.exports.resolveRequest = resolveRequest
@@ -143,7 +135,7 @@ module.exports.resolveRequest = resolveRequest
 function resolve (acc, resolveReducer) {
   const entity = acc.reducer.spec
   return Promise.resolve(acc)
-    .then(itemContext => resolveReducer(itemContext, entity.value))
+    .then(itemContext => resolveReducer(itemContext, entity.value, [['value']]))
     .then(itemContext => resolveOptions(itemContext, resolveReducer))
     .then(itemContext => resolveRequest(itemContext, resolveReducer))
 }

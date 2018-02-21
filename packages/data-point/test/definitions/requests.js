@@ -36,6 +36,10 @@ module.exports = {
   'request:a1.3': {
     url: 'http://remote.test/source4'
   },
+  'request:a1.4': {
+    value: () => ({ source: 'source5' }),
+    url: 'http://remote.test/{value.source}'
+  },
   'request:a2': {
     url: 'http://remote.test',
     options: {
@@ -57,6 +61,9 @@ module.exports = {
   'request:a4': {
     url: 'source1',
     options: {
+      json: () => true,
+      method: () => 'GET',
+      timeout: () => 5000,
       baseUrl: () => 'http://remote.test'
     }
   },
