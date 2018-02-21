@@ -311,6 +311,20 @@ describe('resolve', () => {
     })
   })
 
+  test("interpolate data that's returned from the value lifecycle method", () => {
+    nock('http://remote.test')
+      .get('/source5')
+      .reply(200, {
+        ok: true
+      })
+
+    return transform('request:a1.4', null).then(result => {
+      expect(result.value).toEqual({
+        ok: true
+      })
+    })
+  })
+
   test('url injections', () => {
     nock('http://remote.test')
       .get('/source1')
