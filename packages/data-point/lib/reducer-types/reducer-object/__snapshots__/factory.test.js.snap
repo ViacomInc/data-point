@@ -2,7 +2,6 @@
 
 exports[`ReducerObject.factory#create reducer object with no props argument 1`] = `
 ReducerObject {
-  "isEmpty": true,
   "reducers": Array [],
   "source": [Function],
   "type": "ReducerObject",
@@ -11,7 +10,6 @@ ReducerObject {
 
 exports[`ReducerObject.factory#create reducer object with props argument 1`] = `
 ReducerObject {
-  "isEmpty": false,
   "reducers": Array [
     Object {
       "path": Array [
@@ -74,7 +72,6 @@ Object {
         "a2",
       ],
       "reducer": ReducerList {
-        "isEmpty": false,
         "reducers": Array [
           ReducerPath {
             "asCollection": false,
@@ -99,7 +96,6 @@ Object {
         "b2",
       ],
       "reducer": ReducerObject {
-        "isEmpty": false,
         "reducers": Array [
           Object {
             "path": Array [
