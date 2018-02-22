@@ -6,7 +6,7 @@ const createReducer = require('../../index').create
 describe('ReducerConstant#factory', () => {
   test('reducer with undefined as value', () => {
     const reducer = Factory.create(createReducer)
-    expect(reducer).toBeInstanceOf(Factory.ReducerConstant)
+    expect(reducer).toBeInstanceOf(Factory.Constructor)
     expect(reducer.type).toBe(Factory.type)
     expect(reducer.value).toBe(undefined)
   })

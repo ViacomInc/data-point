@@ -18,7 +18,7 @@ function ReducerFunction () {
   this.body = undefined
 }
 
-module.exports.ReducerFunction = ReducerFunction
+module.exports.Constructor = ReducerFunction
 
 /**
  * @param {*} source

@@ -3,9 +3,10 @@
 const _ = require('lodash')
 const helpers = require('./helpers')
 
-test('Helpers API', () => {
-  // To keep an eye on new methods added to the helpers module
-  expect(helpers).toMatchSnapshot()
+describe('helpers API', () => {
+  test('check what methods are exported in the helpers modules', () => {
+    expect(helpers).toMatchSnapshot()
+  })
 })
 
 describe('helpers.reducify', () => {

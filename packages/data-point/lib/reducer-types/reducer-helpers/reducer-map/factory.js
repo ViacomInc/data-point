@@ -16,7 +16,7 @@ function ReducerMap () {
   this.reducer = undefined
 }
 
-module.exports.ReducerMap = ReducerMap
+module.exports.Constructor = ReducerMap
 
 /**
  * @param {Function} createReducer

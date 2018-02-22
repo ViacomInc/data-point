@@ -8,7 +8,7 @@ describe('factory#create', () => {
   test('factory#create default', () => {
     const result = factory.create(createReducer)
 
-    expect(result).toBeInstanceOf(factory.ReducerList)
+    expect(result).toBeInstanceOf(factory.Constructor)
     expect(result.context).toBeUndefined()
     expect(result.reducers).toHaveLength(0)
   })
