@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Helpers API 1`] = `
+exports[`helpers API check what methods are exported in the helpers modules 1`] = `
 Object {
   "createAccumulator": [Function],
   "createEntity": [Function],
@@ -11,13 +11,6 @@ Object {
     "constant": [Function],
     "filter": [Function],
     "find": [Function],
-    "isArray": [Function],
-    "isBoolean": [Function],
-    "isError": [Function],
-    "isFunction": [Function],
-    "isNumber": [Function],
-    "isObject": [Function],
-    "isString": [Function],
     "map": [Function],
     "omit": [Function],
     "parallel": [Function],

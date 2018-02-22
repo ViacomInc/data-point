@@ -16,7 +16,7 @@ function ReducerConstant () {
   this.value = undefined
 }
 
-module.exports.ReducerConstant = ReducerConstant
+module.exports.Constructor = ReducerConstant
 
 /**
  * @param {Function} createReducer

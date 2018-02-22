@@ -13,7 +13,7 @@ function ReducerStub (type, args) {
   this.args = args
 }
 
-module.exports.ReducerStub = ReducerStub
+module.exports.Constructor = ReducerStub
 
 /**
  * @param {*} source

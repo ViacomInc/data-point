@@ -36,6 +36,10 @@ module.exports = {
   'request:a1.3': {
     url: 'http://remote.test/source4'
   },
+  'request:a1.4': {
+    value: () => ({ source: 'source5' }),
+    url: 'http://remote.test/{value.source}'
+  },
   'request:a2': {
     url: 'http://remote.test',
     options: {

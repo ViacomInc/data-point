@@ -8,7 +8,7 @@ const {
   isError,
   isArray,
   isObject
-} = require('./type-check-function-reducers')
+} = require('./type-check-functions')
 
 function testTypeChecker (typeCheck, goodValue, badValue, type) {
   test('It should return true if type match', () => {
