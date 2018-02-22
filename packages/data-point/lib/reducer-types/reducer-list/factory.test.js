@@ -106,27 +106,27 @@ describe('factory#create', () => {
     expect(result.reducers[3].type).toBe('ReducerFunction')
   })
 
-  test('factory#throw error if reducer is false', () => {
-    expect(() => factory.create(createReducer, [false])).toThrow()
+  test('should throw error if reducer is false', () => {
+    expect(() => factory.create(createReducer, [false])).toThrowErrorMatchingSnapshot()
   })
 
-  test('factory#throw error if reducer is empty string', () => {
-    expect(() => factory.create(createReducer, '')).toThrow()
+  test('should throw error if reducer is empty string', () => {
+    expect(() => factory.create(createReducer, '')).toThrowErrorMatchingSnapshot()
   })
 
-  test('factory#throw error if reducer is non-empty string with no matching reducer', () => {
-    expect(() => factory.create(createReducer, 'asdf')).toThrow()
+  test('should throw error if reducer is non-empty string with no matching reducer', () => {
+    expect(() => factory.create(createReducer, 'asdf')).toThrowErrorMatchingSnapshot()
   })
 
-  test('factory#throw error if one of two reducers is false', () => {
-    expect(() => factory.create(createReducer, ['$foo.bar', false])).toThrow()
+  test('should throw error if one of two reducers is false', () => {
+    expect(() => factory.create(createReducer, ['$foo.bar', false])).toThrowErrorMatchingSnapshot()
   })
 
-  test('factory#throw error if reducer is undefined', () => {
-    expect(() => factory.create(createReducer, [undefined])).toThrow()
+  test('should throw error if reducer is undefined', () => {
+    expect(() => factory.create(createReducer, [undefined])).toThrowErrorMatchingSnapshot()
   })
 
-  test('factory#throw error if reducer is zero', () => {
-    expect(() => factory.create(createReducer, [0])).toThrow()
+  test('should throw error if reducer is zero', () => {
+    expect(() => factory.create(createReducer, [0])).toThrowErrorMatchingSnapshot()
   })
 })

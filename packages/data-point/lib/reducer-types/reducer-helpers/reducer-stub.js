@@ -20,7 +20,7 @@ module.exports.Constructor = ReducerStub
  * @returns {boolean}
  */
 function isType (source) {
-  return source[REDUCER_STUB_SYMBOL] === true
+  return !!source && source[REDUCER_STUB_SYMBOL] === true
 }
 
 module.exports.isType = isType
