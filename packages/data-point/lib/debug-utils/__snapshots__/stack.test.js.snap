@@ -254,7 +254,7 @@ Object {
 }
 `;
 
-exports[`request entity stack traces request:2 2`] = `"request:2 -> options -> ReducerObject[y] -> ReducerList[1] -> throwError()"`;
+exports[`request entity stack traces request:2 2`] = `"request:2[options] -> ReducerObject[y] -> ReducerList[1] -> throwError()"`;
 
 exports[`request entity stack traces request:3 1`] = `
 Object {

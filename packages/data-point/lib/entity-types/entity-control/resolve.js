@@ -51,8 +51,10 @@ function resolve (accumulator, resolveReducer) {
   return getMatchingCaseIndex(caseStatements, accumulator, resolveReducer).then(
     index => {
       if (index === null) {
-        // const _index = caseStatements.length
-        return resolveReducer(accumulator, defaultTransform, ['do', ['default']])
+        return resolveReducer(accumulator, defaultTransform, [
+          'do',
+          ['default']
+        ])
       }
 
       const caseStatement = caseStatements[index]

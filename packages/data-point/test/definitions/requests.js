@@ -61,9 +61,6 @@ module.exports = {
   'request:a4': {
     url: 'source1',
     options: {
-      json: () => true,
-      method: () => 'GET',
-      timeout: () => 5000,
       baseUrl: () => 'http://remote.test'
     }
   },

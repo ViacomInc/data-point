@@ -8,8 +8,6 @@ const { assign, filter, map, find } = DataPoint.helpers
 const debugUtils = require('./index')
 const schemaA10 = require('../../test/definitions/schema')
 
-// TODO have a test for every reducer helper type
-
 const _true = () => true
 
 const _false = () => false

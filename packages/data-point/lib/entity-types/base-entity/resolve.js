@@ -103,12 +103,13 @@ module.exports.resolveMiddleware = resolveMiddleware
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
  * @param {Function} resolveReducer
- * @param {String} key
+ * @param {String} Array
  * @return {Promise}
  */
 function typeCheck (manager, accumulator, reducer, resolveReducer, key) {
-  // if no error returns original accumulator
-  // this prevents typeCheckTransform from mutating the value
+  // returns original accumulator if there's no error
+  // this helps prevent type check reducers from mutating the value, but
+  // it's still possible to modify the value by reference when it's an object
   return resolveReducer(manager, accumulator, reducer, key).return(accumulator)
 }
 
@@ -198,7 +199,9 @@ function resolveEntity (
         resolveReducer
       ).then(acc => {
         const reducer = acc.reducer.spec.outputType
-        return typeCheck(manager, acc, reducer, resolveReducer, [['outputType']])
+        return typeCheck(manager, acc, reducer, resolveReducer, [
+          ['outputType']
+        ])
       })
     })
     .then(resultContext => {

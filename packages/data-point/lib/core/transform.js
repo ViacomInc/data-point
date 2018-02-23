@@ -33,10 +33,7 @@ function reducerResolve (manager, reducerSource, value, options) {
 
   const reducer = Reducer.create(reducerSource)
   return Reducer.resolve(manager, accumulator, reducer).catch(error => {
-    if (error._stack) {
-      error._stack = stringifyReducerStack(error._stack)
-    }
-
+    error._stack = stringifyReducerStack(error._stack)
     throw error
   })
 }

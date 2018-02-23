@@ -38,9 +38,12 @@ describe('reducer#resolve', () => {
     })
 
     const reducer = { type: 'INVALID TYPE' }
-    expect(() => {
-      Resolve.resolve(manager, accumulator, reducer)
-    }).toThrowErrorMatchingSnapshot()
+    return Resolve.resolve(manager, accumulator, reducer)
+      .catch(e => e)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
+        expect(result).toMatchSnapshot()
+      })
   })
 
   test('It should return undefined when no default is provided', () => {

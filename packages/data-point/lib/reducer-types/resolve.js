@@ -60,9 +60,10 @@ function resolveReducer (manager, accumulator, reducer, key) {
   // storing this in case we need it for the catch block, since we
   // can't trust it won't be overwritten in the accumulator object
   const value = accumulator.value
-  const resolve = getResolveFunction(reducer)
-  // NOTE: recursive call
-  const result = resolve(manager, resolveReducer, accumulator, reducer)
+  const result = Promise.try(() => getResolveFunction(reducer))
+    // NOTE: recursive call
+    .then(resolve => resolve(manager, resolveReducer, accumulator, reducer))
+
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
     const resolveDefault = reducers.ReducerDefault.resolve

@@ -43,7 +43,7 @@ module.exports.getRequestOptions = getRequestOptions
 function resolveOptions (accumulator, resolveReducer) {
   accumulator = resolveUrl(accumulator)
   const specOptions = accumulator.reducer.spec.options
-  return resolveReducer(accumulator, specOptions, 'options').then(acc => {
+  return resolveReducer(accumulator, specOptions, [['options']]).then(acc => {
     const options = getRequestOptions(acc.url, acc.value)
     return utils.assign(accumulator, { options })
   })
