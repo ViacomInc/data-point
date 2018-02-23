@@ -5,14 +5,6 @@ const factory = require('./factory')
 const createReducer = require('../index').create
 
 describe('factory#create', () => {
-  test('factory#create default', () => {
-    const result = factory.create(createReducer)
-
-    expect(result).toBeInstanceOf(factory.Constructor)
-    expect(result.context).toBeUndefined()
-    expect(result.reducers).toHaveLength(0)
-  })
-
   test('factory#create only path', () => {
     const result = factory.create(createReducer, '$foo.bar')
     expect(result.reducers).toHaveLength(1)
