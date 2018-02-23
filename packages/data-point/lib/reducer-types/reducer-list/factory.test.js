@@ -98,9 +98,9 @@ describe('factory#create', () => {
     expect(result.reducers[2].type).toBe('ReducerPath')
   })
 
-  test('factory#create reducer from grouped reducers with multiple spaces', () => {
+  test('factory#create reducer from grouped reducers with multiple leading/trailing spaces', () => {
     const result = factory.create(createReducer, [
-      '$foo    |    $bar    | $baz    '
+      '     $foo    |    $bar    |     $baz    '
     ])
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
