@@ -80,7 +80,7 @@ module.exports.resolve = resolveReducer
  * @param {Array|String|Number} key
  * @param {*} value
  * @param {Error} error
- * @throws the given error with more data attached
+ * @throws the given error with _value and _stack properties attached
  */
 function onResolveMalfunction (reducer, key, value, error) {
   if (!error.hasOwnProperty('_value')) {

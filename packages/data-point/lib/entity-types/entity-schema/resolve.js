@@ -23,14 +23,14 @@ function validateContext (acc) {
 module.exports.validateContext = validateContext
 
 /**
- * @param {Accumulator} acc
+ * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
  * @param {Promise}
  */
-function resolve (acc, resolveReducer) {
-  const value = acc.reducer.spec.value
-  return resolveReducer(acc, value, [['value']]).then(racc => {
-    return validateContext(racc).catch(error => {
+function resolve (accumulator, resolveReducer) {
+  const value = accumulator.reducer.spec.value
+  return resolveReducer(accumulator, value, [['value']]).then(acc => {
+    return validateContext(acc).catch(error => {
       error._stack = ['ajv#validate']
       throw error
     })

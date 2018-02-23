@@ -108,7 +108,7 @@ Object.defineProperty(_requestReducer, 'name', {
   value: 'request-promise#request'
 })
 
-// this function is a reducer so that we can log
+// this function is a reducer so that we can generate
 // reducer stack traces if the request has an error
 const requestReducer = createReducer(_requestReducer)
 
