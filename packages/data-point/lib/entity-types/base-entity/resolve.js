@@ -103,7 +103,7 @@ module.exports.resolveMiddleware = resolveMiddleware
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
  * @param {Function} resolveReducer
- * @param {String} Array
+ * @param {Array} key
  * @return {Promise}
  */
 function typeCheck (manager, accumulator, reducer, resolveReducer, key) {
