@@ -59,6 +59,7 @@ function resolveReducer (manager, accumulator, reducer, key) {
 
   // storing this in case we need it for the catch block, since we
   // can't trust it won't be overwritten in the accumulator object
+  // although it could still be modified by reference if it's an object
   const value = accumulator.value
   const result = Promise.try(() => getResolveFunction(reducer))
     // NOTE: recursive call
