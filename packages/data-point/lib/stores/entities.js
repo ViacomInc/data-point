@@ -4,7 +4,7 @@ const storeManager = require('./store-manager')
 const createReducer = require('../reducer-types').create
 
 /**
- * @param {StoreManager} entityTypes
+ * @param {Object} entityTypes
  * @param {Object} source
  * @param {string} id
  * @return {Reducer}
@@ -43,7 +43,7 @@ function errorInfoCbAdd (id) {
 
 /**
  * create instance
- * @param {StoreManager} entityTypes
+ * @param {Object} entityTypes
  * @return {Object}
  */
 function create (entityTypes) {
