@@ -5,14 +5,6 @@ const factory = require('./factory')
 const createReducer = require('../index').create
 
 describe('factory#create', () => {
-  test('factory#create default', () => {
-    const result = factory.create(createReducer)
-
-    expect(result).toBeInstanceOf(factory.Constructor)
-    expect(result.context).toBeUndefined()
-    expect(result.reducers).toHaveLength(0)
-  })
-
   test('factory#create only path', () => {
     const result = factory.create(createReducer, '$foo.bar')
     expect(result.reducers).toHaveLength(1)
@@ -104,5 +96,41 @@ describe('factory#create', () => {
     expect(result.reducers[1].type).toBe('ReducerEntity')
     expect(result.reducers[2].type).toBe('ReducerPath')
     expect(result.reducers[3].type).toBe('ReducerFunction')
+  })
+
+  test('should throw error if reducer is false', () => {
+    expect(() =>
+      factory.create(createReducer, [false])
+    ).toThrowErrorMatchingSnapshot()
+  })
+
+  test('should throw error if reducer is empty string', () => {
+    expect(() =>
+      factory.create(createReducer, '')
+    ).toThrowErrorMatchingSnapshot()
+  })
+
+  test('should throw error if reducer is non-empty string with no matching reducer', () => {
+    expect(() =>
+      factory.create(createReducer, 'asdf')
+    ).toThrowErrorMatchingSnapshot()
+  })
+
+  test('should throw error if one of two reducers is false', () => {
+    expect(() =>
+      factory.create(createReducer, ['$foo.bar', false])
+    ).toThrowErrorMatchingSnapshot()
+  })
+
+  test('should throw error if reducer is undefined', () => {
+    expect(() =>
+      factory.create(createReducer, [undefined])
+    ).toThrowErrorMatchingSnapshot()
+  })
+
+  test('should throw error if reducer is zero', () => {
+    expect(() =>
+      factory.create(createReducer, [0])
+    ).toThrowErrorMatchingSnapshot()
   })
 })
