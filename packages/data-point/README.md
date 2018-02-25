@@ -287,7 +287,11 @@ This method returns a **Promise** with the final output value.
 
 - [Hello World](#hello-world) example.
 - [With options](#acc-locals-example) example.
-- [With constants in options](#options-with-constants) example.
+- [With 
+
+
+
+in options](#options-with-constants) example.
 
 ### <a name="api-data-point-transform">dataPoint.transform()</a>
 
@@ -1161,7 +1165,7 @@ Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
 
 ### <a name="reducer-constant">constant</a>
 
-The **constant** reducer always returns the given value. Constants should not contain other reducers.
+The **constant** reducer always returns the given value. If a reducer is passed it will not be evaluated.
 
 **SYNOPSIS**
 
