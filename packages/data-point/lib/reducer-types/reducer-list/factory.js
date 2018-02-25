@@ -33,7 +33,7 @@ module.exports.isType = isType
  */
 function parseFromString (source) {
   const reducerSource = _.defaultTo(source, '').trim()
-  const tokens = _.compact(reducerSource.split(/\s+\|\s+/))
+  const tokens = reducerSource.split(/\s+\|\s+/)
   return tokens
 }
 
@@ -55,7 +55,6 @@ module.exports.parseTokenExpression = parseTokenExpression
  */
 function parseFromArray (source) {
   return _.chain(source)
-    .compact()
     .map(parseTokenExpression)
     .flatten()
     .value()
@@ -68,7 +67,7 @@ module.exports.parseFromArray = parseFromArray
  * @returns {Array}
  */
 function parse (source) {
-  return parseFromArray(source ? _.castArray(source) : [])
+  return parseFromArray(_.castArray(source))
 }
 
 module.exports.parse = parse
