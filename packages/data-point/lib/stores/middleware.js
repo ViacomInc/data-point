@@ -1,23 +1,38 @@
 const _ = require('lodash')
-const middlewareFactory = require('../middleware')
 
+/**
+ * @param {Object} manager
+ * @return {Object}
+ */
 function clear (manager) {
-  /* eslint no-param-reassign: "off" */
-  manager.stack = []
+  manager.store.clear()
   return manager
 }
+
 module.exports.clear = clear
 
+/**
+ * @param {Object} manager
+ * @param {String} name
+ * @param {Function} callback
+ * @return {Object}
+ */
 function use (manager, name, callback) {
-  manager.stack.push(middlewareFactory.create(name, callback))
-  return manager.stack
+  const stack = manager.store.get(name) || []
+  stack.push(callback)
+  manager.store.set(name, stack)
+  return manager
 }
 
 module.exports.use = use
 
+/**
+ * @param {Object} spec
+ * @return {Object}
+ */
 function create (spec) {
   const manager = {
-    stack: []
+    store: new Map()
   }
 
   manager.use = _.partial(use, manager)
