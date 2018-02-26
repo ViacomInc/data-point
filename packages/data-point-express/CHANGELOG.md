@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/ViacomInc/data-point/compare/v2.0.0...v3.0.0) (2018-02-26)
+
+
+### Features
+
+* **data-point-codemod:** adds codemod package ([#172](https://github.com/ViacomInc/data-point/issues/172)) ([8ac4f37](https://github.com/ViacomInc/data-point/commit/8ac4f37)), closes [#117](https://github.com/ViacomInc/data-point/issues/117)
+
+
+### BREAKING CHANGES
+
+* **data-point-codemod:** every reducer function needs to be changed to accept the first parameter as the
+reducer's input, use codemods provided
+
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/ViacomInc/data-point/compare/v1.5.0...v1.7.0) (2017-12-30)
 

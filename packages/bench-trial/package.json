@@ -1,6 +1,6 @@
 {
   "name": "bench-trial",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Runs one or multiple benchmark tests",
   "main": "./lib/index.js",
   "license": "Apache-2.0",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "benchmark": "^2.1.4",
-    "commander": "^2.13.0",
-    "chalk": "^2.3.0"
+    "chalk": "^2.3.0",
+    "commander": "^2.13.0"
   }
 }
