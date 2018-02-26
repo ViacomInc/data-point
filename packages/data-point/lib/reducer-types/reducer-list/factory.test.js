@@ -37,6 +37,18 @@ describe('factory#create', () => {
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 
+  test('it should create a ReducerList with reducers using a piped reducer with multiple spaces', () => {
+    const result = factory.create(createReducer, [
+      '$foo.bar  |     reducer:add   ',
+      () => true
+    ])
+
+    expect(result.reducers).toHaveLength(3)
+    expect(result.reducers[0].type).toBe('ReducerPath')
+    expect(result.reducers[1].type).toBe('ReducerEntity')
+    expect(result.reducers[2].type).toBe('ReducerFunction')
+  })
+
   test('It should create a ReducerList with reducers using an array of reducers', () => {
     const result = factory.create(createReducer, [
       '$foo.bar',
@@ -72,6 +84,16 @@ describe('factory#create', () => {
 
   test('factory#create reducer from grouped reducers and single reducers', () => {
     const result = factory.create(createReducer, ['$foo | $bar', '$baz'])
+    expect(result.reducers).toHaveLength(3)
+    expect(result.reducers[0].type).toBe('ReducerPath')
+    expect(result.reducers[1].type).toBe('ReducerPath')
+    expect(result.reducers[2].type).toBe('ReducerPath')
+  })
+
+  test('factory#create reducer from grouped reducers with multiple leading/trailing spaces', () => {
+    const result = factory.create(createReducer, [
+      '     $foo    |    $bar    |     $baz    '
+    ])
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
     expect(result.reducers[1].type).toBe('ReducerPath')
