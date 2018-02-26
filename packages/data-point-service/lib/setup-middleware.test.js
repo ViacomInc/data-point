@@ -126,10 +126,12 @@ describe('setupMiddleware', () => {
         const before = s.dataPoint.middleware.store.get('before')
         expect(before).toBeInstanceOf(Array)
         expect(before).toHaveLength(1)
+        expect(before[0]).toBeInstanceOf(Function)
 
         const after = s.dataPoint.middleware.store.get('after')
         expect(after).toBeInstanceOf(Array)
         expect(after).toHaveLength(1)
+        expect(after[0]).toBeInstanceOf(Function)
       })
   })
 
