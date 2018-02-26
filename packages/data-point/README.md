@@ -287,7 +287,7 @@ This method returns a **Promise** with the final output value.
 
 - [Hello World](#hello-world) example.
 - [With options](#acc-locals-example) example.
-- [With in options](#options-with-constants) example.
+- [With constants in options](#options-with-constants) example.
 
 ### <a name="api-data-point-transform">dataPoint.transform()</a>
 
