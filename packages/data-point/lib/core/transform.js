@@ -19,7 +19,12 @@ function reducerResolve (manager, reducerSource, value, options) {
     values: manager.values.getStore()
   })
 
-  const reducer = Reducer.create(reducerSource)
+  let reducer
+  if (Reducer.isReducer(reducerSource)) {
+    reducer = reducerSource
+  } else {
+    reducer = Reducer.create(reducerSource)
+  }
 
   return Reducer.resolve(manager, context, reducer)
 }
