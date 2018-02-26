@@ -43,9 +43,9 @@ module.exports._validateContext = _validateContext
  */
 function resolve (accumulator, resolveReducer) {
   const value = accumulator.reducer.spec.value
-  return resolveReducer(accumulator, value, [['value']]).then(acc =>
-    resolveReducer(acc, _validateContext)
-  )
+  return resolveReducer(accumulator, value, [['value']]).then(acc => {
+    return resolveReducer(acc, _validateContext)
+  })
 }
 
 module.exports.resolve = resolve
