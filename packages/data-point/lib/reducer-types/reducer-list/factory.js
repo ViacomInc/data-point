@@ -32,8 +32,8 @@ module.exports.isType = isType
  * @returns {Array}
  */
 function parseFromString (source) {
-  const reducerSource = _.defaultTo(source, '')
-  const tokens = reducerSource.split(' | ')
+  const reducerSource = _.defaultTo(source, '').trim()
+  const tokens = reducerSource.split(/\s+\|\s+/)
   return tokens
 }
 
