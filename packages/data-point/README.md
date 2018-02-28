@@ -1162,7 +1162,7 @@ Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
 
 ### <a name="reducer-constant">constant</a>
 
-The **constant** reducer always returns the given value.
+The **constant** reducer always returns the given value. If a reducer is passed it will not be evaluated.
 
 **SYNOPSIS**
 
@@ -1209,6 +1209,34 @@ constant(value:*):*
       // }
       }
     })
+  ```
+</details>
+
+
+<details>
+  <summary>reducers are not evaluated when defined inside of constants</summary>
+
+  ```js
+  const { constant } = DataPoint.helpers
+
+  const input = {
+    b: 1
+  }
+
+  // ReducerObject that contains a ReducerPath ('$a')
+  let reducer = {
+    a: '$b'
+  }
+
+  dataPoint.resolve(reducer, input) // => { a: 1 }
+
+  // both the object and the path will be treated as
+  // constants instead of being used to create reducers
+  reducer = constant({
+    a: '$b'
+  })
+
+  dataPoint.resolve(reducer, input) // => { a: '$b' }
   ```
 </details>
 
