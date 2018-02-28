@@ -24,9 +24,9 @@ function testError (reducer, input) {
     .catch(error => error)
     .then(result => {
       expect(result).toBeInstanceOf(Error)
-      expect(result).toHaveProperty('_value')
+      expect(result).toHaveProperty('_input')
       expect(result).toHaveProperty('_stack')
-      expect(result._value).toMatchSnapshot()
+      expect(result._input).toMatchSnapshot()
       expect(result._stack).toMatchSnapshot()
     })
 }

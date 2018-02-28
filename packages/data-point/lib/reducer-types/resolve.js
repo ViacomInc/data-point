@@ -79,13 +79,13 @@ module.exports.resolve = resolveReducer
 /**
  * @param {Reducer} reducer
  * @param {Array|String|Number} key
- * @param {*} value
+ * @param {*} input
  * @param {Error} error
- * @throws the given error with _value and _stack properties attached
+ * @throws the given error with _input and _stack properties attached
  */
-function onResolveMalfunction (reducer, key, value, error) {
-  if (!error.hasOwnProperty('_value')) {
-    error._value = value
+function onResolveMalfunction (reducer, key, input, error) {
+  if (!error.hasOwnProperty('_input')) {
+    error._input = input
   }
 
   let stack

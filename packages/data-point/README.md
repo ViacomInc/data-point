@@ -3334,7 +3334,7 @@ Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
 
 When a reducer throws an error, DataPoint adds two properties to the error object:
 
-`_value:*` - the input value to the reducer that failed
+`_input:*` - the input value to the reducer that failed
 
 `_stack:String` - the reducer stack trace
 
@@ -3366,7 +3366,7 @@ dataPoint.resolve('model:with-error', input)
       'model:with-error[value] -> ReducerObject[a.b] -> throwError()'
     )
     assert.equal(
-      error._value,
+      error._input,
       'foo'
     )
   })
