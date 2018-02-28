@@ -62,7 +62,7 @@ function create (createReducer, source) {
 
   // do not include the name for arrow functions (which do not have a prototype),
   // because some arrow functions have inferred names, which might be confusing
-  // if they show up in the reducer stack traces for error messages
+  // if they show up in the error._stack string when an error is thrown
   const name = (reducer.body.prototype && reducer.body.name) || ''
   name && (reducer.name = name)
   return reducer
