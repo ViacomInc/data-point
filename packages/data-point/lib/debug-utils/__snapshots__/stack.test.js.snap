@@ -1,22 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ReducerAssign invalid input type 1`] = `
+exports[`ReducerAssign invalid input type #1 1`] = `
 Object {
   "a": 1,
   "b": 2,
 }
 `;
 
-exports[`ReducerAssign invalid input type 2`] = `"ReducerAssign -> ReducerObject[a] -> throwError()"`;
+exports[`ReducerAssign invalid input type #1 2`] = `"ReducerAssign -> ReducerObject[a] -> throwError()"`;
 
-exports[`ReducerAssign invalid input type 3`] = `
+exports[`ReducerAssign invalid input type #2 1`] = `
 Object {
   "a": 1,
   "b": 2,
 }
 `;
 
-exports[`ReducerAssign invalid input type 4`] = `"ReducerAssign -> ReducerObject[b] -> throwError()"`;
+exports[`ReducerAssign invalid input type #2 2`] = `"ReducerAssign -> ReducerObject[b] -> throwError()"`;
 
 exports[`ReducerFilter invalid input type 1`] = `false`;
 
@@ -74,7 +74,7 @@ exports[`ReducerMap throw error on 2nd item 1`] = `2`;
 
 exports[`ReducerMap throw error on 2nd item 2`] = `"ReducerMap[1] -> ReducerFunction()"`;
 
-exports[`ReducerObject with errors nested property 1`] = `
+exports[`ReducerObject with errors nested property throws an error 1`] = `
 Object {
   "a": 1,
   "b": Object {
@@ -85,194 +85,194 @@ Object {
 }
 `;
 
-exports[`ReducerObject with errors nested property 2`] = `"ReducerObject[b.c.d] -> throwError()"`;
+exports[`ReducerObject with errors nested property throws an error 2`] = `"ReducerObject[b.c.d] -> throwError()"`;
 
-exports[`ReducerObject with errors single property 1`] = `
+exports[`ReducerObject with errors single property throws an error 1`] = `
 Object {
   "a": 1,
   "b": 2,
 }
 `;
 
-exports[`ReducerObject with errors single property 2`] = `"ReducerObject[b] -> throwError()"`;
+exports[`ReducerObject with errors single property throws an error 2`] = `"ReducerObject[b] -> throwError()"`;
 
-exports[`control entity stack traces control:1 1`] = `
+exports[`control entity stack traces control:1 - first case throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`control entity stack traces control:1 2`] = `"control:1 -> case[0] -> throwError()"`;
+exports[`control entity stack traces control:1 - first case throws an error 2`] = `"control:1 -> case[0] -> throwError()"`;
 
-exports[`control entity stack traces control:2 1`] = `
+exports[`control entity stack traces control:2 - second case throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`control entity stack traces control:2 2`] = `"control:2 -> case[1] -> throwError()"`;
+exports[`control entity stack traces control:2 - second case throws an error 2`] = `"control:2 -> case[1] -> throwError()"`;
 
-exports[`control entity stack traces control:3 1`] = `
+exports[`control entity stack traces control:3 - first do throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`control entity stack traces control:3 2`] = `"control:3 -> do[0] -> throwError()"`;
+exports[`control entity stack traces control:3 - first do throws an error 2`] = `"control:3 -> do[0] -> throwError()"`;
 
-exports[`control entity stack traces control:4 1`] = `
+exports[`control entity stack traces control:4 - second do throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`control entity stack traces control:4 2`] = `"control:4 -> do[1] -> throwError()"`;
+exports[`control entity stack traces control:4 - second do throws an error 2`] = `"control:4 -> do[1] -> throwError()"`;
 
-exports[`control entity stack traces control:5 1`] = `
+exports[`control entity stack traces control:5 - default throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`control entity stack traces control:5 2`] = `"control:5 -> do[default] -> throwError()"`;
+exports[`control entity stack traces control:5 - default throws an error 2`] = `"control:5 -> do[default] -> throwError()"`;
 
-exports[`do not log names for anonymous functions function in ReducerList 1`] = `
+exports[`do not log names for anonymous functions function in ReducerList throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`do not log names for anonymous functions function in ReducerList 2`] = `"ReducerFunction()"`;
+exports[`do not log names for anonymous functions function in ReducerList throws an error 2`] = `"ReducerFunction()"`;
 
-exports[`do not log names for anonymous functions function with inferred name from object property 1`] = `
+exports[`do not log names for anonymous functions function with inferred name from object property throws an error 1`] = `
 Object {
   "a": 1,
 }
 `;
 
-exports[`do not log names for anonymous functions function with inferred name from object property 2`] = `"ReducerObject[a] -> ReducerFunction()"`;
+exports[`do not log names for anonymous functions function with inferred name from object property throws an error 2`] = `"ReducerObject[a] -> ReducerFunction()"`;
 
-exports[`do not log names for anonymous functions function with inferred name from variable 1`] = `
+exports[`do not log names for anonymous functions function with inferred name from variable throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`do not log names for anonymous functions function with inferred name from variable 2`] = `"ReducerFunction()"`;
+exports[`do not log names for anonymous functions function with inferred name from variable throws an error 2`] = `"ReducerFunction()"`;
 
-exports[`entry entity stack traces entry:1 1`] = `
+exports[`entry entity stack traces entry:1 - before throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`entry entity stack traces entry:1 2`] = `"entry:1[before] -> throwError()"`;
+exports[`entry entity stack traces entry:1 - before throws an error 2`] = `"entry:1[before] -> throwError()"`;
 
-exports[`entry entity stack traces entry:2 1`] = `
+exports[`entry entity stack traces entry:2 - value throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`entry entity stack traces entry:2 2`] = `"entry:2[value] -> throwError()"`;
+exports[`entry entity stack traces entry:2 - value throws an error 2`] = `"entry:2[value] -> throwError()"`;
 
-exports[`entry entity stack traces entry:3 1`] = `
+exports[`entry entity stack traces entry:3 - after throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`entry entity stack traces entry:3 2`] = `"entry:3[after] -> throwError()"`;
+exports[`entry entity stack traces entry:3 - after throws an error 2`] = `"entry:3[after] -> throwError()"`;
 
-exports[`entry entity stack traces entry:4 1`] = `[Error: test error message]`;
+exports[`entry entity stack traces entry:4 - error handler throws a new error 1`] = `[Error: test error message]`;
 
-exports[`entry entity stack traces entry:4 2`] = `"entry:4[error] -> throwError()"`;
+exports[`entry entity stack traces entry:4 - error handler throws a new error 2`] = `"entry:4[error] -> throwError()"`;
 
-exports[`entry entity stack traces entry:type-check-1 1`] = `
+exports[`entry entity stack traces entry:type-check-1 - 'string' inputType throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`entry entity stack traces entry:type-check-1 2`] = `"entry:type-check-1[inputType] -> isString()"`;
+exports[`entry entity stack traces entry:type-check-1 - 'string' inputType throws an error 2`] = `"entry:type-check-1[inputType] -> isString()"`;
 
-exports[`entry entity stack traces entry:type-check-2 1`] = `500`;
+exports[`entry entity stack traces entry:type-check-2 - 'string' outputType throws an error 1`] = `500`;
 
-exports[`entry entity stack traces entry:type-check-2 2`] = `"entry:type-check-2[outputType] -> isString()"`;
+exports[`entry entity stack traces entry:type-check-2 - 'string' outputType throws an error 2`] = `"entry:type-check-2[outputType] -> isString()"`;
 
-exports[`entry entity stack traces entry:type-check-3 1`] = `
+exports[`entry entity stack traces entry:type-check-3 - inputType uses a schema and throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`entry entity stack traces entry:type-check-3 2`] = `"entry:type-check-3[inputType] -> schema:a.1.0 -> ajv#validate()"`;
+exports[`entry entity stack traces entry:type-check-3 - inputType uses a schema and throws an error 2`] = `"entry:type-check-3[inputType] -> schema:a.1.0 -> ajv#validate()"`;
 
-exports[`entry entity stack traces entry:type-check-4 1`] = `500`;
+exports[`entry entity stack traces entry:type-check-4 - outputType uses a schema and throws an error 1`] = `500`;
 
-exports[`entry entity stack traces entry:type-check-4 2`] = `"entry:type-check-4[outputType] -> schema:a.1.0 -> ajv#validate()"`;
+exports[`entry entity stack traces entry:type-check-4 - outputType uses a schema and throws an error 2`] = `"entry:type-check-4[outputType] -> schema:a.1.0 -> ajv#validate()"`;
 
-exports[`model entity stack traces model:1 1`] = `
+exports[`model entity stack traces model:1 - before throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`model entity stack traces model:1 2`] = `"model:1[before] -> throwError()"`;
+exports[`model entity stack traces model:1 - before throws an error 2`] = `"model:1[before] -> throwError()"`;
 
-exports[`model entity stack traces model:2 1`] = `
+exports[`model entity stack traces model:2 - value throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`model entity stack traces model:2 2`] = `"model:2[value] -> throwError()"`;
+exports[`model entity stack traces model:2 - value throws an error 2`] = `"model:2[value] -> throwError()"`;
 
-exports[`model entity stack traces model:3 1`] = `
+exports[`model entity stack traces model:3 - after throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`model entity stack traces model:3 2`] = `"model:3[after] -> throwError()"`;
+exports[`model entity stack traces model:3 - after throws an error 2`] = `"model:3[after] -> throwError()"`;
 
-exports[`model entity stack traces model:4 1`] = `[Error: test error message]`;
+exports[`model entity stack traces model:4 - error handler throws a new error 1`] = `[Error: test error message]`;
 
-exports[`model entity stack traces model:4 2`] = `"model:4[error] -> throwError()"`;
+exports[`model entity stack traces model:4 - error handler throws a new error 2`] = `"model:4[error] -> throwError()"`;
 
-exports[`request entity stack traces request:1 1`] = `
+exports[`request entity stack traces request:1 - value throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`request entity stack traces request:1 2`] = `"request:1[value] -> ReducerList[1] -> throwError()"`;
+exports[`request entity stack traces request:1 - value throws an error 2`] = `"request:1[value] -> ReducerList[1] -> throwError()"`;
 
-exports[`request entity stack traces request:2 1`] = `
+exports[`request entity stack traces request:2 - options throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`request entity stack traces request:2 2`] = `"request:2[options] -> ReducerObject[y] -> ReducerList[1] -> throwError()"`;
+exports[`request entity stack traces request:2 - options throws an error 2`] = `"request:2[options] -> ReducerObject[y] -> ReducerList[1] -> throwError()"`;
 
-exports[`request entity stack traces request:3 1`] = `
+exports[`request entity stack traces request:3 - before throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`request entity stack traces request:3 2`] = `"request:3[before] -> throwError()"`;
+exports[`request entity stack traces request:3 - before throws an error 2`] = `"request:3[before] -> throwError()"`;
 
-exports[`request entity stack traces request:4 1`] = `
+exports[`request entity stack traces request:4 - after throws an error 1`] = `
 Object {
   "ok": true,
 }
 `;
 
-exports[`request entity stack traces request:4 2`] = `"request:4[after] -> throwError()"`;
+exports[`request entity stack traces request:4 - after throws an error 2`] = `"request:4[after] -> throwError()"`;
 
-exports[`request entity stack traces request:5 1`] = `
+exports[`request entity stack traces request:5 - request returns a 404 1`] = `
 Object {
   "json": true,
   "method": "GET",
@@ -280,45 +280,45 @@ Object {
 }
 `;
 
-exports[`request entity stack traces request:5 2`] = `"request:5 -> request-promise#request()"`;
+exports[`request entity stack traces request:5 - request returns a 404 2`] = `"request:5 -> request-promise#request()"`;
 
-exports[`schema entity stack traces schema:a.1.0 1`] = `
+exports[`schema entity stack traces schema:a.1.0 - schema throws an error from ajv#validate 1`] = `
 Object {
   "baaaaaar": "1",
   "foo": 1,
 }
 `;
 
-exports[`schema entity stack traces schema:a.1.0 2`] = `"schema:a.1.0 -> ajv#validate()"`;
+exports[`schema entity stack traces schema:a.1.0 - schema throws an error from ajv#validate 2`] = `"schema:a.1.0 -> ajv#validate()"`;
 
-exports[`schema entity stack traces schema:with-value-prop 1`] = `
+exports[`schema entity stack traces schema:with-value-prop - value throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`schema entity stack traces schema:with-value-prop 2`] = `"schema:with-value-prop[value] -> throwError()"`;
+exports[`schema entity stack traces schema:with-value-prop - value throws an error 2`] = `"schema:with-value-prop[value] -> throwError()"`;
 
-exports[`transform entity stack traces transform:1 1`] = `
+exports[`transform entity stack traces transform:1 - value is a function that throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`transform entity stack traces transform:1 2`] = `"transform:1[value] -> ReducerFunction()"`;
+exports[`transform entity stack traces transform:1 - value is a function that throws an error 2`] = `"transform:1[value] -> ReducerFunction()"`;
 
-exports[`transform entity stack traces transform:2 1`] = `
+exports[`transform entity stack traces transform:2 - references another entity that throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`transform entity stack traces transform:2 2`] = `"transform:2[value] -> transform:1[value] -> ReducerFunction()"`;
+exports[`transform entity stack traces transform:2 - references another entity that throws an error 2`] = `"transform:2[value] -> transform:1[value] -> ReducerFunction()"`;
 
-exports[`transform entity stack traces transform:3 1`] = `
+exports[`transform entity stack traces transform:3 - references an entity chain that throws an error 1`] = `
 Object {
   "x": 1,
 }
 `;
 
-exports[`transform entity stack traces transform:3 2`] = `"transform:3[value] -> transform:2[value] -> transform:1[value] -> ReducerFunction()"`;
+exports[`transform entity stack traces transform:3 - references an entity chain that throws an error 2`] = `"transform:3[value] -> transform:2[value] -> transform:1[value] -> ReducerFunction()"`;

@@ -172,102 +172,102 @@ const dataPoint = DataPoint.create({
 dataPoint.addEntities(schemaA10)
 
 describe('transform entity stack traces', () => {
-  test('transform:1', () => {
+  test('transform:1 - value is a function that throws an error', () => {
     return testError('transform:1', { x: 1 })
   })
-  test('transform:2', () => {
+  test('transform:2 - references another entity that throws an error', () => {
     return testError('transform:2', { x: 1 })
   })
-  test('transform:3', () => {
+  test('transform:3 - references an entity chain that throws an error', () => {
     return testError('transform:3', { x: 1 })
   })
 })
 
 describe('request entity stack traces', () => {
-  test('request:1', () => {
+  test('request:1 - value throws an error', () => {
     return testError('request:1', { x: 1 })
   })
-  test('request:2', () => {
+  test('request:2 - options throws an error', () => {
     return testError('request:2', { x: 1 })
   })
-  test('request:3', () => {
+  test('request:3 - before throws an error', () => {
     return testError('request:3', { x: 1 })
   })
-  test('request:4', () => {
+  test('request:4 - after throws an error', () => {
     return testError('request:4', { x: 1 })
   })
-  test('request:5', () => {
+  test('request:5 - request returns a 404', () => {
     return testError('request:5', { x: 1 })
   })
 })
 
 describe('control entity stack traces', () => {
-  test('control:1', () => {
+  test('control:1 - first case throws an error', () => {
     return testError('control:1', { x: 1 })
   })
-  test('control:2', () => {
+  test('control:2 - second case throws an error', () => {
     return testError('control:2', { x: 1 })
   })
-  test('control:3', () => {
+  test('control:3 - first do throws an error', () => {
     return testError('control:3', { x: 1 })
   })
-  test('control:4', () => {
+  test('control:4 - second do throws an error', () => {
     return testError('control:4', { x: 1 })
   })
-  test('control:5', () => {
+  test('control:5 - default throws an error', () => {
     return testError('control:5', { x: 1 })
   })
 })
 
 describe('model entity stack traces', () => {
-  test('model:1', () => {
+  test('model:1 - before throws an error', () => {
     return testError('model:1', { x: 1 })
   })
-  test('model:2', () => {
+  test('model:2 - value throws an error', () => {
     return testError('model:2', { x: 1 })
   })
-  test('model:3', () => {
+  test('model:3 - after throws an error', () => {
     return testError('model:3', { x: 1 })
   })
-  test('model:4', () => {
+  test('model:4 - error handler throws a new error', () => {
     return testError('model:4', { x: 1 })
   })
 })
 
 describe('entry entity stack traces', () => {
-  test('entry:1', () => {
+  test('entry:1 - before throws an error', () => {
     return testError('entry:1', { x: 1 })
   })
-  test('entry:2', () => {
+  test('entry:2 - value throws an error', () => {
     return testError('entry:2', { x: 1 })
   })
-  test('entry:3', () => {
+  test('entry:3 - after throws an error', () => {
     return testError('entry:3', { x: 1 })
   })
-  test('entry:4', () => {
+  test('entry:4 - error handler throws a new error', () => {
     return testError('entry:4', { x: 1 })
   })
 
-  test('entry:type-check-1', () => {
+  test("entry:type-check-1 - 'string' inputType throws an error", () => {
     return testError('entry:type-check-1', { x: 1 })
   })
-  test('entry:type-check-2', () => {
+  test("entry:type-check-2 - 'string' outputType throws an error", () => {
     return testError('entry:type-check-2', { x: 1 })
   })
-  test('entry:type-check-3', () => {
+  test('entry:type-check-3 - inputType uses a schema and throws an error', () => {
     return testError('entry:type-check-3', { x: 1 })
   })
-  test('entry:type-check-4', () => {
+  test('entry:type-check-4 - outputType uses a schema and throws an error', () => {
     return testError('entry:type-check-4', { x: 1 })
   })
 })
 
 describe('schema entity stack traces', () => {
-  test('schema:with-value-prop', () => {
+  test('schema:with-value-prop - value throws an error', () => {
     return testError('schema:with-value-prop', { x: 1 })
   })
 
-  test('schema:a.1.0', () => {
+  test('schema:a.1.0 - schema throws an error from ajv#validate', () => {
     return testError('schema:a.1.0', {
       foo: 1,
       baaaaaar: '1'
@@ -307,14 +307,14 @@ describe('ReducerList with errors', () => {
 })
 
 describe('ReducerObject with errors', () => {
-  test('single property', () => {
+  test('single property throws an error', () => {
     const reducer = {
       a: '$a',
       b: throwError
     }
     return testError(reducer, { a: 1, b: 2 })
   })
-  test('nested property', () => {
+  test('nested property throws an error', () => {
     const reducer = {
       a: '$a',
       b: {
@@ -328,7 +328,7 @@ describe('ReducerObject with errors', () => {
 })
 
 describe('do not log names for anonymous functions', () => {
-  test('function in ReducerList', () => {
+  test('function in ReducerList throws an error', () => {
     const reducer = [
       () => {
         throw new Error('test error')
@@ -336,13 +336,13 @@ describe('do not log names for anonymous functions', () => {
     ]
     return testError(reducer, { x: 1 })
   })
-  test('function with inferred name from variable', () => {
+  test('function with inferred name from variable throws an error', () => {
     const anonFunction = () => {
       throw new Error('test error')
     }
     return testError(anonFunction, { x: 1 })
   })
-  test('function with inferred name from object property', () => {
+  test('function with inferred name from object property throws an error', () => {
     const reducer = {
       a: () => {
         throw new Error('test error')
@@ -353,11 +353,11 @@ describe('do not log names for anonymous functions', () => {
 })
 
 describe('ReducerAssign', () => {
-  test('invalid input type', () => {
+  test('invalid input type #1', () => {
     const reducer = assign({ a: throwError, b: '$b' })
     return testError(reducer, { a: 1, b: 2 })
   })
-  test('invalid input type', () => {
+  test('invalid input type #2', () => {
     const reducer = assign({ a: '$a', b: throwError })
     return testError(reducer, { a: 1, b: 2 })
   })
