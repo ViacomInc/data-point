@@ -1372,7 +1372,6 @@ const {
 } = require('data-point').entityFactories
 ```
 
-
 The following examples are equivalent:
 
 **Example #1 (with object literal)**
