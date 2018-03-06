@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-const core = require('./core')
+const DataPoint = require('../index')
 
 const reducers = require('../../test/utils/reducers')
 const entities = require('../../test/definitions/entities')
@@ -11,7 +11,7 @@ const TestData = require('../../test/data.json')
 let dataPoint
 
 beforeAll(() => {
-  dataPoint = core.create({
+  dataPoint = DataPoint.create({
     values: {
       v1: 'v1'
     },
@@ -197,6 +197,18 @@ describe('resolve', () => {
       .then(Transform.resolve(dataPoint, '$foo'))
       .then(value => {
         expect(value).toEqual('bar')
+      })
+  })
+})
+
+describe('dataPoint.createReducer', () => {
+  test('it should evaluate an existing reducer', () => {
+    const reducer = DataPoint.createReducer(['$a', input => input + 1])
+    return dataPoint
+      .resolve(reducer, { a: 5 })
+      .catch(err => err)
+      .then(output => {
+        expect(output).toBe(6)
       })
   })
 })
