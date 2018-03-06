@@ -1357,7 +1357,7 @@ dataPoint.addEntities({
 
 ### <a name="entity-factories">Entity factories</a>
 
-Entities can be defined with object literals, *or* with factories that DataPoint exposes. Each entity type has a corresponding factory:
+Entities can be defined with object literals, or with factories that DataPoint exposes. Each entity type has a corresponding factory:
 
 ```js
 const {

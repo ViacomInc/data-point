@@ -2,11 +2,17 @@
 
 const { createEntityFactory } = require('./factory')
 
-describe('creating a model with createEntityFactory', () => {
-  const factory = createEntityFactory('model')
-  const spec = { value: input => input }
-  const instance = factory('nuts', spec)
+let factory
+let spec
+let instance
 
+beforeAll(() => {
+  factory = createEntityFactory('model')
+  spec = { value: input => input }
+  instance = factory('nuts', spec)
+})
+
+describe('creating a model with createEntityFactory', () => {
   test('createEntityFactory return value should be a function', () => {
     expect(createEntityFactory).toBeInstanceOf(Function)
   })
