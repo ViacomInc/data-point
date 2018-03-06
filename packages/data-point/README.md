@@ -1377,7 +1377,6 @@ The following examples are equivalent:
 **Example #1 (with object literal)**
 
 ```js
-// object literal version
 dataPoint.addEntities({
   'model:hello-world': {
     value: input => ({
