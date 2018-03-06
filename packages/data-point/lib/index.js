@@ -10,5 +10,6 @@ module.exports = {
   resolveEntity: helpers.resolveEntity,
   reducify: helpers.reducify,
   reducifyAll: helpers.reducifyAll,
+  createReducer: helpers.createReducer,
   createReducerResolver: helpers.reducifyAll
 }
