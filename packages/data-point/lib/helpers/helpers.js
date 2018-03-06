@@ -17,6 +17,8 @@ module.exports.helpers = {
   withDefault: stubFactories.withDefault
 }
 
+module.exports.entityFactories = require('../entity-types').factories
+
 module.exports.isReducer = require('../reducer-types').isReducer
 
 module.exports.createReducer = require('../reducer-types').create

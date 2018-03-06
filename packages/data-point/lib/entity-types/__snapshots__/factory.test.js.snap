@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`entity-types/factory#createEntityFactory should create an entity factory that returns an object with the expected shape 1`] = `
+Object {
+  "definition": Object {
+    "Hash:nuts": Object {},
+  },
+  "id": "Hash:nuts",
+  "name": "nuts",
+  "spec": Object {},
+  "type": "Hash",
+}
+`;

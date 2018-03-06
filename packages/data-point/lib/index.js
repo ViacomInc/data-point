@@ -8,6 +8,7 @@ module.exports = {
   helpers: helpers.helpers,
   createEntity: helpers.createEntity,
   resolveEntity: helpers.resolveEntity,
+  entityFactories: helpers.entityFactories,
   reducify: helpers.reducify,
   reducifyAll: helpers.reducifyAll,
   createReducerResolver: helpers.reducifyAll
