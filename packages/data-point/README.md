@@ -1357,7 +1357,7 @@ dataPoint.addEntities({
 
 ### <a name="entity-factories">Entity factories</a>
 
-Entities can be defined with object literals, or with factories that DataPoint exposes. Each entity type has a corresponding factory:
+Entities can be defined with object literals, or with these factory functions:
 
 ```js
 const {
@@ -1372,7 +1372,20 @@ const {
 } = require('data-point').entityFactories
 ```
 
-The following examples are equivalent:
+Each factory has the following signature:
+
+```js
+Factory(name:String, spec:Object):Object
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *name* | `string` | The name of the entity; this will be used to generate an entity ID with the format `<entityType>:<name>` |
+| *spec* | `Object` | The source for generating the entity |
+
+Using these factories is optional, and the following examples are equivalent:
 
 **Example #1 (with object literal)**
 
@@ -1398,6 +1411,8 @@ const model = Model('hello-world', {
 })
 
 const entities = {}
+
+assert.equal(model.id, 'model:hello-world')
 
 entities[model.id] = model.spec
 
