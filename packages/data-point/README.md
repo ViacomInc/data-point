@@ -372,7 +372,7 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 | *$* | Reference to current `accumulator.value`. |
 | *$..* | Gives you full access to current `accumulator`. |
 | *$path* | Simple Object path notation to extract a path from current `accumulator.value`. |
-| *$path[]* | Object path notation with trailing `[]` to extract a value from an array of objects at the `accumulator.value` for each. |
+| *$path[]* | Appending `[]` will map the reducer to each element of an input array. Returns `undefined` if the input is not an array.
 
 #### <a name="root-path">Root path $</a>
 
