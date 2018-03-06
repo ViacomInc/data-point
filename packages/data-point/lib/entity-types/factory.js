@@ -1,25 +1,29 @@
-// TODO add precompile flag?
-
 /**
- * @param {String} type
+ * @param {String} _type
  * @return {Function}
  */
-function createEntityFactory (type) {
+function createEntityFactory (_type) {
+  const type = _type.toLowerCase()
   /**
    * @param {String} name
    * @param {Object} spec
    * @return {Object}
    */
-  return function Factory (name, spec) {
+  function Factory (name, spec) {
     const id = `${type}:${name}`
-    return {
-      id,
-      type,
-      name,
-      spec,
-      definition: { [id]: spec }
-    }
+    const result = { [id]: spec }
+    // these properties are non-enumerable
+    // so that we can do nifty things like:
+    // dataPoint.create({ entities: { ...Hash('name', spec) } })
+    Object.defineProperty(result, 'id', { value: id })
+    Object.defineProperty(result, 'type', { value: type })
+    Object.defineProperty(result, 'name', { value: name })
+    Object.defineProperty(result, 'spec', { value: spec })
+    return result
   }
+
+  Factory.type = type
+  return Factory
 }
 
 module.exports.createEntityFactory = createEntityFactory

@@ -15,7 +15,6 @@ Object {
     "Reducer": [Function],
     "Request": [Function],
     "Schema": [Function],
-    "Transform": [Function],
   },
   "helpers": Object {
     "assign": [Function],

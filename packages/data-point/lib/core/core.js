@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const Transform = require('./transform')
 const normalizeEntities = require('./normalize-entities')
-const entityTypeDefinitions = require('../entity-types').definitions
+const entities = require('../entity-types').definitions
 
 const storeValues = require('../stores/values')
 const storeEntities = require('../stores/entities')
@@ -64,18 +64,13 @@ function create (spec) {
   manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
 
   // built-in entity types
-  manager.addEntityType('reducer', entityTypeDefinitions.Transform)
-  manager.addEntityType('entry', entityTypeDefinitions.Entry)
-  // alias to entry, may be used to process any object type
-  manager.addEntityType('model', entityTypeDefinitions.Model)
-  manager.addEntityType('hash', entityTypeDefinitions.Hash)
-  manager.addEntityType('collection', entityTypeDefinitions.Collection)
-  manager.addEntityType('request', entityTypeDefinitions.Request)
+  _.forOwn(entities, (definition, key) => {
+    manager.addEntityType(key.toLowerCase(), definition)
+  })
+
   // for backwards compatibility
-  manager.addEntityType('transform', entityTypeDefinitions.Transform)
-  manager.addEntityType('source', entityTypeDefinitions.Request)
-  manager.addEntityType('control', entityTypeDefinitions.Control)
-  manager.addEntityType('schema', entityTypeDefinitions.Schema)
+  manager.addEntityType('transform', entities.Reducer)
+  manager.addEntityType('source', entities.Request)
 
   addToStore(manager.values, options.values, true)
 

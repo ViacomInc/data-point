@@ -1,15 +1,13 @@
 const mapValues = require('lodash/mapValues')
 
-const Transform = require('./entity-transform')
 const { createEntityFactory } = require('./factory')
 
 const definitions = {
-  Transform,
-  Reducer: Transform,
   Entry: require('./entity-entry'),
-  Hash: require('./entity-hash'),
   Model: require('./entity-model'),
+  Reducer: require('./entity-transform'),
   Collection: require('./entity-collection'),
+  Hash: require('./entity-hash'),
   Request: require('./entity-request'),
   Control: require('./entity-control'),
   Schema: require('./entity-schema')
