@@ -1354,6 +1354,75 @@ dataPoint.addEntities({
 | *EntityType* | `string` | valid entity type to associate with the EntityObject |
 | *EntityId* | `string` | unique entity ID associated with the EntityObject |
 
+### <a name="entity-factories">Entity factories</a>
+
+Entities can be defined with object literals, *or* with factories that DataPoint exposes. Each entity type has a corresponding factory:
+
+```js
+const {
+  Entry,
+  Model,
+  Reducer,
+  Transform,
+  Collection,
+  Hash,
+  Request,
+  Source,
+  Control,
+  Schema
+} = require('data-point').entityFactories
+```
+
+
+The following examples are equivalent:
+
+**Example #1**
+
+```js
+dataPoint.addEntities({
+  'hash:hello-world': {
+    value: input => ({
+      hello: 'world'
+    })
+  }
+})
+```
+
+**Example #2**
+
+```js
+const { Hash } = DataPoint.entityFactories
+
+const hash = Hash({
+  value: input => ({
+    hello: 'world'
+  })
+})
+
+const entities = {}
+
+entities[hash.id] = hash.spec
+
+dataPoint.addEntities(entities)
+```
+
+**Example #3**
+
+```js
+const { Hash } = DataPoint.entityFactories
+
+const hash = Hash({
+  value: input => ({
+    hello: 'world'
+  })
+})
+
+const entities = { ...hash }
+
+dataPoint.addEntities(entities)
+```
+
+
 ### <a name="built-in-entities">Built-in Entities</a> 
 
 DataPoint comes with the following built-in entities: 
