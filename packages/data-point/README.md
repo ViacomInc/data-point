@@ -1379,7 +1379,7 @@ The following examples are equivalent:
 ```js
 // object literal version
 dataPoint.addEntities({
-  'hash:hello-world': {
+  'model:hello-world': {
     value: input => ({
       hello: 'world'
     })
@@ -1390,9 +1390,9 @@ dataPoint.addEntities({
 **Example #2 (with factory and assignment)**
 
 ```js
-const { Hash } = DataPoint.entityFactories
+const { Model } = DataPoint.entityFactories
 
-const hash = Hash({
+const model = Model('hello-world', {
   value: input => ({
     hello: 'world'
   })
@@ -1400,7 +1400,7 @@ const hash = Hash({
 
 const entities = {}
 
-entities[hash.id] = hash.spec
+entities[model.id] = model.spec
 
 dataPoint.addEntities(entities)
 ```
@@ -1408,15 +1408,15 @@ dataPoint.addEntities(entities)
 **Example #3 (with factory and spread syntax)**
 
 ```js
-const { Hash } = DataPoint.entityFactories
+const { Model } = DataPoint.entityFactories
 
-const hash = Hash({
+const model = Model('hello-world', {
   value: input => ({
     hello: 'world'
   })
 })
 
-const entities = { ...hash }
+const entities = { ...model }
 
 dataPoint.addEntities(entities)
 ```
