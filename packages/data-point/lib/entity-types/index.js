@@ -15,6 +15,8 @@ const definitions = {
 
 module.exports = {
   definitions,
+  // this creates a factory for each entity type, which
+  // will be exposed through DataPoint.entityHelpers
   factories: mapValues(definitions, (value, key) => {
     return createEntityFactory(key.toLowerCase())
   })
