@@ -15,7 +15,7 @@ describe('creating a model with createEntityFactory', () => {
     expect(factory.type).toBe('model')
   })
 
-  test('should create an entity factory that returns an object with the expected shape', () => {
+  test('entity factory should return an object with the expected shape', () => {
     // the 'model:nuts' key should appear in this snapshot,
     // but other keys shouldn't because they're non-enumerable
     expect(instance).toMatchSnapshot()
