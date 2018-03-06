@@ -23,8 +23,8 @@ npm install --save data-point
 - [Transforms](#transforms)
   - [dataPoint.resolve](#api-data-point-resolve)
   - [dataPoint.transform](#api-data-point-transform)
+- [Accumulator Object](#accumulator-object)
 - [Reducers](#reducers)
-  - [Accumulator](#accumulator)
   - [PathReducer](#path-reducer)
   - [FunctionReducer](#function-reducer)
   - [ObjectReducer](#object-reducer)
@@ -327,7 +327,26 @@ The following table describes the properties of the `options` argument.
 | *locals* | `Object` | Hash with values you want exposed to every reducer. See [example](#acc-locals-example). |
 | *trace* | `boolean` | Set this to `true` to trace the entities and the time each one is taking to execute. **Use this option for debugging.** |
 
-## <a name="reducers">Reducer</a>
+
+## <a name="accumulator-object">Accumulator Object</a>
+
+This object is passed to reducers and middleware callbacks; it has contextual information about the current transformation or middleware that's being resolved.
+
+The `accumulator.value` property is the current input data. This property should be treated as a **read-only immutable object**. This helps ensure that your reducers are [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0) that produce no side effects. If the value is an object, use it as your initial source for creating a new object.
+
+**Properties exposed:**
+
+| Key | Type | Description |
+|:---|:---|:---|
+| *value*  | `Object` | Value to be transformed. |
+| *initialValue*  | `Object` | Initial value passed to the entity. You can use this value as a reference to the initial value passed to your Entity before any reducer was applied. |
+| *values*  | `Object` | Access to the values stored via [dataPoint.addValue](#api-data-point-add-value). |
+| *params*  | `Object` | Value of the current Entity's params property. (for all entities except [Reducer](#reducer-entity)) |
+| *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#api-data-point-transform). |
+| *reducer*  | `Object` | Information relative to the current [Reducer](#reducers) being executed. |
+
+
+## <a name="reducers">Reducers</a>
 
 Reducers are used to transform values **asynchronously**. DataPoint supports the following reducer types:
 
@@ -336,23 +355,6 @@ Reducers are used to transform values **asynchronously**. DataPoint supports the
 3. [ObjectReducer](#object-reducer)
 4. [EntityReducer](#entity-reducer)
 5. [ListReducer](#list-reducer)
-
-### <a name="accumulator">Accumulator</a>
-
-This object is passed to reducers and to middleware callbacks; it contains contextual information about the current transformation (or middleware) being executed. 
-
-The `Accumulator.value` property is the data source from which you want to apply transformations. This property **SHOULD** be treated as **read-only immutable object**. Use it as your initial source and create a new object from it. This ensures that your reducers are [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0); pure functions produce no side effects. 
-
-**Properties exposed:**
-
-| Key | Type | Description |
-|:---|:---|:---|
-| *value*  | `Object` | Value to be transformed. |
-| *initialValue*  | `Object` | Initial value passed to the an entity. You can use this value as a reference to the initial value passed to your Entity before any reducer was applied. |
-| *values*  | `Object` | Access to the values stored via [dataPoint.addValue](#api-data-point-add-value). |
-| *params*  | `Object` | Value of the current Entity's params property. (for all entities except [Reducer](#reducer-entity)) |
-| *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#api-data-point-transform). |
-| *reducer*  | `Object` | Information relative to the current [Reducer](#reducers) being executed. |
 
 ### <a name="path-reducer">PathReducer</a>
 
@@ -493,14 +495,14 @@ Example at: [examples/reducer-path.js](examples/reducer-path.js)
 
 ### <a name="function-reducer">FunctionReducer</a>
 
-A FunctionReducer allows you to use a function to apply a transformation. There are a couple of ways you may write your FunctionReducer:
+A FunctionReducer allows you to use a function to apply a transformation. There are several ways to define a FunctionReducer:
 
 - Synchronous `function` that returns new value
 - Asynchronous `function` that returns a `Promise`
 - Asynchronous `function` with callback parameter
 - Asynchronous through [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) `function` **only if your environment supports it**
 
-**IMPORTANT:** Be careful with the parameters passed to your reducer function, DataPoint relies on the number of arguments to detect the type of ReducerFunction it should expect. 
+**IMPORTANT:** Be careful with the parameters passed to your reducer function; DataPoint relies on the number of arguments to detect the type of ReducerFunction it should expect.
 
 #### <a name="function-reducer">Returning a value</a>
 
