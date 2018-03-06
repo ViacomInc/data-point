@@ -51,7 +51,6 @@ npm install --save data-point
     - [Schema](#schema-entity)
   - [Entity type checking](#entity-type-check)
   - [Entity ComposeReducer](#entity-compose-reducer)
-  - [Inspecting Entities](#inspecting-entities)
   - [Extending Entities](#extending-entities)
 - [dataPoint.use](#api-data-point-use)
 - [dataPoint.addValue](#api-data-point-add-value)
