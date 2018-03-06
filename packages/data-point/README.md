@@ -30,7 +30,6 @@ npm install --save data-point
   - [ObjectReducer](#object-reducer)
   - [EntityReducer](#entity-reducer)
   - [ListReducer](#list-reducer)
-  - [Collection Mapping](#reducer-collection-mapping)
 - [Reducer Helpers](#reducer-helpers)
   - [assign](#reducer-assign)
   - [map](#reducer-map)
@@ -803,7 +802,9 @@ dataPoint.resolve(reducer, input) // => {}
 
 ### <a name="entity-reducer">EntityReducer</a>
 
-An EntityReducer is the actual implementation of an entity. When implementing an EntityReducer, you are actually passing the current [Accumulator](#accumulator) Object to an entity spec, to become its current Accumulator object.
+An EntityReducer is used to execute an entity with the current [Accumulator](#accumulator) as the input.
+
+Appending `[]` to an entity reducer will map the given entity to each element of an input array. If the current accumulator value is not an array, the reducer will return `undefined`.
 
 For information about supported (built-in) entities, see the [Entities](#entities) Section.
 
@@ -823,29 +824,61 @@ For information about supported (built-in) entities, see the [Entities](#entitie
 
 <details>
   <summary>Entity Reducer Example</summary>
-  
+
   ```js
   const input = {
     a: {
       b: 'Hello World'
     }
   }
-  
+
   const toUpperCase = (input) => {
     return input.toUpperCase()
   }
-  
+
   dataPoint.addEntities({
     'transform:getGreeting': '$a.b',
     'transform:toUpperCase': toUpperCase,
   })
-  
+
   // resolve `transform:getGreeting`,
   // pipe value to `transform:toUpperCase`
   dataPoint
     .resolve(['transform:getGreeting | transform:toUpperCase'], input)
     .then((output) => {
       assert.equal(output, 'HELLO WORLD')
+    })
+  ```
+</details>
+
+<details>
+  <summary>Array Mapping Example</summary>
+
+  ```js
+  const input = {
+    a: [
+      'Hello World',
+      'Hello Laia',
+      'Hello Darek',
+      'Hello Italy',
+    ]
+  }
+
+  const toUpperCase = (input) => {
+    return input.toUpperCase()
+  }
+
+  dataPoint.addEntities({
+    'transform:toUpperCase': toUpperCase
+  })
+
+  dataPoint
+    .resolve(['$a | transform:toUpperCase[]'], input)
+    .then((output) => {
+      assert.equal(output[0], 'HELLO WORLD')
+      assert.equal(output[1], 'HELLO LAIA')
+      assert.equal(output[2], 'HELLO DAREK')
+      assert.equal(output[3], 'HELLO ITALY')
     })
   ```
 </details>
@@ -920,42 +953,6 @@ dataPoint
 </details>
 
 Example at: [examples/reducer-conditional-operator.js](examples/reducer-conditional-operator.js)
-
-### <a name="reducer-collection-mapping">Collection Mapping</a>
-
-Adding `[]` at the end of an entity reducer will map the given entity to each result of the current `value` if `value` is a collection. If the value is not a collection, the entity will ignore the `[]` directive.
-
-<details>
-  <summary>Reducer Collection Mapping Example</summary>
-  
-  ```js
-  const input = {
-    a: [
-      'Hello World',
-      'Hello Laia',
-      'Hello Darek',
-      'Hello Italy',
-    ]
-  }
-  
-  const toUpperCase = (input) => {
-    return input.toUpperCase()
-  }
-  
-  dataPoint.addEntities({
-    'transform:toUpperCase': toUpperCase
-  })
-  
-  dataPoint
-    .resolve(['$a | transform:toUpperCase[]'], input)
-    .then((output) => {
-      assert.equal(output[0], 'HELLO WORLD')
-      assert.equal(output[1], 'HELLO LAIA')
-      assert.equal(output[2], 'HELLO DAREK')
-      assert.equal(output[3], 'HELLO ITALY')
-    })
-  ```
-</details>
 
 ## <a name="reducer-helpers">Reducer Helpers</a>
 
