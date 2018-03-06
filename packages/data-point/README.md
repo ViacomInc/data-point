@@ -41,6 +41,7 @@ npm install --save data-point
   - [withDefault](#reducer-default)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
+  - [Entity factories](#entity-factories)
   - [Built-in entities](#built-in-entities)
     - [Reducer / Transform](#reducer-entity)
     - [Model](#model-entity)
@@ -1363,11 +1364,9 @@ const {
   Entry,
   Model,
   Reducer,
-  Transform,
   Collection,
   Hash,
   Request,
-  Source,
   Control,
   Schema
 } = require('data-point').entityFactories
@@ -1376,9 +1375,10 @@ const {
 
 The following examples are equivalent:
 
-**Example #1**
+**Example #1 (with object literal)**
 
 ```js
+// object literal version
 dataPoint.addEntities({
   'hash:hello-world': {
     value: input => ({
@@ -1388,7 +1388,7 @@ dataPoint.addEntities({
 })
 ```
 
-**Example #2**
+**Example #2 (with factory and assignment)**
 
 ```js
 const { Hash } = DataPoint.entityFactories
@@ -1406,7 +1406,7 @@ entities[hash.id] = hash.spec
 dataPoint.addEntities(entities)
 ```
 
-**Example #3**
+**Example #3 (with factory and spread syntax)**
 
 ```js
 const { Hash } = DataPoint.entityFactories
