@@ -41,6 +41,7 @@ npm install --save data-point
   - [withDefault](#reducer-default)
 - [Entities](#entities)
   - [dataPoint.addEntities](#api-data-point-add-entities)
+  - [Entity factories](#entity-factories)
   - [Built-in entities](#built-in-entities)
     - [Reducer / Transform](#reducer-entity)
     - [Model](#model-entity)
@@ -1353,6 +1354,87 @@ dataPoint.addEntities({
 |:---|:---|:---|
 | *EntityType* | `string` | valid entity type to associate with the EntityObject |
 | *EntityId* | `string` | unique entity ID associated with the EntityObject |
+
+### <a name="entity-factories">Entity factories</a>
+
+Entities can be defined with object literals, or with these factory functions:
+
+```js
+const {
+  Entry,
+  Model,
+  Reducer,
+  Collection,
+  Hash,
+  Request,
+  Control,
+  Schema
+} = require('data-point').entityFactories
+```
+
+Each factory has the following signature:
+
+```js
+Factory(name:String, spec:Object):Object
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *name* | `string` | The name of the entity; this will be used to generate an entity ID with the format `<entityType>:<name>` |
+| *spec* | `Object` | The source for generating the entity |
+
+Using these factories is optional, and the following examples are equivalent:
+
+**Example #1 (with object literal)**
+
+```js
+dataPoint.addEntities({
+  'model:hello-world': {
+    value: input => ({
+      hello: 'world'
+    })
+  }
+})
+```
+
+**Example #2 (with factory and assignment)**
+
+```js
+const { Model } = DataPoint.entityFactories
+
+const model = Model('hello-world', {
+  value: input => ({
+    hello: 'world'
+  })
+})
+
+const entities = {}
+
+assert.equal(model.id, 'model:hello-world')
+
+entities[model.id] = model.spec
+
+dataPoint.addEntities(entities)
+```
+
+**Example #3 (with factory and spread syntax)**
+
+```js
+const { Model } = DataPoint.entityFactories
+
+const model = Model('hello-world', {
+  value: input => ({
+    hello: 'world'
+  })
+})
+
+const entities = { ...model }
+
+dataPoint.addEntities(entities)
+```
+
 
 ### <a name="built-in-entities">Built-in Entities</a> 
 
