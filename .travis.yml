@@ -3,6 +3,8 @@ node_js:
   - 6
   - 8
 sudo: false
+install:
+  - npm install -g codecov
 cache:
   yarn: true
   directories:
@@ -13,4 +15,4 @@ script:
   - "yarn test -- --maxWorkers=4"
   - "scripts/is-it-pretty.sh"
 after_script:
-  - "test -e ./coverage/lcov.info && npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"
+  - codecov
