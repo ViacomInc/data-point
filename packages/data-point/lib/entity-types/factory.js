@@ -1,3 +1,5 @@
+const capitalize = require('lodash/capitalize')
+
 /**
  * @param {String} _type
  * @return {Function}
@@ -22,7 +24,14 @@ function createEntityFactory (_type) {
     return result
   }
 
-  Factory.type = type
+  Object.defineProperty(Factory, 'name', {
+    value: `${capitalize(type)}Factory`
+  })
+
+  Object.defineProperty(Factory, 'type', {
+    value: type
+  })
+
   return Factory
 }
 

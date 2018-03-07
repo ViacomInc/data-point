@@ -17,6 +17,10 @@ describe('creating a model with createEntityFactory', () => {
     expect(createEntityFactory).toBeInstanceOf(Function)
   })
 
+  test('createEntityFactory return value should have the correct "name" property', () => {
+    expect(factory.name).toBe('ModelFactory')
+  })
+
   test('createEntityFactory return value should have the correct "type" property', () => {
     expect(factory.type).toBe('model')
   })
