@@ -1,6 +1,5 @@
 const _ = require('lodash')
 
-const createReducer = require('../../reducer-types').create
 const createBaseEntity = require('../base-entity').create
 const { validateModifiers } = require('../validate-modifiers')
 
@@ -15,27 +14,29 @@ module.exports.EntityControl = EntityControl
 
 /**
  * map each key from spec into a reducer
- *
- * @param {hash} spec - key/value where each value will be mapped into a reducer
- * @returns
+ * @param {Function} createReducer
+ * @param {Object} spec - each value will be mapped into a reducer
+ * @return {Object}
  */
-function parseCaseStatement (spec) {
+function parseCaseStatement (createReducer, spec) {
   return _.mapValues(spec, createReducer)
 }
+
 module.exports.parseCaseStatement = parseCaseStatement
 
 /**
  * Parse only case statements
- *
- * @param {hash} spec - key/value where each value will be mapped into a reducer
- * @returns
+ * @param {Function} createReducer
+ * @param {Array<Object>} spec
+ * @return {Array<Object>}
  */
-function parseCaseStatements (spec) {
+function parseCaseStatements (createReducer, spec) {
   return _(spec)
     .remove(statement => !_.isUndefined(statement.case))
-    .map(parseCaseStatement)
+    .map(statement => parseCaseStatement(createReducer, statement))
     .value()
 }
+
 module.exports.parseCaseStatements = parseCaseStatements
 
 function parseDefaultStatement (id, select) {
@@ -49,32 +50,34 @@ function parseDefaultStatement (id, select) {
   }
   return defaultCase.default
 }
+
 /**
- * parse spec
- *
- * @param {any} spec
- * @returns
+ * @param {Function} createReducer
+ * @param {Object} spec
+ * @return {Object}
  */
-function parseSwitch (spec) {
+function parseSwitch (createReducer, spec) {
   const select = spec.select
   const defaultStatement = parseDefaultStatement(spec.id, select)
   return {
-    cases: parseCaseStatements(select),
+    cases: parseCaseStatements(createReducer, select),
     default: createReducer(defaultStatement)
   }
 }
+
 module.exports.parseSwitch = parseSwitch
 
 /**
  * Creates new Entity Object
- * @param  {Object} spec - spec
+ * @param {Function} createReducer
+ * @param {Object} spec - spec
  * @param {string} id - Entity id
  * @return {EntityControl} Entity Object
  */
-function create (spec, id) {
+function create (createReducer, spec, id) {
   validateModifiers(id, spec, ['select'])
-  const entity = createBaseEntity(EntityControl, spec, id)
-  entity.select = parseSwitch(spec)
+  const entity = createBaseEntity(createReducer, EntityControl, spec, id)
+  entity.select = parseSwitch(createReducer, spec)
   return Object.freeze(entity)
 }
 

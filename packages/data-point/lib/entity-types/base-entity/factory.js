@@ -2,14 +2,14 @@ const deepFreeze = require('deep-freeze')
 const defaultTo = require('lodash/defaultTo')
 const { normalizeTypeCheckSource } = require('../../helpers/type-check-helpers')
 
-const createReducer = require('../../reducer-types').create
-
 /**
+ * @param {Function} createReducer
  * @param {Function} Factory - factory function to create the entity
  * @param {Object} spec - spec for the Entity
  * @param {string} id - Entity's id
+ * @return {Entity}
  */
-function create (Factory, spec, id) {
+function create (createReducer, Factory, spec, id) {
   const entity = new Factory(spec)
 
   entity.id = id

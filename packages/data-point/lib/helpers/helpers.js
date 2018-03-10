@@ -17,15 +17,19 @@ module.exports.helpers = {
   withDefault: stubFactories.withDefault
 }
 
+const createReducer = require('../reducer-types').create
+
+module.exports.createReducer = createReducer
+
+const createEntity = require('../entity-types/base-entity').create
+
+module.exports.createEntity = _.partial(createEntity, createReducer)
+
+module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
+
 module.exports.entityFactories = require('../entity-types').factories
 
 module.exports.isReducer = require('../reducer-types').isReducer
-
-module.exports.createReducer = require('../reducer-types').create
-
-module.exports.createEntity = require('../entity-types/base-entity').create
-
-module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
 
 module.exports.validateEntityModifiers = require('../entity-types/validate-modifiers').validateModifiers
 
