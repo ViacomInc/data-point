@@ -43,15 +43,7 @@
       "/node_modules/",
       "/test/utils/",
       "/test/definitions/"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 100
-      }
-    }
+    ]
   },
   "lint-staged": {
     "*.js": [
