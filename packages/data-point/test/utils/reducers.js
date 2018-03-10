@@ -25,8 +25,7 @@ module.exports.isEqualTo = compareTo => value => {
 }
 
 module.exports.addKeyValue = (key, val) => value => {
-  // TODO: check why this is mutating object, dont believe it should
-  return _.set(value, key, val)
+  return utils.set(value, key, val)
 }
 
 module.exports.getKeyValue = key => value => {
@@ -50,7 +49,6 @@ module.exports.useDataacc = () => (value, acc) => {
 }
 
 module.exports.addQueryVar = (key, val) => value => {
-  // TODO: check why this is mutating object, dont believe it should
   return utils.set(value, `qs.${key}`, val)
 }
 
