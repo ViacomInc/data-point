@@ -4,7 +4,18 @@ exports[`lib It should explicity expose set of methods 1`] = `
 Object {
   "create": [Function],
   "createEntity": [Function],
+  "createReducer": [Function],
   "createReducerResolver": [Function],
+  "entityFactories": Object {
+    "Collection": [Function],
+    "Control": [Function],
+    "Entry": [Function],
+    "Hash": [Function],
+    "Model": [Function],
+    "Reducer": [Function],
+    "Request": [Function],
+    "Schema": [Function],
+  },
   "helpers": Object {
     "assign": [Function],
     "constant": [Function],

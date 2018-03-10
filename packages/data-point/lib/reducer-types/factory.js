@@ -52,6 +52,10 @@ function normalizeInput (source) {
  * @return {reducer}
  */
 function createReducer (source, options = {}) {
+  if (isReducer(source)) {
+    return source
+  }
+
   source = normalizeInput(source)
   const reducerType = reducerTypes.find(r => r.isType(source))
   if (_.isUndefined(reducerType)) {
