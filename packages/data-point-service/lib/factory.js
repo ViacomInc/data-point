@@ -42,7 +42,7 @@ function handleCacheError (err, Service) {
     throw err
   } else {
     logger.warn(
-      'REDIS is flagged as not required, this is NOT recommeded for production environments.'
+      'REDIS is flagged as not required, this is NOT recommended for production environments.'
     )
   }
 
@@ -76,7 +76,7 @@ function createDataPoint (service) {
 function bootstrapDataPoint (bootstrap, service) {
   if (!service.isCacheAvailable) {
     logger.warn(
-      'REDIS is not availabe, there will be no cacheing mechanism for',
+      'REDIS is not available, there will be no cacheing mechanism for',
       'DataPoint - we wish you the best of luck in your adventure.'
     )
     return service

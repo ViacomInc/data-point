@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/ViacomInc/data-point/compare/v3.0.0...v3.1.0) (2018-03-07)
+
+
+
+
+**Note:** Version bump only for package data-point-express
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/ViacomInc/data-point/compare/v2.0.0...v3.0.0) (2018-02-26)
 

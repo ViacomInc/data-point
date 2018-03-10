@@ -27,6 +27,8 @@ module.exports.createEntity = _.partial(createEntity, createReducer)
 
 module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
 
+module.exports.entityFactories = require('../entity-types').factories
+
 module.exports.isReducer = require('../reducer-types').isReducer
 
 module.exports.validateEntityModifiers = require('../entity-types/validate-modifiers').validateModifiers

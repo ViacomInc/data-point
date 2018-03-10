@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/ViacomInc/data-point/compare/v3.0.0...v3.1.0) (2018-03-07)
+
+
+### Features
+
+* **data-point:** Add entity factories ([#238](https://github.com/ViacomInc/data-point/issues/238)) ([c9acf7d](https://github.com/ViacomInc/data-point/commit/c9acf7d))
+* **data-point:** Expose createReducer on DataPoint object ([#234](https://github.com/ViacomInc/data-point/issues/234)) ([41eb42a](https://github.com/ViacomInc/data-point/commit/41eb42a)), closes [#233](https://github.com/ViacomInc/data-point/issues/233)
+* Address todo comments regarding object mutation ([#239](https://github.com/ViacomInc/data-point/issues/239)) ([a6b8318](https://github.com/ViacomInc/data-point/commit/a6b8318))
+
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/ViacomInc/data-point/compare/v2.0.0...v3.0.0) (2018-02-26)
 

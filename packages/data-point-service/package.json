@@ -1,6 +1,6 @@
 {
   "name": "data-point-service",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "DataPoint as a Service",
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -12,16 +12,16 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "data-point": "^3.0.0"
+    "data-point": "^3.1.0"
   },
   "dependencies": {
     "bluebird": "3.5.1",
-    "data-point-cache": "^3.0.0",
+    "data-point-cache": "^3.1.0",
     "lodash": "4.x",
     "winston": "2.x"
   },
   "peerDependencies": {
-    "data-point": "^3.0.0"
+    "data-point": "^3.1.0"
   },
   "keywords": [
     "service",

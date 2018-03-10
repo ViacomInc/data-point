@@ -1,21 +1,13 @@
 const _ = require('lodash')
 
-const normalizeEntities = require('./normalize-entities')
 const Transform = require('./transform')
+const normalizeEntities = require('./normalize-entities')
+const entities = require('../entity-types').definitions
 
 const storeValues = require('../stores/values')
 const storeEntities = require('../stores/entities')
 const storeEntityTypes = require('../stores/entity-types')
 const storeMiddleware = require('../stores/middleware')
-
-const EntityTransform = require('../entity-types/entity-transform')
-const EntityEntry = require('../entity-types/entity-entry')
-const EntityHash = require('../entity-types/entity-hash')
-const EntityModel = require('../entity-types/entity-model')
-const EntityCollection = require('../entity-types/entity-collection')
-const EntityRequest = require('../entity-types/entity-request')
-const EntityControl = require('../entity-types/entity-control')
-const EntitySchema = require('../entity-types/entity-schema')
 
 /**
  * @param {Object} store
@@ -77,18 +69,13 @@ function create (spec) {
   manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
 
   // built-in entity types
-  manager.addEntityType('reducer', EntityTransform)
-  manager.addEntityType('entry', EntityEntry)
-  // alias to entry, may be used to process any object type
-  manager.addEntityType('model', EntityModel)
-  manager.addEntityType('hash', EntityHash)
-  manager.addEntityType('collection', EntityCollection)
-  manager.addEntityType('request', EntityRequest)
+  _.forOwn(entities, (definition, key) => {
+    manager.addEntityType(key.toLowerCase(), definition)
+  })
+
   // for backwards compatibility
-  manager.addEntityType('transform', EntityTransform)
-  manager.addEntityType('source', EntityRequest)
-  manager.addEntityType('control', EntityControl)
-  manager.addEntityType('schema', EntitySchema)
+  manager.addEntityType('transform', entities.Reducer)
+  manager.addEntityType('source', entities.Request)
 
   addToStore(manager.values, options.values, true)
 
