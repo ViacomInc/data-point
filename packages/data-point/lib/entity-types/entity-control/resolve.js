@@ -2,16 +2,16 @@ const Promise = require('bluebird')
 
 /**
  *
- * @param {any} caseStatements
- * @param {any} acc
- * @param {any} resolveReducer
- * @returns
+ * @param {Array<Object>} caseStatements
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @return {Number}
  */
-function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
+function getMatchingCaseIndex (caseStatements, accumulator, resolveReducer) {
   return Promise.reduce(
     caseStatements,
-    (result, statement) => {
-      if (result) {
+    (result, statement, index) => {
+      if (result !== null) {
         // doing this until proven wrong :)
         const err = new Error('bypassing')
         err.name = 'bypass'
@@ -20,9 +20,11 @@ function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
         return Promise.reject(err)
       }
 
-      return resolveReducer(acc, statement.case).then(res => {
-        return res.value ? statement : false
-      })
+      return resolveReducer(accumulator, statement.case, ['case', index]).then(
+        res => {
+          return res.value ? index : null
+        }
+      )
     },
     null
   ).catch(error => {
@@ -34,20 +36,29 @@ function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
     throw error
   })
 }
-module.exports.getMatchingCaseStatement = getMatchingCaseStatement
+module.exports.getMatchingCaseIndex = getMatchingCaseIndex
 
-function resolve (acc, resolveReducer) {
-  const selectControl = acc.reducer.spec.select
+/**
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @returns {Promise}
+ */
+function resolve (accumulator, resolveReducer) {
+  const selectControl = accumulator.reducer.spec.select
   const caseStatements = selectControl.cases
   const defaultTransform = selectControl.default
 
-  return getMatchingCaseStatement(caseStatements, acc, resolveReducer).then(
-    caseStatement => {
-      if (caseStatement) {
-        return resolveReducer(acc, caseStatement.do)
+  return getMatchingCaseIndex(caseStatements, accumulator, resolveReducer).then(
+    index => {
+      if (index === null) {
+        return resolveReducer(accumulator, defaultTransform, [
+          'do',
+          ['default']
+        ])
       }
 
-      return resolveReducer(acc, defaultTransform)
+      const caseStatement = caseStatements[index]
+      return resolveReducer(accumulator, caseStatement.do, ['do', index])
     }
   )
 }

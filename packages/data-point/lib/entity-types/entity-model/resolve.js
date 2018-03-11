@@ -3,7 +3,8 @@
  * @param {Function} resolveReducer
  */
 function resolve (accumulator, resolveReducer) {
-  return resolveReducer(accumulator, accumulator.reducer.spec.value)
+  const entity = accumulator.reducer.spec
+  return resolveReducer(accumulator, entity.value, [['value']])
 }
 
 module.exports.resolve = resolve

@@ -1,4 +1,5 @@
 const Promise = require('bluebird')
+const castArray = require('lodash/castArray')
 
 const ReducerEntity = require('./reducer-entity')
 const ReducerFunction = require('./reducer-function')
@@ -45,9 +46,10 @@ function getResolveFunction (reducer) {
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
+ * @param {Array|String|Number} key - id for reducer stack traces if an error is thrown
  * @returns {Promise<Accumulator>}
  */
-function resolveReducer (manager, accumulator, reducer) {
+function resolveReducer (manager, accumulator, reducer, key) {
   // this conditional is here because BaseEntity#resolve
   // does not check that lifecycle methods are defined
   // before trying to resolve them
@@ -55,16 +57,58 @@ function resolveReducer (manager, accumulator, reducer) {
     return Promise.resolve(accumulator)
   }
 
-  const resolve = getResolveFunction(reducer)
-  // NOTE: recursive call
-  const result = resolve(manager, resolveReducer, accumulator, reducer)
+  // storing this in case we need it for the catch block, since we
+  // can't trust it won't be overwritten in the accumulator object
+  // although it could still be modified by reference if it's an object
+  const value = accumulator.value
+  let result = Promise.try(() => {
+    const resolve = getResolveFunction(reducer)
+    // NOTE: recursive call
+    return resolve(manager, resolveReducer, accumulator, reducer)
+  })
+
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
     const resolveDefault = reducers.ReducerDefault.resolve
-    return result.then(acc => resolveDefault(acc, _default))
+    result = result.then(acc => resolveDefault(acc, _default))
   }
 
-  return result
+  return result.catch(error => onResolveMalfunction(reducer, key, value, error))
 }
 
 module.exports.resolve = resolveReducer
+
+/**
+ * @param {Reducer} reducer
+ * @param {Array|String|Number} key
+ * @param {*} input
+ * @param {Error} error
+ * @throws the given error with _input and _stack properties attached
+ */
+function onResolveMalfunction (reducer, key, input, error) {
+  if (!error.hasOwnProperty('_input')) {
+    error._input = input
+  }
+
+  let stack
+  if (typeof key === 'undefined') {
+    stack = []
+  } else {
+    stack = castArray(key)
+  }
+
+  if (reducer.type === 'ReducerFunction') {
+    stack.push(`${reducer.name || reducer.type}()`)
+  } else if (reducer.type === 'ReducerEntity') {
+    stack.push(reducer.id)
+  } else {
+    stack.push(reducer.type)
+  }
+
+  if (error._stack) {
+    stack = stack.concat(error._stack)
+  }
+
+  error._stack = stack
+  throw error
+}

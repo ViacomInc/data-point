@@ -12,10 +12,12 @@ const utils = require('../../utils')
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
   return Promise.map(reducer.reducers, ({ reducer, path }) => {
-    return resolveReducer(manager, accumulator, reducer).then(({ value }) => ({
-      path,
-      value
-    }))
+    return resolveReducer(manager, accumulator, reducer, [path]).then(
+      ({ value }) => ({
+        path,
+        value
+      })
+    )
   }).then(result => {
     const value = result.reduce(
       (acc, { path, value }) => set(acc, path, value),

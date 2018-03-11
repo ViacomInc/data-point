@@ -58,7 +58,6 @@ function createReducer (source, options = {}) {
 
   source = normalizeInput(source)
   const reducerType = reducerTypes.find(r => r.isType(source))
-
   if (_.isUndefined(reducerType)) {
     const message = [
       'Invalid reducer type.',

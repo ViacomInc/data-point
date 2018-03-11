@@ -54,6 +54,16 @@ beforeEach(() => {
   dataPoint.middleware.clear()
 })
 
+describe('requestReducer', () => {
+  test('it is a reducer', () => {
+    expect(ReducerFactory.isReducer(Resolve.requestReducer)).toBe(true)
+  })
+
+  test('it has a custom function name', () => {
+    expect(Resolve.requestReducer.body.name).toBe('request-promise#request')
+  })
+})
+
 describe('resolveUrlInjections', () => {
   test('url with no reducer', () => {
     const value = {
@@ -233,31 +243,11 @@ describe('resolveRequest', () => {
       }
     }
 
-    return Resolve.resolveRequest(acc).then(result => {
+    return Resolve.resolveRequest(acc, resolveReducerBound).then(result => {
       expect(result.value).toEqual({
         ok: true
       })
     })
-  })
-
-  test('log errors when request fails', () => {
-    nock('http://remote.test')
-      .get('/source1')
-      .reply(404, 'not found')
-
-    const acc = {
-      options: {
-        json: true,
-        url: 'http://remote.test/source1'
-      },
-      value: 'foo'
-    }
-    _.set(acc, 'reducer.spec.id', 'test:test')
-    return Resolve.resolveRequest(acc)
-      .catch(e => e)
-      .then(result => {
-        expect(result.message).toMatchSnapshot()
-      })
   })
 })
 
@@ -393,23 +383,6 @@ describe('resolve', () => {
     return transform('request:a4', {}).then(result => {
       expect(result.value).toEqual({
         ok: true
-      })
-    })
-  })
-
-  test('it should omit options.auth when encountering an error', () => {
-    nock('http://remote.test')
-      .get('/source1')
-      .reply(404)
-
-    return transform('request:a9', {}).catch(err => {
-      expect(err.statusCode).toEqual(404)
-      expect(err.message).toMatchSnapshot()
-
-      // credentials are still available in the raw error.options
-      expect(err.options.auth).toEqual({
-        user: 'cool_user',
-        pass: 'super_secret!'
       })
     })
   })

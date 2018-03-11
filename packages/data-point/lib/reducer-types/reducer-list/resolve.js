@@ -17,8 +17,8 @@ function resolve (manager, resolveReducer, accumulator, reducerList) {
 
   const result = Promise.reduce(
     reducers,
-    (accumulator, reducer) => {
-      return resolveReducer(manager, accumulator, reducer)
+    (accumulator, reducer, index) => {
+      return resolveReducer(manager, accumulator, reducer, index)
     },
     accumulator
   )

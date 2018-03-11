@@ -56,6 +56,7 @@ npm install --save data-point
 - [dataPoint.use](#api-data-point-use)
 - [dataPoint.addValue](#api-data-point-add-value)
 - [Custom Entity Types](#custom-entity-types)
+- [Debugging](#debugging)
 - [Integrations](#integrations)
 - [Patterns and Best Practices](#patterns-best-practices)
 - [Contributing](#contributing)
@@ -3408,6 +3409,49 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
 
 
 Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
+
+## <a name="debugging">Debugging</a>
+
+When a reducer throws an error, DataPoint adds two properties to the error object:
+
+`_input:*` - the input value to the reducer that failed
+
+`_stack:String` - the reducer stack trace
+
+```js
+const assert = require('assert')
+
+function throwError () {
+  throw new Error()
+}
+
+const dataPoint = DataPoint.create({
+  entities: {
+    'model:with-error': {
+      value: {
+        a: {
+          b: throwError
+        }
+      }
+    }
+  }
+})
+
+const input = 'foo'
+
+dataPoint.resolve('model:with-error', input)
+  .catch(error => {
+    assert.equal(
+      error._stack,
+      'model:with-error[value] -> ReducerObject[a.b] -> throwError()'
+    )
+    assert.equal(
+      error._input,
+      'foo'
+    )
+  })
+
+```
 
 ## <a name="integrations">Integrations</a>
 

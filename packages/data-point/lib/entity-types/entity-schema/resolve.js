@@ -2,31 +2,49 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const Ajv = require('ajv')
 
-function validateContext (acc) {
-  const ajv = new Ajv(acc.reducer.spec.options)
-  const validate = ajv.compile(acc.reducer.spec.schema)
+const createReducer = require('../../reducer-types').create
 
-  return Promise.resolve(validate(acc.value)).then(valid => {
-    if (!valid) {
-      const messages = _.map(validate.errors, 'message')
-      const messageListStr = messages.join('\n -')
-      const error = new Error(`Errors Found:\n - ${messageListStr}`)
-      error.name = 'InvalidSchema'
-      error.errors = validate.errors
-      return Promise.reject(error)
-    }
+/**
+ * @param {*} value
+ * @param {Object} context
+ * @return {Promise}
+ */
+function validateContext (value, context) {
+  const ajv = new Ajv(context.reducer.spec.options)
+  const validate = ajv.compile(context.reducer.spec.schema)
+  if (validate(value)) {
+    return Promise.resolve(value)
+  }
 
-    return acc
-  })
+  const message = _.map(validate.errors, 'message').join('\n -')
+  const error = new Error(`Errors Found:\n - ${message}`)
+  error.name = 'InvalidSchema'
+  error.errors = validate.errors
+  return Promise.reject(error)
 }
 
 module.exports.validateContext = validateContext
 
-function resolve (acc, resolveReducer) {
-  const value = acc.reducer.spec.value
+// this name will appear in the stack trace if schema validation fails
+Object.defineProperty(validateContext, 'name', {
+  value: 'ajv#validate'
+})
 
-  return resolveReducer(acc, value).then(racc => {
-    return validateContext(racc)
+// this function is a reducer so that we can generate
+// reducer stack traces if the schema validation fails
+const _validateContext = createReducer(validateContext)
+
+module.exports._validateContext = _validateContext
+
+/**
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @param {Promise}
+ */
+function resolve (accumulator, resolveReducer) {
+  const value = accumulator.reducer.spec.value
+  return resolveReducer(accumulator, value, [['value']]).then(acc => {
+    return resolveReducer(acc, _validateContext)
   })
 }
 

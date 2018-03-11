@@ -18,11 +18,11 @@ function resolve (manager, resolveReducer, accumulator, reducerFind) {
   const reducer = reducerFind.reducer
   return Promise.reduce(
     accumulator.value,
-    (result, itemValue) => {
+    (result, itemValue, index) => {
       const itemContext = utils.set(accumulator, 'value', itemValue)
       return (
         result ||
-        resolveReducer(manager, itemContext, reducer).then(res => {
+        resolveReducer(manager, itemContext, reducer, index).then(res => {
           return reducerPredicateIsTruthy(reducer, res.value)
             ? itemValue
             : undefined

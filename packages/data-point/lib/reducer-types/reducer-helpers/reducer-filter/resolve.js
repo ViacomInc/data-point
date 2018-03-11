@@ -12,9 +12,9 @@ const { reducerPredicateIsTruthy } = require('../utils')
  */
 function resolve (manager, resolveReducer, accumulator, reducerFilter) {
   const reducer = reducerFilter.reducer
-  return Promise.filter(accumulator.value, itemValue => {
+  return Promise.filter(accumulator.value, (itemValue, index) => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
-    return resolveReducer(manager, itemContext, reducer).then(res => {
+    return resolveReducer(manager, itemContext, reducer, index).then(res => {
       return reducerPredicateIsTruthy(reducer, res.value)
     })
   }).then(result => utils.set(accumulator, 'value', result))
