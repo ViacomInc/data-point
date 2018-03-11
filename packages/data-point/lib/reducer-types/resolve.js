@@ -61,14 +61,16 @@ function resolveReducer (manager, accumulator, reducer, key) {
   // can't trust it won't be overwritten in the accumulator object
   // although it could still be modified by reference if it's an object
   const value = accumulator.value
-  const result = Promise.try(() => getResolveFunction(reducer))
+  let result = Promise.try(() => {
+    const resolve = getResolveFunction(reducer)
     // NOTE: recursive call
-    .then(resolve => resolve(manager, resolveReducer, accumulator, reducer))
+    return resolve(manager, resolveReducer, accumulator, reducer)
+  })
 
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
     const resolveDefault = reducers.ReducerDefault.resolve
-    return result.then(acc => resolveDefault(acc, _default))
+    result = result.then(acc => resolveDefault(acc, _default))
   }
 
   return result.catch(error => onResolveMalfunction(reducer, key, value, error))
