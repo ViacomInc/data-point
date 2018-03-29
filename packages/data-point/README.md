@@ -1381,7 +1381,7 @@ All entities share a common API (except for [Reducer](#reducer-entity)).
 
 ##### <a name="entity-type-check">Entity type checking</a>
 
-You may use **inputType** and **outputType** to type check against the values being passed and resolved from an entity. Type checking does not mutate the result. 
+You may use **inputType** and **outputType** to type check the values being passed and returned from entities. Type checking does not mutate the result.
 
 **Built in type checks:**
 
@@ -1415,10 +1415,40 @@ To use built-in type checks you may set the value of **inputType**/**outputType*
 
 </details>
 
-**Type Check using Reducer**
+**Custom type checking:**
 
-To customize type checking you may use a [Reducer](#reducers). If the reducer throws an error, the type check fails. In the case of `inputType` and `outputType` the return value is ignored.
+You may also type check by creating a [Reducer](#reducers) with the `createTypeCheckReducer` function.
 
+**SYNOPSIS**
+
+```js
+DataPoint.createTypeCheckReducer(typeCheckFunction, [expectedType])
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *typeCheckFunction* | `Function` | Return `true` if the input is valid; otherwise, an error will be thrown. If the function returns a string, that will be appended to the error message. |
+| *expectedType* | `string` | The expected type; this will also be used in the error message. |
+
+
+```js
+const DataPoint = require('data-point')
+
+const { createTypeCheckReducer } = DataPoint
+
+const isNonEmptyArray = input => Array.isArray(input) && input.length > 0
+
+const dataPoint = DataPoint.create({
+  entities: {
+    'model:get-first-item': {
+      inputType: createTypeCheckReducer(isNonEmptyArray, 'non-empty-array'),
+      value: input => input[0]
+    }
+  }
+})
+```
 
 <details>
   <summary>Custom type check with <a href="#function-reducer">FunctionReducer</a></summary>

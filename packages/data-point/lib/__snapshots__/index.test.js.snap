@@ -5,6 +5,7 @@ Object {
   "create": [Function],
   "createEntity": [Function],
   "createReducerResolver": [Function],
+  "createTypeCheckReducer": [Function],
   "helpers": Object {
     "assign": [Function],
     "constant": [Function],
