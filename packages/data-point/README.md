@@ -1493,7 +1493,7 @@ You may use **inputType** and **outputType** to type check the values being pass
 
 **Built in type checks:**
 
-To use built-in type checks you may set the value of **inputType**/**outputType** to: `'string'`, `'number'`, `'boolean'`, `'function'`, `'error'`, `'array'`, or `'object'`. 
+To use built-in type checks, you may set the value of **inputType** or **outputType** to: `'string'`, `'number'`, `'boolean'`, `'function'`, `'error'`, `'array'`, or `'object'`.
 
 <details>
   <summary>Check if a model outputs an string</summary>
@@ -1525,7 +1525,7 @@ To use built-in type checks you may set the value of **inputType**/**outputType*
 
 **Custom type checking:**
 
-You may also type check by creating a [Reducer](#reducers) with the `createTypeCheckReducer` function.
+You may also type check with a [Schema Entity](#schema-entity), or by creating a [Reducer](#reducers) with the `createTypeCheckReducer` function.
 
 **SYNOPSIS**
 
@@ -1537,61 +1537,32 @@ DataPoint.createTypeCheckReducer(typeCheckFunction, [expectedType])
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *typeCheckFunction* | `Function` | Return `true` if the input is valid; otherwise, an error will be thrown. If the function returns a string, that will be appended to the error message. |
-| *expectedType* | `string` | The expected type; this will also be used in the error message. |
-
-
-```js
-const DataPoint = require('data-point')
-
-const { createTypeCheckReducer } = DataPoint
-
-const isNonEmptyArray = input => Array.isArray(input) && input.length > 0
-
-const dataPoint = DataPoint.create({
-  entities: {
-    'model:get-first-item': {
-      inputType: createTypeCheckReducer(isNonEmptyArray, 'non-empty-array'),
-      value: input => input[0]
-    }
-  }
-})
-```
+| *typeCheckFunction* | `Function<Boolean|String>` | Return `true` when the input is valid; otherwise, an error will be thrown. If the function returns a string, that will be appended to the error message. |
+| *expectedType* | `string` _(optional)_ | The expected type; this will also be used in the error message. |
 
 <details>
-  <summary>Custom type check with <a href="#function-reducer">FunctionReducer</a></summary>
+  <summary>Custom type check</a></summary>
 
   ```js
-  const dataPoint = DataPoint.create()
+  const DataPoint = require('data-point')
 
-  dataPoint.addEntities({
-    'model:getName': {
-      value: '$name',
+  const { createTypeCheckReducer } = DataPoint
 
-      outputType: value => {
-        if(typeof value === 'string' && value.length > 5) {
-          return trues
-        }
+  const isNonEmptyArray = input => Array.isArray(input) && input.length > 0
 
-        throw new Error('should be string and length > 5')
+  const dataPoint = DataPoint.create({
+    entities: {
+      'model:get-first-item': {
+        inputType: createTypeCheckReducer(isNonEmptyArray, 'non-empty-array'),
+        value: input => input[0]
       }
     }
   })
-
-  const input = {
-    name: 'DataPoint'
-  }
-
-  dataPoint.resolve('model:getName', input)
-    .then(output => {
-      // output -> 'DataPoint'
-    })
   ```
-
 </details>
 
 <details>
-  <summary>Custom type check with <a href="#entity-reducer">EntityReducer</a></summary>
+  <summary>Custom type check with a schema</summary>
 
   In this example we are using a [Schema Entity](#schema-entity) to check the inputType.
 
