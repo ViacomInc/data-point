@@ -35,6 +35,20 @@ describe('reducer#create', () => {
     expect(reducer.entityType).toBe('fooEntity')
   })
 
+  test('return the input when the input is already a reducer', () => {
+    const reducer1 = Factory.create('$test')
+    const reducer2 = Factory.create(reducer1)
+    expect(reducer1 === reducer2).toBe(true)
+    expect(reducer1).toEqual(reducer2)
+  })
+
+  test('do not modify an existing reducer in the source for a ReducerList', () => {
+    const reducer1 = Factory.create('$bar')
+    const reducer2 = Factory.create(['$foo', reducer1])
+    expect(reducer1 === reducer2.reducers[1]).toBe(true)
+    expect(reducer1).toEqual(reducer2.reducers[1])
+  })
+
   test('detect invalid', () => {
     expect(() => {
       Factory.create('a')

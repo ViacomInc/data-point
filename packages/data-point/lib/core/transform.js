@@ -20,7 +20,6 @@ function reducerResolve (manager, reducerSource, value, options) {
   })
 
   const reducer = Reducer.create(reducerSource)
-
   return Reducer.resolve(manager, context, reducer)
 }
 
