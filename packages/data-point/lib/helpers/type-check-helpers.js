@@ -1,6 +1,7 @@
-const typeCheckFunctions = require('./type-check-functions')
+const typeCheckFunctions = require('./type-check-functions').defaults
 
 const modifiers = {
+  __proto__: null,
   string: typeCheckFunctions.isString,
   number: typeCheckFunctions.isNumber,
   boolean: typeCheckFunctions.isBoolean,
