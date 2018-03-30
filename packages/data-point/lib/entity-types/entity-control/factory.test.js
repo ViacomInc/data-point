@@ -1,9 +1,10 @@
 /* eslint-env jest */
 
 const Factory = require('./factory')
+const createReducer = require('../../reducer-types').create
 
 test('Factory#create', () => {
-  const control = Factory.create({
+  const control = Factory.create(createReducer, {
     select: [
       { case: '$a', do: '$b' },
       { case: '$c', do: '$d' },
@@ -20,7 +21,7 @@ test('Factory#create', () => {
 
 test('Factory#create enforce default statement', () => {
   expect(() => {
-    Factory.create({
+    Factory.create(createReducer, {
       select: [{ case: 'a()', do: 'b()' }, { case: 'c()', do: 'd()' }]
     })
   }).toThrow(/missing|default/)

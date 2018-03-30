@@ -1,9 +1,10 @@
 /* eslint-env jest */
 
 const Factory = require('./factory')
+const createReducer = require('../../reducer-types').create
 
 test('Factory#create', () => {
-  const obj = Factory.create({
+  const obj = Factory.create(createReducer, {
     schema: {
       properties: {
         foo: { type: 'number' },
@@ -23,7 +24,7 @@ test('Factory#create', () => {
   expect(obj).toHaveProperty('params')
 
   expect(() =>
-    Factory.create({
+    Factory.create(createReducer, {
       schema: { type: null }
     })
   ).toThrowErrorMatchingSnapshot()

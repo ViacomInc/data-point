@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const createBaseEntity = require('../base-entity').create
-const createReducer = require('../../reducer-types').create
 const { validateModifiers } = require('../validate-modifiers')
 
 /**
@@ -26,13 +25,14 @@ module.exports.defaultOptions = defaultOptions
 
 /**
  * creates new Request based on spec
+ * @param {Function} createReducer
  * @param {Object} spec - request spec
  * @param {string} id - Entity id
  * @return {EntityRequest} Entity Object
  */
-function create (spec, id) {
+function create (createReducer, spec, id) {
   validateModifiers(id, spec, ['options', 'url'])
-  const entity = createBaseEntity(EntityRequest, spec, id)
+  const entity = createBaseEntity(createReducer, EntityRequest, spec, id)
   entity.url = _.defaultTo(spec.url, '')
   entity.options = createReducer(spec.options || defaultOptions)
 
