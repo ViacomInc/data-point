@@ -6,16 +6,14 @@ const utils = require('../../../utils')
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerMap} reducerMap
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducerMap) {
   const reducer = reducerMap.reducer
   return Promise.map(accumulator.value, itemValue => {
     const itemContext = utils.set(accumulator, 'value', itemValue)
-    return resolveReducer(manager, itemContext, reducer).then(res => {
-      return res.value
-    })
-  }).then(result => utils.set(accumulator, 'value', result))
+    return resolveReducer(manager, itemContext, reducer)
+  })
 }
 
 module.exports.resolve = resolve

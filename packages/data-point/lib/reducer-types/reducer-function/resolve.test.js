@@ -25,7 +25,7 @@ describe('resolve#filter.resolve', () => {
     return resolveFunction
       .resolve(dataPoint, resolveReducer, accumulator, reducer)
       .then(result => {
-        expect(result.value).toBe('testnode')
+        expect(result).toBe('testnode')
       })
   })
 
@@ -39,7 +39,7 @@ describe('resolve#filter.resolve', () => {
     return resolveFunction
       .resolve(dataPoint, resolveReducer, accumulator, reducer)
       .then(result => {
-        expect(result.value).toBe('testsync')
+        expect(result).toBe('testsync')
       })
   })
 
@@ -55,7 +55,7 @@ describe('resolve#filter.resolve', () => {
     return resolveFunction
       .resolve(dataPoint, resolveReducer, accumulator, reducer)
       .then(result => {
-        expect(result.value).toBe('testpromise')
+        expect(result).toBe('testpromise')
       })
   })
 

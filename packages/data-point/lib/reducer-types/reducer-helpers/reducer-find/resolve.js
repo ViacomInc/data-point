@@ -8,11 +8,11 @@ const { reducerPredicateIsTruthy } = require('../utils')
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerFind} reducerFind
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducerFind) {
   if (accumulator.value.length === 0) {
-    return Promise.resolve(utils.set(accumulator, 'value', undefined))
+    return Promise.resolve(undefined)
   }
 
   const reducer = reducerFind.reducer
@@ -22,15 +22,15 @@ function resolve (manager, resolveReducer, accumulator, reducerFind) {
       const itemContext = utils.set(accumulator, 'value', itemValue)
       return (
         result ||
-        resolveReducer(manager, itemContext, reducer).then(res => {
-          return reducerPredicateIsTruthy(reducer, res.value)
+        resolveReducer(manager, itemContext, reducer).then(value => {
+          return reducerPredicateIsTruthy(reducer, value)
             ? itemValue
             : undefined
         })
       )
     },
     null
-  ).then(result => utils.set(accumulator, 'value', result))
+  )
 }
 
 module.exports.resolve = resolve

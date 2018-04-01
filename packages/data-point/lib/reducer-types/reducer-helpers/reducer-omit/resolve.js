@@ -1,19 +1,15 @@
 const Promise = require('bluebird')
 const omit = require('lodash/omit')
 
-const utils = require('../../../utils')
-
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerOmit} reducerOmit
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducerOmit) {
-  const keys = reducerOmit.keys
-  const value = omit(accumulator.value, keys)
-  return Promise.resolve(utils.set(accumulator, 'value', value))
+  return Promise.resolve(omit(accumulator.value, reducerOmit.keys))
 }
 
 module.exports.resolve = resolve

@@ -34,7 +34,7 @@ describe('resolve#reducerObject.resolve', () => {
       accumulator,
       reducer
     ).then(result => {
-      expect(result.value).toEqual({})
+      expect(result).toEqual({})
     })
   })
 
@@ -69,7 +69,7 @@ describe('resolve#reducerObject.resolve', () => {
       accumulator,
       reducer
     ).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         x: [1, 2],
         y: {
           a: {
@@ -121,7 +121,7 @@ describe('resolve#reducerObject.resolve', () => {
       accumulator,
       reducer
     ).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         x: 'X',
         y: 'Y',
         z: {
@@ -169,7 +169,7 @@ describe('resolve#reducerObject.resolve', () => {
       accumulator,
       reducer
     ).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         x: {
           a: 1
         },

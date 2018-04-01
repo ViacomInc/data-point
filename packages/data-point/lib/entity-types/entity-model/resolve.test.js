@@ -31,12 +31,12 @@ beforeAll(() => {
 describe('Model.resolve', () => {
   test('Entry#resolve - resolve empty', () => {
     return transform('model:a.0').then(result => {
-      expect(result.value).toEqual(undefined)
+      expect(result).toEqual(undefined)
     })
   })
   test('Entry#resolve - resolve any Reducer', () => {
-    return transform('model:a.1', 5).then(ac => {
-      expect(ac.value).toEqual(10)
+    return transform('model:a.1', 5).then(result => {
+      expect(result).toEqual(10)
     })
   })
 })

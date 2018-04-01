@@ -30,7 +30,7 @@ describe('resolve#reducer.resolve - with valid reducers', () => {
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result.value).toBeUndefined())
+    ).then(result => expect(result).toBeUndefined())
   })
 
   test('one reducer', () => {
@@ -45,7 +45,7 @@ describe('resolve#reducer.resolve - with valid reducers', () => {
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result.value).toEqual(testData.a.g))
+    ).then(result => expect(result).toEqual(testData.a.g))
   })
 
   test('multiple reducers', () => {
@@ -60,7 +60,7 @@ describe('resolve#reducer.resolve - with valid reducers', () => {
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result.value).toBe(1))
+    ).then(result => expect(result).toBe(1))
   })
 })
 
@@ -77,7 +77,7 @@ describe('resolve#reducer.resolve - reducer model', () => {
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result.value).toEqual(testData))
+    ).then(result => expect(result).toEqual(testData))
   })
 
   test('it returns original input after piping through hash:asIs', () => {
@@ -93,7 +93,7 @@ describe('resolve#reducer.resolve - reducer model', () => {
       accumulator,
       reducerList
     ).then(result => {
-      expect(result.value).toEqual(testData.a.h)
+      expect(result).toEqual(testData.a.h)
     })
   })
 })
@@ -118,7 +118,7 @@ describe('resolve#reducer.resolve - reducer request', () => {
       accumulator,
       reducerList
     ).then(result =>
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     )
@@ -149,7 +149,7 @@ describe('resolve#reducer.resolve - reducer request', () => {
       accumulator,
       reducer
     ).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })

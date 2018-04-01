@@ -234,7 +234,7 @@ describe('resolveRequest', () => {
     }
 
     return Resolve.resolveRequest(acc).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })
@@ -305,7 +305,7 @@ describe('resolve', () => {
       })
 
     return transform('request:a1', null).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })
@@ -319,7 +319,7 @@ describe('resolve', () => {
       })
 
     return transform('request:a1.4', null).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })
@@ -333,7 +333,7 @@ describe('resolve', () => {
       })
 
     return transform('request:a1.0', {}).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })
@@ -355,7 +355,7 @@ describe('resolve', () => {
         }
       }
     ).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })
@@ -377,7 +377,7 @@ describe('resolve', () => {
         }
       }
     ).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })
@@ -391,7 +391,7 @@ describe('resolve', () => {
       })
 
     return transform('request:a4', {}).then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         ok: true
       })
     })

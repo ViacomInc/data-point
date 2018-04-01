@@ -1,16 +1,12 @@
-const utils = require('../../utils')
-
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerPath} reducer
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
-  const value = reducer.body(accumulator)
-  const acc = utils.set(accumulator, 'value', value)
-  return Promise.resolve(acc)
+  return Promise.resolve(reducer.body(accumulator))
 }
 
 module.exports.resolve = resolve

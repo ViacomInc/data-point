@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const fp = require('lodash/fp')
-const Promise = require('bluebird')
 const rp = require('request-promise')
 
 const utils = require('../../utils')
@@ -43,8 +42,8 @@ module.exports.getRequestOptions = getRequestOptions
 function resolveOptions (accumulator, resolveReducer) {
   accumulator = resolveUrl(accumulator)
   const specOptions = accumulator.reducer.spec.options
-  return resolveReducer(accumulator, specOptions).then(acc => {
-    const options = getRequestOptions(acc.url, acc.value)
+  return resolveReducer(accumulator, specOptions).then(value => {
+    const options = getRequestOptions(accumulator.url, value)
     return utils.assign(accumulator, { options })
   })
 }
@@ -97,40 +96,37 @@ module.exports.inspect = inspect
 
 /**
  * @param {Accumulator} acc
- * @param {Function} resolveReducer
- * @return {Promise<Accumulator>}
+ * @return {Promise}
  */
-function resolveRequest (acc, resolveReducer) {
+function resolveRequest (acc) {
   inspect(acc)
-  return rp(acc.options)
-    .then(result => utils.set(acc, 'value', result))
-    .catch(error => {
-      // remove auth objects from acc and error for printing to console
-      const redactedAcc = fp.set('options.auth', '[omitted]', acc)
-      const redactedError = fp.set('options.auth', '[omitted]', error)
+  return rp(acc.options).catch(error => {
+    // remove auth objects from acc and error for printing to console
+    const redactedAcc = fp.set('options.auth', '[omitted]', acc)
+    const redactedError = fp.set('options.auth', '[omitted]', error)
 
-      const message = [
-        'Entity info:',
-        '\n  - Id: ',
-        _.get(redactedAcc, 'reducer.spec.id'),
-        '\n',
-        utils.inspectProperties(
-          redactedAcc,
-          ['options', 'params', 'value'],
-          '  '
-        ),
-        '\n  Request:\n',
-        utils.inspectProperties(
-          redactedError,
-          ['error', 'message', 'statusCode', 'options', 'body'],
-          '  '
-        )
-      ].join('')
+    const message = [
+      'Entity info:',
+      '\n  - Id: ',
+      _.get(redactedAcc, 'reducer.spec.id'),
+      '\n',
+      utils.inspectProperties(
+        redactedAcc,
+        ['options', 'params', 'value'],
+        '  '
+      ),
+      '\n  Request:\n',
+      utils.inspectProperties(
+        redactedError,
+        ['error', 'message', 'statusCode', 'options', 'body'],
+        '  '
+      )
+    ].join('')
 
-      // attaching to error so it can be exposed by a handler outside datapoint
-      error.message = `${error.message}\n\n${message}`
-      throw error
-    })
+    // attaching to error so it can be exposed by a handler outside datapoint
+    error.message = `${error.message}\n\n${message}`
+    throw error
+  })
 }
 
 module.exports.resolveRequest = resolveRequest
@@ -138,14 +134,15 @@ module.exports.resolveRequest = resolveRequest
 /**
  * @param {Accumulator} acc
  * @param {Function} resolveReducer
- * @return {Promise<Accumulator>}
+ * @return {Promise}
  */
 function resolve (acc, resolveReducer) {
   const entity = acc.reducer.spec
-  return Promise.resolve(acc)
-    .then(itemContext => resolveReducer(itemContext, entity.value))
-    .then(itemContext => resolveOptions(itemContext, resolveReducer))
-    .then(itemContext => resolveRequest(itemContext, resolveReducer))
+  return resolveReducer(acc, entity.value)
+    .then(value => {
+      return resolveOptions(utils.set(acc, 'value', value), resolveReducer)
+    })
+    .then(itemContext => resolveRequest(itemContext))
 }
 
 module.exports.resolve = resolve

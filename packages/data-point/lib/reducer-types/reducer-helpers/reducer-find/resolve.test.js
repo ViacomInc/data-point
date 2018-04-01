@@ -22,7 +22,7 @@ describe('ReducerFind#resolve', () => {
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toBeUndefined()
+        expect(result).toBeUndefined()
       }
     )
   })
@@ -40,7 +40,7 @@ describe('ReducerFind#resolve', () => {
     const reducer = Factory.create(Reducer.create, ['$a', value => value > 1])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual({
+        expect(result).toEqual({
           a: 2
         })
       }
@@ -60,7 +60,7 @@ describe('ReducerFind#resolve', () => {
     const reducer = Factory.create(Reducer.create, '$c')
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toBeUndefined()
+        expect(result).toBeUndefined()
       }
     )
   })
@@ -85,7 +85,7 @@ describe('ReducerFind#resolve with reducer objects', () => {
     })
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toBeUndefined()
+        expect(result).toBeUndefined()
       }
     )
   })
@@ -115,7 +115,7 @@ describe('ReducerFind#resolve with reducer objects', () => {
     })
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual(value[3])
+        expect(result).toEqual(value[3])
       }
     )
   })

@@ -32,16 +32,16 @@ describe('entity.transform.value', () => {
   test('should resolve value Transform', () => {
     return transform('transform:a0', {
       message: 'hello world'
-    }).then(acc => {
-      expect(acc.value).toEqual('hello world')
+    }).then(result => {
+      expect(result).toEqual('hello world')
     })
   })
 
   test('should resolve context Transform', () => {
     return transform('transform:a1', {
       message: 'hello world'
-    }).then(acc => {
-      expect(acc.value).toEqual('HELLO WORLD')
+    }).then(result => {
+      expect(result).toEqual('HELLO WORLD')
     })
   })
 })
@@ -50,16 +50,16 @@ describe('entity.reducer.value', () => {
   test('should resolve value Transform', () => {
     return transform('reducer:a0', {
       message: 'hello world'
-    }).then(acc => {
-      expect(acc.value).toEqual('hello world')
+    }).then(result => {
+      expect(result).toEqual('hello world')
     })
   })
 
   test('should resolve context Transform', () => {
     return transform('reducer:a1', {
       message: 'hello world'
-    }).then(acc => {
-      expect(acc.value).toEqual('HELLO WORLD')
+    }).then(result => {
+      expect(result).toEqual('HELLO WORLD')
     })
   })
 })

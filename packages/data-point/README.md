@@ -3317,7 +3317,7 @@ function create(spec:Object):Object
 This is where your entity resolution logic is to be implemented. It follows the following syntax: 
 
 ```js
-function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
+function resolve(acc:Accumulator, resolveReducer:function):Promise
 ```
 
 <details>

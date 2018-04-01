@@ -2,10 +2,10 @@ const Promise = require('bluebird')
 
 /**
  *
- * @param {any} caseStatements
- * @param {any} acc
- * @param {any} resolveReducer
- * @returns
+ * @param {Array<Object>} caseStatements
+ * @param {Accumulator} acc
+ * @param {Function} resolveReducer
+ * @return {Promise}
  */
 function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
   return Promise.reduce(
@@ -20,8 +20,8 @@ function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
         return Promise.reject(err)
       }
 
-      return resolveReducer(acc, statement.case).then(res => {
-        return res.value ? statement : false
+      return resolveReducer(acc, statement.case).then(value => {
+        return value ? statement : false
       })
     },
     null
@@ -36,6 +36,11 @@ function getMatchingCaseStatement (caseStatements, acc, resolveReducer) {
 }
 module.exports.getMatchingCaseStatement = getMatchingCaseStatement
 
+/**
+ * @param {Accumulator} acc
+ * @param {Function} resolveReducer
+ * @return {Promise}
+ */
 function resolve (acc, resolveReducer) {
   const selectControl = acc.reducer.spec.select
   const caseStatements = selectControl.cases

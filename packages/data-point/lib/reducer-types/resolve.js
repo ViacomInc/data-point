@@ -45,14 +45,14 @@ function getResolveFunction (reducer) {
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolveReducer (manager, accumulator, reducer) {
   // this conditional is here because BaseEntity#resolve
   // does not check that lifecycle methods are defined
   // before trying to resolve them
   if (!reducer) {
-    return Promise.resolve(accumulator)
+    return Promise.resolve(accumulator.value)
   }
 
   const resolve = getResolveFunction(reducer)
@@ -61,7 +61,7 @@ function resolveReducer (manager, accumulator, reducer) {
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
     const resolveDefault = reducers.ReducerDefault.resolve
-    return result.then(acc => resolveDefault(acc, _default))
+    return result.then(value => resolveDefault(value, _default))
   }
 
   return result

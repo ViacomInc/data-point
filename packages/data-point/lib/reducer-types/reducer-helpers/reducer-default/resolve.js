@@ -1,4 +1,3 @@
-const utils = require('../../../utils')
 const { isFalsy } = require('../utils')
 
 /**
@@ -6,13 +5,12 @@ const { isFalsy } = require('../utils')
  * @param {*} _default
  * @returns {Accumulator}
  */
-function resolve (accumulator, _default) {
-  let value = accumulator.value
+function resolve (value, _default) {
   if (isFalsy(value)) {
-    value = typeof _default === 'function' ? _default() : _default
+    return typeof _default === 'function' ? _default() : _default
   }
 
-  return utils.assign(accumulator, { value })
+  return value
 }
 
 module.exports.resolve = resolve

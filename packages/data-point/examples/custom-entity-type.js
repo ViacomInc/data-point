@@ -30,13 +30,13 @@ function resolve (accumulator, resolveReducer) {
   const spec = accumulator.reducer.spec
   // resolve 'spec.value' reducer
   // against accumulator
-  return resolveReducer(accumulator, spec.value).then(acc => {
+  return resolveReducer(accumulator, spec.value).then(result => {
     // execute lodash template against
     // accumulator value
-    const value = spec.template(acc.value)
+    const value = spec.template(result)
     // set new accumulator.value
     // this method creates a new acc object
-    return Object.assign({}, acc, {
+    return Object.assign({}, accumulator, {
       value
     })
   })
