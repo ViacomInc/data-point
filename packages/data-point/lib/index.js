@@ -2,6 +2,7 @@
 
 const core = require('./core')
 const helpers = require('./helpers')
+const { createTypeCheckReducer } = require('./helpers/type-check-functions')
 
 module.exports = {
   create: core.create,
@@ -12,5 +13,6 @@ module.exports = {
   reducify: helpers.reducify,
   reducifyAll: helpers.reducifyAll,
   createReducer: helpers.createReducer,
-  createReducerResolver: helpers.reducifyAll
+  createReducerResolver: helpers.reducifyAll,
+  createTypeCheckReducer
 }

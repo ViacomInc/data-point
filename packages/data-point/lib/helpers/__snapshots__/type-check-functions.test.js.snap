@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`custom type check reducer should throw error (with custom message) 1`] = `
+"Entity type check failed!
+Actual type: boolean
+Input value: false
+Hello the world is collapsing."
+`;
+
+exports[`custom type check reducer should throw error (with expected type) 1`] = `
+"Entity type check failed!
+Expected type: non-empty array
+Actual type: boolean
+Input value: false"
+`;
+
+exports[`custom type check reducer should throw error for invalid input 1`] = `
+"Entity type check failed!
+Actual type: boolean
+Input value: false"
+`;
+
 exports[`isArray It should throw error when not matched 1`] = `
 "Entity type check failed!
 Expected type: array
@@ -23,7 +43,7 @@ Input value: 'foo'"
 
 exports[`isError It should throw error when not matched 1`] = `
 "Entity type check failed!
-Expected type: function
+Expected type: error
 Actual type: string
 Input value: 'foo'"
 `;
