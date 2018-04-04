@@ -1,5 +1,4 @@
-const _ = require('lodash')
-const LocalsFactory = require('../locals/factory')
+const merge = require('lodash/merge')
 
 /**
  * @class
@@ -28,7 +27,8 @@ function create (spec) {
   accumulator.reducer = {
     spec: spec.context
   }
-  accumulator.locals = LocalsFactory.create(_.defaultTo(spec.locals, {}))
+
+  accumulator.locals = merge({}, spec.locals)
   accumulator.values = spec.values
   accumulator.trace = spec.trace
 
