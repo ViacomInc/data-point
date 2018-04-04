@@ -6,6 +6,7 @@ Object {
   "createEntity": [Function],
   "createReducer": [Function],
   "createReducerResolver": [Function],
+  "createTypeCheckReducer": [Function],
   "entityFactories": Object {
     "Collection": [Function],
     "Control": [Function],
