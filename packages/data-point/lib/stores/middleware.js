@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const middlewareFactory = require('../middleware')
 
 function clear (manager) {
@@ -20,8 +19,8 @@ function create (spec) {
     stack: []
   }
 
-  manager.use = _.partial(use, manager)
-  manager.clear = _.partial(clear, manager)
+  manager.use = use.bind(null, manager)
+  manager.clear = clear.bind(null, manager)
 
   return manager
 }
