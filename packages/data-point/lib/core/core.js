@@ -61,12 +61,12 @@ function create (spec) {
 
   manager.addEntityType = manager.entityTypes.add
   // add multiple entity types
-  manager.addEntityTypes = _.partial(addToStore, manager.entityTypes)
+  manager.addEntityTypes = addToStore.bind(null, manager.entityTypes)
 
   manager.use = manager.middleware.use
 
   // add collection of items (plural)
-  manager.addEntities = _.partial(addEntitiesToStore, manager.entities)
+  manager.addEntities = addEntitiesToStore.bind(null, manager.entities)
 
   // built-in entity types
   _.forOwn(entities, (definition, key) => {
@@ -85,7 +85,7 @@ function create (spec) {
   // supports currying
   manager.resolve = Transform.resolve(manager)
   // does not support currying
-  manager.transform = _.partial(Transform.transform, manager)
+  manager.transform = Transform.transform.bind(null, manager)
 
   return manager
 }
