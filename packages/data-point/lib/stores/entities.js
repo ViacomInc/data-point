@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const storeManager = require('./store-manager')
 
 /**
@@ -46,7 +45,7 @@ function create (entityTypes) {
   return storeManager.create({
     errorInfoCbGet,
     errorInfoCbAdd,
-    create: _.partial(createEntity, entityTypes)
+    create: createEntity.bind(null, entityTypes)
   })
 }
 
