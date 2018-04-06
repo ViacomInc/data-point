@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const Promise = require('bluebird')
 
 const middleware = require('../../middleware')
@@ -136,7 +135,7 @@ function resolveEntity (
     console.time(timeId)
   }
 
-  const resolveReducerBound = _.partial(resolveReducer, manager)
+  const resolveReducerBound = resolveReducer.bind(null, manager)
 
   return Promise.resolve(accUid)
     .then(acc =>
