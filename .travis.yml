@@ -3,7 +3,7 @@ node_js:
   - 6
   - 8
 sudo: false
-install:
+before_install:
   - npm install -g codecov
 cache:
   yarn: true
