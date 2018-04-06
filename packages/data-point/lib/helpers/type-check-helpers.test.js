@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
 const helpers = require('./type-check-helpers')
-const typeCheckFunctions = require('./type-check-functions')
+const typeCheckFunctions = require('./type-check-functions').defaults
 
 describe('type-check-helpers#normalizeTypeCheckSource', () => {
   test('It should return function reducer it matches any of the predefined types', () => {

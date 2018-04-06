@@ -6,7 +6,6 @@ const Resolve = require('./resolve')
 
 const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer-types/factory')
-const LocalsFactory = require('../../locals/factory')
 
 const ResolveEntity = require('../base-entity/resolve')
 
@@ -42,9 +41,9 @@ function helperMockContext (accumulatorData, reducerSource, requestName) {
 }
 
 beforeAll(() => {
-  locals = LocalsFactory.create({
+  locals = {
     itemPath: '/source1'
-  })
+  }
   dataPoint = FixtureStore.create()
   resolveReducerBound = helpers.createReducerResolver(dataPoint)
   values = dataPoint.values.getStore()
