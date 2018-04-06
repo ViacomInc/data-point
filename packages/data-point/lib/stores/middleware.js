@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 /**
  * @param {Object} manager
  * @return {Object}
@@ -35,8 +33,8 @@ function create (spec) {
     store: new Map()
   }
 
-  manager.use = _.partial(use, manager)
-  manager.clear = _.partial(clear, manager)
+  manager.use = use.bind(null, manager)
+  manager.clear = clear.bind(null, manager)
 
   return manager
 }

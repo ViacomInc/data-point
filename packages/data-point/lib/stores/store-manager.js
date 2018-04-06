@@ -91,10 +91,10 @@ function create (spec) {
     store: new Map()
   }
 
-  manager.getStore = _.partial(getStore, manager)
-  manager.clear = _.partial(clear, manager)
-  manager.get = _.partial(get, manager, spec.errorInfoCbGet)
-  manager.add = _.partial(add, manager, spec.errorInfoCbAdd, spec.create)
+  manager.getStore = getStore.bind(null, manager)
+  manager.clear = clear.bind(null, manager)
+  manager.get = get.bind(null, manager, spec.errorInfoCbGet)
+  manager.add = add.bind(null, manager, spec.errorInfoCbAdd, spec.create)
 
   return manager
 }
