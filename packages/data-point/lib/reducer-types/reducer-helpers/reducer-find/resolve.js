@@ -15,19 +15,21 @@ function resolve (manager, resolveReducer, accumulator, reducerFind) {
     return Promise.resolve(utils.set(accumulator, 'value', undefined))
   }
 
+  let hasResult = false
   const reducer = reducerFind.reducer
   return Promise.reduce(
     accumulator.value,
     (result, itemValue) => {
+      if (hasResult) {
+        return result
+      }
       const itemContext = utils.set(accumulator, 'value', itemValue)
-      return (
-        result ||
-        resolveReducer(manager, itemContext, reducer).then(res => {
-          return reducerPredicateIsTruthy(reducer, res.value)
-            ? itemValue
-            : undefined
-        })
-      )
+      return resolveReducer(manager, itemContext, reducer).then(res => {
+        if (reducerPredicateIsTruthy(reducer, res.value)) {
+          hasResult = true
+          return itemValue
+        }
+      })
     },
     null
   ).then(result => utils.set(accumulator, 'value', result))

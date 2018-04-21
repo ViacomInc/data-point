@@ -47,6 +47,17 @@ describe('ReducerFind#resolve', () => {
     )
   })
 
+  test("it should find a matching item that's falsy", () => {
+    const value = [0, 1, 2]
+    const accumulator = AccumulatorFactory.create({ value })
+    const reducer = Factory.create(Reducer.create, input => input === 0)
+    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
+      result => {
+        expect(result.value).toBe(0)
+      }
+    )
+  })
+
   test('It should return undefined when no match is found', () => {
     const value = [
       {
@@ -89,6 +100,7 @@ describe('ReducerFind#resolve with reducer objects', () => {
       }
     )
   })
+
   test('it should match the item with truthy keys', () => {
     const value = [
       {
