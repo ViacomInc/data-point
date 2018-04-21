@@ -152,7 +152,7 @@ function reportFasterOpsperSec (suites) {
   const first = sorted[0]
   const second = sorted[1]
 
-  const diffMedian = (first.median - second.median) / first.median * 100
+  const diffMedian = (first.median - second.median) / second.median * 100
 
   console.log(
     ` Speed: %s was faster by %s (%s vs %s)`,
