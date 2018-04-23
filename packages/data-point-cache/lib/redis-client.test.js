@@ -4,6 +4,7 @@ jest.mock('ioredis', () => {
   return require('ioredis-mock')
 })
 
+const ms = require('ms')
 const RedisClient = require('./redis-client')
 
 const logger = require('./logger')
@@ -109,7 +110,7 @@ describe('get/set/exists', () => {
     return RedisClient.create().then(redisClient => {
       const redis = redisClient.redis
       return redisClient
-        .set('stale', 'test')
+        .set('stale', 'test', 0)
         .then(() => {
           const jobs = [
             redis
@@ -131,6 +132,36 @@ describe('get/set/exists', () => {
             d: 'test'
           })
           expect(ttl).toBe(-1)
+        })
+    })
+  })
+
+  test('It should set ttl to 2 weeks if not provided', () => {
+    return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
+      return redisClient
+        .set('test', 'test')
+        .then(() => {
+          const jobs = [
+            redis
+              .pipeline()
+              .get('test')
+              .exec(),
+            redis
+              .pipeline()
+              .pttl('test')
+              .exec()
+          ]
+          return Promise.all(jobs)
+        })
+        .then(results => {
+          const rawValue = results[0][0][1]
+          const ttl = results[1][0][1]
+
+          expect(JSON.parse(rawValue)).toEqual({
+            d: 'test'
+          })
+          expect(ttl).toBeGreaterThan(ms('6d'))
         })
     })
   })
