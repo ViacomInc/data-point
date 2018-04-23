@@ -6,8 +6,8 @@ function server (dataPoint) {
   const app = express()
 
   app.get('/api/hello-world', (req, res) => {
-    dataPoint.transform(`entry:HelloWorld`, req.query).then(acc => {
-      res.send(acc.value)
+    dataPoint.resolve(`model:HelloWorld`, {}).then(value => {
+      res.send(value)
     })
   })
 
@@ -20,7 +20,9 @@ function createService () {
   return DataPointService.create({
     DataPoint,
     entities: {
-      'entry:HelloWorld': () => 'Hello World!!'
+      'model:HelloWorld': {
+        value: () => 'Hello World'
+      }
     }
   }).then(service => {
     return service.dataPoint
