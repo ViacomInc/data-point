@@ -100,7 +100,7 @@ function setSWIControlEntry (service, key, ttl) {
  * @returns {Promise}
  */
 function setStaleWhileRevalidateEntry (service, entryKey, value, ttl) {
-  // TODO: stale entries have NO ttl, rethink if this is the right approach or
+  // NOTE: stale entries have NO ttl, rethink if this is the right approach or
   // if stale should just mean a much longer TTL?
   return setSWIStaleEntry(service, entryKey, value).then(() =>
     setSWIControlEntry(service, entryKey, ttl)
