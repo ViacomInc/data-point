@@ -108,6 +108,59 @@ function setStaleWhileRevalidateEntry (service, entryKey, value, ttl) {
 }
 
 /**
+ * @param {String} entityId entity Id
+ * @param {String} entryKey entity cache key
+ * @returns {Function<Boolean>} function that returns true
+ */
+function revalidateSuccess (entityId, entryKey) {
+  return () => {
+    logger.debug(
+      'Succesful revalidation entityId: %s with cache key: %s',
+      entityId,
+      entryKey
+    )
+    return true
+  }
+}
+
+/**
+ * @param {Service} service Service instance
+ * @param {String} entryKey entity cache key
+ * @returns {Function}
+ */
+function updateSWIEntry (service, entryKey, ttl) {
+  /**
+   * @param {Accumulator} acc
+   */
+  return acc => {
+    return setStaleWhileRevalidateEntry(service, entryKey, acc.value, ttl)
+  }
+}
+
+/**
+ * @param {String} entityId entity Id
+ * @param {String} entryKey entity cache key
+ * @returns {Function}
+ */
+function handleRevalidateError (entityId, entryKey) {
+  /**
+   * @param {Error} error
+   */
+  return error => {
+    logger.error(
+      'Could not revalidate entityId: %s with cache key: %s\n',
+      entityId,
+      entryKey,
+      error
+    )
+    // there is really nothing to do here, on another iteration
+    // params.staleWhileRevalidate could take an object that has a
+    // custom error handler
+    return false
+  }
+}
+
+/**
  * @param {Service} service Service instance
  * @param {String} entryKey entry key
  * @param {String} ttl time to live value supported by https://github.com/zeit/ms
@@ -134,35 +187,12 @@ function revalidateEntry (service, entryKey, ttl, ctx) {
     entityId,
     entryKey
   )
+
   return service.dataPoint
     .resolveFromAccumulator(entityId, revalidateContext)
-    .then(acc => {
-      return setStaleWhileRevalidateEntry(
-        service,
-        entryKey,
-        acc.value,
-        ttl
-      ).then(() => {
-        logger.debug(
-          'Succesful revalidation entityId: %s with cache key: %s',
-          entityId,
-          entryKey
-        )
-        return true
-      })
-    })
-    .catch(error => {
-      logger.error(
-        'Could not revalidate entityId: %s with cache key: %s\n',
-        entityId,
-        entryKey,
-        error
-      )
-      // there is really nothing to do here, on another iteration
-      // params.staleWhileRevalidate could take an object that has a
-      // custom error handler
-      return false
-    })
+    .then(updateSWIEntry(service, entryKey, ttl))
+    .then(revalidateSuccess(entityId, entryKey))
+    .catch(handleRevalidateError(entityId, entryKey))
 }
 
 /**
