@@ -9,12 +9,20 @@ describe('setupMiddleware', () => {
       settings: {}
     }
     return SetupMiddleware.setupMiddleware(service)
+      .catch(err => err)
       .then(s => {
-        expect(s).toHaveProperty('dataPoint.middleware.stack.length', 2)
-        expect(s).toHaveProperty('dataPoint.middleware.stack.0.name', 'before')
-        expect(s).toHaveProperty('dataPoint.middleware.stack.1.name', 'after')
+        expect(s.dataPoint.middleware.store.size).toBe(2)
+
+        const before = s.dataPoint.middleware.store.get('before')
+        expect(before).toBeInstanceOf(Array)
+        expect(before).toHaveLength(1)
+        expect(before[0]).toBeInstanceOf(Function)
+
+        const after = s.dataPoint.middleware.store.get('after')
+        expect(after).toBeInstanceOf(Array)
+        expect(after).toHaveLength(1)
+        expect(after[0]).toBeInstanceOf(Function)
       })
-      .catch(err => console.log(err))
   })
 
   test('It should use custom before/after if provided', () => {
@@ -26,17 +34,10 @@ describe('setupMiddleware', () => {
       }
     }
     return SetupMiddleware.setupMiddleware(service)
+      .catch(err => err)
       .then(s => {
-        expect(s).toHaveProperty('dataPoint.middleware.stack.length', 2)
-        expect(s).toHaveProperty(
-          'dataPoint.middleware.stack.0.callback',
-          'before'
-        )
-        expect(s).toHaveProperty(
-          'dataPoint.middleware.stack.1.callback',
-          'after'
-        )
+        expect(s.dataPoint.middleware.store.get('before')).toEqual(['before'])
+        expect(s.dataPoint.middleware.store.get('after')).toEqual(['after'])
       })
-      .catch(err => console.log(err))
   })
 })
