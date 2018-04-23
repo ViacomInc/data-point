@@ -1,7 +1,6 @@
 const IORedis = require('ioredis')
 const Promise = require('bluebird')
 const logger = require('./logger')
-const ms = require('ms')
 
 function reconnectOnError (err) {
   logger.error('ioredis - reconnectOnError', err.toString())
@@ -78,20 +77,18 @@ function decode (value) {
   return value ? JSON.parse(value).d : undefined
 }
 
-const week = ms('7d')
-function set (cache, key, value, ttl = week) {
+function set (cache, key, value, ttl) {
   const redis = cache.redis
   const val = encode(value)
-  return redis
-    .pipeline()
-    .set(key, val)
-    .exec()
-    .then(res =>
-      redis
-        .pipeline()
-        .pexpire(key, ttl.toString())
-        .exec()
-    )
+  const validTTL = typeof ttl === 'number' && ttl > 0
+
+  const pipeline = redis.pipeline().set(key, val)
+
+  if (validTTL) {
+    pipeline.pexpire(key, ttl.toString())
+  }
+
+  return pipeline.exec()
 }
 
 function getFromRedisResult (res) {
