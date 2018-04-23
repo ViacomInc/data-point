@@ -1,31 +1,36 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["___done"] }] */
-
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-function run (context, stackSpec, done) {
+/**
+ *
+ * @param {Accumulator} accumulator
+ * @param {Array<Function>} stackSpec
+ * @param {Function} done
+ * @return {*}
+ */
+function run (accumulator, stackSpec, done) {
   if (stackSpec.length === 0) {
-    return done(null, context)
+    return done(null, accumulator)
   }
 
   const stack = stackSpec.slice(0)
 
   function next (err) {
     if (err) {
-      return done(err, context)
+      return done(err, accumulator)
     }
 
-    if (context.___done === true) {
-      return done(null, context)
+    if (accumulator.___done === true) {
+      return done(null, accumulator)
     }
 
     const middlewareFunc = stack.shift()
 
     if (typeof middlewareFunc === 'undefined') {
-      return done(null, context)
+      return done(null, accumulator)
     }
 
-    const execError = _.attempt(middlewareFunc, context, next)
+    const execError = _.attempt(middlewareFunc, accumulator, next)
 
     if (_.isError(execError)) {
       next(execError)

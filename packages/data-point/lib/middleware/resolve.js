@@ -1,31 +1,33 @@
+const Promise = require('bluebird')
+
 const middlewareContextFactory = require('../middleware-context')
 const middlewareControl = require('../middleware-control')
 
-function getStack (stack, middlewareName) {
-  return stack.reduce((acc, middleware) => {
-    if (middleware.name === middlewareName) {
-      acc.push(middleware.callback)
-    }
-    return acc
-  }, [])
+/**
+ * @param {Map} store
+ * @param {String} middlewareName
+ * @return {Array}
+ */
+function getStack (store, middlewareName) {
+  return store.get(middlewareName) || []
 }
 
 module.exports.getStack = getStack
 
-function executeStack (stack, middlewareName, accumulator) {
-  const middlewareStack = getStack(stack, middlewareName)
-  return middlewareControl(accumulator, middlewareStack)
-}
-
-module.exports.executeStack = executeStack
-
+/**
+ * @param {Object} manager
+ * @param {String} middlewareName
+ * @param {Accumulator} accumulator
+ * @return {Promise}
+ */
 function resolve (manager, middlewareName, accumulator) {
-  const middlewareContext = middlewareContextFactory.create(accumulator)
-  return executeStack(
-    manager.middleware.stack,
-    middlewareName,
-    middlewareContext
-  )
+  const stack = getStack(manager.middleware.store, middlewareName)
+  if (stack.length === 0) {
+    return Promise.resolve(accumulator)
+  }
+
+  accumulator = middlewareContextFactory.create(accumulator)
+  return middlewareControl(accumulator, stack)
 }
 
 module.exports.resolve = resolve
