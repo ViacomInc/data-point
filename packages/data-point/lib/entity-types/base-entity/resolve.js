@@ -9,7 +9,7 @@ const utils = require('../../utils')
  * @param {Error} error
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
   const errorReducer = accumulator.reducer.spec.error
@@ -71,35 +71,47 @@ module.exports.createCurrentAccumulator = createCurrentAccumulator
  * then pls let me know and send a PR
  *
  * @param {Object} manager - dataPoint instance
+ * @param {Promise} promise - should resolve to the current accumulator
  * @param {string} name - name of middleware to execute
- * @param {Accumulator} acc - current accumulator
+ * @returns {Promise}
  */
-function resolveMiddleware (manager, name, acc) {
-  return middleware.resolve(manager, name, acc).then(middlewareResult => {
-    const reqCtx = utils.assign(acc, {
-      value: middlewareResult.value,
-      locals: middlewareResult.locals
+function resolveMiddleware (manager, promise, name) {
+  if (!manager.middleware.store.has(name)) {
+    return promise
+  }
+
+  return promise
+    .then(accumulator => {
+      return middleware.resolve(manager, name, accumulator)
     })
+    .then(middlewareResult => {
+      if (middlewareResult.___resolve === true) {
+        // doing this until proven wrong :)
+        const err = new Error('bypassing middleware')
+        err.name = 'bypass'
+        err.bypass = true
+        err.bypassValue = middlewareResult
+        return Promise.reject(err)
+      }
 
-    if (middlewareResult.___resolve === true) {
-      // doing this until proven wrong :)
-      const err = new Error('bypassing middleware')
-      err.name = 'bypass'
-      err.bypass = true
-      err.bypassValue = reqCtx
-      return Promise.reject(err)
-    }
-
-    return reqCtx
-  })
+      return middlewareResult
+    })
 }
 
 module.exports.resolveMiddleware = resolveMiddleware
 
-function typeCheck (manager, acc, reducer, resolveReducer) {
-  // if no error returns original accumulator
-  // this prevents typeCheckTransform from mutating the value
-  return resolveReducer(manager, acc, reducer).return(acc)
+/**
+ * @param {Object} manager
+ * @param {Accumulator} accumulator
+ * @param {Reducer} reducer
+ * @param {Function} resolveReducer
+ * @returns {Promise}
+ */
+function typeCheck (manager, accumulator, reducer, resolveReducer) {
+  // returns original accumulator if there's no error
+  // this helps prevent type check reducers from mutating the value, but
+  // it's still possible to modify the value by reference when it's an object
+  return resolveReducer(manager, accumulator, reducer).return(accumulator)
 }
 
 /**
@@ -108,7 +120,7 @@ function typeCheck (manager, acc, reducer, resolveReducer) {
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @param {Function} mainResolver
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolveEntity (
   manager,
@@ -127,52 +139,87 @@ function resolveEntity (
     currentAccumulator.trace === true ||
     currentAccumulator.reducer.spec.params.trace === true
 
-  let accUid = currentAccumulator
   let timeId
+  let accUid = currentAccumulator
   if (trace === true) {
     accUid = utils.set(currentAccumulator, 'euid', utils.getUID())
     timeId = `⧖ ${accUid.context.id}(${accUid.euid})`
     console.time(timeId)
   }
 
-  const resolveReducerBound = resolveReducer.bind(null, manager)
+  const {
+    inputType,
+    before,
+    after,
+    outputType
+  } = currentAccumulator.reducer.spec
 
-  return Promise.resolve(accUid)
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.inputType, resolveReducer)
-    )
-    .then(acc => resolveMiddleware(manager, `before`, acc))
-    .then(acc =>
-      resolveMiddleware(manager, `${reducer.entityType}:before`, acc)
-    )
-    .then(acc => resolveReducer(manager, acc, acc.reducer.spec.before))
-    .then(acc => mainResolver(acc, resolveReducerBound))
-    .then(acc => resolveReducer(manager, acc, acc.reducer.spec.after))
-    .then(acc => resolveMiddleware(manager, `${reducer.entityType}:after`, acc))
-    .then(acc => resolveMiddleware(manager, `after`, acc))
-    .catch(error => {
-      // checking if this is an error to bypass the `then` chain
-      if (error.bypass === true) {
-        return error.bypassValue
-      }
+  let result = Promise.resolve(accUid)
 
-      throw error
+  if (inputType) {
+    result = result.then(acc => {
+      return typeCheck(manager, acc, inputType, resolveReducer)
     })
-    .then(acc =>
-      typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
-    )
+  }
+
+  result = resolveMiddleware(manager, result, 'before')
+
+  result = resolveMiddleware(manager, result, `${reducer.entityType}:before`)
+
+  if (before) {
+    result = result.then(acc => {
+      return resolveReducer(manager, acc, before)
+    })
+  }
+
+  result = result.then(acc => {
+    return mainResolver(acc, resolveReducer.bind(null, manager))
+  })
+
+  if (after) {
+    result = result.then(acc => {
+      return resolveReducer(manager, acc, after)
+    })
+  }
+
+  result = resolveMiddleware(manager, result, `${reducer.entityType}:after`)
+
+  result = resolveMiddleware(manager, result, 'after')
+
+  result = result.catch(error => {
+    // checking if this is an error to bypass the `then` chain
+    if (error.bypass === true) {
+      return error.bypassValue
+    }
+
+    throw error
+  })
+
+  if (outputType) {
+    result = result.then(acc => {
+      return typeCheck(manager, acc, outputType, resolveReducer)
+    })
+  }
+
+  return result
     .catch(error => {
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
-      return resolveErrorReducers(
+      let result = resolveErrorReducers(
         manager,
         error,
         currentAccumulator,
         resolveReducer
-      ).then(acc =>
-        typeCheck(manager, acc, acc.reducer.spec.outputType, resolveReducer)
       )
+
+      if (outputType) {
+        result = result.then(acc => {
+          return typeCheck(manager, acc, outputType, resolveReducer)
+        })
+      }
+
+      return result
     })
     .then(resultContext => {
       if (trace === true) {
@@ -193,7 +240,7 @@ module.exports.resolveEntity = resolveEntity
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @param {Function} mainResolver
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
   const hasEmptyConditional = reducer.hasEmptyConditional

@@ -1,5 +1,7 @@
 /* eslint-env jest */
 
+const Promise = require('bluebird')
+
 const ResolveEntity = require('./resolve')
 const createReducer = require('../../reducer-types').create
 const resolveReducer = require('../../reducer-types').resolve
@@ -102,11 +104,11 @@ describe('ResolveEntity.resolveMiddleware', () => {
       next(null)
     })
 
-    const racc = helpers.createAccumulator('foo')
+    const acc = helpers.createAccumulator('foo')
     return ResolveEntity.resolveMiddleware(
       dataPoint,
-      'request:before',
-      racc
+      Promise.resolve(acc),
+      'request:before'
     ).then(acc => {
       expect(acc.value).toEqual('bar')
     })
@@ -118,8 +120,12 @@ describe('ResolveEntity.resolveMiddleware', () => {
       next(null)
     })
 
-    const racc = helpers.createAccumulator('foo')
-    return ResolveEntity.resolveMiddleware(dataPoint, 'request:before', racc)
+    const acc = helpers.createAccumulator('foo')
+    return ResolveEntity.resolveMiddleware(
+      dataPoint,
+      Promise.resolve(acc),
+      'request:before'
+    )
       .catch(reason => reason)
       .then(reason => {
         expect(reason).toBeInstanceOf(Error)
