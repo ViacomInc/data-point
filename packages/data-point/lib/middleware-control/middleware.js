@@ -9,7 +9,7 @@ const Promise = require('bluebird')
  * @return {*}
  */
 function run (accumulator, stackSpec, done) {
-  if (stackSpec.length === 0) {
+  if (!stackSpec || stackSpec.length === 0) {
     return done(null, accumulator)
   }
 
