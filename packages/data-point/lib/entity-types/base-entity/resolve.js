@@ -91,7 +91,7 @@ function resolveMiddleware (manager, promise, name) {
         err.name = 'bypass'
         err.bypass = true
         err.bypassValue = middlewareResult
-        return Promise.reject(err)
+        throw err
       }
 
       return middlewareResult
