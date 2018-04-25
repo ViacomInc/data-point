@@ -9,7 +9,7 @@ const utils = require('../../utils')
  * @param {Error} error
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
- * @returns {Promise}
+ * @returns {Promise<Accumulator>}
  */
 function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
   const errorReducer = accumulator.reducer.spec.error
