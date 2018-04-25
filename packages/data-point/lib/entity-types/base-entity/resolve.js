@@ -120,7 +120,7 @@ function typeCheck (manager, accumulator, reducer, resolveReducer) {
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @param {Function} mainResolver
- * @returns {Promise}
+ * @returns {Promise<Accumulator>}
  */
 function resolveEntity (
   manager,
@@ -206,7 +206,7 @@ function resolveEntity (
       // attach entity information to help debug
       error.entityId = currentAccumulator.reducer.spec.id
 
-      let result = resolveErrorReducers(
+      let errorResult = resolveErrorReducers(
         manager,
         error,
         currentAccumulator,
@@ -214,12 +214,12 @@ function resolveEntity (
       )
 
       if (outputType) {
-        result = result.then(acc => {
+        errorResult = errorResult.then(acc => {
           return typeCheck(manager, acc, outputType, resolveReducer)
         })
       }
 
-      return result
+      return errorResult
     })
     .then(resultContext => {
       if (trace === true) {
@@ -240,7 +240,7 @@ module.exports.resolveEntity = resolveEntity
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @param {Function} mainResolver
- * @returns {Promise}
+ * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
   const hasEmptyConditional = reducer.hasEmptyConditional
