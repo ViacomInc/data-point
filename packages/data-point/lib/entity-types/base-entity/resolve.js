@@ -33,6 +33,34 @@ function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
 module.exports.resolveErrorReducers = resolveErrorReducers
 
 /**
+ * @param {Promise} promise
+ * @param {*} condition
+ * @param {Function} callback
+ * @returns {Promise}
+ */
+function addToPromiseChain (promise, condition, callback) {
+  if (!condition) {
+    return promise
+  }
+
+  return promise.then(callback)
+}
+
+/**
+ * @param {Error} error
+ * @returns {*} bypass value
+ * @throws rethrows error if bypass was not found
+ */
+function handleByPassError (error) {
+  // checking if this is an error to bypass the `then` chain
+  if (error.bypass === true) {
+    return error.bypassValue
+  }
+
+  throw error
+}
+
+/**
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Function} reducer
@@ -156,50 +184,35 @@ function resolveEntity (
 
   let result = Promise.resolve(accUid)
 
-  if (inputType) {
-    result = result.then(acc => {
-      return typeCheck(manager, acc, inputType, resolveReducer)
-    })
-  }
+  result = addToPromiseChain(result, inputType, acc =>
+    typeCheck(manager, acc, inputType, resolveReducer)
+  )
 
   result = resolveMiddleware(manager, result, 'before')
 
   result = resolveMiddleware(manager, result, `${reducer.entityType}:before`)
 
-  if (before) {
-    result = result.then(acc => {
-      return resolveReducer(manager, acc, before)
-    })
-  }
+  result = addToPromiseChain(result, before, acc =>
+    resolveReducer(manager, acc, before)
+  )
 
   result = result.then(acc => {
     return mainResolver(acc, resolveReducer.bind(null, manager))
   })
 
-  if (after) {
-    result = result.then(acc => {
-      return resolveReducer(manager, acc, after)
-    })
-  }
+  result = addToPromiseChain(result, after, acc =>
+    resolveReducer(manager, acc, after)
+  )
 
   result = resolveMiddleware(manager, result, `${reducer.entityType}:after`)
 
   result = resolveMiddleware(manager, result, 'after')
 
-  result = result.catch(error => {
-    // checking if this is an error to bypass the `then` chain
-    if (error.bypass === true) {
-      return error.bypassValue
-    }
+  result = result.catch(handleByPassError)
 
-    throw error
-  })
-
-  if (outputType) {
-    result = result.then(acc => {
-      return typeCheck(manager, acc, outputType, resolveReducer)
-    })
-  }
+  result = addToPromiseChain(result, outputType, acc =>
+    typeCheck(manager, acc, outputType, resolveReducer)
+  )
 
   return result
     .catch(error => {
@@ -213,11 +226,9 @@ function resolveEntity (
         resolveReducer
       )
 
-      if (outputType) {
-        errorResult = errorResult.then(acc => {
-          return typeCheck(manager, acc, outputType, resolveReducer)
-        })
-      }
+      errorResult = addToPromiseChain(errorResult, outputType, acc =>
+        typeCheck(manager, acc, outputType, resolveReducer)
+      )
 
       return errorResult
     })
