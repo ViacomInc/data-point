@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`revalidateEntry should log at debug level start and success 1`] = `
+Array [
+  Array [
+    "Revalidating entityId: %s with cache key: %s",
+    "model:Foo",
+    "key",
+  ],
+  Array [
+    "Succesful revalidation entityId: %s with cache key: %s",
+    "model:Foo",
+    "key",
+  ],
+]
+`;
+
+exports[`revalidateEntry should log error level when error occurs 1`] = `
+Array [
+  Array [
+    "Could not revalidate entityId: %s with cache key: %s
+",
+    "model:Foo",
+    "key",
+    [Error: TestError],
+  ],
+]
+`;
+
+exports[`revalidateEntry should set cache 1`] = `
+Array [
+  Array [
+    "SWI-STALE:key",
+    undefined,
+    0,
+  ],
+  Array [
+    "SWI-CONTROL:key",
+    "SWI-CONTROL",
+    200,
+  ],
+]
+`;

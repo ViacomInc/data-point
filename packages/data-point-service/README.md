@@ -79,7 +79,7 @@ function createService () {
   return DataPointService.create({
     DataPoint,
     entities: {
-      'entry:HelloWorld': (input, acc) => 'Hello World!!'
+      'reducer:HelloWorld': (input, acc) => 'Hello World!!'
     }
   }).then((service) => {
     return service.dataPoint
@@ -88,6 +88,64 @@ function createService () {
 
 createService()
   .then(server)
+```
+
+## <a name="entity-params-cache">Configure entity.params cache</a>
+
+To configure an entity's cache settings you must set cache configuration through the params object.
+
+```js
+'<type>:<entity-name>': {
+  params: {
+    ttl: String,
+    staleWhileRevalidate: Boolean
+  }
+}
+```
+
+### ttl
+
+Use `ttl` to set an entity's cache entry **Time To Live** value. This value is expected to be written as a string following the format supported by [ms](https://www.npmjs.com/package/ms).
+
+**Example:**
+
+Creates a request entity that when called will append an entry to redis with a TTL of 20 minutes. When the entry expires, the next request that comes through will have to re-fetch again to respond, upon success a new cache entry with same TTL will be created.
+
+```js
+DataPointService.create({
+  DataPoint,
+  entities: {
+    'request:getPlanets': {
+      url: 'https://swapi.co/api/planets/'
+      params: {
+        ttl: '20m', // 20 minutes
+      }
+    }
+  }
+})
+```
+
+### staleWhileRevalidate
+
+Use `staleWhileRevalidate` flag in conjunction with a valid `ttl` to use the Stale While Revalidate caching pattern. When this flag is set to `true` your entity will be resolved to a stale value until the ttl expires, revalidation happens in the background and is triggered only upon the key being requested and its ttl being expired.
+
+**Example:**
+
+Creates a request entity that when called will append an entry to redis with no expiration (stale), at the same time it will create a controller cache entry that has the ttl value. On every request to this entity the stale value will be returned, when the control entry expires, the stale value will continue to be returned and a background process will be triggered to execute the entity and update the stale entry.
+
+```js
+DataPointService.create({
+  DataPoint,
+  entities: {
+    'request:getPlanets': {
+      url: 'https://swapi.co/api/planets/'
+      params: {
+        ttl: '20m', // 20 minutes
+        staleWhileRevalidate: true
+      }
+    }
+  }
+})
 ```
 
 ## <a name="contributing">Contributing</a>

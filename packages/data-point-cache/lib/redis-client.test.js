@@ -4,6 +4,7 @@ jest.mock('ioredis', () => {
   return require('ioredis-mock')
 })
 
+const ms = require('ms')
 const RedisClient = require('./redis-client')
 
 const logger = require('./logger')
@@ -69,22 +70,115 @@ describe('create', () => {
 })
 
 describe('get/set/exists', () => {
-  test('It should test get/set functionality', () => {
+  test('It should test get/set/exists functionality', () => {
     return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
+      return redisClient
+        .set('test', 'test', 2000)
+        .then(() => {
+          const jobs = [
+            redis
+              .pipeline()
+              .get('test')
+              .exec(),
+            redis
+              .pipeline()
+              .pttl('test')
+              .exec(),
+            redisClient.get('test'),
+            redisClient.exists('test')
+          ]
+          return Promise.all(jobs)
+        })
+        .then(results => {
+          const rawValue = results[0][0][1]
+          const ttl = results[1][0][1]
+          const value = results[2]
+          const exists = results[3]
+
+          expect(JSON.parse(rawValue)).toEqual({
+            d: 'test'
+          })
+          expect(ttl).toBeGreaterThan(1900)
+          expect(value).toEqual('test')
+          expect(exists).toEqual(true)
+        })
+    })
+  })
+
+  test('It should test set with no ttl', () => {
+    return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
+      return redisClient
+        .set('stale', 'test', 0)
+        .then(() => {
+          const jobs = [
+            redis
+              .pipeline()
+              .get('stale')
+              .exec(),
+            redis
+              .pipeline()
+              .pttl('stale')
+              .exec()
+          ]
+          return Promise.all(jobs)
+        })
+        .then(results => {
+          const rawValue = results[0][0][1]
+          const ttl = results[1][0][1]
+
+          expect(JSON.parse(rawValue)).toEqual({
+            d: 'test'
+          })
+          expect(ttl).toBe(-1)
+        })
+    })
+  })
+
+  test('It should set ttl to 2 weeks if not provided', () => {
+    return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
       return redisClient
         .set('test', 'test')
         .then(() => {
-          return redisClient.get('test')
+          const jobs = [
+            redis
+              .pipeline()
+              .get('test')
+              .exec(),
+            redis
+              .pipeline()
+              .pttl('test')
+              .exec()
+          ]
+          return Promise.all(jobs)
         })
-        .then(val => {
-          expect(val).toEqual('test')
+        .then(results => {
+          const rawValue = results[0][0][1]
+          const ttl = results[1][0][1]
+
+          expect(JSON.parse(rawValue)).toEqual({
+            d: 'test'
+          })
+          expect(ttl).toBeGreaterThan(ms('6d'))
         })
-        .then(() => {
-          return redisClient.exists('test')
-        })
-        .then(val => {
-          expect(val).toEqual(true)
-        })
+    })
+  })
+
+  test('It should test get on non existent key', () => {
+    return RedisClient.create().then(redisClient => {
+      return redisClient.get('invalid').then(value => {
+        expect(value).toEqual(undefined)
+      })
+    })
+  })
+
+  test('It should test exists on non existent key', () => {
+    return RedisClient.create().then(redisClient => {
+      return redisClient.exists('invalid').then(value => {
+        expect(value).toEqual(false)
+      })
     })
   })
 })

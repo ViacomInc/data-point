@@ -80,6 +80,11 @@ function create (spec) {
   manager.resolve = Transform.resolve(manager)
   // does not support currying
   manager.transform = Transform.transform.bind(null, manager)
+  // does not support currying
+  manager.resolveFromAccumulator = Transform.resolveFromAccumulator.bind(
+    null,
+    manager
+  )
 
   return manager
 }

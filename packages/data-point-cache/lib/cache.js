@@ -9,7 +9,7 @@ const DefaultSettings = {
 }
 
 function set (cache, key, value, ttl = '20m') {
-  const ttlms = ms(ttl)
+  const ttlms = typeof ttl === 'string' ? ms(ttl) : ttl
   return cache.redis
     .set(key, value, ttlms)
     .then(res => cache.local.set(key, value, cache.settings.localTTL))
