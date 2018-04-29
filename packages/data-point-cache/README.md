@@ -78,7 +78,7 @@ Parameter description:
 |:---|:---|:---|:---|
 | **key** | `String` | yes | key related to this entry. |
 | **value** | `Any` | yes | Value to be stored, this value will be stringified when stored in redis. |
-| **ttl** | `String` | optional | Time To Live of the entry. **IMPORTANT:** If not provided or value is `0` it will create a stale key. |
+| **ttl** | `String` | optional | Time To Live of the entry. Defaults to **20 minutes**.  |
 
 ### cache.get
 
