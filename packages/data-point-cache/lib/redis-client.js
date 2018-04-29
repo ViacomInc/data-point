@@ -79,19 +79,19 @@ function decode (value) {
 }
 
 const week = ms('7d')
+
 function set (cache, key, value, ttl = week) {
   const redis = cache.redis
   const val = encode(value)
-  return redis
-    .pipeline()
-    .set(key, val)
-    .exec()
-    .then(res =>
-      redis
-        .pipeline()
-        .pexpire(key, ttl.toString())
-        .exec()
-    )
+  const validTTL = typeof ttl === 'number' && ttl > 0
+
+  const pipeline = redis.pipeline().set(key, val)
+
+  if (validTTL) {
+    pipeline.pexpire(key, ttl.toString())
+  }
+
+  return pipeline.exec()
 }
 
 function getFromRedisResult (res) {
