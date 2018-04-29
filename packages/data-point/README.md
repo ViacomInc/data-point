@@ -327,6 +327,24 @@ The following table describes the properties of the `options` argument.
 | *locals* | `Object` | Hash with values you want exposed to every reducer. See [example](#acc-locals-example). |
 | *trace* | `boolean` | Set this to `true` to trace the entities and the time each one is taking to execute. **Use this option for debugging.** |
 
+### <a name="api-data-point-resolve-from-context">dataPoint.resolveFromAccumulator()</a>
+
+Execute a [Reducer](#reducers) from a provided Accumulator. This function will attempt at resolving a reducer providing an already constructed Accumulator Object. It will take the value provided in the Accumulator object to use as the input.
+
+**SYNOPSIS**
+
+```js
+dataPoint.resolveFromAccumulator(reducer:Reducer, acc:Accumulator):Promise(acc:Accumulator)
+```
+
+This method returns a **Promise** with the final output value.
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *reducer* | [Reducer](#reducers) | Reducer that manipulates the input. |
+| *acc* | [Accumulator](#accumulator) | Reducer's accumulator Object. The main property is `value`, which is the value the  reducer will use as its input. |
 
 ## <a name="accumulator-object">Accumulator Object</a>
 

@@ -10,6 +10,19 @@ function getOptions (spec) {
   })
 }
 
+/**
+ * @param {DataPoint} manager DataPoint instance
+ * @param {Object} reducerSource reducer source
+ * @param {Accumulator} context accumulator object
+ * @returns {Promise<Accumulator>} resolved reducer context
+ */
+function resolveFromAccumulator (manager, reducerSource, context) {
+  const reducer = Reducer.create(reducerSource)
+  return Reducer.resolve(manager, context, reducer)
+}
+
+module.exports.resolveFromAccumulator = resolveFromAccumulator
+
 function reducerResolve (manager, reducerSource, value, options) {
   const contextOptions = getOptions(options)
   const context = AccumulatorFactory.create({
@@ -19,8 +32,7 @@ function reducerResolve (manager, reducerSource, value, options) {
     values: manager.values.getStore()
   })
 
-  const reducer = Reducer.create(reducerSource)
-  return Reducer.resolve(manager, context, reducer)
+  return resolveFromAccumulator(manager, reducerSource, context)
 }
 
 function transform (manager, reducerSource, value, options, done) {
