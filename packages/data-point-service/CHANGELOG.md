@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/ViacomInc/data-point/compare/v3.1.0...v3.2.0) (2018-05-02)
+
+
+### Bug Fixes
+
+* **factory.js:** Fixed some small typos in factory.js output messages. ([#241](https://github.com/ViacomInc/data-point/issues/241)) ([d212e83](https://github.com/ViacomInc/data-point/commit/d212e83))
+
+
+### Features
+
+* **data-point-service:** adds staleWhileRevalidate feature ([#267](https://github.com/ViacomInc/data-point/issues/267)) ([a121249](https://github.com/ViacomInc/data-point/commit/a121249)), closes [#265](https://github.com/ViacomInc/data-point/issues/265)
+
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/ViacomInc/data-point/compare/v3.0.0...v3.1.0) (2018-03-07)
 

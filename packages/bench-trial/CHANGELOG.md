@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/ViacomInc/data-point/compare/v3.1.0...v3.2.0) (2018-05-02)
+
+
+### Bug Fixes
+
+* **bench-trial:** Fix equation for calculating percentage increase / decrease ([#255](https://github.com/ViacomInc/data-point/issues/255)) ([75d4b9a](https://github.com/ViacomInc/data-point/commit/75d4b9a))
+
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/ViacomInc/data-point/compare/v3.0.0...v3.1.0) (2018-03-07)
 
