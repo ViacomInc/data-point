@@ -176,6 +176,8 @@ describe('ResolveEntity.resolveEntity', () => {
     }).then(acc => {
       expect(console.time).toBeCalled()
       expect(console.timeEnd).toBeCalled()
+      expect(console.time.mock.calls).toMatchSnapshot()
+      expect(console.timeEnd.mock.calls).toMatchSnapshot()
       expect(acc).toHaveProperty('value', 'foo')
       console.time = consoleTime
       console.timeEnd = consoleTimeEnd
