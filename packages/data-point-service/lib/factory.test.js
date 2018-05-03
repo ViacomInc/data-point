@@ -8,6 +8,7 @@ jest.mock('data-point-cache', () => {
   }
 })
 
+let os = require('os')
 let Factory = require('./factory')
 const DataPoint = require('data-point')
 const _ = require('lodash')
@@ -16,20 +17,92 @@ const logger = require('./logger')
 
 logger.clear()
 
+describe('getDefaultSettings', () => {
+  it('should return default settings', () => {
+    expect(Factory.getDefaultSettings()).toMatchSnapshot()
+  })
+})
+
+describe('prefixDeprecationError', () => {
+  it('should do nothing if cache.prefix is undefined', () => {
+    expect(() => {
+      Factory.prefixDeprecationError({})
+    }).not.toThrowError()
+  })
+
+  it('should warn when cache.prefix is set', () => {
+    expect(() => {
+      Factory.prefixDeprecationError({
+        cache: {
+          prefix: 'something'
+        }
+      })
+    }).toThrowErrorMatchingSnapshot()
+  })
+})
+
+describe('getCachePrefix', () => {
+  const hostname = os.hostname
+  const warn = logger.warn
+  afterEach(() => {
+    os.hostname = hostname
+    logger.warn = warn
+  })
+
+  it('should return os.hostname if not set', () => {
+    const options = {}
+    os.hostname = () => 'test'
+    expect(Factory.getCachePrefix(options)).toEqual('test:')
+  })
+  it('should use cache.redis.keyPrefix ', () => {
+    const options = {
+      cache: {
+        redis: {
+          keyPrefix: 'keyPrefix'
+        }
+      }
+    }
+    expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
+  })
+  it('should use cache.redis.keyPrefix over cache.prefix ', () => {
+    const options = {
+      cache: {
+        redis: {
+          keyPrefix: 'keyPrefix'
+        }
+      }
+    }
+    logger.warn = () => {}
+    expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
+  })
+  it('should use not add colon(:) twice', () => {
+    const options = {
+      cache: {
+        redis: {
+          keyPrefix: 'keyPrefix:'
+        }
+      }
+    }
+    logger.warn = () => {}
+    expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
+  })
+})
+
 describe('createServiceObject', () => {
   test('It should create a default ServiceObject', () => {
     const os = require('os')
     const Service = Factory.createServiceObject()
     expect(Service).toEqual({
       cache: null,
-      cachePrefix: os.hostname(),
       dataPoint: null,
       isCacheAvailable: false,
       isCacheRequired: false,
       settings: {
         cache: {
           isRequired: false,
-          prefix: os.hostname()
+          redis: {
+            keyPrefix: `${os.hostname()}:`
+          }
         }
       }
     })
@@ -44,14 +117,15 @@ describe('createServiceObject', () => {
     })
     expect(Service).toEqual({
       cache: null,
-      cachePrefix: os.hostname(),
       dataPoint: null,
       isCacheAvailable: false,
       isCacheRequired: true,
       settings: {
         cache: {
           isRequired: true,
-          prefix: os.hostname()
+          redis: {
+            keyPrefix: `${os.hostname()}:`
+          }
         }
       }
     })
