@@ -12,7 +12,7 @@
     "posttest": "npm run run-examples",
     "lint": "standard --verbose | snazzy",
     "contributors:add": "all-contributors add",
-    "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
+    "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits --independent",
     "watch": "jest --watchAll --coverage",
     "run-examples": "scripts/run-examples.js"
   },
