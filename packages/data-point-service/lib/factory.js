@@ -8,26 +8,51 @@ const { setupMiddleware } = require('./setup-middleware')
 
 const Cache = require('data-point-cache')
 
-const settingsDefault = {
-  cache: {
-    isRequired: false,
-    prefix: os.hostname()
+/**
+ * @returns {Object} Default module's options
+ */
+function getDefaultSettings () {
+  return {
+    cache: {
+      isRequired: false
+    }
   }
 }
 
+/**
+ * @param {Object} options module's options
+ * @returns {undefined}
+ */
+function prefixDeprecationError (options) {
+  const prefix = _.get(options, 'cache.prefix')
+  if (typeof prefix !== 'undefined') {
+    throw new Error(
+      'options.cache.prefix is now deprecated, please use options.cache.redis.keyPrefix instead.'
+    )
+  }
+}
+
+/**
+ * @param {Object} settings module's settings object
+ * @returns {String} cache prefix defaults to os.hostname()
+ */
+function getCachePrefix (settings) {
+  const keyPrefix = _.get(settings, 'cache.redis.keyPrefix')
+  const prefix = keyPrefix || os.hostname()
+  const separator = prefix.endsWith(':') ? '' : ':'
+  return `${prefix}${separator}`
+}
+
 function createServiceObject (options) {
-  const settings = _.merge({}, settingsDefault, options)
+  prefixDeprecationError(options)
 
-  const cachePrefix = _.defaultTo(
-    _.get(settings, 'cache.prefix'),
-    os.hostname()
-  )
-
+  const settings = _.merge({}, getDefaultSettings(), options)
   const isCacheRequired = _.defaultTo(_.get(settings, 'cache.isRequired'), true)
+
+  _.set(settings, 'cache.redis.keyPrefix', getCachePrefix(settings))
 
   return {
     isCacheRequired,
-    cachePrefix,
     settings,
     isCacheAvailable: false,
     cache: null,
@@ -97,6 +122,9 @@ function create (options) {
 }
 
 module.exports = {
+  getDefaultSettings,
+  prefixDeprecationError,
+  getCachePrefix,
   create,
   createServiceObject,
   successCreateCache,
