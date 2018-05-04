@@ -1,5 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ResolveEntity.resolveEntity It should log trace calls when set to true 1`] = `
+Array [
+  Array [
+    "⧖ model:asIs(1)",
+  ],
+]
+`;
+
+exports[`ResolveEntity.resolveEntity It should log trace calls when set to true 2`] = `
+Array [
+  Array [
+    "⧖ model:asIs(1)",
+  ],
+]
+`;
+
 exports[`ResolveEntity.resolveEntity inputType - throws error if inputType does not pass 1`] = `
 [Error: Entity type check failed!
 Expected type: number

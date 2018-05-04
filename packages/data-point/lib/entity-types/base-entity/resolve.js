@@ -163,6 +163,16 @@ function resolveEntity (
     reducer
   )
 
+  const {
+    id,
+    inputType,
+    before,
+    after,
+    outputType
+  } = currentAccumulator.reducer.spec
+
+  const entityId = id
+
   const trace =
     currentAccumulator.trace === true ||
     currentAccumulator.reducer.spec.params.trace === true
@@ -171,16 +181,9 @@ function resolveEntity (
   let accUid = currentAccumulator
   if (trace === true) {
     accUid = utils.set(currentAccumulator, 'euid', utils.getUID())
-    timeId = `⧖ ${accUid.context.id}(${accUid.euid})`
+    timeId = `⧖ ${entityId}(${accUid.euid})`
     console.time(timeId)
   }
-
-  const {
-    inputType,
-    before,
-    after,
-    outputType
-  } = currentAccumulator.reducer.spec
 
   let result = Promise.resolve(accUid)
 

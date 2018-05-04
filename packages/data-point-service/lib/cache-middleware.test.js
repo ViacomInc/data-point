@@ -21,7 +21,6 @@ function createMocks () {
   const set = jest.fn(() => Promise.resolve(true))
   const get = jest.fn(() => Promise.resolve(true))
   const service = {
-    cachePrefix: 'prefix',
     dataPoint: {
       resolveFromAccumulator
     },
@@ -41,10 +40,10 @@ function createMocks () {
 }
 
 describe('genrateKey', () => {
-  it('should generate default id with prefix', () => {
+  it('should generate default id', () => {
     const ctx = createContext()
-    const result = CacheMiddleware.generateKey('prefix', ctx)
-    expect(result).toEqual('prefix:entity:model:Foo')
+    const result = CacheMiddleware.generateKey(ctx)
+    expect(result).toEqual('entity:model:Foo')
   })
 
   it('should generate a key using cacheKey parameter', () => {
@@ -54,8 +53,8 @@ describe('genrateKey', () => {
       return `custom:${acc.context.id}`
     }
 
-    const result = CacheMiddleware.generateKey('prefix', ctx)
-    expect(result).toEqual('prefix:custom:model:Foo')
+    const result = CacheMiddleware.generateKey(ctx)
+    expect(result).toEqual('custom:model:Foo')
   })
 })
 
@@ -419,7 +418,7 @@ describe('before', () => {
     const next = () => {
       expect(spyResolveStaleWhileRevalidateEntry).toHaveBeenCalledWith(
         mocks.service,
-        'prefix:entity:model:Foo',
+        'entity:model:Foo',
         '20m',
         mocks.ctx
       )
@@ -435,9 +434,7 @@ describe('before', () => {
     mocks.service.cache.get = jest.fn()
 
     const next = jest.fn(() => {
-      expect(mocks.service.cache.get).toHaveBeenCalledWith(
-        'prefix:entity:model:Foo'
-      )
+      expect(mocks.service.cache.get).toHaveBeenCalledWith('entity:model:Foo')
       expect(next).toBeCalled()
       done()
     })
@@ -520,7 +517,7 @@ describe('after', () => {
     const next = () => {
       expect(setStaleWhileRevalidateEntry).toBeCalledWith(
         mocks.service,
-        'prefix:entity:model:Foo',
+        'entity:model:Foo',
         'VALUE',
         '20m'
       )
@@ -548,7 +545,7 @@ describe('after', () => {
     const next = () => {
       expect(setStaleWhileRevalidateEntry).not.toBeCalled()
       expect(mocks.service.cache.set).toBeCalledWith(
-        'prefix:entity:model:Foo',
+        'entity:model:Foo',
         'VALUE',
         '20m'
       )

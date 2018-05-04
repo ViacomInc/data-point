@@ -30,8 +30,7 @@ Properties of the `options` argument:
 |:---|:---|:---|
 | **cache** | `Object` | cache specific settings |
 | **cache.isRequired** | `Boolean` | false by default, if true it will throw an error |
-| **cache.prefix** | `string` | by default [os.hostname()](https://nodejs.org/api/os.html#os_os_hostname), this will be the prefix of every cache key added to redis |
-| **cache.redis** | `Object` | redis settings passed to the [IORedis constructor](https://github.com/luin/ioredis/blob/master/API.md#new-redisport-host-options) |
+| **cache.redis** | `Object` | **redis** settings passed to the [ioredis](https://github.com/luin/ioredis/blob/master/API.md#new-redisport-host-options) constructor. For key prefixing, set [keyPrefix](https://github.com/luin/ioredis#transparent-key-prefixing) through `cache.redis.keyPrefix`; if the value is not provided then [os.hostname()](https://nodejs.org/api/os.html#os_os_hostname) will be used. |
 
 This method returns a Promise that resolves to a Service Object. 
 
