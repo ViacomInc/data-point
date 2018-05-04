@@ -44,8 +44,10 @@ function createService () {
           return `Hello ${person}!!`
         },
         params: {
-          ttl: '10s',
-          staleWhileRevalidate: true
+          cache: {
+            ttl: '10s',
+            staleWhileRevalidate: true
+          }
         }
       }
     }

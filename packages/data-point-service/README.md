@@ -89,22 +89,24 @@ createService()
   .then(server)
 ```
 
-## <a name="entity-params-cache">Configure entity.params cache</a>
+## <a name="entity-params-cache">Configure entity's cache settings</a>
 
 To configure an entity's cache settings you must set cache configuration through the params object.
 
 ```js
 '<type>:<entity-name>': {
   params: {
-    ttl: String,
-    staleWhileRevalidate: Boolean
+    cache: {
+      ttl: String,
+      staleWhileRevalidate: Boolean
+    }
   }
 }
 ```
 
-### ttl
+### cache.ttl
 
-Use `ttl` to set an entity's cache entry **Time To Live** value. This value is expected to be written as a string following the format supported by [ms](https://www.npmjs.com/package/ms).
+Use `cache.ttl` to set an entity's cache entry **Time To Live** value. This value is expected to be written as a string following the format supported by [ms](https://www.npmjs.com/package/ms).
 
 **Example:**
 
@@ -117,16 +119,18 @@ DataPointService.create({
     'request:getPlanets': {
       url: 'https://swapi.co/api/planets/'
       params: {
-        ttl: '20m', // 20 minutes
+        cache: {
+          ttl: '20m', // 20 minutes
+        }
       }
     }
   }
 })
 ```
 
-### staleWhileRevalidate
+### cache.staleWhileRevalidate
 
-Use `staleWhileRevalidate` flag in conjunction with a valid `ttl` to use the Stale While Revalidate caching pattern. When this flag is set to `true` your entity will be resolved to a stale value until the ttl expires, revalidation happens in the background and is triggered only upon the key being requested and its ttl being expired.
+Use `cache.staleWhileRevalidate` flag in conjunction with a valid `cache.ttl` to use the Stale While Revalidate caching pattern. When this flag is set to `true` your entity will be resolved to a stale value until the ttl expires, revalidation happens in the background and is triggered only upon the key being requested and its ttl being expired.
 
 **Example:**
 
@@ -139,8 +143,10 @@ DataPointService.create({
     'request:getPlanets': {
       url: 'https://swapi.co/api/planets/'
       params: {
-        ttl: '20m', // 20 minutes
-        staleWhileRevalidate: true
+        cache: {
+          ttl: '20m', // 20 minutes
+          staleWhileRevalidate: true
+        }
       }
     }
   }
