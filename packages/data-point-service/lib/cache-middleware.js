@@ -7,12 +7,10 @@ const logger = require('./logger')
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {String} generated cache key
  */
-function generateKey (prefix, ctx) {
-  const cacheKey = ctx.context.params.cacheKey
+function generateKey (ctx) {
+  return ctx.context.params.cacheKey
     ? ctx.context.params.cacheKey(ctx)
     : `entity:${ctx.context.id}`
-
-  return `${prefix}:${cacheKey}`
 }
 
 /**
@@ -248,7 +246,7 @@ function before (service, ctx, next) {
     return next()
   }
 
-  const entryKey = generateKey(service.cachePrefix, ctx)
+  const entryKey = generateKey(ctx)
 
   Promise.resolve(staleWhileRevalidate)
     .then(isStaleWhileRevalidate => {
@@ -287,7 +285,7 @@ function after (service, ctx, next) {
   }
 
   // from here below ttl is assumed to be true
-  const entryKey = generateKey(service.cachePrefix, ctx)
+  const entryKey = generateKey(ctx)
 
   if (staleWhileRevalidate) {
     // if its at the process of revalidating, then lets skip any further calls
