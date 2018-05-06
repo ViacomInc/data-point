@@ -45,8 +45,8 @@ function createService () {
         },
         params: {
           cache: {
-            ttl: '10s',
-            staleWhileRevalidate: true
+            ttl: '1m',
+            staleWhileRevalidate: '3m'
           }
         }
       }

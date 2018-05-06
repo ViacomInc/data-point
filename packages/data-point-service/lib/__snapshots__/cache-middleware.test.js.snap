@@ -32,7 +32,7 @@ Array [
   Array [
     "SWI-STALE:key",
     undefined,
-    0,
+    400,
   ],
   Array [
     "SWI-CONTROL:key",
