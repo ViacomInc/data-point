@@ -1,7 +1,10 @@
 /* eslint-env jest */
 
-const CacheMiddleware = require('./cache-middleware')
 const winston = require('winston')
+const util = require('util')
+util.deprecate = jest.fn(fn => fn)
+
+const CacheMiddleware = require('./cache-middleware')
 
 function createContext () {
   const ctx = {
@@ -42,18 +45,18 @@ function createMocks () {
 describe('genrateKey', () => {
   it('should generate default id', () => {
     const ctx = createContext()
-    const result = CacheMiddleware.generateKey(ctx)
+    const result = CacheMiddleware.generateKey(null, ctx)
     expect(result).toEqual('entity:model:Foo')
   })
 
   it('should generate a key using cacheKey parameter', () => {
     const ctx = createContext()
 
-    ctx.context.params.cacheKey = acc => {
+    const cacheKey = acc => {
       return `custom:${acc.context.id}`
     }
 
-    const result = CacheMiddleware.generateKey(ctx)
+    const result = CacheMiddleware.generateKey(cacheKey, ctx)
     expect(result).toEqual('custom:model:Foo')
   })
 })
@@ -383,6 +386,97 @@ describe('resolveStaleWhileRevalidateEntry', () => {
       expect(value).toEqual('STALE')
       spyRevalidateEntry.mockReset()
       spyRevalidateEntry.mockRestore()
+    })
+  })
+})
+
+describe('warnLooseParamsCacheDeprecation', () => {
+  const looseCacheParamsDeprecationWarning =
+    CacheMiddleware.looseCacheParamsDeprecationWarning
+  afterAll(() => {
+    CacheMiddleware.looseCacheParamsDeprecationWarning = looseCacheParamsDeprecationWarning
+  })
+  it('should call deprecate if params.ttl is set', () => {
+    CacheMiddleware.looseCacheParamsDeprecationWarning = jest.fn()
+    expect(
+      CacheMiddleware.warnLooseParamsCacheDeprecation({
+        ttl: true
+      })
+    )
+    expect(CacheMiddleware.looseCacheParamsDeprecationWarning).toBeCalled()
+  })
+
+  it('should call deprecate if params.cacheKey is set', () => {
+    CacheMiddleware.looseCacheParamsDeprecationWarning = jest.fn()
+
+    expect(
+      CacheMiddleware.warnLooseParamsCacheDeprecation({
+        cacheKey: true
+      })
+    )
+
+    expect(CacheMiddleware.looseCacheParamsDeprecationWarning).toBeCalled()
+  })
+
+  it('should call deprecate if params.staleWhileRevalidate is set', () => {
+    CacheMiddleware.looseCacheParamsDeprecationWarning = jest.fn()
+
+    expect(
+      CacheMiddleware.warnLooseParamsCacheDeprecation({
+        staleWhileRevalidate: true
+      })
+    )
+
+    expect(CacheMiddleware.looseCacheParamsDeprecationWarning).toBeCalled()
+  })
+})
+
+describe('getCacheParams', () => {
+  it('should have backwards compatability with params loose properties', () => {
+    const params = {
+      ttl: '20s',
+      cacheKey: () => true,
+      staleWhileRevalidate: () => true
+    }
+    const cache = CacheMiddleware.getCacheParams(params)
+    expect(cache).toEqual({
+      ttl: params.ttl,
+      cacheKey: params.cacheKey,
+      staleWhileRevalidate: params.staleWhileRevalidate
+    })
+  })
+  it('should have get values from params.cache property', () => {
+    const params = {
+      cache: {
+        ttl: '20s',
+        cacheKey: () => true,
+        staleWhileRevalidate: () => true
+      }
+    }
+    const cache = CacheMiddleware.getCacheParams(params)
+    expect(cache).toEqual({
+      ttl: params.cache.ttl,
+      cacheKey: params.cache.cacheKey,
+      staleWhileRevalidate: params.cache.staleWhileRevalidate
+    })
+  })
+  it('should have params.cache priority over loose param cache settings', () => {
+    const params = {
+      ttl: '10s',
+      cacheKey: () => true,
+      staleWhileRevalidate: () => true,
+      cache: {
+        ttl: '20s',
+        cacheKey: () => true
+      }
+    }
+    const cache = CacheMiddleware.getCacheParams(params)
+    expect(cache).toEqual({
+      ttl: params.cache.ttl,
+      cacheKey: params.cache.cacheKey,
+      // this key will use the loose value since its not being set through
+      // params.cache
+      staleWhileRevalidate: params.staleWhileRevalidate
     })
   })
 })

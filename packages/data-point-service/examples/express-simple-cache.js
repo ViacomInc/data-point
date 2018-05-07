@@ -44,7 +44,9 @@ function createService () {
           return `Hello ${person}!!`
         },
         params: {
-          ttl: '10s'
+          cache: {
+            ttl: '10s'
+          }
         }
       }
     }

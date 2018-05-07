@@ -1,16 +1,16 @@
 const Promise = require('bluebird')
+const defaultTo = require('lodash/defaultTo')
 const set = require('lodash/fp/set')
 const logger = require('./logger')
+const { deprecate } = require('util')
 
 /**
- * @param {String} prefix cache ky prefix
+ * @param {Function} cacheKey function to generate a cache key
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {String} generated cache key
  */
-function generateKey (ctx) {
-  return ctx.context.params.cacheKey
-    ? ctx.context.params.cacheKey(ctx)
-    : `entity:${ctx.context.id}`
+function generateKey (cacheKey, ctx) {
+  return cacheKey ? cacheKey(ctx) : `entity:${ctx.context.id}`
 }
 
 /**
@@ -234,27 +234,57 @@ function resolveStaleWhileRevalidateEntry (service, entryKey, ttl, ctx) {
   })
 }
 
+const looseCacheParamsDeprecationWarning = deprecate(() => {},
+'Usage of params.ttl, params.cacheKey and params.staleWhileRevalidate will be deprecated. Please configure through params.cache object instead')
+
+/**
+ * Logs deprecation warning if loose cache params were used
+ * @param {Object} params entity's custom params
+ */
+function warnLooseParamsCacheDeprecation (params) {
+  if (params.ttl || params.cacheKey || params.staleWhileRevalidate) {
+    module.exports.looseCacheParamsDeprecationWarning()
+  }
+}
+
+/**
+ * @param {Object} params entity's custom params
+ * @returns {Object} normalized values
+ */
+function getCacheParams (params) {
+  warnLooseParamsCacheDeprecation(params)
+  const cache = defaultTo(params.cache, {})
+  return {
+    ttl: defaultTo(cache.ttl, params.ttl),
+    cacheKey: defaultTo(cache.cacheKey, params.cacheKey),
+    staleWhileRevalidate: defaultTo(
+      cache.staleWhileRevalidate,
+      params.staleWhileRevalidate
+    )
+  }
+}
+
 /**
  * @param {Service} service Service instance
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @param {Function} next Middleware callback
  */
 function before (service, ctx, next) {
-  const { ttl, staleWhileRevalidate } = ctx.context.params
+  const cache = getCacheParams(ctx.context.params)
 
-  if (!ttl || ctx.locals.resetCache === true) {
+  if (!cache.ttl || ctx.locals.resetCache === true) {
     return next()
   }
 
-  const entryKey = generateKey(ctx)
+  const entryKey = generateKey(cache.cacheKey, ctx)
 
-  Promise.resolve(staleWhileRevalidate)
+  Promise.resolve(cache.staleWhileRevalidate)
     .then(isStaleWhileRevalidate => {
       return isStaleWhileRevalidate
         ? module.exports.resolveStaleWhileRevalidateEntry(
             service,
             entryKey,
-            ttl,
+            cache.ttl,
             ctx
           )
         : getEntry(service, entryKey)
@@ -277,17 +307,17 @@ function before (service, ctx, next) {
  * @param {Function} next Middleware callback
  */
 function after (service, ctx, next) {
-  const { ttl, staleWhileRevalidate } = ctx.context.params
+  const cache = getCacheParams(ctx.context.params)
 
-  if (!ttl) {
+  if (!cache.ttl) {
     // do nothing
     return next()
   }
 
   // from here below ttl is assumed to be true
-  const entryKey = generateKey(ctx)
+  const entryKey = generateKey(cache.cacheKey, ctx)
 
-  if (staleWhileRevalidate) {
+  if (cache.staleWhileRevalidate) {
     // if its at the process of revalidating, then lets skip any further calls
     if (ctx.locals.revalidatingCache) {
       return next()
@@ -295,14 +325,14 @@ function after (service, ctx, next) {
 
     // adds (or updates) the stale cache entry with the latest value
     return module.exports
-      .setStaleWhileRevalidateEntry(service, entryKey, ctx.value, ttl)
+      .setStaleWhileRevalidateEntry(service, entryKey, ctx.value, cache.ttl)
       .then(() => {
         next()
       })
   }
 
   // adds a cache entry
-  return setEntry(service, entryKey, ctx.value, ttl).then(() => next())
+  return setEntry(service, entryKey, ctx.value, cache.ttl).then(() => next())
 }
 
 module.exports = {
@@ -317,6 +347,9 @@ module.exports = {
   resolveStaleWhileRevalidateEntry,
   revalidateEntry,
   setStaleWhileRevalidateEntry,
+  looseCacheParamsDeprecationWarning,
+  warnLooseParamsCacheDeprecation,
+  getCacheParams,
   before,
   after
 }
