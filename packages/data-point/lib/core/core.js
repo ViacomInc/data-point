@@ -37,7 +37,6 @@ function addEntitiesToStore (store, entities) {
 function create (spec) {
   const options = _.defaultTo(spec, {
     values: {},
-    reducers: {},
     entities: {},
     entityTypes: {}
   })
