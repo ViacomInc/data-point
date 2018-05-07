@@ -97,14 +97,18 @@ To configure an entity's cache settings you must set cache configuration through
 '<type>:<entity-name>': {
   params: {
     cache: {
-      ttl: String,
-      staleWhileRevalidate: Boolean
+      ttl: String|Number,
+      staleWhileRevalidate: String|Number
     }
   }
 }
 ```
 
 ### cache.ttl
+
+```js
+ttl: String|Number
+```
 
 Use `cache.ttl` to set an entity's cache entry **Time To Live** value. This value is expected to be written as a string following the format supported by [ms](https://www.npmjs.com/package/ms).
 
@@ -130,7 +134,11 @@ DataPointService.create({
 
 ### cache.staleWhileRevalidate
 
-Use `cache.staleWhileRevalidate` flag in conjunction with a valid `cache.ttl` to use the Stale While Revalidate caching pattern. When this flag is set to `true` your entity will be resolved to a stale value until the ttl expires, revalidation happens in the background and is triggered only upon the key being requested and its ttl being expired.
+`staleWhileRevalidate = delta-seconds`
+
+`staleWhileRevalidate` value is expected to be written as a string following the format supported by [ms](https://www.npmjs.com/package/ms). Alternately it may also be set to `true`, which tells the entity to use double the time of the value of its `ttl`.
+
+Use `cache.staleWhileRevalidate` in conjunction with a valid `cache.ttl` to use the Stale While Revalidate cache pattern. When present, caches MAY serve the response in which it appears after it becomes stale, up to the indicated `ttl`. The cache SHOULD attempt to revalidate it asynchronously while still serving stale responses. If delta-seconds passes without the cached entity being revalidated, it SHOULD NOT continue to be served stale.
 
 **Example:**
 

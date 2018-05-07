@@ -3,6 +3,7 @@ const defaultTo = require('lodash/defaultTo')
 const set = require('lodash/fp/set')
 const logger = require('./logger')
 const { deprecate } = require('util')
+const ms = require('ms')
 
 /**
  * @param {Function} cacheKey function to generate a cache key
@@ -70,14 +71,15 @@ function setEntry (service, key, value, ttl) {
 }
 
 /**
+ * When stale is provided the value is calculated as ttl + stale
  * @param {Service} service Service instance
  * @param {String} key entry key
  * @param {Object} value entry value
- * @param {String} ttl time to live value supported by https://github.com/zeit/ms
+ * @param {Number|String} ttl time to live value supported by https://github.com/zeit/ms
  * @returns {Promise}
  */
 function setSWIStaleEntry (service, key, value, ttl) {
-  return setEntry(service, createSWIStaleKey(key), value, 0)
+  return setEntry(service, createSWIStaleKey(key), value, ttl)
 }
 
 /**
@@ -94,15 +96,16 @@ function setSWIControlEntry (service, key, ttl) {
  * @param {Service} service Service instance
  * @param {String} entryKey entry key
  * @param {Object} value entry value
- * @param {String} ttl time to live value supported by https://github.com/zeit/ms
+ * @param {Object} cache cache configuration
  * @returns {Promise}
  */
-function setStaleWhileRevalidateEntry (service, entryKey, value, ttl) {
-  // NOTE: stale entries have NO ttl, rethink if this is the right approach or
-  // if stale should just mean a much longer TTL?
-  return setSWIStaleEntry(service, entryKey, value).then(() =>
-    setSWIControlEntry(service, entryKey, ttl)
-  )
+function setStaleWhileRevalidateEntry (service, entryKey, value, cache) {
+  return setSWIStaleEntry(
+    service,
+    entryKey,
+    value,
+    cache.staleWhileRevalidateTtl
+  ).then(() => setSWIControlEntry(service, entryKey, cache.ttl))
 }
 
 /**
@@ -124,14 +127,20 @@ function revalidateSuccess (entityId, entryKey) {
 /**
  * @param {Service} service Service instance
  * @param {String} entryKey entity cache key
+ * @param {Object} cache cache configuration
  * @returns {Function}
  */
-function updateSWIEntry (service, entryKey, ttl) {
+function updateSWIEntry (service, entryKey, cache) {
   /**
    * @param {Accumulator} acc
    */
   return acc => {
-    return setStaleWhileRevalidateEntry(service, entryKey, acc.value, ttl)
+    return module.exports.setStaleWhileRevalidateEntry(
+      service,
+      entryKey,
+      acc.value,
+      cache
+    )
   }
 }
 
@@ -161,11 +170,11 @@ function handleRevalidateError (entityId, entryKey) {
 /**
  * @param {Service} service Service instance
  * @param {String} entryKey entry key
- * @param {String} ttl time to live value supported by https://github.com/zeit/ms
+ * @param {Object} cache cache configuration
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {Promise}
  */
-function revalidateEntry (service, entryKey, ttl, ctx) {
+function revalidateEntry (service, entryKey, cache, ctx) {
   const entityId = ctx.context.id
 
   const revalidatingCache = {
@@ -188,7 +197,7 @@ function revalidateEntry (service, entryKey, ttl, ctx) {
 
   return service.dataPoint
     .resolveFromAccumulator(entityId, revalidateContext)
-    .then(updateSWIEntry(service, entryKey, ttl))
+    .then(updateSWIEntry(service, entryKey, cache))
     .then(revalidateSuccess(entityId, entryKey))
     .catch(handleRevalidateError(entityId, entryKey))
 }
@@ -200,11 +209,11 @@ function revalidateEntry (service, entryKey, ttl, ctx) {
  *
  * @param {Service} service Service instance
  * @param {String} entryKey entry key
- * @param {String} ttl time to live value supported by https://github.com/zeit/ms
+ * @param {Object} cache cache configuration
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {Promise<Object|undefined>} cached stale value
  */
-function resolveStaleWhileRevalidateEntry (service, entryKey, ttl, ctx) {
+function resolveStaleWhileRevalidateEntry (service, entryKey, cache, ctx) {
   const revalidatingCache = ctx.locals.revalidatingCache
 
   if (revalidatingCache) {
@@ -227,7 +236,7 @@ function resolveStaleWhileRevalidateEntry (service, entryKey, ttl, ctx) {
     if (staleEntry && controlEntry === false) {
       // IMPORTANT: creates new thread
       // NOTE: using through module.exports allows us to test if it was called
-      module.exports.revalidateEntry(service, entryKey, ttl, ctx)
+      module.exports.revalidateEntry(service, entryKey, cache, ctx)
     }
     // return stale entry regardless
     return staleEntry
@@ -248,19 +257,71 @@ function warnLooseParamsCacheDeprecation (params) {
 }
 
 /**
+ * @param {String|Number} value value in string ms format, or number milliseconds
+ * @returns {Number}
+ */
+function parseMs (value) {
+  return typeof value === 'string' ? ms(value) : value
+}
+
+/**
+ * @param {String|Number|Boolean} staleWhileRevalidate if true will calculate twice the ttl
+ * @param {String|Number} ttl
+ * @returns {Number} in milliseconds
+ */
+function getStaleWhileRevalidateTtl (staleWhileRevalidate, ttl) {
+  return staleWhileRevalidate === true
+    ? parseMs(ttl) * 2 // default value
+    : parseMs(ttl) + parseMs(staleWhileRevalidate)
+}
+
+/**
+ * @param {String|Number|Boolean}  value
+ * @returns {Bolean}
+ */
+function shouldUseStaleWhileRevalidate (value) {
+  return (
+    typeof value === 'string' || typeof value === 'number' || value === true
+  )
+}
+
+/**
  * @param {Object} params entity's custom params
  * @returns {Object} normalized values
  */
 function getCacheParams (params) {
   warnLooseParamsCacheDeprecation(params)
   const cache = defaultTo(params.cache, {})
-  return {
-    ttl: defaultTo(cache.ttl, params.ttl),
-    cacheKey: defaultTo(cache.cacheKey, params.cacheKey),
-    staleWhileRevalidate: defaultTo(
+  const ttl = defaultTo(cache.ttl, params.ttl)
+
+  let useStaleWhileRevalidate
+  let staleWhileRevalidateTtl
+
+  // we only want to calculate below values if ttl is set
+  if (typeof ttl !== 'undefined') {
+    const staleWhileRevalidate = defaultTo(
       cache.staleWhileRevalidate,
       params.staleWhileRevalidate
     )
+
+    useStaleWhileRevalidate = shouldUseStaleWhileRevalidate(
+      staleWhileRevalidate
+    )
+
+    // only calculate stale's ttl if we need to
+    if (useStaleWhileRevalidate) {
+      staleWhileRevalidateTtl = getStaleWhileRevalidateTtl(
+        staleWhileRevalidate,
+        ttl
+      )
+    }
+  }
+
+  return {
+    ttl,
+    cacheKey: defaultTo(cache.cacheKey, params.cacheKey),
+    useStaleWhileRevalidate,
+    staleWhileRevalidateTtl
   }
 }
 
@@ -278,13 +339,13 @@ function before (service, ctx, next) {
 
   const entryKey = generateKey(cache.cacheKey, ctx)
 
-  Promise.resolve(cache.staleWhileRevalidate)
-    .then(isStaleWhileRevalidate => {
-      return isStaleWhileRevalidate
+  Promise.resolve(cache.useStaleWhileRevalidate)
+    .then(useStaleWhileRevalidate => {
+      return useStaleWhileRevalidate
         ? module.exports.resolveStaleWhileRevalidateEntry(
             service,
             entryKey,
-            cache.ttl,
+            cache,
             ctx
           )
         : getEntry(service, entryKey)
@@ -317,7 +378,7 @@ function after (service, ctx, next) {
   // from here below ttl is assumed to be true
   const entryKey = generateKey(cache.cacheKey, ctx)
 
-  if (cache.staleWhileRevalidate) {
+  if (cache.useStaleWhileRevalidate) {
     // if its at the process of revalidating, then lets skip any further calls
     if (ctx.locals.revalidatingCache) {
       return next()
@@ -325,7 +386,7 @@ function after (service, ctx, next) {
 
     // adds (or updates) the stale cache entry with the latest value
     return module.exports
-      .setStaleWhileRevalidateEntry(service, entryKey, ctx.value, cache.ttl)
+      .setStaleWhileRevalidateEntry(service, entryKey, ctx.value, cache)
       .then(() => {
         next()
       })
@@ -349,6 +410,9 @@ module.exports = {
   setStaleWhileRevalidateEntry,
   looseCacheParamsDeprecationWarning,
   warnLooseParamsCacheDeprecation,
+  parseMs,
+  getStaleWhileRevalidateTtl,
+  shouldUseStaleWhileRevalidate,
   getCacheParams,
   before,
   after
