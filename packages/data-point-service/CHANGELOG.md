@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="4.1.0"></a>
+# [4.1.0](https://github.com/ViacomInc/data-point/compare/data-point-service@4.0.0...data-point-service@4.1.0) (2018-05-07)
+
+
+### Features
+
+* **data-point-service:** consolidate params.cache ([#279](https://github.com/ViacomInc/data-point/issues/279)) ([48b4d1b](https://github.com/ViacomInc/data-point/commit/48b4d1b)), closes [#276](https://github.com/ViacomInc/data-point/issues/276)
+
+
+
+
 <a name="4.0.0"></a>
 # 4.0.0 (2018-05-03)
 
