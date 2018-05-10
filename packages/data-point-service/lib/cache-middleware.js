@@ -5,6 +5,8 @@ const logger = require('./logger')
 const { deprecate } = require('util')
 const ms = require('ms')
 
+const SWR_CONTROL = 'SWR-CONTROL'
+
 /**
  * @param {Function} cacheKey function to generate a cache key
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
@@ -16,18 +18,18 @@ function generateKey (cacheKey, ctx) {
 
 /**
  * @param {String} key cache key
- * @returns {String} key prefixed with "SWI-STALE"
+ * @returns {String} key postfixed with "swr.stale"
  */
-function createSWIStaleKey (key) {
-  return `SWI-STALE:${key}`
+function createSWRStaleKey (key) {
+  return `${key}:swr.stale`
 }
 
 /**
  * @param {String} key cache key
- * @returns {String} key prefixed with "SWI-CONTROL"
+ * @returns {String} key postfixed with "swr.control"
  */
-function createSWIControlKey (key) {
-  return `SWI-CONTROL:${key}`
+function createSWRControlKey (key) {
+  return `${key}:swr.control`
 }
 
 /**
@@ -44,8 +46,8 @@ function getEntry (service, key) {
  * @param {String} key entry key
  * @returns {Promise<Object|undefined>} entry value
  */
-function getSWIStaleEntry (service, key) {
-  return service.cache.get(createSWIStaleKey(key))
+function getSWRStaleEntry (service, key) {
+  return service.cache.get(createSWRStaleKey(key))
 }
 
 /**
@@ -53,9 +55,9 @@ function getSWIStaleEntry (service, key) {
  * @param {String} key entry key
  * @returns {Promise<Object|undefined>} entry value
  */
-function getSWIControlEntry (service, key) {
-  return getEntry(service, createSWIControlKey(key)).then(
-    result => result === 'SWI-CONTROL'
+function getSWRControlEntry (service, key) {
+  return getEntry(service, createSWRControlKey(key)).then(
+    result => result === SWR_CONTROL
   )
 }
 
@@ -78,8 +80,8 @@ function setEntry (service, key, value, ttl) {
  * @param {Number|String} ttl time to live value supported by https://github.com/zeit/ms
  * @returns {Promise}
  */
-function setSWIStaleEntry (service, key, value, ttl) {
-  return setEntry(service, createSWIStaleKey(key), value, ttl)
+function setSWRStaleEntry (service, key, value, ttl) {
+  return setEntry(service, createSWRStaleKey(key), value, ttl)
 }
 
 /**
@@ -88,8 +90,8 @@ function setSWIStaleEntry (service, key, value, ttl) {
  * @param {String} ttl time to live value supported by https://github.com/zeit/ms
  * @returns {Promise}
  */
-function setSWIControlEntry (service, key, ttl) {
-  return setEntry(service, createSWIControlKey(key), 'SWI-CONTROL', ttl)
+function setSWRControlEntry (service, key, ttl) {
+  return setEntry(service, createSWRControlKey(key), SWR_CONTROL, ttl)
 }
 
 /**
@@ -100,12 +102,12 @@ function setSWIControlEntry (service, key, ttl) {
  * @returns {Promise}
  */
 function setStaleWhileRevalidateEntry (service, entryKey, value, cache) {
-  return setSWIStaleEntry(
+  return setSWRStaleEntry(
     service,
     entryKey,
     value,
     cache.staleWhileRevalidateTtl
-  ).then(() => setSWIControlEntry(service, entryKey, cache.ttl))
+  ).then(() => setSWRControlEntry(service, entryKey, cache.ttl))
 }
 
 /**
@@ -130,7 +132,7 @@ function revalidateSuccess (entityId, entryKey) {
  * @param {Object} cache cache configuration
  * @returns {Function}
  */
-function updateSWIEntry (service, entryKey, cache) {
+function updateSWREntry (service, entryKey, cache) {
   /**
    * @param {Accumulator} acc
    */
@@ -197,9 +199,20 @@ function revalidateEntry (service, entryKey, cache, ctx) {
 
   return service.dataPoint
     .resolveFromAccumulator(entityId, revalidateContext)
-    .then(updateSWIEntry(service, entryKey, cache))
+    .then(updateSWREntry(service, entryKey, cache))
     .then(revalidateSuccess(entityId, entryKey))
     .catch(handleRevalidateError(entityId, entryKey))
+}
+
+/**
+ * Checks if the current entry key is the one being revalidated
+ * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
+ * @param {String} currentEntryKey entry key
+ * @returns {Boolean} true if revalidating entryKey matches current key
+ */
+function isRevalidatingCacheKey (ctx, currentEntryKey) {
+  const revalidatingCache = ctx.locals.revalidatingCache
+  return (revalidatingCache && revalidatingCache.entryKey) === currentEntryKey
 }
 
 /**
@@ -214,16 +227,17 @@ function revalidateEntry (service, entryKey, cache, ctx) {
  * @returns {Promise<Object|undefined>} cached stale value
  */
 function resolveStaleWhileRevalidateEntry (service, entryKey, cache, ctx) {
-  const revalidatingCache = ctx.locals.revalidatingCache
-
-  if (revalidatingCache) {
-    // bypass the rest so entity gets resolved
+  // IMPORTANT: we only want to bypass an entity that is being revalidated and
+  // that matches the same cache entry key, otherwise all child entities will
+  // be needlesly resolved
+  if (isRevalidatingCacheKey(ctx, entryKey)) {
+    // bypass the rest forces entity to get resolved
     return undefined
   }
 
   const tasks = [
-    getSWIControlEntry(service, entryKey),
-    getSWIStaleEntry(service, entryKey)
+    getSWRControlEntry(service, entryKey),
+    getSWRStaleEntry(service, entryKey)
   ]
 
   return Promise.all(tasks).then(results => {
@@ -398,13 +412,14 @@ function after (service, ctx, next) {
 
 module.exports = {
   generateKey,
-  createSWIStaleKey,
-  createSWIControlKey,
+  createSWRStaleKey,
+  createSWRControlKey,
   getEntry,
-  getSWIControlEntry,
+  getSWRControlEntry,
   setEntry,
-  setSWIStaleEntry,
-  setSWIControlEntry,
+  setSWRStaleEntry,
+  setSWRControlEntry,
+  isRevalidatingCacheKey,
   resolveStaleWhileRevalidateEntry,
   revalidateEntry,
   setStaleWhileRevalidateEntry,
