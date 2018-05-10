@@ -23,7 +23,7 @@ module.exports.createReducer = createReducer
 
 const createEntity = require('../entity-types/base-entity').create
 
-module.exports.createEntity = _.partial(createEntity, createReducer)
+module.exports.createEntity = createEntity.bind(null, createReducer)
 
 module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
 
