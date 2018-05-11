@@ -30,13 +30,13 @@ Array [
 exports[`revalidateEntry should set cache 1`] = `
 Array [
   Array [
-    "SWI-STALE:key",
+    "key:swr.stale",
     undefined,
     400,
   ],
   Array [
-    "SWI-CONTROL:key",
-    "SWI-CONTROL",
+    "key:swr.control",
+    "SWR-CONTROL",
     200,
   ],
 ]

@@ -62,16 +62,16 @@ describe('genrateKey', () => {
   })
 })
 
-describe('createSWIStaleKey', () => {
+describe('createSWRStaleKey', () => {
   it('should create stale key', () => {
-    expect(CacheMiddleware.createSWIStaleKey('key')).toEqual('SWI-STALE:key')
+    expect(CacheMiddleware.createSWRStaleKey('key')).toEqual('key:swr.stale')
   })
 })
 
-describe('createSWIStaleKey', () => {
+describe('createSWRStaleKey', () => {
   it('should create control key', () => {
-    expect(CacheMiddleware.createSWIControlKey('key')).toEqual(
-      'SWI-CONTROL:key'
+    expect(CacheMiddleware.createSWRControlKey('key')).toEqual(
+      'key:swr.control'
     )
   })
 })
@@ -89,15 +89,15 @@ describe('getEntry', () => {
   })
 })
 
-describe('getSWIControlEntry', () => {
+describe('getSWRControlEntry', () => {
   it('should return true if key exists with valid wrapper ', () => {
     const service = {
       cache: {
-        get: jest.fn(key => Promise.resolve('SWI-CONTROL'))
+        get: jest.fn(key => Promise.resolve('SWR-CONTROL'))
       }
     }
-    return CacheMiddleware.getSWIControlEntry(service, 'test').then(result => {
-      expect(service.cache.get).toBeCalledWith('SWI-CONTROL:test')
+    return CacheMiddleware.getSWRControlEntry(service, 'test').then(result => {
+      expect(service.cache.get).toBeCalledWith('test:swr.control')
       expect(result).toEqual(true)
     })
   })
@@ -108,8 +108,8 @@ describe('getSWIControlEntry', () => {
         get: jest.fn(key => Promise.resolve(undefined))
       }
     }
-    return CacheMiddleware.getSWIControlEntry(service, 'test').then(result => {
-      expect(service.cache.get).toBeCalledWith('SWI-CONTROL:test')
+    return CacheMiddleware.getSWRControlEntry(service, 'test').then(result => {
+      expect(service.cache.get).toBeCalledWith('test:swr.control')
       expect(result).toEqual(false)
     })
   })
@@ -127,52 +127,52 @@ describe('setEntry', () => {
   })
 })
 
-describe('setSWIStaleEntry', () => {
+describe('setSWRStaleEntry', () => {
   it('should create a key that has no ttl', () => {
     const service = {
       cache: {
         set: jest.fn()
       }
     }
-    CacheMiddleware.setSWIStaleEntry(service, 'key', 'value', 100)
-    expect(service.cache.set).toBeCalledWith('SWI-STALE:key', 'value', 100)
+    CacheMiddleware.setSWRStaleEntry(service, 'key', 'value', 100)
+    expect(service.cache.set).toBeCalledWith('key:swr.stale', 'value', 100)
   })
 })
 
-describe('setSWIControlEntry', () => {
+describe('setSWRControlEntry', () => {
   it('should create a key that has no ttl', () => {
     const service = {
       cache: {
         set: jest.fn()
       }
     }
-    CacheMiddleware.setSWIControlEntry(service, 'key', 100)
+    CacheMiddleware.setSWRControlEntry(service, 'key', 100)
     expect(service.cache.set).toBeCalledWith(
-      'SWI-CONTROL:key',
-      'SWI-CONTROL',
+      'key:swr.control',
+      'SWR-CONTROL',
       100
     )
   })
 })
 
-describe('setSWIControlEntry', () => {
+describe('setSWRControlEntry', () => {
   it('should create a key that has no ttl', () => {
     const service = {
       cache: {
         set: jest.fn()
       }
     }
-    CacheMiddleware.setSWIControlEntry(service, 'key', 200)
+    CacheMiddleware.setSWRControlEntry(service, 'key', 200)
     expect(service.cache.set).toBeCalledWith(
-      'SWI-CONTROL:key',
-      'SWI-CONTROL',
+      'key:swr.control',
+      'SWR-CONTROL',
       200
     )
   })
 })
 
 describe('setStaleWhileRevalidateEntry', () => {
-  it('should store stale entry and SWI control entry', () => {
+  it('should store stale entry and SWR control entry', () => {
     const set = jest.fn(() => Promise.resolve(true))
     const service = {
       cache: {
@@ -191,8 +191,8 @@ describe('setStaleWhileRevalidateEntry', () => {
       'value',
       cache
     ).then(() => {
-      expect(set.mock.calls[0]).toEqual(['SWI-STALE:key', 'value', 400])
-      expect(set.mock.calls[1]).toEqual(['SWI-CONTROL:key', 'SWI-CONTROL', 200])
+      expect(set.mock.calls[0]).toEqual(['key:swr.stale', 'value', 400])
+      expect(set.mock.calls[1]).toEqual(['key:swr.control', 'SWR-CONTROL', 200])
     })
   })
 })
@@ -287,6 +287,28 @@ describe('revalidateEntry', () => {
   })
 })
 
+describe('isRevalidatingCacheKey', () => {
+  it('should return false if revalidating property does not exists', () => {
+    const ctx = createContext()
+    ctx.locals.revalidatingCache = undefined
+    expect(CacheMiddleware.isRevalidatingCacheKey(ctx, 'key')).toEqual(false)
+  })
+  it('should return false if revalidating key does not match current key', () => {
+    const ctx = createContext()
+    ctx.locals.revalidatingCache = {
+      entryKey: 'otherKey'
+    }
+    expect(CacheMiddleware.isRevalidatingCacheKey(ctx, 'key')).toEqual(false)
+  })
+  it('should return true if revalidating key matches current key', () => {
+    const ctx = createContext()
+    ctx.locals.revalidatingCache = {
+      entryKey: 'key'
+    }
+    expect(CacheMiddleware.isRevalidatingCacheKey(ctx, 'key')).toEqual(true)
+  })
+})
+
 describe('resolveStaleWhileRevalidateEntry', () => {
   let logDebug
   let logError
@@ -310,7 +332,23 @@ describe('resolveStaleWhileRevalidateEntry', () => {
 
   it('should exit if revalidation flag is set', () => {
     const mocks = createMocks()
-    mocks.ctx.locals.revalidatingCache = true
+    mocks.ctx.locals.revalidatingCache = {
+      entryKey: 'key'
+    }
+    const result = CacheMiddleware.resolveStaleWhileRevalidateEntry(
+      mocks.service,
+      'key',
+      200,
+      mocks.ctx
+    )
+    expect(result).toBeUndefined()
+  })
+
+  it('should return undefined if revalidation flag is set', () => {
+    const mocks = createMocks()
+    mocks.ctx.locals.revalidatingCache = {
+      entryKey: 'key'
+    }
     const result = CacheMiddleware.resolveStaleWhileRevalidateEntry(
       mocks.service,
       'key',
@@ -324,12 +362,12 @@ describe('resolveStaleWhileRevalidateEntry', () => {
     const mocks = createMocks()
     mocks.service.cache.get = jest.fn(key => {
       return Promise.resolve().then(() => {
-        if (key === 'SWI-STALE:key') {
+        if (key === 'key:swr.stale') {
           return 'STALE'
         }
-        // this forces getSWIControlEntry to return true
-        if (key === 'SWI-CONTROL:key') {
-          return 'SWI-CONTROL'
+        // this forces getSWRControlEntry to return true
+        if (key === 'key:swr.control') {
+          return 'SWR-CONTROL'
         }
       })
     })
@@ -349,13 +387,13 @@ describe('resolveStaleWhileRevalidateEntry', () => {
     const spyRevalidateEntry = jest.spyOn(CacheMiddleware, 'revalidateEntry')
     mocks.service.cache.get = jest.fn(key => {
       return Promise.resolve().then(() => {
-        if (key === 'SWI-STALE:key') {
+        if (key === 'key:swr.stale') {
           return 'STALE'
         }
-        // this forces getSWIControlEntry to return true, simulating that key's ttl
+        // this forces getSWRControlEntry to return true, simulating that key's ttl
         // has not expired
-        if (key === 'SWI-CONTROL:key') {
-          return 'SWI-CONTROL'
+        if (key === 'key:swr.control') {
+          return 'SWR-CONTROL'
         }
       })
     })
@@ -378,12 +416,12 @@ describe('resolveStaleWhileRevalidateEntry', () => {
     spyRevalidateEntry.mockImplementation(() => true)
     mocks.service.cache.get = jest.fn(key => {
       return Promise.resolve().then(() => {
-        if (key === 'SWI-STALE:key') {
+        if (key === 'key:swr.stale') {
           return 'STALE'
         }
-        // this forces getSWIControlEntry to return false, simulating that key's ttl
+        // this forces getSWRControlEntry to return false, simulating that key's ttl
         // has now expired
-        if (key === 'SWI-CONTROL:key') {
+        if (key === 'key:swr.control') {
           return undefined
         }
       })
