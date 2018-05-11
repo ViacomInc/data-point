@@ -85,12 +85,22 @@ module.exports.resolveUrl = resolveUrl
  * @param {Accumulator} acc
  */
 function inspect (acc) {
-  if (acc.params && acc.params.inspect) {
+  const paramInspect = acc.params && acc.params.inspect
+
+  if (typeof paramInspect === 'function') {
+    paramInspect(acc)
+    return true
+  }
+
+  if (paramInspect === true) {
     utils.inspect(acc, {
       options: acc.options,
       value: acc.value
     })
+    return true
   }
+
+  return false
 }
 
 module.exports.inspect = inspect

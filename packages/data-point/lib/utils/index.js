@@ -59,11 +59,6 @@ function inspect (acc, data) {
   }
 
   console.info.apply(null, log)
-
-  if (typeof acc.params.inspect === 'function') {
-    console.info('\ncustom:')
-    _.attempt(acc.params.inspect, acc)
-  }
 }
 
 module.exports.inspect = inspect

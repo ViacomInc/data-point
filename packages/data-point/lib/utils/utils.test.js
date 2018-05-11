@@ -90,14 +90,6 @@ describe('inspect', () => {
     expect(console.info.mock.calls[0]).toContain('\nfoo:')
     expect(console.info.mock.calls[0]).toContain('"bar"')
   })
-  test('It should execute custom inspect if function', () => {
-    console.info = jest.fn()
-    const acc = getAcc()
-    acc.params.inspect = () => console.info('baz')
-    utils.inspect(acc)
-    expect(console.info.mock.calls[1]).toContain('\ncustom:')
-    expect(console.info.mock.calls[2]).toContain('baz')
-  })
 })
 
 describe('inspectProperties', () => {
