@@ -12,6 +12,7 @@ const ResolveEntity = require('../base-entity/resolve')
 const FixtureStore = require('../../../test/utils/fixture-store')
 
 const helpers = require('../../helpers')
+const utils = require('../../utils')
 
 let dataPoint
 let resolveReducerBound
@@ -274,24 +275,41 @@ describe('inspect', () => {
   afterEach(() => {
     console.info = consoleInfo
   })
-  test('It should not execute utils.inspect', () => {
-    console.info = jest.fn()
+  test('It should not execute custom inspect or utils.inspect', () => {
+    const utilsIinspectSpy = jest.spyOn(utils, 'inspect')
     const acc = getAcc()
     acc.params.inspect = undefined
+
     Resolve.inspect(acc)
-    expect(console.info).not.toBeCalled()
+    expect(utilsIinspectSpy).not.toBeCalled()
+
+    utilsIinspectSpy.mockReset()
+    utilsIinspectSpy.mockRestore()
   })
-  test('It should not execute utils.inspect', () => {
-    console.info = jest.fn()
-    Resolve.inspect(getAcc())
-    expect(console.info.mock.calls[0]).toContain('test:test')
-  })
-  test('It should output options', () => {
-    console.info = jest.fn()
+  test('It should execute custom inspect when provided, not execute utils.inspect', () => {
+    const utilsIinspectSpy = jest.spyOn(utils, 'inspect')
     const acc = getAcc()
-    _.set(acc, 'options', { options: 1 })
+    acc.params.inspect = jest.fn()
+
     Resolve.inspect(acc)
-    expect(console.info.mock.calls[0]).toContain('\noptions:')
+    expect(utilsIinspectSpy).not.toBeCalled()
+    expect(acc.params.inspect).toBeCalledWith(acc)
+
+    utilsIinspectSpy.mockReset()
+    utilsIinspectSpy.mockRestore()
+  })
+  test('It should execute utils.inspect when params.inspect === true', () => {
+    const utilsIinspectSpy = jest
+      .spyOn(utils, 'inspect')
+      .mockImplementation(() => true)
+    const acc = getAcc()
+    acc.params.inspect = true
+
+    Resolve.inspect(acc)
+    expect(utilsIinspectSpy).toBeCalled()
+
+    utilsIinspectSpy.mockReset()
+    utilsIinspectSpy.mockRestore()
   })
 })
 
