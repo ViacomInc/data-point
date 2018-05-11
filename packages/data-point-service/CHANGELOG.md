@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="4.1.1"></a>
+## [4.1.1](https://github.com/ViacomInc/data-point/compare/data-point-service@4.1.0...data-point-service@4.1.1) (2018-05-11)
+
+
+### Bug Fixes
+
+* **data-point-service:** fix revalidation logic and key creation ([#282](https://github.com/ViacomInc/data-point/issues/282)) ([74bf227](https://github.com/ViacomInc/data-point/commit/74bf227))
+
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/ViacomInc/data-point/compare/data-point-service@4.0.0...data-point-service@4.1.0) (2018-05-07)
 
