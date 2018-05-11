@@ -1,6 +1,6 @@
 {
   "name": "data-point",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Data Processing and Transformation Utility",
   "main": "index.js",
   "license": "Apache-2.0",

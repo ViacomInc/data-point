@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.3.1"></a>
+## [3.3.1](https://github.com/ViacomInc/data-point/compare/data-point@3.3.0...data-point@3.3.1) (2018-05-11)
+
+
+### Bug Fixes
+
+* **data-point:** fix request.params.inspect ([#283](https://github.com/ViacomInc/data-point/issues/283)) ([633b514](https://github.com/ViacomInc/data-point/commit/633b514)), closes [#263](https://github.com/ViacomInc/data-point/issues/263)
+
+
+
+
 <a name="3.3.0"></a>
 # 3.3.0 (2018-05-07)
 

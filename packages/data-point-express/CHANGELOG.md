@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="4.1.2"></a>
+## [4.1.2](https://github.com/ViacomInc/data-point/compare/data-point-express@4.1.1...data-point-express@4.1.2) (2018-05-11)
+
+
+
+
+**Note:** Version bump only for package data-point-express
+
 <a name="4.1.1"></a>
 ## [4.1.1](https://github.com/ViacomInc/data-point/compare/data-point-express@4.1.0...data-point-express@4.1.1) (2018-05-11)
 
