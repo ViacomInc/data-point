@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const defaultTo = require('lodash/defaultTo')
 const set = require('lodash/fp/set')
-const logger = require('./logger')
+const debug = require('debug')('data-point-service:cache')
 const { deprecate } = require('util')
 const ms = require('ms')
 
@@ -117,7 +117,7 @@ function setStaleWhileRevalidateEntry (service, entryKey, value, cache) {
  */
 function revalidateSuccess (entityId, entryKey) {
   return () => {
-    logger.debug(
+    debug(
       'Succesful revalidation entityId: %s with cache key: %s',
       entityId,
       entryKey
@@ -156,7 +156,7 @@ function handleRevalidateError (entityId, entryKey) {
    * @param {Error} error
    */
   return error => {
-    logger.error(
+    console.error(
       'Could not revalidate entityId: %s with cache key: %s\n',
       entityId,
       entryKey,
@@ -190,12 +190,7 @@ function revalidateEntry (service, entryKey, cache, ctx) {
     revalidatingCache,
     ctx
   )
-
-  logger.debug(
-    'Revalidating entityId: %s with cache key: %s',
-    entityId,
-    entryKey
-  )
+  debug('Revalidating entityId: %s with cache key: %s', entityId, entryKey)
 
   return service.dataPoint
     .resolveFromAccumulator(entityId, revalidateContext)

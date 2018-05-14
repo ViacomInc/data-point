@@ -19,7 +19,7 @@
     "data-point-cache": "^3.2.0",
     "lodash": "4.x",
     "ms": "2.x",
-    "winston": "2.x"
+    "debug": "3.x"
   },
   "peerDependencies": {
     "data-point": "^3.3.1"

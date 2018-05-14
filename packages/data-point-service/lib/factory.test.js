@@ -13,10 +13,6 @@ let Factory = require('./factory')
 const DataPoint = require('data-point')
 const _ = require('lodash')
 
-const logger = require('./logger')
-
-logger.clear()
-
 describe('getDefaultSettings', () => {
   it('should return default settings', () => {
     expect(Factory.getDefaultSettings()).toMatchSnapshot()
@@ -43,10 +39,10 @@ describe('prefixDeprecationError', () => {
 
 describe('getCachePrefix', () => {
   const hostname = os.hostname
-  const warn = logger.warn
+  const warn = console.warn
   afterEach(() => {
     os.hostname = hostname
-    logger.warn = warn
+    console.warn = warn
   })
 
   it('should return os.hostname if not set', () => {
@@ -72,7 +68,7 @@ describe('getCachePrefix', () => {
         }
       }
     }
-    logger.warn = () => {}
+    console.warn = () => {}
     expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
   })
   it('should use not add colon(:) twice', () => {
@@ -83,7 +79,7 @@ describe('getCachePrefix', () => {
         }
       }
     }
-    logger.warn = () => {}
+    console.warn = () => {}
     expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
   })
 })
@@ -136,14 +132,14 @@ function saveRestoreLogs () {
   let loggerError
   let loggerWarn
   beforeEach(() => {
-    loggerError = logger.error
-    loggerWarn = logger.warn
-    logger.error = () => {}
-    logger.warn = () => {}
+    loggerError = console.error
+    loggerWarn = console.warn
+    console.error = () => {}
+    console.warn = () => {}
   })
   afterEach(() => {
-    logger.error = loggerError
-    logger.warn = loggerWarn
+    console.error = loggerError
+    console.warn = loggerWarn
   })
 }
 
@@ -158,15 +154,15 @@ describe('handleCacheError', () => {
   })
 
   test('It should inform user', () => {
-    logger.error = jest.fn()
-    logger.warn = jest.fn()
+    console.error = jest.fn()
+    console.warn = jest.fn()
 
     Factory.handleCacheError(new Error(), {
       settings: {}
     })
 
-    expect(logger.error).toBeCalled()
-    expect(logger.warn).toBeCalled()
+    expect(console.error).toBeCalled()
+    expect(console.warn).toBeCalled()
   })
 
   test('It should throw error if cache is required', () => {
@@ -266,12 +262,7 @@ describe('create', () => {
       }
     })
 
-    const mockLogError = jest.fn()
-    jest.mock('./logger', () => {
-      return {
-        error: mockLogError
-      }
-    })
+    console.error = jest.fn()
 
     Factory = require('./factory')
 
@@ -292,7 +283,7 @@ describe('create', () => {
       })
       .catch(error => error)
       .then(res => {
-        expect(mockLogError).toBeCalled()
+        expect(console.error).toBeCalled()
         expect(res).toHaveProperty('message', 'FAILED')
       })
   })
