@@ -2,9 +2,6 @@
 
 const InMemory = require('./in-memory')
 
-const logger = require('./logger')
-logger.clear()
-
 describe('set', () => {
   let cache
   beforeEach(() => (cache = { entries: {} }))
@@ -41,18 +38,21 @@ describe('del', () => {
 
 describe('swipeTick', () => {
   let cache
+  const warn = console.warn
   beforeEach(() => (cache = { entries: {} }))
+  afterAll(() => {
+    console.warn = warn
+  })
   test('it should remove all keys if length is more than permited', () => {
     const entry = { value: 'test1', ttl: 1000, created: Date.now() }
     for (var index = 0; index < 10001; index++) {
       cache.entries[`${index}key`] = entry
     }
-
-    logger.warn = jest.fn()
+    console.warn = jest.fn()
     InMemory.swipeTick(cache)
     const keys = Object.keys(cache.entries)
     expect(keys).toHaveLength(0)
-    expect(logger.warn).toBeCalled()
+    expect(console.warn).toBeCalled()
   })
 
   test('it should remove keys - on each tick', () => {

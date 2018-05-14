@@ -1,5 +1,3 @@
-const logger = require('./logger')
-
 function set (cache, key, value, ttl) {
   cache.entries[key] = {
     value,
@@ -26,7 +24,7 @@ function swipeTick (cache) {
   const keys = Object.keys(cache.entries)
   if (keys.length > 10000) {
     cache.entries = {}
-    logger.warn(
+    console.warn(
       'Cache inMemory reached max (10000) number of entries, all keys now being deleted.'
     )
     return
