@@ -8,12 +8,12 @@ const InspectorMiddleware = require('./inspector-middleware')
 const Express = require('express')
 const DataPoint = require('data-point')
 const request = require('supertest')
-const logger = require('./logger')
-logger.clear()
 
 describe('create - inspect middleware', () => {
+  const consoleWarn = console.warn
   let dataPoint
   beforeAll(() => {
+    console.warn = () => {}
     dataPoint = DataPoint.create({
       entities: {
         'transform:test-params': (value, acc) => ({
@@ -27,6 +27,10 @@ describe('create - inspect middleware', () => {
         })
       }
     })
+  })
+
+  afterAll(() => {
+    console.warn = consoleWarn
   })
 
   test('Create an inspect HTML route', done => {
