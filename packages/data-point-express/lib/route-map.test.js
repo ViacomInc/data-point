@@ -2,8 +2,6 @@
 
 const RouteMap = require('./route-map')
 const _ = require('lodash')
-const logger = require('./logger')
-logger.clear()
 
 const routes = {
   a: {

@@ -18,8 +18,7 @@
     "bluebird": "3.5.1",
     "ioredis": "3.1.4",
     "lodash": "4.x",
-    "ms": "2.x",
-    "winston": "2.x"
+    "ms": "2.x"
   },
   "keywords": [
     "cache",

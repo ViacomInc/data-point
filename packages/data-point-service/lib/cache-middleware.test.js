@@ -1,6 +1,10 @@
 /* eslint-env jest */
 
-const winston = require('winston')
+const mockDebug = jest.fn()
+jest.mock('debug', () => {
+  return () => mockDebug
+})
+
 const util = require('util')
 const ms = require('ms')
 util.deprecate = jest.fn(fn => fn)
@@ -198,7 +202,6 @@ describe('setStaleWhileRevalidateEntry', () => {
 })
 
 describe('revalidateEntry', () => {
-  let logDebug
   let logError
   const cache = {
     ttl: 200,
@@ -206,37 +209,29 @@ describe('revalidateEntry', () => {
   }
 
   beforeEach(() => {
-    const logger = winston.loggers.get('data-point-service')
-    logDebug = logger.debug
-    logError = logger.error
-    // to hide when not testing it got called
-    logger.debug = () => true
+    logError = console.error
+    mockDebug.mockReset()
   })
+
   afterEach(() => {
-    const logger = winston.loggers.get('data-point-service')
-    logger.debug = logDebug
-    logger.error = logError
+    console.error = logError
   })
 
   it('should log at debug level start and success', () => {
     const mocks = createMocks()
-    const logger = winston.loggers.get('data-point-service')
-    logger.debug = jest.fn()
-
     return CacheMiddleware.revalidateEntry(
       mocks.service,
       'key',
       cache,
       mocks.ctx
     ).then(() => {
-      expect(logger.debug.mock.calls).toMatchSnapshot()
+      expect(mockDebug.mock.calls).toMatchSnapshot()
     })
   })
 
   it('should log error level when error occurs', () => {
     const mocks = createMocks()
-    const logger = winston.loggers.get('data-point-service')
-    logger.error = jest.fn()
+    console.error = jest.fn()
     mocks.service.dataPoint.resolveFromAccumulator = () =>
       Promise.reject(new Error('TestError'))
 
@@ -246,7 +241,7 @@ describe('revalidateEntry', () => {
       cache,
       mocks.ctx
     ).then(() => {
-      expect(logger.error.mock.calls).toMatchSnapshot()
+      expect(console.error.mock.calls).toMatchSnapshot()
     })
   })
 
@@ -318,16 +313,13 @@ describe('resolveStaleWhileRevalidateEntry', () => {
   }
 
   beforeEach(() => {
-    const logger = winston.loggers.get('data-point-service')
-    logDebug = logger.debug
-    logError = logger.error
+    logError = console.error
     // to hide when not testing it got called
-    logger.debug = () => true
+    console.debug = () => true
   })
   afterEach(() => {
-    const logger = winston.loggers.get('data-point-service')
-    logger.debug = logDebug
-    logger.error = logError
+    console.debug = logDebug
+    console.error = logError
   })
 
   it('should exit if revalidation flag is set', () => {

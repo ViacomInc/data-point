@@ -1,7 +1,6 @@
 const os = require('os')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const logger = require('./logger')
 
 const DataPointFactory = require('./data-point-factory')
 const { setupMiddleware } = require('./setup-middleware')
@@ -61,12 +60,12 @@ function createServiceObject (options) {
 }
 
 function handleCacheError (err, Service) {
-  logger.error('Could not connect to REDIS', Service.settings.cache)
+  console.error('Could not connect to REDIS', Service.settings.cache)
 
   if (Service.isCacheRequired) {
     throw err
   } else {
-    logger.warn(
+    console.warn(
       'REDIS is flagged as not required, this is NOT recommended for production environments.'
     )
   }
@@ -100,7 +99,7 @@ function createDataPoint (service) {
 
 function bootstrapDataPoint (bootstrap, service) {
   if (!service.isCacheAvailable) {
-    logger.warn(
+    console.warn(
       'REDIS is not available, there will be no cacheing mechanism for',
       'DataPoint - we wish you the best of luck in your adventure.'
     )
@@ -116,7 +115,7 @@ function create (options) {
     .then(() => createCache(Service))
     .then(() => createDataPoint(Service))
     .catch(err => {
-      logger.error('DataPoint could not initialize')
+      console.error('DataPoint could not initialize')
       throw err
     })
 }

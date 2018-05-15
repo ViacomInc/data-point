@@ -1,10 +1,9 @@
 const IORedis = require('ioredis')
 const Promise = require('bluebird')
-const logger = require('./logger')
 const ms = require('ms')
 
 function reconnectOnError (err) {
-  logger.error('ioredis - reconnectOnError', err.toString())
+  console.error('ioredis - reconnectOnError', err.toString())
   return true
 }
 
@@ -15,7 +14,7 @@ function redisDecorator (redis, resolve, reject) {
       redis.disconnect()
       return reject(error)
     }
-    logger.error('ioredis - error', error.toString())
+    console.error('ioredis - error', error.toString())
   })
 
   redis.on('ready', () => {
@@ -30,7 +29,7 @@ function redisDecorator (redis, resolve, reject) {
   redis.on('connect', () => {
     wasConnected = true
     if (reconnecting) {
-      logger.info('ioredis reconnected')
+      console.info('ioredis reconnected')
     }
   })
 }

@@ -7,9 +7,6 @@ jest.mock('ioredis', () => {
 const ms = require('ms')
 const RedisClient = require('./redis-client')
 
-const logger = require('./logger')
-logger.clear()
-
 describe('factory', () => {
   test('It should create a new redis instance', () => {
     return RedisClient.factory().then(redis => {
@@ -20,10 +17,14 @@ describe('factory', () => {
 })
 
 describe('reconnectOnError', () => {
+  const consoleError = console.error
+  afterAll(() => {
+    console.error = consoleError
+  })
   test('It should log error', () => {
-    logger.error = jest.fn()
+    console.error = jest.fn()
     const result = RedisClient.reconnectOnError(new Error('test'))
-    expect(logger.error).toBeCalled()
+    expect(console.error).toBeCalled()
     expect(result).toEqual(true)
   })
 })
@@ -184,6 +185,12 @@ describe('get/set/exists', () => {
 })
 
 describe('redisDecorator', () => {
+  const consoleError = console.error
+  const consoleInfo = console.info
+  afterAll(() => {
+    console.error = consoleError
+    console.info = consoleInfo
+  })
   test('It should execute resolve when ready', done => {
     const EventEmitter = require('events')
     const redis = new EventEmitter()
@@ -210,21 +217,21 @@ describe('redisDecorator', () => {
   test('It should log error when already connected', () => {
     const EventEmitter = require('events')
     const redis = new EventEmitter()
-    logger.error = jest.fn()
+    console.error = jest.fn()
     RedisClient.redisDecorator(redis, () => {})
     redis.emit('connect')
     redis.emit('error', new Error('test'))
-    expect(logger.error).toBeCalled()
+    expect(console.error).toBeCalled()
   })
 
   test('It should log when reconnected', () => {
     const EventEmitter = require('events')
     const redis = new EventEmitter()
-    logger.info = jest.fn()
+    console.info = jest.fn()
 
     RedisClient.redisDecorator(redis)
     redis.emit('reconnecting')
     redis.emit('connect')
-    expect(logger.info).toBeCalled()
+    expect(console.info).toBeCalled()
   })
 })
