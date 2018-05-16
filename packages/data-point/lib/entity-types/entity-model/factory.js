@@ -1,4 +1,5 @@
 const createBaseEntity = require('../base-entity').create
+const { resolve } = require('./resolve')
 
 /**
  * @class
@@ -15,6 +16,7 @@ module.exports.EntityModel = EntityModel
  */
 function create (spec, id) {
   const entity = createBaseEntity(EntityModel, spec, id)
+  entity.resolve = resolve
   return Object.freeze(entity)
 }
 

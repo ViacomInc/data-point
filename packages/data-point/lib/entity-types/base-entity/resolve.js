@@ -80,13 +80,20 @@ function handleByPassError (error) {
  */
 function createCurrentAccumulator (manager, accumulator, reducer) {
   // get defined source
-  const entity = manager.entities.get(reducer.id)
 
-  // set reducer's spec
-  const currentReducer = utils.assign(reducer, {
-    spec: entity,
-    options: entity.options
-  })
+  let currentReducer
+  let entity
+  if (reducer.type === 'ReducerEntityInstance') {
+    currentReducer = reducer
+    entity = reducer.spec
+  } else {
+    entity = manager.entities.get(reducer.id)
+    // set reducer's spec
+    currentReducer = utils.assign(reducer, {
+      spec: entity,
+      options: entity.options
+    })
+  }
 
   // create accumulator to resolve
   const currentAccumulator = utils.assign(accumulator, {

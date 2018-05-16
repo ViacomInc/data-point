@@ -13,6 +13,7 @@ function create (Factory, spec, id) {
   const entity = new Factory(spec)
 
   entity.id = id
+  entity.isEntityInstance = true
 
   if (spec.before) {
     entity.before = createReducer(spec.before)

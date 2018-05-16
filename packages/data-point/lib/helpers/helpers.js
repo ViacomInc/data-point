@@ -14,7 +14,8 @@ module.exports.helpers = {
   omit: stubFactories.omit,
   parallel: stubFactories.parallel,
   pick: stubFactories.pick,
-  withDefault: stubFactories.withDefault
+  withDefault: stubFactories.withDefault,
+  entity: stubFactories.entity
 }
 
 module.exports.entityFactories = require('../entity-types').factories
