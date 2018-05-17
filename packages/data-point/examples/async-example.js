@@ -15,7 +15,7 @@ dataPoint.addEntities({
 
   // model entity to resolve a Planet
   'model:Planet': {
-    inputType: 'schema:DataInput',
+    // inputType: 'schema:DataInput',
     value: [
       // hit request:Planet data source
       'request:Planet',

@@ -1,9 +1,7 @@
 const assert = require('assert')
 const DataPoint = require('../')
 
-const Model = require('../lib/entity-types/entity-model')
-// how it will be eventually (pulled individually)
-// const Model = require('data-point-entity-model')
+const { Model } = DataPoint.entities
 
 const input = {
   a: {
@@ -26,6 +24,6 @@ const myModel = Model('myModel', {
 })
 
 const dataPoint = DataPoint.create()
-dataPoint.resolve([myModel], input).then(output => {
+dataPoint.resolve(myModel, input).then(output => {
   assert.equal(output, 30)
 })

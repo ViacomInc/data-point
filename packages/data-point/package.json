@@ -52,7 +52,7 @@
   },
   "files": [
     "LICENSE",
-    "index.js",
+    "*.js",
     "lib/"
   ],
   "dependencies": {

@@ -27,8 +27,12 @@ function defaultOptions () {
 module.exports.defaultOptions = defaultOptions
 
 /**
+ * @typedef {Array|String|Function} Reducer
+ */
+
+/**
  * creates new Request based on spec
- * @param {Object} spec - request spec
+ * @param {{url:String, options:Object, before:Reducer}} spec - request spec
  * @param {string} id - Entity id
  * @return {EntityRequest} Entity Object
  */
