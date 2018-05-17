@@ -6,20 +6,6 @@ const DataPoint = require('../')
 function RenderTemplate () {}
 
 /**
- * Entity Factory
- * @param {*} spec - Entity Specification
- * @param {string} id - Entity id
- * @return {RenderTemplate} RenderTemplate Instance
- */
-function create (spec, id) {
-  // create an entity instance
-  const entity = DataPoint.createEntity(RenderTemplate, spec, id)
-  // set/create template from spec.template value
-  entity.template = _.template(_.defaultTo(spec.template, ''))
-  return entity
-}
-
-/**
  * Resolve entity
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
@@ -43,12 +29,24 @@ function resolve (accumulator, resolveReducer) {
 }
 
 /**
+ * Entity Factory
+ * @param {*} spec - Entity Specification
+ * @param {string} id - Entity id
+ * @return {RenderTemplate} RenderTemplate Instance
+ */
+function create (id, spec) {
+  // create an entity instance
+  const entity = DataPoint.createEntity(id, spec, resolve, RenderTemplate)
+  // set/create template from spec.template value
+  entity.template = _.template(_.defaultTo(spec.template, ''))
+  entity.resolve = resolve
+  return entity
+}
+
+/**
  * RenderEntity API
  */
-const RenderEntity = {
-  create,
-  resolve
-}
+const RenderEntity = create
 
 // Create DataPoint instance
 const dataPoint = DataPoint.create({

@@ -9,7 +9,6 @@ const reducerMap = require('./reducer-map')
 const reducerOmit = require('./reducer-omit')
 const reducerParallel = require('./reducer-parallel')
 const reducerPick = require('./reducer-pick')
-const reducerEntityInstance = require('./reducer-entity-instance')
 
 /*
 "Reducer helpers" are functions that create reducers.
@@ -41,8 +40,7 @@ const reducers = {
   [reducerMap.type]: reducerMap,
   [reducerOmit.type]: reducerOmit,
   [reducerParallel.type]: reducerParallel,
-  [reducerPick.type]: reducerPick,
-  [reducerEntityInstance.type]: reducerEntityInstance
+  [reducerPick.type]: reducerPick
 }
 
 module.exports.reducers = reducers
@@ -60,8 +58,7 @@ const stubFactories = {
   [reducerMap.name]: bindStubFunction(reducerMap.type),
   [reducerOmit.name]: bindStubFunction(reducerOmit.type),
   [reducerParallel.name]: bindStubFunction(reducerParallel.type),
-  [reducerPick.name]: bindStubFunction(reducerPick.type),
-  [reducerEntityInstance.name]: bindStubFunction(reducerEntityInstance.type)
+  [reducerPick.name]: bindStubFunction(reducerPick.type)
 }
 
 module.exports.stubFactories = stubFactories

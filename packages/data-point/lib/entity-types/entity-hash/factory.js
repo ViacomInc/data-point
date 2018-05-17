@@ -1,3 +1,4 @@
+const { resolve } = require('./resolve')
 const createReducer = require('../../reducer-types').create
 const deepFreeze = require('deep-freeze')
 const constant = require('lodash/constant')
@@ -13,7 +14,9 @@ const {
 /**
  * @class
  */
-function EntityHash () {}
+function EntityHash () {
+  this.entityType = 'hash'
+}
 
 module.exports.EntityHash = EntityHash
 
@@ -64,7 +67,7 @@ function createCompose (composeSpec) {
  * @param {string} id - Entity id
  * @return {EntityHash} Entity Object
  */
-function create (spec, id) {
+function create (id, spec) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
 
   const outputType = getTypeCheckSourceWithDefault(
@@ -74,7 +77,7 @@ function create (spec, id) {
   )
   spec = Object.assign({}, spec, { outputType })
 
-  const entity = createBaseEntity(EntityHash, spec, id)
+  const entity = createBaseEntity(id, spec, resolve, EntityHash)
   const compose = parseCompose.parse(id, modifierKeys, spec)
   if (compose.length) {
     entity.compose = createCompose(compose)

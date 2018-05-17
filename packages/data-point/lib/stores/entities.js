@@ -8,8 +8,8 @@ const storeManager = require('./store-manager')
 function createEntity (entityTypes, source, id) {
   const tokens = id.split(':')
   const entityType = tokens[0]
-  const EntityType = entityTypes.get(entityType)
-  const entity = EntityType.create(source, id)
+  const entityFactory = entityTypes.get(entityType)
+  const entity = entityFactory(tokens[1], source)
   return entity
 }
 

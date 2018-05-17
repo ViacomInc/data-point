@@ -78,16 +78,15 @@ function handleByPassError (error) {
  * @param {Function} reducer
  * @returns {Accumulator}
  */
-function createCurrentAccumulator (manager, accumulator, reducer) {
+function createCurrentAccumulator (manager, accumulator, reducer, entity) {
   // get defined source
 
   let currentReducer
-  let entity
+  // let entity
   if (reducer.type === 'ReducerEntityInstance') {
     currentReducer = reducer
-    entity = reducer.spec
   } else {
-    entity = manager.entities.get(reducer.id)
+    // entity = manager.entities.get(reducer.id)
     // set reducer's spec
     currentReducer = utils.assign(reducer, {
       spec: entity,
@@ -167,7 +166,7 @@ function typeCheck (manager, accumulator, reducer, resolveReducer) {
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {Function} reducer
- * @param {Function} mainResolver
+ * @param {Function} entity
  * @returns {Promise<Accumulator>}
  */
 function resolveEntity (
@@ -175,12 +174,13 @@ function resolveEntity (
   resolveReducer,
   accumulator,
   reducer,
-  mainResolver
+  entity
 ) {
   const currentAccumulator = createCurrentAccumulator(
     manager,
     accumulator,
-    reducer
+    reducer,
+    entity
   )
 
   const {
@@ -225,7 +225,7 @@ function resolveEntity (
 
   result = result.then(acc => {
     acc.debug(acc.uid, '- resolve')
-    return mainResolver(acc, resolveReducer.bind(null, manager))
+    return entity.resolve(acc, resolveReducer.bind(null, manager))
   })
 
   result = addToPromiseChain(result, after, acc =>
@@ -280,10 +280,10 @@ module.exports.resolveEntity = resolveEntity
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {Function} reducer
- * @param {Function} mainResolver
+ * @param {Function} entity
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
+function resolve (manager, resolveReducer, accumulator, reducer, entity) {
   const hasEmptyConditional = reducer.hasEmptyConditional
 
   if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
@@ -296,7 +296,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
       resolveReducer,
       accumulator,
       reducer,
-      mainResolver
+      entity
     )
   }
 
@@ -316,7 +316,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
       resolveReducer,
       itemCtx,
       reducer,
-      mainResolver
+      entity
     )
   }).then(mappedResults => {
     const value = mappedResults.map(acc => acc.value)

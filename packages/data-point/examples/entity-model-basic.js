@@ -1,17 +1,9 @@
 const assert = require('assert')
 const DataPoint = require('../')
-const dataPoint = DataPoint.create()
 
-const EntityModel = require('../lib/entity-types/entity-model')
-const { entity } = DataPoint.helpers
-
-function Model (id, spec) {
-  return entity(`model:${id}`, EntityModel.create(spec, `model:${id}`))
-}
-
-const myModel = Model('myModel', {
-  value: (val) => val * 100
-})
+const Model = require('../lib/entity-types/entity-model')
+// how it will be eventually (pulled individually)
+// const Model = require('data-point-entity-model')
 
 const input = {
   a: {
@@ -29,12 +21,11 @@ const multiplyBy = number => input => {
   return input * number
 }
 
-dataPoint.addEntities({
-  'model:foo': {
-    value: ['$a.b.c', getMax, multiplyBy(10), myModel]
-  }
+const myModel = Model('myModel', {
+  value: ['$a.b.c', getMax, multiplyBy(10)]
 })
 
-dataPoint.resolve('model:foo', input).then(output => {
+const dataPoint = DataPoint.create()
+dataPoint.resolve([myModel], input).then(output => {
   assert.equal(output, 30)
 })

@@ -4,16 +4,32 @@ const { normalizeTypeCheckSource } = require('../../helpers/type-check-helpers')
 
 const createReducer = require('../../reducer-types').create
 
+function validateResolve (id, resolve) {
+  if (typeof resolve !== 'function') {
+    throw new Error(`Entity type "${id}" must provide a "resolve" function`)
+  }
+
+  if (resolve.length !== 2) {
+    throw new Error(`Entity type "${id}.resolve" method must have an arity of 2 (accumulator:Accumulator, resolveReducer:Function)`)
+  }
+
+  return resolve
+}
+
 /**
  * @param {Function} Factory - factory function to create the entity
  * @param {Object} spec - spec for the Entity
- * @param {string} id - Entity's id
+ * @param {string} name - Entity's name
  */
-function create (Factory, spec, id) {
+function create (name, spec, resolve, Factory) {
   const entity = new Factory(spec)
 
-  entity.id = id
   entity.isEntityInstance = true
+
+  entity.name = name
+  entity.id = `${entity.entityType}:${name}`
+
+  entity.resolve = validateResolve(entity.id, resolve)
 
   if (spec.before) {
     entity.before = createReducer(spec.before)

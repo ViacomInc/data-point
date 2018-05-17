@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const utils = require('../../utils')
 
 /**
  * parse reducer
@@ -7,32 +6,21 @@ const utils = require('../../utils')
  * @return {reducer}
  */
 function create (entitySpec, id) {
-  if (!_.isFunction(entitySpec.create)) {
+  if (!_.isFunction(entitySpec)) {
     throw new Error(
-      `Entity Module '${id}' should expose a 'create' method, instead got: ${Object.keys(
-        entitySpec
-      )}`
+      `Entity Factory '${id}' should be a function: ${JSON.stringify(entitySpec)}`
     )
   }
 
-  if (!_.isFunction(entitySpec.resolve)) {
+  if (entitySpec.length !== 2) {
     throw new Error(
-      `Entity Module '${id}' should expose a 'resolve' method, instead got: ${Object.keys(
-        entitySpec
-      )}`
-    )
-  }
-
-  if (entitySpec.resolve.length !== 2) {
-    throw new Error(
-      `Entity Module '${id}' 'resolve' method should have an arity of 2, instead got: ${
-        entitySpec.resolve.length
+      `Entity Factory '${id}' method should have an arity of 2, instead got: ${
+        entitySpec.length
       }`
     )
   }
 
-  const entity = utils.set(entitySpec, 'id', id)
-  return Object.freeze(entity)
+  return entitySpec
 }
 
 module.exports.create = create

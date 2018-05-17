@@ -1,9 +1,12 @@
 const createBaseEntity = require('../base-entity').create
+const { resolve } = require('./resolve')
 
 /**
  * @class
  */
-function EntityTransform () {}
+function EntityTransform () {
+  this.entityType = 'transform'
+}
 
 module.exports.EntityTransform = EntityTransform
 
@@ -13,14 +16,11 @@ module.exports.EntityTransform = EntityTransform
  * @param {string} id - Entity id
  * @return {EntityTransform} Entity Object
  */
-function create (spec, id) {
-  const entity = createBaseEntity(
-    EntityTransform,
-    {
-      value: spec
-    },
-    id
-  )
+function create (id, spec) {
+  const entitySpec = {
+    value: spec
+  }
+  const entity = createBaseEntity(id, entitySpec, resolve, EntityTransform)
   return Object.freeze(entity)
 }
 

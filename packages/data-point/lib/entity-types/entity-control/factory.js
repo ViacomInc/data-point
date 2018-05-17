@@ -1,5 +1,5 @@
 const _ = require('lodash')
-
+const { resolve } = require('./resolve')
 const createReducer = require('../../reducer-types').create
 const createBaseEntity = require('../base-entity').create
 const { validateModifiers } = require('../validate-modifiers')
@@ -8,6 +8,7 @@ const { validateModifiers } = require('../validate-modifiers')
  * @class
  */
 function EntityControl () {
+  this.entityType = 'control'
   this.select = undefined
 }
 
@@ -71,10 +72,11 @@ module.exports.parseSwitch = parseSwitch
  * @param {string} id - Entity id
  * @return {EntityControl} Entity Object
  */
-function create (spec, id) {
+function create (id, spec) {
   validateModifiers(id, spec, ['select'])
-  const entity = createBaseEntity(EntityControl, spec, id)
+  const entity = createBaseEntity(id, spec, resolve, EntityControl)
   entity.select = parseSwitch(spec)
+
   return Object.freeze(entity)
 }
 

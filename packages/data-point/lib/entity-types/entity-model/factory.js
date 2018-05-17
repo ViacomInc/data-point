@@ -4,7 +4,9 @@ const { resolve } = require('./resolve')
 /**
  * @class
  */
-function EntityModel () {}
+function EntityModel () {
+  this.entityType = 'model'
+}
 
 module.exports.EntityModel = EntityModel
 
@@ -14,9 +16,8 @@ module.exports.EntityModel = EntityModel
  * @param {string} id - Entity id
  * @return {EntityModel} Entity Object
  */
-function create (spec, id) {
-  const entity = createBaseEntity(EntityModel, spec, id)
-  entity.resolve = resolve
+function create (id, spec) {
+  const entity = createBaseEntity(id, spec, resolve, EntityModel)
   return Object.freeze(entity)
 }
 
