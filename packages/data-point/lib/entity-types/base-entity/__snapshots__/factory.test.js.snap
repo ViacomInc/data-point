@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EntityFactory should create new entity instance 1`] = `
+Object {
+  "entityType": "bar",
+  "id": "bar:foo",
+  "isEntityInstance": true,
+  "name": "foo",
+  "params": Object {},
+  "resolve": [Function],
+}
+`;
+
+exports[`EntityFactory should create new entity instance with generic name 1`] = `
+Object {
+  "entityType": "bar",
+  "id": "bar:generic",
+  "isEntityInstance": true,
+  "name": "generic",
+  "params": Object {},
+  "resolve": [Function],
+}
+`;
+
+exports[`validateResolve should throw error if function does not match arity 1`] = `"Entity \\"foo:bar\\" resolve(accumulator:Accumulator, resolveReducer:Function) function must have an arity of 2"`;
+
+exports[`validateResolve should throw error if type is not function 1`] = `"Entity \\"foo:bar\\" must be provided with a resolve(accumulator:Accumulator, resolveReducer:Function) function"`;

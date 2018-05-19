@@ -9,12 +9,12 @@ const routes = {
   helloWorld: {
     priority: 100,
     path: '/hello-world',
-    middleware: 'transform:HelloWorld'
+    middleware: 'reducer:HelloWorld'
   },
   greet: {
     priority: 200,
     path: '/greet/:name',
-    middleware: 'transform:greet'
+    middleware: 'reducer:greet'
   },
   getPerson: {
     priority: 300,

@@ -103,9 +103,9 @@ Object {
             ],
             "reducer": ReducerEntity {
               "asCollection": false,
-              "entityType": "transform",
+              "entityType": "reducer",
               "hasEmptyConditional": false,
-              "id": "transform:entity-name",
+              "id": "reducer:entity-name",
               "name": "entity-name",
               "type": "ReducerEntity",
               Symbol(reducer): true,

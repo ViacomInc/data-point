@@ -3,13 +3,13 @@
 
 // prettier-ignore
 const entities = {
-  'transform:a': `$.`,
-  'transform:b': `$. | foo | $.`,
-  'transform:c': `foo | bar | baz`,
-  'transform:d': "$.",
-  'transform:e': "$. | foo",
-  'transform:f': "$. | $. | $.",
-  'transform:g': "foo | bar | baz",
+  'reducer:a': `$.`,
+  'reducer:b': `$. | foo | $.`,
+  'reducer:c': `foo | bar | baz`,
+  'reducer:d': "$.",
+  'reducer:e': "$. | foo",
+  'reducer:f': "$. | $. | $.",
+  'reducer:g': "foo | bar | baz",
   nested: {
     object: {
       a: "$. | $."

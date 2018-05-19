@@ -14,10 +14,10 @@ describe('create - entity middleware', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:my-test-query': (value, acc) => ({
+        'reducer:my-test-query': (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         }),
-        'transform:my-test-params': (value, acc) => ({
+        'reducer:my-test-params': (value, acc) => ({
           message: `Hello ${acc.locals.params.name}`
         })
       }
@@ -28,7 +28,7 @@ describe('create - entity middleware', () => {
     const app = new Express()
     app.use(
       '/api/bad-entity',
-      RouteMiddleware.create(dataPoint, 'transform:unknown')
+      RouteMiddleware.create(dataPoint, 'reducer:unknown')
     )
     request(app)
       .get('/api/bad-entity')
@@ -45,7 +45,7 @@ describe('create - entity middleware', () => {
     const app = new Express()
     app.use(
       '/api/my-test-query',
-      RouteMiddleware.create(dataPoint, 'transform:my-test-query')
+      RouteMiddleware.create(dataPoint, 'reducer:my-test-query')
     )
     request(app)
       .get('/api/my-test-query?name=test')
@@ -61,7 +61,7 @@ describe('create - entity middleware', () => {
     const app = new Express()
     app.use(
       '/api/my-test-params/:name',
-      RouteMiddleware.create(dataPoint, 'transform:my-test-params')
+      RouteMiddleware.create(dataPoint, 'reducer:my-test-params')
     )
     request(app)
       .get('/api/my-test-params/test')

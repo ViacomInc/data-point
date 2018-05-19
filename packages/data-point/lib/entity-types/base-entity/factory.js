@@ -4,16 +4,37 @@ const { normalizeTypeCheckSource } = require('../../helpers/type-check-helpers')
 
 const createReducer = require('../../reducer-types').create
 
-function validateResolve (id, resolve) {
+function validateResolve (entity, resolve) {
   if (typeof resolve !== 'function') {
-    throw new Error(`Entity type "${id}" must provide a "resolve" function`)
+    throw new Error(
+      `Entity "${
+        entity.id
+      }" must be provided with a resolve(accumulator:Accumulator, resolveReducer:Function) function`
+    )
   }
 
   if (resolve.length !== 2) {
-    throw new Error(`Entity type "${id}.resolve" method must have an arity of 2 (accumulator:Accumulator, resolveReducer:Function)`)
+    throw new Error(
+      `Entity "${
+        entity.id
+      }" resolve(accumulator:Accumulator, resolveReducer:Function) function must have an arity of 2`
+    )
   }
 
   return resolve
+}
+
+function EntityFactory (type, factory) {
+  return function createEntity (name, spec) {
+    let entityName = name
+    let entitySpec = spec
+    if (arguments.length === 1) {
+      entityName = 'generic'
+      entitySpec = name
+    }
+    const entity = factory(name, entitySpec)
+    return create(type, entityName, entity)
+  }
 }
 
 /**
@@ -21,45 +42,48 @@ function validateResolve (id, resolve) {
  * @param {Object} spec - spec for the Entity
  * @param {string} name - Entity's name
  */
-function create (name, spec, resolve, Factory) {
-  const entity = new Factory(spec)
-
+function create (type, name, entity) {
+  entity.entityType = type
   entity.isEntityInstance = true
 
   entity.name = name
   entity.id = `${entity.entityType}:${name}`
 
-  entity.resolve = validateResolve(entity.id, resolve)
+  entity.resolve = validateResolve(entity, entity.resolve)
 
-  if (spec.before) {
-    entity.before = createReducer(spec.before)
+  if (entity.before) {
+    entity.before = createReducer(entity.before)
   }
 
-  if (spec.value) {
-    entity.value = createReducer(spec.value)
+  if (entity.value) {
+    entity.value = createReducer(entity.value)
   }
 
-  if (spec.after) {
-    entity.after = createReducer(spec.after)
+  if (entity.after) {
+    entity.after = createReducer(entity.after)
   }
 
-  if (spec.error) {
-    entity.error = createReducer(spec.error)
+  if (entity.error) {
+    entity.error = createReducer(entity.error)
   }
 
-  if (spec.inputType) {
-    const inputType = normalizeTypeCheckSource(spec.inputType)
+  if (entity.inputType) {
+    const inputType = normalizeTypeCheckSource(entity.inputType)
     entity.inputType = createReducer(inputType)
   }
 
-  if (spec.outputType) {
-    const outputType = normalizeTypeCheckSource(spec.outputType)
+  if (entity.outputType) {
+    const outputType = normalizeTypeCheckSource(entity.outputType)
     entity.outputType = createReducer(outputType)
   }
 
-  entity.params = deepFreeze(defaultTo(spec.params, {}))
+  entity.params = deepFreeze(defaultTo(entity.params, {}))
 
-  return entity
+  return Object.freeze(entity)
 }
 
-module.exports.create = create
+module.exports = {
+  EntityFactory,
+  validateResolve,
+  create
+}

@@ -16,13 +16,13 @@ describe('create - inspect middleware', () => {
     console.warn = () => {}
     dataPoint = DataPoint.create({
       entities: {
-        'transform:test-params': (value, acc) => ({
+        'reducer:test-params': (value, acc) => ({
           message: `Hello ${acc.locals.params.name}`
         }),
-        'transform:test-query': (value, acc) => ({
+        'reducer:test-query': (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         }),
-        'transform:test-value': (value, acc) => ({
+        'reducer:test-value': (value, acc) => ({
           message: `Hello ${value}`
         })
       }
@@ -48,7 +48,7 @@ describe('create - inspect middleware', () => {
 
   test('it should pass query value', done => {
     const body = {
-      entityId: 'transform:test-query',
+      entityId: 'reducer:test-query',
       query: {
         name: 'Foo'
       }
@@ -70,7 +70,7 @@ describe('create - inspect middleware', () => {
 
   test('it should pass params value', done => {
     const body = {
-      entityId: 'transform:test-params',
+      entityId: 'reducer:test-params',
       params: {
         name: 'Foo'
       }
@@ -92,7 +92,7 @@ describe('create - inspect middleware', () => {
 
   test('it should pass value to transform', done => {
     const body = {
-      entityId: 'transform:test-value',
+      entityId: 'reducer:test-value',
       value: 'Foo'
     }
     const app = new Express()
@@ -118,9 +118,9 @@ describe('create - inspect middleware', () => {
       .expect('Content-Type', /json/)
       .expect(response => {
         expect(response.body).toEqual([
-          'transform:test-params',
-          'transform:test-query',
-          'transform:test-value'
+          'reducer:test-params',
+          'reducer:test-query',
+          'reducer:test-value'
         ])
       })
       .expect(200)

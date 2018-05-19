@@ -1,8 +1,8 @@
 module.exports = {
-  'transform:HelloWorld': () => {
+  'reducer:HelloWorld': () => {
     return 'Hello World!!'
   },
-  'transform:greet': (input, acc) => {
+  'reducer:greet': (input, acc) => {
     return `Hello ${acc.locals.params.name}!!`
   },
   'entry:getPerson': {

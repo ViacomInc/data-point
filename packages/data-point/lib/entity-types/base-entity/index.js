@@ -5,5 +5,6 @@ the resolve function directly from base-entity/resolve.js
 */
 
 module.exports = {
+  EntityFactory: require('./factory').EntityFactory,
   create: require('./factory').create
 }

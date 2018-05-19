@@ -172,11 +172,11 @@ describe('resolveReducer', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:string': () => `Test`,
-        'transform:object': () => ({
+        'reducer:string': () => `Test`,
+        'reducer:object': () => ({
           test: `Test`
         }),
-        'transform:value': value => `Test ${value}`
+        'reducer:value': value => `Test ${value}`
       }
     })
   })
@@ -184,7 +184,7 @@ describe('resolveReducer', () => {
   test('it should resolve text response', done => {
     const app = new Express()
     app.get('/test', (req, res) => {
-      return Middleware.resolveReducer(dataPoint, 'transform:string', {}, res)
+      return Middleware.resolveReducer(dataPoint, 'reducer:string', {}, res)
     })
     request(app)
       .get('/test')
@@ -199,7 +199,7 @@ describe('resolveReducer', () => {
   test('it should resolve object response', done => {
     const app = new Express()
     app.get('/test', (req, res) => {
-      return Middleware.resolveReducer(dataPoint, 'transform:object', {}, res)
+      return Middleware.resolveReducer(dataPoint, 'reducer:object', {}, res)
     })
     request(app)
       .get('/test')
@@ -218,7 +218,7 @@ describe('resolveReducer', () => {
     app.get('/test', (req, res) => {
       return Middleware.resolveReducer(
         dataPoint,
-        'transform:value',
+        'reducer:value',
         {},
         res,
         'TEST'

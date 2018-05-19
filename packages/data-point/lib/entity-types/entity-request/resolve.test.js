@@ -38,7 +38,8 @@ function helperMockContext (accumulatorData, reducerSource, requestName) {
     values
   })
   const reducer = ReducerFactory.create(reducerSource)
-  return ResolveEntity.createCurrentAccumulator(dataPoint, accumulator, reducer)
+  const entity = dataPoint.entities.get(reducer.id)
+  return ResolveEntity.createCurrentAccumulator(accumulator, reducer, entity)
 }
 
 beforeAll(() => {

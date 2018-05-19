@@ -211,6 +211,16 @@ test('Entry#resolve - run schema, pass value if valid', () => {
     .then(result => expect(result.value).toBeTruthy())
 })
 
+test('Model Entity Instance', () => {
+  const Model = require('./entity-model')
+  const model = Model('myModel', {
+    value: value => value * 10
+  })
+  return dataPoint
+    .resolve(model, 10)
+    .then(result => expect(result).toEqual(100))
+})
+
 describe('trace feature', () => {
   test('trace via options parameter', () => {
     const consoleTime = console.time

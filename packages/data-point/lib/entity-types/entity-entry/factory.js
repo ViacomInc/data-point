@@ -1,13 +1,11 @@
 const { resolve } = require('./resolve')
-const createBaseEntity = require('../base-entity').create
+const { EntityFactory } = require('../base-entity')
 const { validateModifiers } = require('../validate-modifiers')
 
 /**
  * @class
  */
-function EntityEntry () {
-  this.entityType = 'entry'
-}
+function EntityEntry () {}
 
 module.exports.EntityEntry = EntityEntry
 
@@ -19,8 +17,10 @@ module.exports.EntityEntry = EntityEntry
  */
 function create (id, spec) {
   validateModifiers(id, spec, [])
-  const entity = createBaseEntity(id, spec, resolve, EntityEntry)
-  return Object.freeze(entity)
+  const entity = Object.assign(new EntityEntry(), spec, {
+    resolve
+  })
+  return entity
 }
 
-module.exports.create = create
+module.exports.create = EntityFactory('entry', create)

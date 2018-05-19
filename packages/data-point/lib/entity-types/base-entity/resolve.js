@@ -72,35 +72,40 @@ function handleByPassError (error) {
   throw error
 }
 
+function getCurrentReducer (reducer, entity) {
+  // let entity
+  if (reducer.type === 'ReducerEntityInstance') {
+    return reducer
+  }
+
+  // set reducer's spec
+  return utils.assign(reducer, {
+    spec: entity
+  })
+}
+
+module.exports.getCurrentReducer = getCurrentReducer
+
 /**
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @returns {Accumulator}
  */
-function createCurrentAccumulator (manager, accumulator, reducer, entity) {
-  // get defined source
-
-  let currentReducer
-  // let entity
-  if (reducer.type === 'ReducerEntityInstance') {
-    currentReducer = reducer
-  } else {
-    // entity = manager.entities.get(reducer.id)
-    // set reducer's spec
-    currentReducer = utils.assign(reducer, {
-      spec: entity,
-      options: entity.options
-    })
-  }
+function createCurrentAccumulator (accumulator, reducer, entity) {
+  const currentReducer = getCurrentReducer(reducer, entity)
+  // const entityId = accumulator.reducer.spec.id
+  const entityId = reducer.id
+  const uid = `${entityId}:${utils.getUID()}`
 
   // create accumulator to resolve
   const currentAccumulator = utils.assign(accumulator, {
+    uid: uid,
     context: entity,
     reducer: currentReducer,
     initialValue: accumulator.value,
-    // shortcut to reducer.spec.params
-    params: entity.params
+    params: entity.params,
+    debug: debugEntity(reducer.entityType)
   })
 
   return currentAccumulator
@@ -161,6 +166,7 @@ function typeCheck (manager, accumulator, reducer, resolveReducer) {
   return resolveReducer(manager, accumulator, reducer).return(accumulator)
 }
 
+module.exports.typeCheck = typeCheck
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
@@ -169,47 +175,33 @@ function typeCheck (manager, accumulator, reducer, resolveReducer) {
  * @param {Function} entity
  * @returns {Promise<Accumulator>}
  */
-function resolveEntity (
-  manager,
-  resolveReducer,
-  accumulator,
-  reducer,
-  entity
-) {
+function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
   const currentAccumulator = createCurrentAccumulator(
-    manager,
     accumulator,
     reducer,
     entity
   )
 
   const {
-    id,
     inputType,
     before,
     after,
     outputType
   } = currentAccumulator.reducer.spec
 
-  const entityId = id
-  const uid = `${entityId}:${utils.getUID()}`
-  const accUid = utils.set(currentAccumulator, 'uid', uid)
-
-  accUid.debug = debugEntity(reducer.entityType)
-
   const trace =
     currentAccumulator.trace === true ||
-    currentAccumulator.reducer.spec.params.trace === true
+    currentAccumulator.context.params.trace === true
 
   let timeId
   if (trace === true) {
-    timeId = `⧖ ${uid}`
+    timeId = `⧖ ${currentAccumulator.uid}`
     console.time(timeId)
   }
 
-  accUid.debug(uid, '- resolve:start')
+  currentAccumulator.debug(currentAccumulator.uid, '- resolve:start')
 
-  let result = Promise.resolve(accUid)
+  let result = Promise.resolve(currentAccumulator)
 
   result = addToPromiseChain(result, inputType, acc =>
     typeCheck(manager, acc, inputType, resolveReducer)
@@ -291,13 +283,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, entity) {
   }
 
   if (!reducer.asCollection) {
-    return resolveEntity(
-      manager,
-      resolveReducer,
-      accumulator,
-      reducer,
-      entity
-    )
+    return resolveEntity(manager, resolveReducer, accumulator, reducer, entity)
   }
 
   if (!Array.isArray(accumulator.value)) {
@@ -311,13 +297,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, entity) {
       return Promise.resolve(itemCtx)
     }
 
-    return resolveEntity(
-      manager,
-      resolveReducer,
-      itemCtx,
-      reducer,
-      entity
-    )
+    return resolveEntity(manager, resolveReducer, itemCtx, reducer, entity)
   }).then(mappedResults => {
     const value = mappedResults.map(acc => acc.value)
     return utils.set(accumulator, 'value', value)

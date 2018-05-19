@@ -6,23 +6,18 @@ const EntityEntry = require('../entity-entry')
 
 describe('reducer/reducer-entity#create', () => {
   const stub = () => {}
-  test('throw if create is missing', () => {
+  test('throw if factory is not a function', () => {
     expect(() => {
       factory.create({}, 'entry:abc')
-    }).toThrow()
-  })
-  test('throw if resolve is missing', () => {
-    expect(() => {
-      factory.create({ create: stub }, 'entry:abc')
-    }).toThrow()
+    }).toThrowErrorMatchingSnapshot()
   })
   test('throw if resolve has wrong arity', () => {
     expect(() => {
-      factory.create({ create: stub, resolve: stub }, 'entry:abc')
-    }).toThrow()
+      factory.create(stub, 'entry:abc')
+    }).toThrowErrorMatchingSnapshot()
   })
   test('entry', () => {
     const reducer = factory.create(EntityEntry, 'entry:abc')
-    expect(reducer.id).toBe('entry:abc')
+    expect(reducer).toBe(reducer)
   })
 })
