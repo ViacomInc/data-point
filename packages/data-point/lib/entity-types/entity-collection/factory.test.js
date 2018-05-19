@@ -59,7 +59,6 @@ describe('parse compose modifier', () => {
     const result = modelFactory.create('name', {
       compose: [{ map: '$a' }, { find: '$a' }, { filter: '$a' }]
     })
-
     expect(helpers.isReducer(result.compose)).toBe(true)
     expect(result.compose).toHaveProperty('type', 'ReducerList')
     expect(result.compose.reducers[0]).toHaveProperty('type', 'ReducerMap')

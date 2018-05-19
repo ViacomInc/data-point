@@ -24,25 +24,14 @@ function validateResolve (entity, resolve) {
   return resolve
 }
 
-function EntityFactory (type, factory) {
-  return function createEntity (name, spec) {
-    let entityName = name
-    let entitySpec = spec
-    if (arguments.length === 1) {
-      entityName = 'generic'
-      entitySpec = name
-    }
-    const entity = factory(name, entitySpec)
-    return create(type, entityName, entity)
-  }
-}
-
 /**
  * @param {Function} Factory - factory function to create the entity
  * @param {Object} spec - spec for the Entity
  * @param {string} name - Entity's name
  */
-function create (type, name, entity) {
+function createEntityType (type, name, entity) {
+  // delete entity.spec
+  const spec = Object.assign({}, entity.spec, entity)
   entity.entityType = type
   entity.isEntityInstance = true
 
@@ -51,39 +40,52 @@ function create (type, name, entity) {
 
   entity.resolve = validateResolve(entity, entity.resolve)
 
-  if (entity.before) {
-    entity.before = createReducer(entity.before)
+  if (spec.before) {
+    entity.before = createReducer(spec.before)
   }
 
-  if (entity.value) {
-    entity.value = createReducer(entity.value)
+  if (spec.value) {
+    entity.value = createReducer(spec.value)
   }
 
-  if (entity.after) {
-    entity.after = createReducer(entity.after)
+  if (spec.after) {
+    entity.after = createReducer(spec.after)
   }
 
-  if (entity.error) {
-    entity.error = createReducer(entity.error)
+  if (spec.error) {
+    entity.error = createReducer(spec.error)
   }
 
-  if (entity.inputType) {
-    const inputType = normalizeTypeCheckSource(entity.inputType)
+  if (spec.inputType) {
+    const inputType = normalizeTypeCheckSource(spec.inputType)
     entity.inputType = createReducer(inputType)
   }
 
-  if (entity.outputType) {
-    const outputType = normalizeTypeCheckSource(entity.outputType)
+  if (spec.outputType) {
+    const outputType = normalizeTypeCheckSource(spec.outputType)
     entity.outputType = createReducer(outputType)
   }
 
-  entity.params = deepFreeze(defaultTo(entity.params, {}))
+  entity.params = deepFreeze(defaultTo(spec.params, {}))
 
   return Object.freeze(entity)
 }
 
+function create (type, factory) {
+  return function createEntity (name, spec) {
+    let entityName = name
+    let entitySpec = spec
+    if (arguments.length === 1) {
+      entityName = 'generic'
+      entitySpec = name
+    }
+    const entity = factory(name, entitySpec)
+    return createEntityType(type, entityName, entity)
+  }
+}
+
 module.exports = {
-  EntityFactory,
   validateResolve,
+  createEntityType,
   create
 }

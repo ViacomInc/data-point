@@ -36,7 +36,8 @@ function resolve (accumulator, resolveReducer) {
  */
 function create (id, spec) {
   // create an entity instance
-  const entity = DataPoint.createEntity(id, spec, resolve, RenderTemplate)
+  const entity = new RenderTemplate()
+  entity.spec = spec
   // set/create template from spec.template value
   entity.template = _.template(_.defaultTo(spec.template, ''))
   entity.resolve = resolve
@@ -46,7 +47,7 @@ function create (id, spec) {
 /**
  * RenderEntity API
  */
-const RenderEntity = create
+const RenderEntity = DataPoint.createEntity('render', create)
 
 // Create DataPoint instance
 const dataPoint = DataPoint.create({

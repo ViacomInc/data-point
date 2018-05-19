@@ -1,4 +1,4 @@
-const { EntityFactory } = require('../base-entity')
+const BaseEntity = require('../base-entity')
 const { resolve } = require('./resolve')
 
 /**
@@ -15,9 +15,10 @@ module.exports.EntityModel = EntityModel
  * @return {EntityModel} Entity Object
  */
 function create (id, spec) {
-  return Object.assign(new EntityModel(), spec, {
-    resolve
-  })
+  const entity = new EntityModel()
+  entity.spec = spec
+  entity.resolve = resolve
+  return entity
 }
 
-module.exports.create = EntityFactory('model', create)
+module.exports.create = BaseEntity.create('model', create)

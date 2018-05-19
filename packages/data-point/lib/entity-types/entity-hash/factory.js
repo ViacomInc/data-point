@@ -5,7 +5,7 @@ const constant = require('lodash/constant')
 const defaultTo = require('lodash/defaultTo')
 const reducerHelpers = require('../../reducer-types/reducer-helpers')
 const parseCompose = require('../parse-compose')
-const { EntityFactory } = require('../base-entity')
+const BaseEntity = require('../base-entity')
 const { validateModifiers } = require('../validate-modifiers')
 const {
   getTypeCheckSourceWithDefault
@@ -74,10 +74,10 @@ function create (id, spec) {
     spec.outputType
   )
 
-  const entity = Object.assign(new EntityHash(), spec, {
-    outputType,
-    resolve
-  })
+  const entity = new EntityHash()
+  entity.spec = spec
+  entity.outputType = outputType
+  entity.resolve = resolve
 
   const compose = parseCompose.parse(id, modifierKeys, spec)
   if (compose.length) {
@@ -87,4 +87,4 @@ function create (id, spec) {
   return entity
 }
 
-module.exports.create = EntityFactory('hash', create)
+module.exports.create = BaseEntity.create('hash', create)

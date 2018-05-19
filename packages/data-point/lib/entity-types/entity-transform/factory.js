@@ -1,4 +1,4 @@
-const { EntityFactory } = require('../base-entity')
+const BaseEntity = require('../base-entity')
 const { resolve } = require('./resolve')
 
 /**
@@ -21,4 +21,4 @@ function create (id, spec) {
   return entity
 }
 
-module.exports.create = EntityFactory('reducer', create)
+module.exports.create = BaseEntity.create('reducer', create)

@@ -22,7 +22,7 @@ describe('validateResolve', () => {
   })
 })
 
-describe('Factory.create', () => {
+describe('Factory.createEntityType', () => {
   test('It should create entity defaults', () => {
     const resolve = (a, b) => true
     const entityType = {
@@ -32,7 +32,7 @@ describe('Factory.create', () => {
       error: '$',
       after: '$'
     }
-    const entity = Factory.create('foo', 'bar', entityType)
+    const entity = Factory.createEntityType('foo', 'bar', entityType)
 
     expect(entity).toHaveProperty('isEntityInstance', true)
     expect(entity).toHaveProperty('id', 'foo:bar')
@@ -51,17 +51,17 @@ describe('EntityFactory', () => {
     return { resolve }
   }
   it('should create Entity Factory', () => {
-    const BarFactory = Factory.EntityFactory('bar', create)
+    const BarFactory = Factory.create('bar', create)
     expect(BarFactory).toBeInstanceOf(Function)
     expect(BarFactory.length).toEqual(2)
   })
   it('should create new entity instance', () => {
-    const BarFactory = Factory.EntityFactory('bar', create)
+    const BarFactory = Factory.create('bar', create)
     const entity = BarFactory('foo', {})
     expect(entity).toMatchSnapshot()
   })
   it('should create new entity instance with generic name', () => {
-    const BarFactory = Factory.EntityFactory('bar', create)
+    const BarFactory = Factory.create('bar', create)
     const entity = BarFactory({})
     expect(entity).toMatchSnapshot()
   })

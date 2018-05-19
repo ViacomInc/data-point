@@ -1,7 +1,7 @@
 const { resolve } = require('./resolve')
 const parseCompose = require('../parse-compose')
 const createReducer = require('../../reducer-types').create
-const { EntityFactory } = require('../base-entity')
+const BaseEntity = require('../base-entity')
 const reducerHelpers = require('../../reducer-types/reducer-helpers')
 const { validateModifiers } = require('../validate-modifiers')
 const {
@@ -50,16 +50,17 @@ function create (id, spec) {
     spec.outputType
   )
 
-  const entity = Object.assign(new EntityCollection(), spec, {
-    resolve,
-    outputType
-  })
+  const entity = new EntityCollection()
+  entity.spec = spec
+  entity.resolve = resolve
+  entity.outputType = outputType
 
-  const compose = parseCompose.parse(id, modifierKeys, entity)
+  const compose = parseCompose.parse(id, modifierKeys, spec)
+
   if (compose.length) {
     entity.compose = createCompose(compose)
   }
   return entity
 }
 
-module.exports.create = EntityFactory('collection', create)
+module.exports.create = BaseEntity.create('collection', create)

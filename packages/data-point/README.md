@@ -3372,7 +3372,7 @@ DataPoint exposes a set of methods to help you build your own Custom Entity type
 
 ### <a name="adding-entity-types">Adding new Entity types</a>
 
-You can add custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also add them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
+You can register custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also register them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
 
 #### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
 
@@ -3421,7 +3421,7 @@ Because you are extending the base entity API, you get before, value, after, par
 This is a factory method, it receives a raw entity spec, and expects to return a new entity instance object.
 
 ```js
-function create(spec:Object):Object
+function create(name:String, spec:Object):Object
 ```
 
 #### <a name="entity-resolve">Entity.resolve</a>
@@ -3452,7 +3452,9 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
   */
   function create (spec, id) {
     // create an entity instance
-    const entity = DataPoint.createEntity(RenderTemplate, spec, id)
+    const entity = mew RenderTemplate()
+    entity.spec = spec
+    entity.resolve = resolve
     // set/create template from spec.template value
     entity.template = _.template(_.defaultTo(spec.template, ''))
     return entity
@@ -3482,10 +3484,7 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
   /**
   * RenderEntity API
   */
-  const RenderEntity = {
-    create,
-    resolve
-  }
+  const RenderEntity = DataPoint.createEntity('render, create)
 
   // Create DataPoint instance
   const dataPoint = DataPoint.create({

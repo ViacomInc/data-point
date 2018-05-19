@@ -2,7 +2,7 @@ const Ajv = require('ajv')
 const _ = require('lodash')
 const deepFreeze = require('deep-freeze')
 const { resolve } = require('./resolve')
-const { EntityFactory } = require('../base-entity')
+const BaseEntity = require('../base-entity')
 const { validateModifiers } = require('../validate-modifiers')
 
 /**
@@ -45,15 +45,15 @@ module.exports.validateSchema = validateSchema
 function create (id, spec) {
   validateModifiers(id, spec, ['schema', 'options'])
 
-  const entity = Object.assign(new EntitySchema(), spec, {
-    resolve,
-    schema: deepFreeze(_.defaultTo(spec.schema, {})),
-    options: deepFreeze(_.defaultTo(spec.options, {}))
-  })
+  const entity = new EntitySchema()
+  entity.spec = spec
+  entity.resolve = resolve
+  entity.schema = deepFreeze(_.defaultTo(spec.schema, {}))
+  entity.options = deepFreeze(_.defaultTo(spec.options, {}))
 
   validateSchema(entity.schema, entity.options)
 
   return entity
 }
 
-module.exports.create = EntityFactory('schema', create)
+module.exports.create = BaseEntity.create('schema', create)
