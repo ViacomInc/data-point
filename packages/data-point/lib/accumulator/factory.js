@@ -1,4 +1,5 @@
 const merge = require('lodash/merge')
+const debug = require('debug')('data-point')
 
 /**
  * @class
@@ -31,8 +32,9 @@ function create (spec) {
   accumulator.locals = merge({}, spec.locals)
   accumulator.values = spec.values
   accumulator.trace = spec.trace
+  accumulator.debug = debug
 
-  return Object.freeze(accumulator)
+  return accumulator
 }
 
 module.exports.create = create

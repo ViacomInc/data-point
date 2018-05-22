@@ -1,8 +1,20 @@
+const debug = require('debug')
 const Promise = require('bluebird')
-
 const middleware = require('../../middleware')
-
 const utils = require('../../utils')
+const memoize = require('lodash/memoize')
+
+/**
+ * create a new debug scope
+ * @param {String} entityType debug scope
+ */
+function createDebugEntity (entityType) {
+  return debug(`data-point:entity:${entityType}`)
+}
+
+// debug scope gets memoized so it is not as expensive, it will only create one
+// per entity type
+const debugEntity = memoize(createDebugEntity)
 
 /**
  * @param {Object} manager
@@ -114,6 +126,7 @@ function resolveMiddleware (manager, promise, name) {
     })
     .then(middlewareResult => {
       if (middlewareResult.___resolve === true) {
+        middlewareResult.debug(middlewareResult.uid, '- will bypass')
         // doing this until proven wrong :)
         const err = new Error('bypassing middleware')
         err.name = 'bypass'
@@ -172,18 +185,22 @@ function resolveEntity (
   } = currentAccumulator.reducer.spec
 
   const entityId = id
+  const uid = `${entityId}:${utils.getUID()}`
+  const accUid = utils.set(currentAccumulator, 'uid', uid)
+
+  accUid.debug = debugEntity(reducer.entityType)
 
   const trace =
     currentAccumulator.trace === true ||
     currentAccumulator.reducer.spec.params.trace === true
 
   let timeId
-  let accUid = currentAccumulator
   if (trace === true) {
-    accUid = utils.set(currentAccumulator, 'euid', utils.getUID())
-    timeId = `⧖ ${entityId}(${accUid.euid})`
+    timeId = `⧖ ${uid}`
     console.time(timeId)
   }
+
+  accUid.debug(uid, '- resolve:start')
 
   let result = Promise.resolve(accUid)
 
@@ -200,6 +217,7 @@ function resolveEntity (
   )
 
   result = result.then(acc => {
+    acc.debug(acc.uid, '- resolve')
     return mainResolver(acc, resolveReducer.bind(null, manager))
   })
 
@@ -239,6 +257,8 @@ function resolveEntity (
       if (trace === true) {
         console.timeEnd(timeId)
       }
+
+      resultContext.debug(resultContext.uid, `- resolve:end`)
 
       // clean up any modifications we have done to the result context and pass
       // a copy of the original accumulator with only `value` modified

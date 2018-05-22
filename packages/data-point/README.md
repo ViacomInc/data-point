@@ -433,6 +433,7 @@ The `accumulator.value` property is the current input data. This property should
 | *params*  | `Object` | Value of the current Entity's params property. (for all entities except [Reducer](#reducer-entity)) |
 | *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#api-data-point-transform). |
 | *reducer*  | `Object` | Information relative to the current [Reducer](#reducers) being executed. |
+| *debug*  | `Function` | [debug](https://github.com/visionmedia/debug) method with scope `data-point` |
 
 ## <a name="reducers">Reducers</a>
 

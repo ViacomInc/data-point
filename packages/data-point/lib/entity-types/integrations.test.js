@@ -237,7 +237,7 @@ describe('trace feature', () => {
         console.time = consoleTime
         console.timeEnd = consoleTimeEnd
         const ids = _.map(timeIds, 'id')
-        expect(ids[0]).toContain('⧖ model:tracedViaOptions(')
+        expect(ids[0]).toContain('⧖ model:tracedViaOptions:')
       })
   })
   test('trace via entity params', () => {
@@ -263,7 +263,7 @@ describe('trace feature', () => {
         console.time = consoleTime
         console.timeEnd = consoleTimeEnd
         const ids = _.map(timeIds, 'id')
-        expect(ids[0]).toContain('⧖ model:tracedViaParams(')
+        expect(ids[0]).toContain('⧖ model:tracedViaParams:')
       })
   })
 })
