@@ -87,9 +87,9 @@ function getCurrentReducer (reducer, entity) {
 module.exports.getCurrentReducer = getCurrentReducer
 
 /**
- * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Function} reducer
+ * @param {Object} entity
  * @returns {Accumulator}
  */
 function createCurrentAccumulator (accumulator, reducer, entity) {
@@ -172,7 +172,7 @@ module.exports.typeCheck = typeCheck
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {Function} reducer
- * @param {Function} entity
+ * @param {Object} entity
  * @returns {Promise<Accumulator>}
  */
 function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {

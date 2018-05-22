@@ -7,8 +7,8 @@ function RenderTemplate () {}
 
 /**
  * Entity Factory
- * @param {*} spec - Entity Specification
  * @param {string} id - Entity id
+ * @param {*} spec - Entity Specification
  * @return {RenderTemplate} RenderTemplate Instance
  */
 function create (id, spec) {
