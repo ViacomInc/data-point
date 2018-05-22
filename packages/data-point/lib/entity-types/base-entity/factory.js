@@ -45,6 +45,18 @@ function validateFactory (factory) {
 }
 
 /**
+ * NOTE: this method mutates target
+ * @param {String} name reducer name
+ * @param {Object} target entity target
+ * @param {Object} spec entity source spec
+ */
+function setReducerIfTruthy (name, target, spec) {
+  if (spec[name]) {
+    target[name] = createReducer(spec[name])
+  }
+}
+
+/**
  * @param {String} type Entity's type
  * @param {String} name Entity's name
  * @param {Object} spec spec for the Entity
@@ -60,21 +72,10 @@ function createEntityType (type, name, entity) {
   entity.name = name
   entity.id = `${entity.entityType}:${name}`
 
-  if (spec.before) {
-    entity.before = createReducer(spec.before)
-  }
-
-  if (spec.value) {
-    entity.value = createReducer(spec.value)
-  }
-
-  if (spec.after) {
-    entity.after = createReducer(spec.after)
-  }
-
-  if (spec.error) {
-    entity.error = createReducer(spec.error)
-  }
+  setReducerIfTruthy('before', entity, spec)
+  setReducerIfTruthy('value', entity, spec)
+  setReducerIfTruthy('after', entity, spec)
+  setReducerIfTruthy('error', entity, spec)
 
   if (spec.inputType) {
     const inputType = normalizeTypeCheckSource(spec.inputType)
