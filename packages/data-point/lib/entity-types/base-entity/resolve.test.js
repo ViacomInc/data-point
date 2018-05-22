@@ -13,6 +13,19 @@ const utils = require('../../utils')
 
 let dataPoint
 
+const resolveEntity = (entityId, input, options, resolver) => {
+  const racc = helpers.createAccumulator(input, options)
+  const reducer = createReducerEntity(createReducer, entityId)
+  const entity = dataPoint.entities.get(entityId)
+  return ResolveEntity.resolveEntity(
+    dataPoint,
+    resolveReducer,
+    racc,
+    reducer,
+    entity
+  )
+}
+
 beforeAll(() => {
   dataPoint = FixtureStore.create()
 })
@@ -161,19 +174,6 @@ describe('ResolveEntity.resolveMiddleware', () => {
 })
 
 describe('ResolveEntity.resolveEntity', () => {
-  const resolveEntity = (entityId, input, options, resolver) => {
-    const racc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
-    const entity = dataPoint.entities.get(entityId)
-    return ResolveEntity.resolveEntity(
-      dataPoint,
-      resolveReducer,
-      racc,
-      reducer,
-      entity
-    )
-  }
-
   test('It should resolve entity', () => {
     return resolveEntity('model:asIs', 'foo').then(acc => {
       expect(acc).toHaveProperty('value', 'foo')
@@ -244,19 +244,6 @@ describe('ResolveEntity.resolveEntity', () => {
 })
 
 describe('ResolveEntity.resolveEntity outputType', () => {
-  const resolveEntity = (entityId, input, options, resolver) => {
-    const racc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
-    const entity = dataPoint.entities.get(entityId)
-    return ResolveEntity.resolveEntity(
-      dataPoint,
-      resolveReducer,
-      racc,
-      reducer,
-      entity
-    )
-  }
-
   test('throws error if value does not pass typeCheck', () => {
     return resolveEntity('model:c.1', 1)
       .catch(e => e)
