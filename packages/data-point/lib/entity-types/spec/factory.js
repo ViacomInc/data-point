@@ -8,7 +8,9 @@ const _ = require('lodash')
 function create (entitySpec, id) {
   if (!_.isFunction(entitySpec)) {
     throw new Error(
-      `Entity Factory '${id}' should be a function: ${JSON.stringify(entitySpec)}`
+      `Entity Factory '${id}' should be a function: ${JSON.stringify(
+        entitySpec
+      )}`
     )
   }
 

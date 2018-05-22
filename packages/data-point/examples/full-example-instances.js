@@ -3,15 +3,9 @@ const DataPoint = require('../')
 // create DataPoint instance
 const dataPoint = DataPoint.create()
 
-const {
-  Request,
-  Model,
-  Schema
-} = DataPoint.entities
+const { Request, Model, Schema } = DataPoint.entities
 
-const {
-  map
-} = DataPoint.helpers
+const { map } = DataPoint.helpers
 
 // schema to verify data input
 const PlanetSchema = Schema('PlanetSchema', {
@@ -79,10 +73,9 @@ const input = {
   planetId: 1
 }
 
-dataPoint.resolve(PlanetModel, input)
-  .then((output) => {
-    console.log(output)
-    /*
+dataPoint.resolve(PlanetModel, input).then(output => {
+  console.log(output)
+  /*
     output ->
     {
       name: 'Tatooine',
@@ -96,4 +89,4 @@ dataPoint.resolve(PlanetModel, input)
       ]
     }
     */
-  })
+})
