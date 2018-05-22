@@ -6,13 +6,6 @@ const BaseEntity = require('../base-entity')
 const { validateModifiers } = require('../validate-modifiers')
 
 /**
- * @class
- */
-function EntitySchema () {}
-
-module.exports.EntitySchema = EntitySchema
-
-/**
  * @param {Object} schema
  * @param {Object} options
  * @throws if schema is not a valid ajv schema
@@ -40,20 +33,18 @@ module.exports.validateSchema = validateSchema
  * @param {Object} spec - spec
  * @param {string} id - Entity id
  * @throws if spec.schema is not a valid ajv schema
- * @return {EntitySchema} Entity Object
+ * @return {Object} Entity Object
  */
 function create (id, spec) {
   validateModifiers(id, spec, ['schema', 'options'])
 
-  const entity = new EntitySchema()
+  const entity = {}
   entity.spec = spec
-  entity.resolve = resolve
   entity.schema = deepFreeze(_.defaultTo(spec.schema, {}))
   entity.options = deepFreeze(_.defaultTo(spec.options, {}))
 
   validateSchema(entity.schema, entity.options)
-
   return entity
 }
 
-module.exports.create = BaseEntity.create('schema', create)
+module.exports.create = BaseEntity.create('schema', create, resolve)

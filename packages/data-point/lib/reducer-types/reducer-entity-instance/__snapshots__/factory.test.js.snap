@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`create default create 1`] = `
-ReducerEntity {
+ReducerEntityInstance {
   "asCollection": false,
-  "entity": EntityReducer {
+  "entity": reducer:foo {
     "entityType": "reducer",
     "id": "reducer:foo",
     "isEntityInstance": true,
@@ -22,7 +22,7 @@ ReducerEntity {
   "hasEmptyConditional": false,
   "id": "reducer:foo",
   "name": "foo",
-  "spec": EntityReducer {
+  "spec": reducer:foo {
     "entityType": "reducer",
     "id": "reducer:foo",
     "isEntityInstance": true,

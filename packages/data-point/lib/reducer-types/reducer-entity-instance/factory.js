@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 const REDUCER_ENTITY_INSTANCE = 'ReducerEntityInstance'
 
 module.exports.type = REDUCER_ENTITY_INSTANCE
@@ -11,7 +9,7 @@ module.exports.type = REDUCER_ENTITY_INSTANCE
  * @property {string} name - name of the reducer
  * @property {string} entityType - type of entity
  */
-function ReducerEntity () {
+function ReducerEntityInstance () {
   this.type = REDUCER_ENTITY_INSTANCE
   this.name = ''
   this.entityType = null
@@ -19,17 +17,14 @@ function ReducerEntity () {
   this.hasEmptyConditional = false
 }
 
-module.exports.ReducerEntity = ReducerEntity
+module.exports.ReducerEntity = ReducerEntityInstance
 
 /**
  * @param {*} source
  * @returns {boolean}
  */
 function isType (source) {
-  return (
-    source &&
-    source.isEntityInstance === true
-  )
+  return source && source.isEntityInstance === true
 }
 
 module.exports.isType = isType
@@ -40,7 +35,7 @@ module.exports.isType = isType
  * @return {reducer}
  */
 function create (createReducer, entity) {
-  const reducer = new ReducerEntity()
+  const reducer = new ReducerEntityInstance()
 
   reducer.hasEmptyConditional = false
 

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EntityFactory should create new entity instance 1`] = `
-Object {
+exports[`create should create new entity instance 1`] = `
+bar:foo {
   "entityType": "bar",
   "id": "bar:foo",
   "isEntityInstance": true,
@@ -11,8 +11,19 @@ Object {
 }
 `;
 
-exports[`EntityFactory should create new entity instance with generic name 1`] = `
-Object {
+exports[`create should create new entity instance with assigned name 1`] = `
+bar:myBar {
+  "entityType": "bar",
+  "id": "bar:myBar",
+  "isEntityInstance": true,
+  "name": "myBar",
+  "params": Object {},
+  "resolve": [Function],
+}
+`;
+
+exports[`create should create new entity instance with generic name 1`] = `
+bar:generic {
   "entityType": "bar",
   "id": "bar:generic",
   "isEntityInstance": true,
@@ -22,6 +33,14 @@ Object {
 }
 `;
 
-exports[`validateResolve should throw error if function does not match arity 1`] = `"Entity \\"foo:bar\\" resolve(accumulator:Accumulator, resolveReducer:Function) function must have an arity of 2"`;
+exports[`create should throw error if arguments are wrong 1`] = `"Received wrong number of arguments. Try passing create(type:String, factory:Function, resolve:Function)"`;
 
-exports[`validateResolve should throw error if type is not function 1`] = `"Entity \\"foo:bar\\" must be provided with a resolve(accumulator:Accumulator, resolveReducer:Function) function"`;
+exports[`create should throw error if type argument is not string 1`] = `"\\"type\\" argument must be a string create(type:String, factory:Function, resolve:Function)"`;
+
+exports[`validateFactory should throw error if function does not match arity 1`] = `"\\"factory\\" argument must be a function with arity of 2 factory(name:String, spec:Object)"`;
+
+exports[`validateFactory should throw error if type is not function 1`] = `"\\"factory\\" argument must be a function, create(type:String, factory:Function, resolve:Function)"`;
+
+exports[`validateResolve should throw error if function does not match arity 1`] = `"\\"resolve\\" function must have an arity of 2, resolve(accumulator:Accumulator, resolveReducer:Function)"`;
+
+exports[`validateResolve should throw error if type is not function 1`] = `"\\"resolve\\" must be a function, create(type:String, factory:Function, resolve:Function)"`;

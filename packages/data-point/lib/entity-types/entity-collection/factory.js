@@ -7,12 +7,6 @@ const { validateModifiers } = require('../validate-modifiers')
 const {
   getTypeCheckSourceWithDefault
 } = require('../../helpers/type-check-helpers')
-/**
- * @class
- */
-function EntityCollection () {}
-
-module.exports.EntityCollection = EntityCollection
 
 const modifierKeys = ['filter', 'map', 'find']
 
@@ -39,7 +33,7 @@ function createCompose (composeSpec) {
  * Creates new Entity Object
  * @param {Object} spec - spec
  * @param {string} id - Entity id
- * @return {EntityCollection} Entity Object
+ * @return {Object} Entity Object
  */
 function create (id, spec) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
@@ -50,9 +44,8 @@ function create (id, spec) {
     spec.outputType
   )
 
-  const entity = new EntityCollection()
+  const entity = {}
   entity.spec = spec
-  entity.resolve = resolve
   entity.outputType = outputType
 
   const compose = parseCompose.parse(id, modifierKeys, spec)
@@ -63,4 +56,4 @@ function create (id, spec) {
   return entity
 }
 
-module.exports.create = BaseEntity.create('collection', create)
+module.exports.create = BaseEntity.create('collection', create, resolve)

@@ -11,13 +11,6 @@ const {
   getTypeCheckSourceWithDefault
 } = require('../../helpers/type-check-helpers')
 
-/**
- * @class
- */
-function EntityHash () {}
-
-module.exports.EntityHash = EntityHash
-
 const modifierKeys = ['omitKeys', 'pickKeys', 'mapKeys', 'addValues', 'addKeys']
 
 const modifiers = {
@@ -63,7 +56,7 @@ function createCompose (composeSpec) {
  * Creates new Entity Object
  * @param  {Object} spec - spec
  * @param {string} id - Entity id
- * @return {EntityHash} Entity Object
+ * @return {Object} Entity Object
  */
 function create (id, spec) {
   validateModifiers(id, spec, modifierKeys.concat('compose'))
@@ -74,11 +67,9 @@ function create (id, spec) {
     spec.outputType
   )
 
-  const entity = new EntityHash()
+  const entity = {}
   entity.spec = spec
   entity.outputType = outputType
-  entity.resolve = resolve
-
   const compose = parseCompose.parse(id, modifierKeys, spec)
   if (compose.length) {
     entity.compose = createCompose(compose)
@@ -87,4 +78,4 @@ function create (id, spec) {
   return entity
 }
 
-module.exports.create = BaseEntity.create('hash', create)
+module.exports.create = BaseEntity.create('hash', create, resolve)

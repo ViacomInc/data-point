@@ -5,13 +5,6 @@ const BaseEntity = require('../base-entity')
 const { validateModifiers } = require('../validate-modifiers')
 
 /**
- * @class
- */
-function EntityControl () {}
-
-module.exports.EntityControl = EntityControl
-
-/**
  * map each key from spec into a reducer
  *
  * @param {hash} spec - key/value where each value will be mapped into a reducer
@@ -67,15 +60,14 @@ module.exports.parseSwitch = parseSwitch
  * Creates new Entity Object
  * @param  {Object} spec - spec
  * @param {string} id - Entity id
- * @return {EntityControl} Entity Object
+ * @return {Object} Entity Object
  */
 function create (id, spec) {
   validateModifiers(id, spec, ['select'])
-  const entity = new EntityControl()
+  const entity = {}
   entity.spec = spec
-  entity.resolve = resolve
   entity.select = parseSwitch(spec)
   return entity
 }
 
-module.exports.create = BaseEntity.create('control', create)
+module.exports.create = BaseEntity.create('control', create, resolve)

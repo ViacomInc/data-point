@@ -5,15 +5,6 @@ const createReducer = require('../../reducer-types').create
 const { validateModifiers } = require('../validate-modifiers')
 
 /**
- * @class
- * @property {string} url
- * @property {reducer} options
- */
-function EntityRequest () {}
-
-module.exports.EntityRequest = EntityRequest
-
-/**
  * @return {Object}
  */
 function defaultOptions () {
@@ -30,16 +21,15 @@ module.exports.defaultOptions = defaultOptions
  * creates new Request based on spec
  * @param {{url:String, options:Object, before:Reducer}} spec - request spec
  * @param {string} id - Entity id
- * @return {EntityRequest} Entity Object
+ * @return {Object} Entity Object
  */
 function create (id, spec) {
   validateModifiers(id, spec, ['options', 'url'])
-  const entity = new EntityRequest()
+  const entity = {}
   entity.spec = spec
-  entity.resolve = resolve
   entity.url = _.defaultTo(spec.url, '')
   entity.options = createReducer(spec.options || defaultOptions)
   return entity
 }
 
-module.exports.create = BaseEntity.create('request', create)
+module.exports.create = BaseEntity.create('request', create, resolve)
