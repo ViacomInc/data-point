@@ -67,10 +67,6 @@ function create (spec) {
     manager.addEntityType(key.toLowerCase(), entityType)
   })
 
-  // for backwards compatibility
-  // manager.addEntityType('transform', entities.Reducer)
-  // manager.addEntityType('source', entities.Request)
-
   addToStore(manager.values, options.values, true)
 
   manager.addEntityTypes(options.entityTypes, true)
