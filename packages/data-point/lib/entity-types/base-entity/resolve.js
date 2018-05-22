@@ -72,8 +72,11 @@ function handleByPassError (error) {
   throw error
 }
 
+/**
+ * @param {Reducer} reducer
+ * @param {Object} entity
+ */
 function getCurrentReducer (reducer, entity) {
-  // let entity
   if (reducer.type === 'ReducerEntityInstance') {
     return reducer
   }
@@ -88,13 +91,12 @@ module.exports.getCurrentReducer = getCurrentReducer
 
 /**
  * @param {Accumulator} accumulator
- * @param {Function} reducer
+ * @param {Reducer} reducer
  * @param {Object} entity
  * @returns {Accumulator}
  */
 function createCurrentAccumulator (accumulator, reducer, entity) {
   const currentReducer = getCurrentReducer(reducer, entity)
-  // const entityId = accumulator.reducer.spec.id
   const entityId = reducer.id
   const uid = `${entityId}:${utils.getUID()}`
 
