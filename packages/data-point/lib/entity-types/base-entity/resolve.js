@@ -272,7 +272,7 @@ module.exports.resolveEntity = resolveEntity
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {Function} reducer
- * @param {Function} entity
+ * @param {Object} entity
  * @returns {Promise<Accumulator>}
  */
 function resolve (manager, resolveReducer, accumulator, reducer, entity) {

@@ -59,11 +59,10 @@ function setReducerIfTruthy (name, target, spec) {
 /**
  * @param {String} type Entity's type
  * @param {String} name Entity's name
- * @param {Object} spec spec for the Entity
+ * @param {Object} entity Entity Object
  * @returns {Object} Entity instance
  */
 function createEntityType (type, name, entity) {
-  // delete entity.spec
   const spec = Object.assign({}, entity.spec, entity)
 
   entity.entityType = type
