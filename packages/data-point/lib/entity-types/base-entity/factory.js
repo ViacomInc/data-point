@@ -38,7 +38,7 @@ function validateFactory (factory) {
   }
   if (factory.length !== 2) {
     throw new Error(
-      '"factory" argument must be a function with arity of 2 factory(name:String, spec:Object)'
+      '"factory" function must have an arity of 2, factory(name:String, spec:Object)'
     )
   }
   return true

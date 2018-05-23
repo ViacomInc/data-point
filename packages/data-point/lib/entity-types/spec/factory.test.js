@@ -18,6 +18,6 @@ describe('reducer/reducer-entity-id#create', () => {
   })
   test('entry', () => {
     const reducer = factory.create(EntityEntry, 'entry:abc')
-    expect(reducer).toBe(reducer)
+    expect(EntityEntry).toBe(reducer)
   })
 })
