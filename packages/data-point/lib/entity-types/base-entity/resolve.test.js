@@ -83,7 +83,7 @@ describe('ResolveEntity.resolveErrorReducers', () => {
 describe('getCurrentReducer', () => {
   it('should return reducer as is if type=ReducerEntity', () => {
     const reducer = {
-      type: 'ReducerEntity'
+      spec: 'spec'
     }
     expect(ResolveEntity.getCurrentReducer(reducer)).toEqual(reducer)
   })

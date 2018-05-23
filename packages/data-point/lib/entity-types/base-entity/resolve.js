@@ -77,15 +77,13 @@ function handleByPassError (error) {
  * @param {Object} entity
  */
 function getCurrentReducer (reducer, entity) {
-  if (reducer.type === 'ReducerEntity') {
-    return reducer
+  if (!reducer.spec) {
+    return utils.assign(reducer, {
+      spec: entity
+    })
   }
 
-  // if not ReducerEntity it is assumed to be ReducerEntityId
-  // set reducer's spec to normalize the reducer
-  return utils.assign(reducer, {
-    spec: entity
-  })
+  return reducer
 }
 
 module.exports.getCurrentReducer = getCurrentReducer
