@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 
 const ReducerEntity = require('./reducer-entity')
-const ReducerEntityInstance = require('./reducer-entity-instance')
+const ReducerEntityId = require('./reducer-entity-id')
 const ReducerFunction = require('./reducer-function')
 const ReducerList = require('./reducer-list')
 const ReducerObject = require('./reducer-object')
@@ -11,7 +11,7 @@ const { DEFAULT_VALUE } = require('./reducer-symbols')
 
 const reducers = Object.assign({}, ReducerHelpers, {
   [ReducerEntity.type]: ReducerEntity,
-  [ReducerEntityInstance.type]: ReducerEntityInstance,
+  [ReducerEntityId.type]: ReducerEntityId,
   [ReducerFunction.type]: ReducerFunction,
   [ReducerList.type]: ReducerList,
   [ReducerObject.type]: ReducerObject,

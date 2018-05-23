@@ -5,7 +5,7 @@ const Factory = require('./factory')
 const ReducerPath = require('./reducer-path')
 const ReducerFunction = require('./reducer-function')
 const ReducerObject = require('./reducer-object')
-const ReducerEntity = require('./reducer-entity')
+const ReducerEntityId = require('./reducer-entity-id')
 const stubFactories = require('./reducer-helpers').stubFactories
 
 describe('reducer#create', () => {
@@ -30,7 +30,7 @@ describe('reducer#create', () => {
 
   test('create entity', () => {
     const reducer = Factory.create('fooEntity:foo.bar')
-    expect(reducer.type).toBe(ReducerEntity.type)
+    expect(reducer.type).toBe(ReducerEntityId.type)
     expect(reducer.name).toBe('foo.bar')
     expect(reducer.entityType).toBe('fooEntity')
   })

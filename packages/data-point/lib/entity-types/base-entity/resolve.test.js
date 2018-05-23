@@ -5,7 +5,8 @@ const Promise = require('bluebird')
 const ResolveEntity = require('./resolve')
 const createReducer = require('../../reducer-types').create
 const resolveReducer = require('../../reducer-types').resolve
-const createReducerEntity = require('../../reducer-types/reducer-entity').create
+const createReducerEntityId = require('../../reducer-types/reducer-entity-id')
+  .create
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
@@ -15,7 +16,7 @@ let dataPoint
 
 const resolveEntity = (entityId, input, options, resolver) => {
   const racc = helpers.createAccumulator(input, options)
-  const reducer = createReducerEntity(createReducer, entityId)
+  const reducer = createReducerEntityId(createReducer, entityId)
   const entity = dataPoint.entities.get(entityId)
   return ResolveEntity.resolveEntity(
     dataPoint,
@@ -80,13 +81,13 @@ describe('ResolveEntity.resolveErrorReducers', () => {
 })
 
 describe('getCurrentReducer', () => {
-  it('should return reducer as is if type=ReducerEntityInstance', () => {
+  it('should return reducer as is if type=ReducerEntity', () => {
     const reducer = {
-      type: 'ReducerEntityInstance'
+      type: 'ReducerEntity'
     }
     expect(ResolveEntity.getCurrentReducer(reducer)).toEqual(reducer)
   })
-  it('should return decorated reducer if type!=ReducerEntityInstance', () => {
+  it('should return decorated reducer if type!=ReducerEntity', () => {
     const reducer = {}
     expect(ResolveEntity.getCurrentReducer(reducer, 'spec')).toEqual({
       spec: 'spec'
@@ -102,7 +103,7 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
   beforeEach(() => {
     spyGetUID = jest.spyOn(utils, 'getUID')
     spyGetUID.mockImplementationOnce(() => 10)
-    reducer = createReducerEntity(createReducer, 'hash:base')
+    reducer = createReducerEntityId(createReducer, 'hash:base')
     entity = dataPoint.entities.get('hash:base')
     const accumulator = helpers.createAccumulator({
       foo: 'bar'
@@ -381,7 +382,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 describe('ResolveEntity.resolve', () => {
   const resolve = (entityId, input, options) => {
     const racc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
+    const reducer = createReducerEntityId(createReducer, entityId)
     const entity = dataPoint.entities.get(reducer.id)
     return ResolveEntity.resolve(
       dataPoint,

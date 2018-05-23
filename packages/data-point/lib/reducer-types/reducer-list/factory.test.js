@@ -33,7 +33,7 @@ describe('factory#create', () => {
 
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
-    expect(result.reducers[1].type).toBe('ReducerEntity')
+    expect(result.reducers[1].type).toBe('ReducerEntityId')
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 
@@ -45,7 +45,7 @@ describe('factory#create', () => {
 
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
-    expect(result.reducers[1].type).toBe('ReducerEntity')
+    expect(result.reducers[1].type).toBe('ReducerEntityId')
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 
@@ -58,7 +58,7 @@ describe('factory#create', () => {
 
     expect(result.reducers).toHaveLength(3)
     expect(result.reducers[0].type).toBe('ReducerPath')
-    expect(result.reducers[1].type).toBe('ReducerEntity')
+    expect(result.reducers[1].type).toBe('ReducerEntityId')
     expect(result.reducers[2].type).toBe('ReducerFunction')
   })
 })
@@ -115,7 +115,7 @@ describe('factory#create', () => {
 
     expect(result.reducers).toHaveLength(4)
     expect(result.reducers[0].type).toBe('ReducerPath')
-    expect(result.reducers[1].type).toBe('ReducerEntity')
+    expect(result.reducers[1].type).toBe('ReducerEntityId')
     expect(result.reducers[2].type).toBe('ReducerPath')
     expect(result.reducers[3].type).toBe('ReducerFunction')
   })

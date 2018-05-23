@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 const REDUCER_ENTITY = 'ReducerEntity'
 
 module.exports.type = REDUCER_ENTITY
@@ -26,32 +24,29 @@ module.exports.ReducerEntity = ReducerEntity
  * @returns {boolean}
  */
 function isType (source) {
-  return (
-    _.isString(source) &&
-    source.match(/^([^$][\w.]*):([\w.-]+)(\[])?$/) !== null
-  )
+  return source && source.isEntityInstance === true
 }
 
 module.exports.isType = isType
 
 /**
  * @param {Function} createReducer
- * @param {string} source
+ * @param {string} entity
  * @return {reducer}
  */
-function create (createReducer, source) {
+function create (createReducer, entity) {
   const reducer = new ReducerEntity()
-  const tokens = source.split(':')
 
-  let entityType = tokens[0]
-  reducer.hasEmptyConditional = entityType.indexOf('?') === 0
-  reducer.entityType = entityType.replace(/^\?/, '')
+  reducer.hasEmptyConditional = false
 
-  let name = tokens[1]
-  reducer.asCollection = name.slice(-2) === '[]'
-  reducer.name = name.replace(/\[]$/, '')
+  reducer.asCollection = false
 
-  reducer.id = `${reducer.entityType}:${reducer.name}`
+  reducer.id = entity.id
+  reducer.name = entity.name
+  reducer.entityType = entity.entityType
+  reducer.entity = entity
+  // for backwards compatibity with accumulator API
+  reducer.spec = entity
 
   return reducer
 }

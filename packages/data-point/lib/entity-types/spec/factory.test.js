@@ -4,7 +4,7 @@ const factory = require('./factory')
 
 const EntityEntry = require('../entity-entry')
 
-describe('reducer/reducer-entity#create', () => {
+describe('reducer/reducer-entity-id#create', () => {
   const stub = () => {}
   test('throw if factory is not a function', () => {
     expect(() => {

@@ -4,7 +4,7 @@ const util = require('util')
 const { IS_REDUCER, DEFAULT_VALUE } = require('./reducer-symbols')
 
 const ReducerEntity = require('./reducer-entity')
-const ReducerEntityInstance = require('./reducer-entity-instance')
+const ReducerEntityId = require('./reducer-entity-id')
 const ReducerFunction = require('./reducer-function')
 const ReducerHelpers = require('./reducer-helpers')
 const ReducerList = require('./reducer-list')
@@ -13,7 +13,7 @@ const ReducerPath = require('./reducer-path')
 
 const reducerTypes = [
   ReducerEntity,
-  ReducerEntityInstance,
+  ReducerEntityId,
   ReducerFunction,
   ReducerHelpers,
   ReducerList,

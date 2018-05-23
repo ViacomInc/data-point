@@ -33,7 +33,7 @@ npm install --save data-point
   - [function](#function-reducer)
   - [object](#object-reducer)
   - [entity](#entity-reducer)
-  - [registered-entity](#registered-entity-reducer)
+  - [entity-id](#entity-id-reducer)
   - [list](#list-reducer)
 - [Reducer Helpers](#reducer-helpers)
   - [assign](#reducer-assign)
@@ -452,7 +452,7 @@ Reducers are used to transform values **asynchronously**. DataPoint supports the
 2. [function](#function-reducer)
 3. [object](#object-reducer)
 4. [entity](#entity-reducer)
-4. [registered-entity](#registered-entity-reducer)
+4. [entity-id](#entity-id-reducer)
 6. [list](#list-reducer)
 
 ### <a name="path-reducer">Path Reducer</a>
@@ -960,7 +960,7 @@ See the [Entities](#entities) section for information about the supported entity
 
 Example at: [examples/reducer-entity-instance.js](examples/reducer-entity-instance.js)
 
-### <a name="registered-entity">Reference to registered Entity</a>
+### <a name="entity-id">Reference to registered Entity</a>
 
 An entity reducer is used to execute an entity with the current [Accumulator](#accumulator) as the input.
 
@@ -1487,7 +1487,7 @@ dataPoint.resolve(r2, input) // => { b: 1 }
 Entities are used to transform data by composing multiple reducers, they can be created as non-registered or registered entities.
 
 - **<a name="instance-entity-type">Instance entities</a>** - are entity objects created directly with an Entity Factory, they are meant to be used as a [entity reducer](#entity-reducer).
-- **<a name="registered-entity-type">Registered entities</a>** - are entity objects which are registered and cached in a DataPoint instance, they are meant to be used as a [registered entity reducer](#registered-entity-reducer).
+- **<a name="entity-id-type">Registered entities</a>** - are entity objects which are registered and cached in a DataPoint instance, they are meant to be used as a [registered entity reducer](#entity-id-reducer).
 
 **Registered entities** may be added to DataPoint in two different ways:
 
@@ -1552,7 +1552,7 @@ dataPoint.resolve(HelloWorld, {})
   })
 ```
 
-### <a name="registered-entity">Registered Entity</a>
+### <a name="entity-id">Registered Entity</a>
 
 You may register an entity through [DataPoint.create](#api-data-point-create) or [dataPoint.addEntities](#api-data-point-add-entities).
 
