@@ -13,6 +13,7 @@
     "lint": "standard --verbose | snazzy",
     "contributors:add": "all-contributors add",
     "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
+    "next": "yarn run lint && jest --coverage && lerna publish --cd-version=prerelease --npm-tag=next --yes",
     "watch": "jest --watchAll --coverage",
     "run-examples": "scripts/run-examples.js"
   },
