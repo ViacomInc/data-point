@@ -23,11 +23,7 @@ function validateContext (acc) {
 module.exports.validateContext = validateContext
 
 function resolve (acc, resolveReducer) {
-  const value = acc.reducer.spec.value
-
-  return resolveReducer(acc, value).then(racc => {
-    return validateContext(racc)
-  })
+  return validateContext(acc)
 }
 
 module.exports.resolve = resolve

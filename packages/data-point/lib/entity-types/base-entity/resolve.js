@@ -185,6 +185,7 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
 
   const {
     inputType,
+    value,
     before,
     after,
     outputType
@@ -214,6 +215,10 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
 
   result = addToPromiseChain(result, before, acc =>
     resolveReducer(manager, acc, before)
+  )
+
+  result = addToPromiseChain(result, value, acc =>
+    resolveReducer(manager, acc, value)
   )
 
   result = result.then(acc => {

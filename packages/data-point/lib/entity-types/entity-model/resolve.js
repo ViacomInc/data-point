@@ -3,7 +3,7 @@
  * @param {Function} resolveReducer
  */
 function resolve (accumulator, resolveReducer) {
-  return resolveReducer(accumulator, accumulator.reducer.spec.value)
+  return accumulator
 }
 
 module.exports.resolve = resolve

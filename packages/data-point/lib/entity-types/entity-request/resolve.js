@@ -151,9 +151,7 @@ module.exports.resolveRequest = resolveRequest
  * @return {Promise<Accumulator>}
  */
 function resolve (acc, resolveReducer) {
-  const entity = acc.reducer.spec
   return Promise.resolve(acc)
-    .then(itemContext => resolveReducer(itemContext, entity.value))
     .then(itemContext => resolveOptions(itemContext, resolveReducer))
     .then(itemContext => resolveRequest(itemContext, resolveReducer))
 }

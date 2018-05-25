@@ -21,7 +21,9 @@ function transform (entityId, value, options) {
       options
     )
   )
-  return resolveEntryEntity(accumulator, resolveReducerBound)
+  return Promise.resolve(true).then(() =>
+    resolveEntryEntity(accumulator, resolveReducerBound)
+  )
 }
 
 beforeAll(() => {
@@ -36,7 +38,7 @@ describe('Entry.resolve', () => {
     })
   })
   test('Entry#resolve - resolve context', () => {
-    return transform('entry:a1', testData).then(result => {
+    return transform('entry:a1', testData.foo).then(result => {
       expect(result.value).toEqual(1)
     })
   })
