@@ -54,30 +54,15 @@ describe('Collection entity type checking', () => {
   })
 })
 
-describe('entity.collection.value', () => {
-  test('should resolve value Transform', () => {
-    return transform('collection:a.1', testData).then(acc => {
-      expect(acc.value).toEqual([
-        {
-          d1: 2
-        },
-        {
-          d1: 4
-        }
-      ])
-    })
-  })
-})
-
 describe('entity.collection.map', () => {
   test('should resolve map Transform', () => {
-    return transform('collection:b.1', testData).then(acc => {
+    return transform('collection:b.1', testData.a.d).then(acc => {
       expect(acc.value).toEqual([2, 4])
     })
   })
 
   test('should return array with undefined elements if map reducer is empty list', () => {
-    return transform('collection:b.2', testData).then(acc => {
+    return transform('collection:b.2', testData.a.b.c).then(acc => {
       expect(acc.value).toEqual([undefined, undefined, undefined])
     })
   })
@@ -85,7 +70,7 @@ describe('entity.collection.map', () => {
 
 describe('entity.collection.filter', () => {
   test('should resolve filter Transform', () => {
-    return transform('collection:c.1', testData).then(acc => {
+    return transform('collection:c.1', testData.a.d).then(acc => {
       expect(acc.value).toEqual([
         {
           d1: 2
@@ -95,13 +80,13 @@ describe('entity.collection.filter', () => {
   })
 
   test('it should resolve filter transform for collection containing filter property', () => {
-    return transform('collection:c.2', testData).then(acc => {
+    return transform('collection:c.2', testData.a.b.c).then(acc => {
       expect(acc.value).toEqual([1, 3])
     })
   })
 
   test('should return empty array if filter reducer is empty list', () => {
-    return transform('collection:c.3', testData).then(acc => {
+    return transform('collection:c.3', testData.a.b.c).then(acc => {
       expect(acc.value).toEqual([])
     })
   })
@@ -109,19 +94,19 @@ describe('entity.collection.filter', () => {
 
 describe('entity.collection.find', () => {
   test('should resolve find Transform', () => {
-    return transform('collection:d.1', testData).then(acc => {
+    return transform('collection:d.1', testData.a.b.c).then(acc => {
       expect(acc.value).toEqual(1)
     })
   })
 
   test('should resolve to undefined if none found', () => {
-    return transform('collection:d.2', testData).then(acc => {
+    return transform('collection:d.2', testData.a.b.c).then(acc => {
       expect(acc.value).toBeUndefined()
     })
   })
 
   test('should return undefined if find reducer is empty list', () => {
-    return transform('collection:d.3', testData).then(acc => {
+    return transform('collection:d.3', testData.a.b.c).then(acc => {
       expect(acc.value).toEqual(undefined)
     })
   })
@@ -129,13 +114,13 @@ describe('entity.collection.find', () => {
 
 describe('entity.collection.compose', () => {
   test('should resolve one modifier', () => {
-    return transform('collection:j.1', testData).then(acc => {
+    return transform('collection:j.1', testData.a.d).then(acc => {
       expect(acc.value).toEqual([2, 4])
     })
   })
 
   test('should resolve multiple modifiers', () => {
-    return transform('collection:j.2', testData).then(acc => {
+    return transform('collection:j.2', testData.a.d).then(acc => {
       expect(acc.value).toBe(10)
     })
   })
