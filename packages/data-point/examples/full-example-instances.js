@@ -1,3 +1,4 @@
+const mocks = require('./async-example.mocks')
 const DataPoint = require('../')
 
 // create DataPoint instance
@@ -72,6 +73,9 @@ const PlanetModel = Model('Planet', {
 const input = {
   planetId: 1
 }
+
+// mock request calls
+mocks()
 
 dataPoint.resolve(PlanetModel, input).then(output => {
   console.log(output)

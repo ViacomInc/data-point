@@ -148,7 +148,7 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
     // {value.planetId} injects the
     // value from the accumulator
     // creates: https://swapi.co/api/planets/1/
-    urTypo: 'https://swapi.co/api/planets/{value.planetId}'
+    url: 'https://swapi.co/api/planets/{value.planetId}'
   })
 
   const ResidentRequest = Request('Resident', {
@@ -217,7 +217,7 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
   ```
 </details>
 
-Example at: [examples/async-example.js](examples/async-example.js)
+Example at: [examples/full-example-instances.js](examples/full-example-instances.js)
 
 ## <a name="api">API</a>
 
