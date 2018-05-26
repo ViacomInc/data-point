@@ -1,6 +1,5 @@
 function resolve (accumulator, resolveReducer) {
-  const entity = accumulator.reducer.spec
-  return resolveReducer(accumulator, entity.value)
+  return accumulator
 }
 
 module.exports.resolve = resolve
