@@ -30,7 +30,7 @@ beforeAll(() => {
 
 describe('entity.transform.value', () => {
   test('should resolve value Transform', () => {
-    return transform('transform:a0', {
+    return transform('reducer:a0', {
       message: 'hello world'
     }).then(acc => {
       expect(acc.value).toEqual('hello world')
@@ -38,7 +38,7 @@ describe('entity.transform.value', () => {
   })
 
   test('should resolve context Transform', () => {
-    return transform('transform:a1', {
+    return transform('reducer:a1', {
       message: 'hello world'
     }).then(acc => {
       expect(acc.value).toEqual('HELLO WORLD')

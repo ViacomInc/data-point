@@ -1,4 +1,4 @@
 module.exports = {
-  'transform:a0': '$message',
-  'transform:a1': ['transform:a0', value => value.toUpperCase()]
+  'reducer:a0': '$message',
+  'reducer:a1': ['reducer:a0', value => value.toUpperCase()]
 }

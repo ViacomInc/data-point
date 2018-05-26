@@ -15,7 +15,7 @@ describe('create - all middleware', () => {
     console.warn = () => {}
     const options = {
       entities: {
-        'transform:hello': (value, acc) => ({
+        'reducer:hello': (value, acc) => ({
           message: `Hello ${acc.locals.params.name}`
         })
       }
@@ -44,7 +44,7 @@ describe('create - all middleware', () => {
 
   test('create middleware', done => {
     const app = new Express()
-    app.get('/hello/:name', service.mapTo('transform:hello'))
+    app.get('/hello/:name', service.mapTo('reducer:hello'))
     request(app)
       .get('/hello/darek')
       .expect('Content-Type', /json/)
@@ -64,7 +64,7 @@ describe('create - all middleware', () => {
       service.router({
         helloWorld: {
           path: '/hello/:name',
-          middleware: 'transform:hello'
+          middleware: 'reducer:hello'
         }
       })
     )

@@ -18,7 +18,7 @@ Service.create({
     app.use('/api/inspect', service.inspector())
 
     // create api routes
-    app.get('/api/hello-world', service.mapTo('transform:HelloWorld'))
+    app.get('/api/hello-world', service.mapTo('reducer:HelloWorld'))
     app.get('/api/person/:personId', service.mapTo('entry:getPerson'))
 
     app.listen(3000, err => {

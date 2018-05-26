@@ -6,10 +6,9 @@ const storeManager = require('./store-manager')
  * @return {reducer}
  */
 function createEntity (entityTypes, source, id) {
-  const tokens = id.split(':')
-  const entityType = tokens[0]
-  const EntityType = entityTypes.get(entityType)
-  const entity = EntityType.create(source, id)
+  const [entityType, entityName] = id.split(':')
+  const entityFactory = entityTypes.get(entityType)
+  const entity = entityFactory(entityName, source)
   return entity
 }
 

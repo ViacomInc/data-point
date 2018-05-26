@@ -14,7 +14,7 @@ let manager
 beforeAll(() => {
   manager = DataPoint.create({
     entities: {
-      'transform:a': () => ({
+      'reducer:a': () => ({
         b: 22,
         c: 33
       })
@@ -44,7 +44,7 @@ describe('ReducerAssign#resolve', () => {
       }
     })
 
-    const reducer = Factory.create(Reducer.create, 'transform:a')
+    const reducer = Factory.create(Reducer.create, 'reducer:a')
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
         expect(result.value).toEqual({

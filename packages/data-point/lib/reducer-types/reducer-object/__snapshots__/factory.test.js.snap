@@ -101,13 +101,13 @@ Object {
             "path": Array [
               "a3",
             ],
-            "reducer": ReducerEntity {
+            "reducer": ReducerEntityId {
               "asCollection": false,
-              "entityType": "transform",
+              "entityType": "reducer",
               "hasEmptyConditional": false,
-              "id": "transform:entity-name",
+              "id": "reducer:entity-name",
               "name": "entity-name",
-              "type": "ReducerEntity",
+              "type": "ReducerEntityId",
               Symbol(reducer): true,
             },
           },

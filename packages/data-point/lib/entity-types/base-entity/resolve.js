@@ -73,28 +73,40 @@ function handleByPassError (error) {
 }
 
 /**
- * @param {Object} manager
+ * @param {Reducer} reducer
+ * @param {Object} entity
+ */
+function getCurrentReducer (reducer, entity) {
+  if (!reducer.spec) {
+    return utils.assign(reducer, {
+      spec: entity
+    })
+  }
+
+  return reducer
+}
+
+module.exports.getCurrentReducer = getCurrentReducer
+
+/**
  * @param {Accumulator} accumulator
- * @param {Function} reducer
+ * @param {Reducer} reducer
+ * @param {Object} entity
  * @returns {Accumulator}
  */
-function createCurrentAccumulator (manager, accumulator, reducer) {
-  // get defined source
-  const entity = manager.entities.get(reducer.id)
-
-  // set reducer's spec
-  const currentReducer = utils.assign(reducer, {
-    spec: entity,
-    options: entity.options
-  })
+function createCurrentAccumulator (accumulator, reducer, entity) {
+  const currentReducer = getCurrentReducer(reducer, entity)
+  const entityId = reducer.id
+  const uid = `${entityId}:${utils.getUID()}`
 
   // create accumulator to resolve
   const currentAccumulator = utils.assign(accumulator, {
+    uid: uid,
     context: entity,
     reducer: currentReducer,
     initialValue: accumulator.value,
-    // shortcut to reducer.spec.params
-    params: entity.params
+    params: entity.params,
+    debug: debugEntity(reducer.entityType)
   })
 
   return currentAccumulator
@@ -155,54 +167,42 @@ function typeCheck (manager, accumulator, reducer, resolveReducer) {
   return resolveReducer(manager, accumulator, reducer).return(accumulator)
 }
 
+module.exports.typeCheck = typeCheck
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {Function} reducer
- * @param {Function} mainResolver
+ * @param {Object} entity
  * @returns {Promise<Accumulator>}
  */
-function resolveEntity (
-  manager,
-  resolveReducer,
-  accumulator,
-  reducer,
-  mainResolver
-) {
+function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
   const currentAccumulator = createCurrentAccumulator(
-    manager,
     accumulator,
-    reducer
+    reducer,
+    entity
   )
 
   const {
-    id,
     inputType,
     before,
     after,
     outputType
   } = currentAccumulator.reducer.spec
 
-  const entityId = id
-  const uid = `${entityId}:${utils.getUID()}`
-  const accUid = utils.set(currentAccumulator, 'uid', uid)
-
-  accUid.debug = debugEntity(reducer.entityType)
-
   const trace =
     currentAccumulator.trace === true ||
-    currentAccumulator.reducer.spec.params.trace === true
+    currentAccumulator.context.params.trace === true
 
   let timeId
   if (trace === true) {
-    timeId = `⧖ ${uid}`
+    timeId = `⧖ ${currentAccumulator.uid}`
     console.time(timeId)
   }
 
-  accUid.debug(uid, '- resolve:start')
+  currentAccumulator.debug(currentAccumulator.uid, '- resolve:start')
 
-  let result = Promise.resolve(accUid)
+  let result = Promise.resolve(currentAccumulator)
 
   result = addToPromiseChain(result, inputType, acc =>
     typeCheck(manager, acc, inputType, resolveReducer)
@@ -218,7 +218,7 @@ function resolveEntity (
 
   result = result.then(acc => {
     acc.debug(acc.uid, '- resolve')
-    return mainResolver(acc, resolveReducer.bind(null, manager))
+    return entity.resolve(acc, resolveReducer.bind(null, manager))
   })
 
   result = addToPromiseChain(result, after, acc =>
@@ -273,10 +273,10 @@ module.exports.resolveEntity = resolveEntity
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {Function} reducer
- * @param {Function} mainResolver
+ * @param {Object} entity
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
+function resolve (manager, resolveReducer, accumulator, reducer, entity) {
   const hasEmptyConditional = reducer.hasEmptyConditional
 
   if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
@@ -284,13 +284,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
   }
 
   if (!reducer.asCollection) {
-    return resolveEntity(
-      manager,
-      resolveReducer,
-      accumulator,
-      reducer,
-      mainResolver
-    )
+    return resolveEntity(manager, resolveReducer, accumulator, reducer, entity)
   }
 
   if (!Array.isArray(accumulator.value)) {
@@ -304,13 +298,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, mainResolver) {
       return Promise.resolve(itemCtx)
     }
 
-    return resolveEntity(
-      manager,
-      resolveReducer,
-      itemCtx,
-      reducer,
-      mainResolver
-    )
+    return resolveEntity(manager, resolveReducer, itemCtx, reducer, entity)
   }).then(mappedResults => {
     const value = mappedResults.map(acc => acc.value)
     return utils.set(accumulator, 'value', value)

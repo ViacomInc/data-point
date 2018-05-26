@@ -3,7 +3,7 @@
 const Factory = require('./factory')
 
 test('Factory#create', () => {
-  const obj = Factory.create({
+  const obj = Factory.create('name', {
     schema: {
       properties: {
         foo: { type: 'number' },
@@ -23,7 +23,7 @@ test('Factory#create', () => {
   expect(obj).toHaveProperty('params')
 
   expect(() =>
-    Factory.create({
+    Factory.create('name', {
       schema: { type: null }
     })
   ).toThrowErrorMatchingSnapshot()

@@ -33,6 +33,7 @@ npm install --save data-point
   - [function](#function-reducer)
   - [object](#object-reducer)
   - [entity](#entity-reducer)
+  - [entity-id](#entity-id-reducer)
   - [list](#list-reducer)
 - [Reducer Helpers](#reducer-helpers)
   - [assign](#reducer-assign)
@@ -115,81 +116,89 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
 
   ```js
   const DataPoint = require('data-point')
+
   // create DataPoint instance
   const dataPoint = DataPoint.create()
-  const { map } = DataPoint.helpers
 
-  // add entities to dataPoint instance
-  dataPoint.addEntities({
-    // remote service request
-    'request:Planet': {
-      // {value.planetId} injects the
-      // value from the accumulator
-      // creates: https://swapi.co/api/planets/1/
-      url: 'https://swapi.co/api/planets/{value.planetId}'
-    },
+  const {
+    Request,
+    Model,
+    Schema
+  } = DataPoint.entities
 
-    // model entity to resolve a Planet
-    'model:Planet': {
-      inputType: 'schema:DataInput',
-      value: [
-        // hit request:Planet data source
-        'request:Planet',
-        // map result to an object reducer
-        {
-          // map name key
-          name: '$name',
-          population: '$population',
-          // residents is an array of urls
-          // eg. https://swapi.co/api/people/1/
-          // where each url gets mapped
-          // to a model:Resident
-          residents: ['$residents', map('model:Resident')]
-        }
-      ]
-    },
+  const {
+    map
+  } = DataPoint.helpers
 
-    // model entity to resolve a Planet
-    'model:Resident': {
-      inputType: 'string',
-      value: [
-        // hit request:Resident
-        'request:Resident',
-        // extract data
-        {
-          name: '$name',
-          gender: '$gender',
-          birthYear: '$birth_year'
-        }
-      ]
-    },
-
-    'request:Resident': {
-      // check input is string
-      inputType: 'string',
-      url: '{value}'
-    },
-
-    // schema to verify data input
-    'schema:DataInput': {
-      schema: {
-        type: 'object',
-        properties: {
-          planetId: {
-            $id: '/properties/planet',
-            type: 'integer'
-          }
+  // schema to verify data input
+  const PlanetSchema = Schema('PlanetSchema', {
+    schema: {
+      type: 'object',
+      properties: {
+        planetId: {
+          $id: '/properties/planet',
+          type: 'integer'
         }
       }
     }
+  })
+
+  // remote service request
+  const PlanetRequest = Request('Planet', {
+    // {value.planetId} injects the
+    // value from the accumulator
+    // creates: https://swapi.co/api/planets/1/
+    url: 'https://swapi.co/api/planets/{value.planetId}'
+  })
+
+  const ResidentRequest = Request('Resident', {
+    // check input is string
+    inputType: 'string',
+    url: '{value}'
+  })
+
+  // model entity to resolve a Planet
+  const ResidentModel = Model('Resident', {
+    inputType: 'string',
+    value: [
+      // hit request:Resident
+      ResidentRequest,
+      // extract data
+      {
+        name: '$name',
+        gender: '$gender',
+        birthYear: '$birth_year'
+      }
+    ]
+  })
+
+  // model entity to resolve a Planet
+  const PlanetModel = Model('Planet', {
+    inputType: PlanetSchema,
+    value: [
+      // hit request:Planet data source
+      PlanetRequest,
+      // map result to an object reducer
+      {
+        // map name key
+        name: '$name',
+        population: '$population',
+        // residents is an array of urls
+        // eg. https://swapi.co/api/people/1/
+        // where each url gets mapped
+        // to a model:Resident
+        residents: ['$residents', map(ResidentModel)]
+      }
+    ]
   })
 
   const input = {
     planetId: 1
   }
 
-  dataPoint.resolve('model:Planet', input)
+  dataPoint.resolve(PlanetModel, input)
     .then((output) => {
+      console.log(output)
       /*
       output -> 
       { 
@@ -208,7 +217,7 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
   ```
 </details>
 
-Example at: [examples/async-example.js](examples/async-example.js)
+Example at: [examples/full-example-instances.js](examples/full-example-instances.js)
 
 ## <a name="api">API</a>
 
@@ -260,7 +269,7 @@ DataPoint instance.
         foo: 'bar'
       },
       entities: {
-        'transform:HelloWorld': (input) => {
+        'reducer:HelloWorld': (input) => {
           return `hello ${input}!!`
         }
       }
@@ -443,7 +452,8 @@ Reducers are used to transform values **asynchronously**. DataPoint supports the
 2. [function](#function-reducer)
 3. [object](#object-reducer)
 4. [entity](#entity-reducer)
-5. [list](#list-reducer)
+4. [entity-id](#entity-id-reducer)
+6. [list](#list-reducer)
 
 ### <a name="path-reducer">Path Reducer</a>
 
@@ -902,7 +912,55 @@ const input = { a: 1 }
 dataPoint.resolve(reducer, input) // => {}
 ```
 
-### <a name="entity-reducer">Entity Reducer</a>
+### <a name="entity-reducer">Entity instance reducer</a>
+
+An entity instance reducer is used to apply a given entity with to the current [Accumulator](#accumulator).
+
+See the [Entities](#entities) section for information about the supported entity types.
+
+**OPTIONS**
+
+| Option | Type | Description |
+|:---|:---|:---|
+| *?* | `String` | Only execute entity if `acc.value` is not equal to `false`, `null` or `undefined`. |
+| *EntityType* | `String` | Valid Entity type. |
+| *EntityID* | `String` | Valid Entity ID. Appending `[]` will map the reducer to each element of an input array. If the current accumulator value is not an array, the reducer will return `undefined`. |
+
+<details>
+  <summary>Entity Reducer Example</summary>
+
+  ```js
+  const { 
+    Model, 
+    Request 
+  } = require('data-point').entities
+
+  const PersonRequest = Request('PersonRequest', {
+    url: 'https://swapi.co/api/people/{value}'
+  })
+
+  const PersonModel = Model('PersonModel', {
+    value: {
+      name: '$name',
+      birthYear: '$birth_year'
+    }
+  })
+
+  dataPoint
+    .resolve([PersonRequest, PersonModel], 1)
+    .then((output) => {
+      assert.deepEqual(output, {
+        name: 'Luke Skywalker',
+        birthYear: '19BBY'
+      })
+    })
+  ```
+
+</details>
+
+Example at: [examples/reducer-entity-instance.js](examples/reducer-entity-instance.js)
+
+### <a name="entity-id">Reference to registered Entity</a>
 
 An entity reducer is used to execute an entity with the current [Accumulator](#accumulator) as the input.
 
@@ -939,14 +997,14 @@ See the [Entities](#entities) section for information about the supported entity
   }
 
   dataPoint.addEntities({
-    'transform:getGreeting': '$a.b',
-    'transform:toUpperCase': toUpperCase,
+    'reducer:getGreeting': '$a.b',
+    'reducer:toUpperCase': toUpperCase,
   })
 
-  // resolve `transform:getGreeting`,
-  // pipe value to `transform:toUpperCase`
+  // resolve `reducer:getGreeting`,
+  // pipe value to `reducer:toUpperCase`
   dataPoint
-    .resolve(['transform:getGreeting | transform:toUpperCase'], input)
+    .resolve(['reducer:getGreeting | reducer:toUpperCase'], input)
     .then((output) => {
       assert.equal(output, 'HELLO WORLD')
     })
@@ -971,11 +1029,11 @@ See the [Entities](#entities) section for information about the supported entity
   }
 
   dataPoint.addEntities({
-    'transform:toUpperCase': toUpperCase
+    'reducer:toUpperCase': toUpperCase
   })
 
   dataPoint
-    .resolve(['$a | transform:toUpperCase[]'], input)
+    .resolve(['$a | reducer:toUpperCase[]'], input)
     .then((output) => {
       assert.equal(output[0], 'HELLO WORLD')
       assert.equal(output[1], 'HELLO LAIA')
@@ -1027,7 +1085,7 @@ dataPoint.addEntities({
   'request:getPerson': {
     url: 'https://swapi.co/api/people/{value}'
   },
-  'transform:getPerson': {
+  'reducer:getPerson': {
     name: '$name',
     // request:getPerson will only
     // be executed if swapiId is
@@ -1037,7 +1095,7 @@ dataPoint.addEntities({
 })
 
 dataPoint
-  .resolve('transform:getPerson[]', people)
+  .resolve('reducer:getPerson[]', people)
   .then((output) => {
     assert.deepEqual(output, [
       {
@@ -1426,14 +1484,21 @@ dataPoint.resolve(r2, input) // => { b: 1 }
 
 ## <a name="entities">Entities</a>
 
-Entities are used to transform data by composing multiple reducers. They're cached by DataPoint instances, and they can be added in two different ways:
+Entities are used to transform data by composing multiple reducers, they can be created as non-registered or registered entities.
+
+- **<a name="instance-entity-type">Instance entities</a>** - are entity objects created directly with an Entity Factory, they are meant to be used as a [entity reducer](#entity-reducer).
+- **<a name="entity-id-type">Registered entities</a>** - are entity objects which are registered and cached in a DataPoint instance, they are meant to be used as a [registered entity reducer](#entity-id-reducer).
+
+**Registered entities** may be added to DataPoint in two different ways:
 
 1. With the `DataPoint.create` method (as explained in the [setup examples](#setup-examples))
 2. With the [dataPoint.addEntities](#api-data-point-add-entities) instance method
 
-### <a name="entity-factories">Entity factories</a>
+See **[built-in entities](#built-in-entities)** for information on what each entity does.
 
-Entities can be defined with object literals, or with these factory functions:
+### <a name="instance-entity">Instance Entity</a>
+
+Entities can be created with these factory functions:
 
 ```js
 const {
@@ -1445,13 +1510,15 @@ const {
   Request,
   Control,
   Schema
-} = require('data-point').entityFactories
+} = require('data-point').entities
 ```
+
+**SYNOPSIS**
 
 Each factory has the following signature:
 
 ```js
-Factory(name:String, spec:Object):Object
+Factory(name:String, spec:Object):EntityInstance
 ```
 
 **ARGUMENTS**
@@ -1461,54 +1528,56 @@ Factory(name:String, spec:Object):Object
 | *name* | `string` | The name of the entity; this will be used to generate an entity ID with the format `<entityType>:<name>` |
 | *spec* | `Object` | The source for generating the entity |
 
-Using these factories is optional, and the following examples are equivalent:
 
-**Example #1 (with object literal)**
+**Example**
 
 ```js
-dataPoint.addEntities({
-  'model:hello-world': {
-    value: input => ({
+const DataPoint = require('data-point')
+const { Model } = DataPoint.entities
+
+dataPoint = DataPoint.create()
+
+const HelloWorld = Model('HelloWorld', {
+  value: input => ({
+    hello: 'world'
+  })
+})
+
+// to reference it we use the actual entity instance
+dataPoint.resolve(HelloWorld, {})
+  .then(value => {
+    console.assert(value, {
       hello: 'world'
     })
+  })
+```
+
+### <a name="entity-id">Registered Entity</a>
+
+You may register an entity through [DataPoint.create](#api-data-point-create) or [dataPoint.addEntities](#api-data-point-add-entities).
+
+**Example**
+
+```js
+const DataPoint = require('data-point')
+
+dataPoint = DataPoint.create({
+  entities: {
+    'model:HelloWorld', {
+      value: input => ({
+        hello: 'world'
+      } 
+    }
   }
 })
-```
 
-**Example #2 (with factory and assignment)**
-
-```js
-const { Model } = DataPoint.entityFactories
-
-const model = Model('hello-world', {
-  value: input => ({
-    hello: 'world'
+// to reference it we use a string with its registered id
+dataPoint.resolve('model:HelloWorld', {})
+  .then(value => {
+    console.assert(value, {
+      hello: 'world'
+    })
   })
-})
-
-const entities = {}
-
-assert.equal(model.id, 'model:hello-world')
-
-entities[model.id] = model.spec
-
-dataPoint.addEntities(entities)
-```
-
-**Example #3 (with factory and spread syntax)**
-
-```js
-const { Model } = DataPoint.entityFactories
-
-const model = Model('hello-world', {
-  value: input => ({
-    hello: 'world'
-  })
-})
-
-const entities = { ...model }
-
-dataPoint.addEntities(entities)
 ```
 
 ### <a name="entity-base-api">Entity Base API</a>
@@ -1684,7 +1753,7 @@ For backwards compatibility, the keyword **transform** can be used in place of *
 
 ```js
 dataPoint.addEntities({
-  'transform:<entityId>': Reducer
+  'reducer:<entityId>': Reducer
 })
 ```
 
@@ -3303,7 +3372,7 @@ DataPoint exposes a set of methods to help you build your own Custom Entity type
 
 ### <a name="adding-entity-types">Adding new Entity types</a>
 
-You can add custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also add them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
+You can register custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also register them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
 
 #### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
 
@@ -3352,7 +3421,7 @@ Because you are extending the base entity API, you get before, value, after, par
 This is a factory method, it receives a raw entity spec, and expects to return a new entity instance object.
 
 ```js
-function create(spec:Object):Object
+function create(name:String, spec:Object):Object
 ```
 
 #### <a name="entity-resolve">Entity.resolve</a>
@@ -3383,7 +3452,9 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
   */
   function create (spec, id) {
     // create an entity instance
-    const entity = DataPoint.createEntity(RenderTemplate, spec, id)
+    const entity = mew RenderTemplate()
+    entity.spec = spec
+    entity.resolve = resolve
     // set/create template from spec.template value
     entity.template = _.template(_.defaultTo(spec.template, ''))
     return entity
@@ -3413,10 +3484,7 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
   /**
   * RenderEntity API
   */
-  const RenderEntity = {
-    create,
-    resolve
-  }
+  const RenderEntity = DataPoint.createEntity('render, create)
 
   // Create DataPoint instance
   const dataPoint = DataPoint.create({

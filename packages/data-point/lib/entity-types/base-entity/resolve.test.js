@@ -5,13 +5,27 @@ const Promise = require('bluebird')
 const ResolveEntity = require('./resolve')
 const createReducer = require('../../reducer-types').create
 const resolveReducer = require('../../reducer-types').resolve
-const createReducerEntity = require('../../reducer-types/reducer-entity').create
+const createReducerEntityId = require('../../reducer-types/reducer-entity-id')
+  .create
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
 const utils = require('../../utils')
 
 let dataPoint
+
+const resolveEntity = (entityId, input, options, resolver) => {
+  const racc = helpers.createAccumulator(input, options)
+  const reducer = createReducerEntityId(createReducer, entityId)
+  const entity = dataPoint.entities.get(entityId)
+  return ResolveEntity.resolveEntity(
+    dataPoint,
+    resolveReducer,
+    racc,
+    reducer,
+    entity
+  )
+}
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
@@ -66,24 +80,47 @@ describe('ResolveEntity.resolveErrorReducers', () => {
   })
 })
 
+describe('getCurrentReducer', () => {
+  it('should return reducer as is if type=ReducerEntity', () => {
+    const reducer = {
+      spec: 'spec'
+    }
+    expect(ResolveEntity.getCurrentReducer(reducer)).toEqual(reducer)
+  })
+  it('should return decorated reducer if type!=ReducerEntity', () => {
+    const reducer = {}
+    expect(ResolveEntity.getCurrentReducer(reducer, 'spec')).toEqual({
+      spec: 'spec'
+    })
+  })
+})
+
 describe('ResolveEntity.createCurrentAccumulator', () => {
   let acc
-  beforeAll(() => {
-    const reducerEntity = createReducerEntity(createReducer, 'hash:base')
+  let spyGetUID
+  let entity
+  let reducer
+  beforeEach(() => {
+    spyGetUID = jest.spyOn(utils, 'getUID')
+    spyGetUID.mockImplementationOnce(() => 10)
+    reducer = createReducerEntityId(createReducer, 'hash:base')
+    entity = dataPoint.entities.get('hash:base')
     const accumulator = helpers.createAccumulator({
       foo: 'bar'
     })
-    acc = ResolveEntity.createCurrentAccumulator(
-      dataPoint,
-      accumulator,
-      reducerEntity
-    )
+    acc = ResolveEntity.createCurrentAccumulator(accumulator, reducer, entity)
   })
   test('It should set reducer property', () => {
-    expect(acc).toHaveProperty('reducer.spec.id', 'hash:base')
+    expect(acc).toHaveProperty('reducer')
   })
+
+  test('It should create and set uid property', () => {
+    expect(spyGetUID).toBeCalled()
+    expect(acc).toHaveProperty('uid', 'hash:base:10')
+  })
+
   test('It should context as the current Entity', () => {
-    expect(acc).toHaveProperty('context.id', 'hash:base')
+    expect(acc).toHaveProperty('context', entity)
   })
   test('It should initialValue acc.value', () => {
     expect(acc).toHaveProperty('initialValue', {
@@ -91,9 +128,10 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
     })
   })
   test('It should set an initialValue for acc.params', () => {
-    expect(acc).toHaveProperty('params', {
-      base: true
-    })
+    expect(acc).toHaveProperty('params', entity.params)
+  })
+  test('It should override debug method', () => {
+    expect(acc.debug).toBeInstanceOf(Function)
   })
 })
 
@@ -137,20 +175,6 @@ describe('ResolveEntity.resolveMiddleware', () => {
 })
 
 describe('ResolveEntity.resolveEntity', () => {
-  const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc)
-
-  const resolveEntity = (entityId, input, options, resolver) => {
-    const racc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
-    return ResolveEntity.resolveEntity(
-      dataPoint,
-      resolveReducer,
-      racc,
-      reducer,
-      resolver || defaultResolver
-    )
-  }
-
   test('It should resolve entity', () => {
     return resolveEntity('model:asIs', 'foo').then(acc => {
       expect(acc).toHaveProperty('value', 'foo')
@@ -221,20 +245,6 @@ describe('ResolveEntity.resolveEntity', () => {
 })
 
 describe('ResolveEntity.resolveEntity outputType', () => {
-  const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc)
-
-  const resolveEntity = (entityId, input, options, resolver) => {
-    const racc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
-    return ResolveEntity.resolveEntity(
-      dataPoint,
-      resolveReducer,
-      racc,
-      reducer,
-      resolver || defaultResolver
-    )
-  }
-
   test('throws error if value does not pass typeCheck', () => {
     return resolveEntity('model:c.1', 1)
       .catch(e => e)
@@ -370,77 +380,53 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 })
 
 describe('ResolveEntity.resolve', () => {
-  const resolve = resolver => (entityId, input, options) => {
+  const resolve = (entityId, input, options) => {
     const racc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
+    const reducer = createReducerEntityId(createReducer, entityId)
+    const entity = dataPoint.entities.get(reducer.id)
     return ResolveEntity.resolve(
       dataPoint,
       resolveReducer,
       racc,
       reducer,
-      resolver
+      entity
     )
   }
 
   test('It should resolve as single entity', () => {
-    const resolver = (acc, resolveReducer) => {
-      const result = utils.set(acc, 'value', 'bar')
-      return Promise.resolve(result)
-    }
-    return resolve(resolver)('model:asIs', 'foo').then(acc => {
-      expect(acc).toHaveProperty('value', 'bar')
+    return resolve('model:asIs', 'foo').then(acc => {
+      expect(acc).toHaveProperty('value', 'foo')
     })
   })
 
   test('It should resolve as collection', () => {
-    const resolver = (acc, resolveReducer) => {
-      const result = utils.set(acc, 'value', 'bar')
-      return Promise.resolve(result)
-    }
-    return resolve(resolver)('model:asIs[]', ['foo']).then(acc => {
-      expect(acc).toHaveProperty('value', ['bar'])
+    return resolve('model:asIs[]', ['foo']).then(acc => {
+      expect(acc).toHaveProperty('value', ['foo'])
     })
   })
   test('It should return undefined if accumulator is not Array', () => {
-    const resolver = (acc, resolveReducer) => {
-      return Promise.resolve(acc)
-    }
-    return resolve(resolver)('model:asIs[]', {}).then(acc => {
+    return resolve('model:asIs[]', {}).then(acc => {
       expect(acc.value).toBeUndefined()
     })
   })
   test('It should not execute resolver if flag hasEmptyConditional is true and value is empty', () => {
-    const resolver = jest.fn()
-    return resolve(resolver)('?model:asIs', undefined).then(acc => {
-      expect(resolver).not.toHaveBeenCalled()
+    return resolve('?model:asIs', undefined).then(acc => {
+      expect(acc.value).toBeUndefined()
     })
   })
 
   test('It should execute resolver if flag hasEmptyConditional is true and value is not empty', () => {
-    const resolver = (acc, resolveReducer) => {
-      const result = utils.set(acc, 'value', 'bar')
-      return Promise.resolve(result)
-    }
-    return resolve(resolver)('?model:asIs', 'foo').then(acc => {
-      expect(acc).toHaveProperty('value', 'bar')
+    return resolve('?model:asIs', 'foo').then(acc => {
+      expect(acc).toHaveProperty('value', 'foo')
     })
   })
 
   test('It should execute resolver only on non empty items of collection if hasEmptyConditional is set', () => {
-    let count = 0
-    const resolver = (acc, resolveReducer) => {
-      const result = utils.set(acc, 'value', count++)
-      return Promise.resolve(result)
-    }
-    return resolve(resolver)('?model:asIs[]', [
-      'a',
-      undefined,
-      'b',
-      null,
-      'c'
-    ]).then(acc => {
-      expect(acc).toHaveProperty('value', [0, undefined, 1, null, 2])
-    })
+    return resolve('?model:asIs[]', ['a', undefined, 'b', null, 'c']).then(
+      acc => {
+        expect(acc).toHaveProperty('value', ['a', undefined, 'b', null, 'c'])
+      }
+    )
   })
 })
 

@@ -194,7 +194,7 @@ app.use('/api', service.router({
     priority: 100,
     path: '/hello-world',
     method: 'GET',
-    middleware: 'transform:HelloWorld'
+    middleware: 'reducer:HelloWorld'
   },
   addUser: {
     priority: 200,

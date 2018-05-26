@@ -39,7 +39,7 @@ describe('create - datapoint routes', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:Test': (value, acc) => ({
+        'reducer:Test': (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         })
       }
@@ -53,7 +53,7 @@ describe('create - datapoint routes', () => {
         test: {
           priority: 100,
           path: '/test',
-          middleware: 'transform:Test'
+          middleware: 'reducer:Test'
         }
       })
     )

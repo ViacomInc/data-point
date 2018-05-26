@@ -39,12 +39,12 @@ The Service Object holds a reference to a dataPoint instance.
 ```js
 const options = {
   entities: {
-    'transform:foo': (input, acc) => 'bar'
+    'reducer:foo': (input, acc) => 'bar'
   }
 }
 factory.create(options)
   .then((service) => {
-    return service.dataPoint.transform('transform:foo')
+    return service.dataPoint.transform('reducer:foo')
   })
   .then((output) => {
     console.log(output)

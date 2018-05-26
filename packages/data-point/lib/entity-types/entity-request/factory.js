@@ -1,19 +1,8 @@
 const _ = require('lodash')
-const createBaseEntity = require('../base-entity').create
+const { resolve } = require('./resolve')
+const BaseEntity = require('../base-entity')
 const createReducer = require('../../reducer-types').create
 const { validateModifiers } = require('../validate-modifiers')
-
-/**
- * @class
- * @property {string} url
- * @property {reducer} options
- */
-function EntityRequest () {
-  this.url = undefined
-  this.options = undefined
-}
-
-module.exports.EntityRequest = EntityRequest
 
 /**
  * @return {Object}
@@ -25,18 +14,22 @@ function defaultOptions () {
 module.exports.defaultOptions = defaultOptions
 
 /**
- * creates new Request based on spec
- * @param {Object} spec - request spec
- * @param {string} id - Entity id
- * @return {EntityRequest} Entity Object
+ * @typedef {Array|String|Function} Reducer
  */
-function create (spec, id) {
+
+/**
+ * creates new Request based on spec
+ * @param {{url:String, options:Object, before:Reducer}} spec - request spec
+ * @param {string} id - Entity id
+ * @return {Object} Entity Object
+ */
+function create (id, spec) {
   validateModifiers(id, spec, ['options', 'url'])
-  const entity = createBaseEntity(EntityRequest, spec, id)
+  const entity = {}
+  entity.spec = spec
   entity.url = _.defaultTo(spec.url, '')
   entity.options = createReducer(spec.options || defaultOptions)
-
-  return Object.freeze(entity)
+  return entity
 }
 
-module.exports.create = create
+module.exports.create = BaseEntity.create('request', create, resolve)

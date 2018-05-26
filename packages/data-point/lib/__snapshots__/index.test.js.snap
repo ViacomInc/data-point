@@ -7,6 +7,16 @@ Object {
   "createReducer": [Function],
   "createReducerResolver": [Function],
   "createTypeCheckReducer": [Function],
+  "entities": Object {
+    "Collection": [Function],
+    "Control": [Function],
+    "Entry": [Function],
+    "Hash": [Function],
+    "Model": [Function],
+    "Reducer": [Function],
+    "Request": [Function],
+    "Schema": [Function],
+  },
   "entityFactories": Object {
     "Collection": [Function],
     "Control": [Function],
