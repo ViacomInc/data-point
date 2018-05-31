@@ -336,7 +336,9 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a1.4', null).then(result => {
+    return transform('request:a1.4', {
+      source: 'source5'
+    }).then(result => {
       expect(result.value).toEqual({
         ok: true
       })

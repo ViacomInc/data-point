@@ -3469,22 +3469,20 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
   function resolve (accumulator, resolveReducer) {
     // get Entity Spec
     const spec = accumulator.reducer.spec
-    // resolve 'spec.value' reducer against accumulator
-    return resolveReducer(accumulator, spec.value)
-      .then((acc) => {
-        // execute lodash template against accumulator value
-        const output = spec.template(acc.value)
-        // creates a new acc object with new value
-        return Object.assign({}, acc, {
-          value: output
-        })
-      })
+    // execute lodash template against
+    // accumulator value
+    const value = spec.template(accumulator.value)
+    // set new accumulator.value
+    // this method creates a new acc object
+    return Object.assign({}, accumulator, {
+      value
+    })
   }
 
   /**
   * RenderEntity API
   */
-  const RenderEntity = DataPoint.createEntity('render, create)
+  const RenderEntity = DataPoint.createEntity('render', create)
 
   // Create DataPoint instance
   const dataPoint = DataPoint.create({
