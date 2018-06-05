@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`addRoute It should throw error if invalid method 1`] = `"Route undefined has an invalid method (foo), try using GET, POST, DELETE or PUT instead."`;
+
 exports[`verifyMiddlewareFormat should not be empty 1`] = `"Route Foo - middleware property must not be empty"`;
 
 exports[`verifyMiddlewareFormat throw error if entityId is not the last middleware 1`] = `"Route Foo - entityId middleware may only be at the end of the chain"`;
