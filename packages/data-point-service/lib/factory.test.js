@@ -171,7 +171,7 @@ describe('handleCacheError', () => {
         isCacheRequired: true,
         settings: {}
       })
-    }).toThrowError('error')
+    }).toThrowErrorMatchingSnapshot()
   })
 
   test('It should set isCacheAvailable as false if not error not thrown', () => {
