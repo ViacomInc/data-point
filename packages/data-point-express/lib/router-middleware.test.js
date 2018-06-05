@@ -30,7 +30,7 @@ describe('setupRoutes', () => {
   test('It should error if routes are missing', () => {
     expect(() => {
       RouterMiddleware.setupRouter()
-    }).toThrow()
+    }).toThrowErrorMatchingSnapshot()
   })
 })
 
