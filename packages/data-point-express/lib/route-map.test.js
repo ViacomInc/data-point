@@ -248,7 +248,7 @@ describe('addRoute', () => {
         method: 'foo'
       }
       RouteMap.addRoute(createApp(), '/api', route, () => {})
-    }).toThrowError()
+    }).toThrowErrorMatchingSnapshot()
   })
 
   test('It should add a route', () => {

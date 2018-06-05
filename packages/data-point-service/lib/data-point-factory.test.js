@@ -29,7 +29,7 @@ describe('verify', () => {
       DataPointFactory.verify({
         DataPoint
       })
-    }).toThrowError(/entities/)
+    }).toThrowErrorMatchingSnapshot()
   })
 })
 
