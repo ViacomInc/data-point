@@ -3326,7 +3326,7 @@ Example at: [examples/extend-entity-keys.js](examples/extend-entity-keys.js)
 Example at: [examples/extend-entity-reusability.js](examples/extend-entity-reusability.js)
 
 ### <a name="global-entity-options">Globally setting options for entities</a>
-You may set global params for entry types, allowing you to set these options once and have them be consistent. We do this using [entityOverrides] within the options object.
+You may set global params for entry types, allowing you to set these options once and have them be consistent. We do this using `entityOverrides` within the options object.
 
 **EXAMPLE**
 
@@ -3343,7 +3343,7 @@ const options = {
 
 dataPoint.resolve('request:xyz', {}, options)
 ```
-The preceeding example will make it so every 'request' entity will have the inpsect param set to true. This can be done with any entity and its respectful parameters.
+The preceeding example will make it so every `'request'` entity will have the inpsect param set to true. This can be done with any entity and its respectful parameters.
 
 Example at: [examples/entity-request-options-override.js](examples/entity-request-options-override.js)
 
