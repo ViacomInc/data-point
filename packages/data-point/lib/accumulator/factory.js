@@ -28,7 +28,7 @@ function create (spec) {
   accumulator.reducer = {
     spec: spec.context
   }
-
+  accumulator.overrideEntity = merge({}, spec.overrideEntity)
   accumulator.locals = merge({}, spec.locals)
   accumulator.values = spec.values
   accumulator.trace = spec.trace

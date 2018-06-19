@@ -3,6 +3,8 @@ const Promise = require('bluebird')
 const middleware = require('../../middleware')
 const utils = require('../../utils')
 const memoize = require('lodash/memoize')
+const isEmpty = require('lodash/isEmpty')
+const merge = require('lodash/merge')
 
 /**
  * create a new debug scope
@@ -105,11 +107,29 @@ function createCurrentAccumulator (accumulator, reducer, entity) {
     context: entity,
     reducer: currentReducer,
     initialValue: accumulator.value,
-    params: entity.params,
+    params: assignParamsHelper(accumulator, entity),
     debug: debugEntity(reducer.entityType)
   })
 
   return currentAccumulator
+}
+
+/**
+ * Incase there is an override, assigns parameters to the correct requests.
+ * @param {*} accumulator
+ * @param {*} entity
+ */
+function assignParamsHelper (accumulator, entity) {
+  if (
+    !isEmpty(accumulator.overrideEntity) &&
+    accumulator.overrideEntity[entity.entityType]
+  ) {
+    return merge(
+      accumulator.overrideEntity[entity.entityType].params,
+      entity.params
+    )
+  }
+  return entity.params
 }
 
 module.exports.createCurrentAccumulator = createCurrentAccumulator
