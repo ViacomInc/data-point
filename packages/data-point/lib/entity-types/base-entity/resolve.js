@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const middleware = require('../../middleware')
 const utils = require('../../utils')
 const memoize = require('lodash/memoize')
-const isEmpty = require('lodash/isEmpty')
 const merge = require('lodash/merge')
 
 /**
@@ -114,25 +113,25 @@ function createCurrentAccumulator (accumulator, reducer, entity) {
   return currentAccumulator
 }
 
+module.exports.createCurrentAccumulator = createCurrentAccumulator
+
 /**
  * Incase there is an override, assigns parameters to the correct requests.
  * @param {*} accumulator
  * @param {*} entity
  */
 function assignParamsHelper (accumulator, entity) {
-  if (
-    !isEmpty(accumulator.overrideEntity) &&
-    accumulator.overrideEntity[entity.entityType]
-  ) {
+  if (accumulator.entityOverrides[entity.entityType]) {
     return merge(
-      accumulator.overrideEntity[entity.entityType].params,
-      entity.params
+      {},
+      entity.params,
+      accumulator.entityOverrides[entity.entityType].params
     )
   }
   return entity.params
 }
 
-module.exports.createCurrentAccumulator = createCurrentAccumulator
+module.exports.assignParamsHelper = assignParamsHelper
 
 /**
  * Resolves a middeware, this method contains a 'hack'

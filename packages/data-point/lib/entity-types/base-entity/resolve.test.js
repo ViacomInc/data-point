@@ -94,6 +94,33 @@ describe('getCurrentReducer', () => {
     })
   })
 })
+describe('ResolveEntity.createCurrentAccumulatorWithOverride', () => {
+  let acc
+  let spyGetUID
+  let entity
+  let reducer
+  beforeEach(() => {
+    spyGetUID = jest.spyOn(utils, 'getUID')
+    spyGetUID.mockImplementationOnce(() => 10)
+    reducer = createReducerEntityId(createReducer, 'hash:base')
+    entity = dataPoint.entities.get('hash:base')
+    const accumulator = helpers.createAccumulator({
+      foo: 'bar'
+    })
+    accumulator.entityOverrides = {
+      hash: {
+        params: {
+          inspect: true
+        }
+      }
+    }
+    acc = ResolveEntity.createCurrentAccumulator(accumulator, reducer, entity)
+  })
+
+  test('It should have entityOverrides', () => {
+    expect(acc).toHaveProperty('params', { base: true, inspect: true })
+  })
+})
 
 describe('ResolveEntity.createCurrentAccumulator', () => {
   let acc

@@ -7,7 +7,7 @@ const AccumulatorFactory = require('../accumulator/factory')
 function getOptions (spec) {
   return _.defaults({}, spec, {
     locals: {},
-    overrideEntity: {}
+    entityOverrides: {}
   })
 }
 
@@ -29,7 +29,7 @@ function reducerResolve (manager, reducerSource, value, options) {
   const context = AccumulatorFactory.create({
     value: value,
     locals: contextOptions.locals,
-    overrideEntity: contextOptions.overrideEntity,
+    entityOverrides: contextOptions.entityOverrides,
     trace: contextOptions.trace,
     values: manager.values.getStore()
   })
