@@ -4,12 +4,16 @@ const mockRequest = require('./entity-request-basic.mock')
 dataPoint.addEntities({
   'request:getLuke': {
     url: 'https://swapi.co/api/people/1/'
+  },
+  params: {
+    inspect: false
   }
 })
 
 // mock the remote service
 mockRequest()
 
+// The params defined here will override the params defined in the entity definition.
 const options = {
   entityOverrides: {
     request: {

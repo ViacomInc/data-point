@@ -116,7 +116,7 @@ function createCurrentAccumulator (accumulator, reducer, entity) {
 module.exports.createCurrentAccumulator = createCurrentAccumulator
 
 /**
- * Incase there is an override, assigns parameters to the correct requests.
+ * Incase there is an override present, assigns parameters to the correct entity.
  * @param {*} accumulator
  * @param {*} entity
  */

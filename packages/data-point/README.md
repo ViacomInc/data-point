@@ -3343,7 +3343,7 @@ const options = {
 
 dataPoint.resolve('request:xyz', {}, options)
 ```
-The preceeding example will make it so every `'request'` entity will have the inpsect param set to true. This can be done with any entity and its respectful parameters.
+The preceding example will make it so every `'request'` entity will have the inspect param set to true. This can be done with any entity and its respective parameters.
 
 Example at: [examples/entity-request-options-override.js](examples/entity-request-options-override.js)
 
