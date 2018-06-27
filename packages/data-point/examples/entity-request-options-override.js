@@ -4,9 +4,6 @@ const mockRequest = require('./entity-request-basic.mock')
 dataPoint.addEntities({
   'request:getLuke': {
     url: 'https://swapi.co/api/people/1/'
-  },
-  params: {
-    inspect: false
   }
 })
 
