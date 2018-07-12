@@ -69,9 +69,6 @@ describe('createEntityInstance', () => {
   it('should create an instance with overriden constructor name', () => {
     expect(createEntityInstance().constructor.name).toEqual('foo:myFoo')
   })
-  it('should return frozen object', () => {
-    expect(Object.isFrozen(createEntityInstance())).toEqual(true)
-  })
 })
 
 describe('create', () => {
