@@ -1,4 +1,3 @@
-const deepFreeze = require('deep-freeze')
 const defaultTo = require('lodash/defaultTo')
 const { normalizeTypeCheckSource } = require('../../helpers/type-check-helpers')
 
@@ -101,7 +100,7 @@ function createEntityInstance (entity) {
     value: entity.id
   })
 
-  return deepFreeze(Object.assign(new EntityFactory(), entity))
+  return Object.assign(new EntityFactory(), entity)
 }
 
 /**
