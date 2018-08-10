@@ -3,7 +3,7 @@
 exports[`ResolveEntity.resolveEntity It should log trace calls when set to true 1`] = `
 Array [
   Array [
-    "⧖ model:asIs:3",
+    "⧖ model:traced:3",
   ],
 ]
 `;
@@ -11,7 +11,7 @@ Array [
 exports[`ResolveEntity.resolveEntity It should log trace calls when set to true 2`] = `
 Array [
   Array [
-    "⧖ model:asIs:3",
+    "⧖ model:traced:3",
   ],
 ]
 `;

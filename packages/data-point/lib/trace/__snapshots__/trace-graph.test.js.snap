@@ -1,0 +1,159 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createTree should create parent child relationship 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "children": Array [],
+      "duration": 1000020000,
+      "durationMs": 1.00002,
+      "id": "id1",
+      "label": "reducerId1:id1 (reducerName1)",
+      "nestingLevel": 1,
+      "parent": [Circular],
+      "reducer": Object {
+        "id": "reducerId1",
+        "name": "reducerName1",
+      },
+      "time": 1000000000,
+      "timeStart": 1000000000,
+      "timelineStart": 1000000000,
+      "timelineStartMs": 1,
+    },
+    Object {
+      "children": Array [
+        Object {
+          "children": Array [],
+          "duration": 3000020000,
+          "durationMs": 3.00002,
+          "id": "id3",
+          "label": "reducerId3:id3 (reducerName3)",
+          "nestingLevel": 2,
+          "parent": [Circular],
+          "reducer": Object {
+            "id": "reducerId3",
+            "name": "reducerName3",
+          },
+          "time": 3000000000,
+          "timeStart": 3000000000,
+          "timelineStart": 3000000000,
+          "timelineStartMs": 3,
+        },
+      ],
+      "duration": 2000020000,
+      "durationMs": 2.00002,
+      "id": "id2",
+      "label": "reducerId2:id2 (reducerName2)",
+      "nestingLevel": 1,
+      "parent": [Circular],
+      "reducer": Object {
+        "id": "reducerId2",
+        "name": "reducerName2",
+      },
+      "time": 2000000000,
+      "timeStart": 2000000000,
+      "timelineStart": 2000000000,
+      "timelineStartMs": 2,
+    },
+  ],
+  "duration": 20000,
+  "durationMs": 0.00002,
+  "id": "id0",
+  "label": "reducerId0:id0 (reducerName0)",
+  "nestingLevel": 0,
+  "parent": null,
+  "reducer": Object {
+    "id": "reducerId0",
+    "name": "reducerName0",
+  },
+  "time": 0,
+  "timeStart": 0,
+  "timelineStart": 0,
+  "timelineStartMs": 0,
+}
+`;
+
+exports[`logGraph should log the tree 1`] = `
+"0 reducerId0:id0 (reducerName0) S: 0.000ms T: 0.000ms
+  1 reducerId1:id1 (reducerName1) S: 1.000ms T: 1.000ms
+  1 reducerId2:id2 (reducerName2) S: 2.000ms T: 2.000ms
+    2 reducerId3:id3 (reducerName3) S: 3.000ms T: 3.000ms"
+`;
+
+exports[`writeTraceGraph should write graph to disk 1`] = `
+Array [
+  "data-point-trace-123.json",
+  "{
+  \\"id\\": \\"id0\\",
+  \\"time\\": 0,
+  \\"timeStart\\": 0,
+  \\"duration\\": 20000,
+  \\"parent\\": null,
+  \\"reducer\\": {
+    \\"id\\": \\"reducerId0\\",
+    \\"name\\": \\"reducerName0\\"
+  },
+  \\"durationMs\\": 0.00002,
+  \\"timelineStart\\": 0,
+  \\"timelineStartMs\\": 0,
+  \\"nestingLevel\\": 0,
+  \\"label\\": \\"reducerId0:id0 (reducerName0)\\",
+  \\"children\\": [
+    {
+      \\"id\\": \\"id1\\",
+      \\"time\\": 1000000000,
+      \\"timeStart\\": 1000000000,
+      \\"duration\\": 1000020000,
+      \\"parent\\": \\"[Circular ~]\\",
+      \\"reducer\\": {
+        \\"id\\": \\"reducerId1\\",
+        \\"name\\": \\"reducerName1\\"
+      },
+      \\"durationMs\\": 1.00002,
+      \\"timelineStart\\": 1000000000,
+      \\"timelineStartMs\\": 1,
+      \\"nestingLevel\\": 1,
+      \\"label\\": \\"reducerId1:id1 (reducerName1)\\",
+      \\"children\\": []
+    },
+    {
+      \\"id\\": \\"id2\\",
+      \\"time\\": 2000000000,
+      \\"timeStart\\": 2000000000,
+      \\"duration\\": 2000020000,
+      \\"parent\\": \\"[Circular ~]\\",
+      \\"reducer\\": {
+        \\"id\\": \\"reducerId2\\",
+        \\"name\\": \\"reducerName2\\"
+      },
+      \\"durationMs\\": 2.00002,
+      \\"timelineStart\\": 2000000000,
+      \\"timelineStartMs\\": 2,
+      \\"nestingLevel\\": 1,
+      \\"label\\": \\"reducerId2:id2 (reducerName2)\\",
+      \\"children\\": [
+        {
+          \\"id\\": \\"id3\\",
+          \\"time\\": 3000000000,
+          \\"timeStart\\": 3000000000,
+          \\"duration\\": 3000020000,
+          \\"parent\\": \\"[Circular ~.children.1]\\",
+          \\"reducer\\": {
+            \\"id\\": \\"reducerId3\\",
+            \\"name\\": \\"reducerName3\\"
+          },
+          \\"durationMs\\": 3.00002,
+          \\"timelineStart\\": 3000000000,
+          \\"timelineStartMs\\": 3,
+          \\"nestingLevel\\": 2,
+          \\"label\\": \\"reducerId3:id3 (reducerName3)\\",
+          \\"children\\": []
+        }
+      ]
+    }
+  ],
+  \\"maxNestingLevel\\": 3
+}",
+  "utf8",
+]
+`;
