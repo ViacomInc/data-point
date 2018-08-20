@@ -44,15 +44,79 @@ function createGraph () {
   }
 }
 
+describe('nanoToMillisecond', () => {
+  it('should convert to milliseconds', () => {
+    expect(TraceGraph.nanoToMillisecond(1000000)).toEqual(1)
+  })
+})
+
+describe('createReducerSummary', () => {
+  it('should create summary for non ReducerFunction', () => {
+    const reducer = {
+      id: 'id',
+      type: 'ReducerObject',
+      name: 'name'
+    }
+    expect(TraceGraph.createReducerSummary(reducer)).toEqual({
+      body: '',
+      id: 'id',
+      name: 'name',
+      type: 'ReducerObject'
+    })
+  })
+
+  it('should create summary for reducer with no id or name', () => {
+    const reducer = {
+      type: 'ReducerObject'
+    }
+    expect(TraceGraph.createReducerSummary(reducer)).toEqual({
+      body: '',
+      id: '',
+      name: '',
+      type: 'ReducerObject'
+    })
+  })
+
+  it('should create summary for ReducerFunction with named function', () => {
+    const reducer = {
+      id: 'id',
+      type: 'ReducerFunction',
+      name: 'name',
+      body: function namedFunction () {}
+    }
+    expect(TraceGraph.createReducerSummary(reducer)).toEqual({
+      id: 'id',
+      name: reducer.body.name,
+      type: 'ReducerFunction',
+      body: reducer.body.toString()
+    })
+  })
+
+  it('should create summary for ReducerFunction with anonymous function', () => {
+    // to create an anonymous
+    const createFunction = () => () => {}
+    const reducer = {
+      id: 'id',
+      type: 'ReducerFunction',
+      name: 'name',
+      body: createFunction()
+    }
+    expect(TraceGraph.createReducerSummary(reducer)).toEqual({
+      id: 'id',
+      name: 'anonymous',
+      type: 'ReducerFunction',
+      body: reducer.body.toString()
+    })
+  })
+})
+
 describe('createTraceNodeLabel', () => {
   it('should use name when available', () => {
     const node = {}
     set(node, 'id', 'nodeId')
     set(node, 'reducer.id', 'reducerId')
     set(node, 'reducer.name', 'reducerName')
-    expect(TraceGraph.createTraceNodeLabel(node)).toEqual(
-      'reducerId:nodeId (reducerName)'
-    )
+    expect(TraceGraph.createTraceNodeLabel(node)).toEqual('reducerId:nodeId')
   })
   it('should not set name when not available', () => {
     const node = {}

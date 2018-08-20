@@ -20,11 +20,17 @@ Array [
   ],
   \\"timeStart\\": 2000000000,
   \\"duration\\": 8000000000,
-  \\"durationMs\\": 8,
+  \\"durationMs\\": 8000,
   \\"timelineStart\\": 0,
   \\"timelineStartMs\\": 0,
   \\"nestingLevel\\": 0,
-  \\"label\\": \\"model:tracedViaOptions:1 (tracedViaOptions)\\",
+  \\"label\\": \\"model:tracedViaOptions:1\\",
+  \\"reducerSummary\\": {
+    \\"id\\": \\"model:tracedViaOptions\\",
+    \\"type\\": \\"ReducerEntityId\\",
+    \\"name\\": \\"tracedViaOptions\\",
+    \\"body\\": \\"\\"
+  },
   \\"children\\": [
     {
       \\"id\\": \\"2\\",
@@ -40,11 +46,17 @@ Array [
       \\"timeStart\\": 4000000000,
       \\"parent\\": \\"[Circular ~]\\",
       \\"duration\\": 6000000000,
-      \\"durationMs\\": 6,
+      \\"durationMs\\": 6000,
       \\"timelineStart\\": 2000000000,
-      \\"timelineStartMs\\": 2,
+      \\"timelineStartMs\\": 2000,
       \\"nestingLevel\\": 1,
-      \\"label\\": \\"ReducerPath:2 (a.b.c)\\",
+      \\"label\\": \\"ReducerPath:2\\",
+      \\"reducerSummary\\": {
+        \\"id\\": \\"\\",
+        \\"type\\": \\"ReducerPath\\",
+        \\"name\\": \\"a.b.c\\",
+        \\"body\\": \\"\\"
+      },
       \\"children\\": []
     }
   ],

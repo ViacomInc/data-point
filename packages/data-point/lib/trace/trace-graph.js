@@ -8,13 +8,48 @@ const writeFileP = Promise.promisify(fs.writeFile)
 module.exports.writeFileP = writeFileP
 
 const NS_PER_SEC = 1e9
+
+const NS_PER_MS = 1000000
+
+/**
+ * @param {Number} nano nanoseconds
+ * @returns {Number} milliseconds
+ */
+function nanoToMillisecond (nano) {
+  return nano / NS_PER_MS
+}
+
+module.exports.nanoToMillisecond = nanoToMillisecond
+
+/**
+ * @param {ReducerSpec} reducer
+ * @returns {Object} Reducer summary
+ */
+function createReducerSummary (reducer) {
+  let functionName = ''
+  let functionBody = ''
+
+  if (reducer.type === 'ReducerFunction') {
+    functionName = reducer.body.name || 'anonymous'
+    functionBody = reducer.body.toString()
+  }
+
+  return {
+    id: reducer.id || '',
+    type: reducer.type,
+    name: functionName || reducer.name || '',
+    body: functionBody || ''
+  }
+}
+
+module.exports.createReducerSummary = createReducerSummary
+
 /**
  * @param {TraceNode} node create node label
  * @returns {string} generated string based off of reducer info and id
  */
 function createTraceNodeLabel (node) {
-  const name = node.reducer.name ? ` (${node.reducer.name})` : ''
-  return `${node.reducer.id || node.reducer.type}:${node.id}${name}`
+  return `${node.reducer.id || node.reducer.type}:${node.id}`
 }
 
 module.exports.createTraceNodeLabel = createTraceNodeLabel
@@ -30,11 +65,13 @@ module.exports.createTraceNodeLabel = createTraceNodeLabel
  * @param {Accumulator} accumulator
  */
 function createTree (currentNode, traceGraph, nestingLevel, accumulator) {
-  currentNode.durationMs = currentNode.duration / NS_PER_SEC
+  currentNode.durationMs = nanoToMillisecond(currentNode.duration)
   currentNode.timelineStart = currentNode.timeStart - accumulator.timeStart
-  currentNode.timelineStartMs = currentNode.timelineStart / NS_PER_SEC
+  currentNode.timelineStartMs = nanoToMillisecond(currentNode.timelineStart)
   currentNode.nestingLevel = nestingLevel
   currentNode.label = createTraceNodeLabel(currentNode)
+
+  currentNode.reducerSummary = createReducerSummary(currentNode.reducer)
 
   const children = traceGraph.filter(node => {
     return node.parent && node.parent.id === currentNode.id
