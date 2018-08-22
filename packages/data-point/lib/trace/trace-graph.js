@@ -4,22 +4,10 @@ const Promise = require('bluebird')
 // this module is used to cover circular references
 const stringify = require('json-stringify-safe')
 
+const { NS_PER_SEC, nanoToMillisecond } = require('./time-helpers')
+
 const writeFileP = Promise.promisify(fs.writeFile)
 module.exports.writeFileP = writeFileP
-
-const NS_PER_SEC = 1e9
-
-const NS_PER_MS = 1000000
-
-/**
- * @param {Number} nano nanoseconds
- * @returns {Number} milliseconds
- */
-function nanoToMillisecond (nano) {
-  return nano / NS_PER_MS
-}
-
-module.exports.nanoToMillisecond = nanoToMillisecond
 
 /**
  * @param {ReducerSpec} reducer
@@ -45,7 +33,7 @@ function createReducerSummary (reducer) {
 module.exports.createReducerSummary = createReducerSummary
 
 /**
- * @param {TraceNode} node create node label
+ * @param {TraceNode} node Trace node input
  * @returns {string} generated string based off of reducer info and id
  */
 function createTraceNodeLabel (node) {

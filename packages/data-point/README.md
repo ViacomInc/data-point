@@ -3547,7 +3547,8 @@ Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
 
 To trace a DataPoint transformation you can set the value `trace:true` to the options object passed to the `datapoint.transform()` method. 
 
-This tool will write a JSON file to disk that exposes all of the reducers that are being executed within a transformation. It provides information such as time start and duration of each process as well as information regarding the reducer that was executed.
+This tool will write a JSON file to disk (on the current execution path) that exposes all of the reducers that are being executed within a transformation. It provides information such as time start and duration of each process as well as information regarding the reducer that was executed.
+
 
 ### Example: 
 

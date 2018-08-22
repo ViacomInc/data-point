@@ -225,15 +225,17 @@ test('Model Entity Instance', () => {
 describe('trace feature', () => {
   let mockDateNow
   let mockWriteFileP
+  let mockhrTime
   afterEach(() => {
     mockDateNow.mockRestore()
     mockWriteFileP.mockRestore()
+    mockhrTime.mockRestore()
   })
 
   test('trace via options parameter', () => {
     let calls = 0
     const NS_PER_SEC = 1e9
-    jest.spyOn(process, 'hrtime').mockImplementation(t => {
+    mockhrTime = jest.spyOn(process, 'hrtime').mockImplementation(t => {
       calls++
       return [calls, NS_PER_SEC * calls]
     })

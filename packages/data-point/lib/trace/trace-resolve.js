@@ -1,26 +1,5 @@
 const uniqueId = require('lodash/uniqueId')
-
-const NS_PER_SEC = 1e9
-
-/**
- * @param {hrtime} time hrtime value
- * @returns {Integer} nanosecond
- */
-function hrtimeTotNanosec (time) {
-  return time[0] * NS_PER_SEC + time[1]
-}
-
-module.exports.hrtimeTotNanosec = hrtimeTotNanosec
-
-/**
- * @param {hrtime} time hrtime value
- * @returns {Integer} duration between time argument and current time
- */
-function getDuration (time) {
-  const diff = process.hrtime(time)
-  const nanosec = hrtimeTotNanosec(diff)
-  return nanosec
-}
+const { hrtimeTotNanosec, getDuration } = require('./time-helpers')
 
 module.exports.getDuration = getDuration
 

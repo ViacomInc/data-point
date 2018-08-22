@@ -6,26 +6,6 @@ const NS_PER_SEC = 1e9
 
 const mockedTime = [1, NS_PER_SEC * 1]
 
-describe('hrtimeTotNanosec', () => {
-  it('should convert hrtime resolution to nanosec', () => {
-    expect(TraceResolve.hrtimeTotNanosec(mockedTime)).toEqual(2000000000)
-  })
-})
-
-describe('getDuration', () => {
-  let mockhrTime
-  afterAll(() => {
-    mockhrTime.mockRestore()
-  })
-  it('should return difference between two times', () => {
-    mockhrTime = jest.spyOn(process, 'hrtime').mockImplementation(t => {
-      return mockedTime
-    })
-    expect(TraceResolve.getDuration()).toEqual(2000000000)
-    expect(mockhrTime).toBeCalled()
-  })
-})
-
 describe('augmentTraceNodeDuration', () => {
   let mockGetDuration
   afterAll(() => {

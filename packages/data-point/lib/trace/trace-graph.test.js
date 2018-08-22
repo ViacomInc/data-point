@@ -44,12 +44,6 @@ function createGraph () {
   }
 }
 
-describe('nanoToMillisecond', () => {
-  it('should convert to milliseconds', () => {
-    expect(TraceGraph.nanoToMillisecond(1000000)).toEqual(1)
-  })
-})
-
 describe('createReducerSummary', () => {
   it('should create summary for non ReducerFunction', () => {
     const reducer = {
