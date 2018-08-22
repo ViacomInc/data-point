@@ -53,9 +53,10 @@ module.exports.createTraceNodeLabel = createTraceNodeLabel
  * @param {Accumulator} accumulator
  */
 function createTree (currentNode, traceGraph, nestingLevel, accumulator) {
-  currentNode.durationMs = nanoToMillisecond(currentNode.duration)
-  currentNode.timelineStart = currentNode.timeStart - accumulator.timeStart
-  currentNode.timelineStartMs = nanoToMillisecond(currentNode.timelineStart)
+  currentNode.durationMs = nanoToMillisecond(currentNode.durationNs)
+  currentNode.timelineStartNs =
+    currentNode.timeStartNs - accumulator.timeStartNs
+  currentNode.timelineStartMs = nanoToMillisecond(currentNode.timelineStartNs)
   currentNode.nestingLevel = nestingLevel
   currentNode.label = createTraceNodeLabel(currentNode)
 
@@ -90,8 +91,8 @@ function logGraph (node) {
     '  '.repeat(node.nestingLevel),
     node.nestingLevel,
     node.label,
-    (node.timelineStart / NS_PER_SEC).toFixed(3),
-    (node.duration / NS_PER_SEC).toFixed(3)
+    (node.timelineStartNs / NS_PER_SEC).toFixed(3),
+    (node.durationNs / NS_PER_SEC).toFixed(3)
   )
   node.children.forEach(child => {
     logGraph(child)
@@ -105,7 +106,7 @@ module.exports.logGraph = logGraph
  */
 function writeTraceGraph (traceGraph) {
   const root = traceGraph.find(node => !node.parent)
-  const graphAcc = { timeStart: root.timeStart, maxNestingLevel: 0 }
+  const graphAcc = { timeStartNs: root.timeStartNs, maxNestingLevel: 0 }
   createTree(root, traceGraph, 0, graphAcc)
   root.maxNestingLevel = graphAcc.maxNestingLevel
 

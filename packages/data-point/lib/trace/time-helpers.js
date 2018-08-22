@@ -28,12 +28,12 @@ module.exports.hrtimeTotNanosec = hrtimeTotNanosec
 
 /**
  * @param {hrtime} time hrtime value
- * @returns {Integer} duration between time argument and current time
+ * @returns {Integer} nanoseconds duration between time argument and current time
  */
-function getDuration (time) {
+function getDurationNs (time) {
   const diff = process.hrtime(time)
   const nanosec = hrtimeTotNanosec(diff)
   return nanosec
 }
 
-module.exports.getDuration = getDuration
+module.exports.getDurationNs = getDurationNs

@@ -20,7 +20,7 @@ Object {
     "id": "1",
     "parent": undefined,
     "reducer": "reducer",
-    "timeStart": 2000000000,
+    "timeStartNs": 2000000000,
   },
 }
 `;

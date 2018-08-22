@@ -13,7 +13,7 @@ describe('augmentTraceNodeDuration', () => {
   })
   it('should set duration', () => {
     mockGetDuration = jest
-      .spyOn(TraceResolve, 'getDuration')
+      .spyOn(TraceResolve, 'getDurationNs')
       .mockImplementation(t => {
         return `${t}&duration`
       })
@@ -21,7 +21,7 @@ describe('augmentTraceNodeDuration', () => {
       hrtime: 'hrtime'
     }
     expect(TraceResolve.augmentTraceNodeDuration(traceNode)(true)).toEqual(true)
-    expect(traceNode).toHaveProperty('duration', 'hrtime&duration')
+    expect(traceNode).toHaveProperty('durationNs', 'hrtime&duration')
   })
 })
 

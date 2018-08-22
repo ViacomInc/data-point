@@ -9,8 +9,8 @@ function createNode (index) {
   return {
     id: `id${index}`,
     time,
-    timeStart: time,
-    duration: time + 20000,
+    timeStartNs: time,
+    durationNs: time + 20000,
     parent: null,
     reducer: {
       id: `reducerId${index}`,
@@ -36,7 +36,7 @@ function createTraceGraph () {
 function createGraph () {
   const traceGraph = createTraceGraph()
   const root = traceGraph[0]
-  const graphAcc = { timeStart: root.timeStart, maxNestingLevel: 0 }
+  const graphAcc = { timeStartNs: root.timeStartNs, maxNestingLevel: 0 }
   TraceGraph.createTree(root, traceGraph, 0, graphAcc)
   return {
     root,

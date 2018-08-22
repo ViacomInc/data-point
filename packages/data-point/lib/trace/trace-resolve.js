@@ -1,7 +1,7 @@
 const uniqueId = require('lodash/uniqueId')
-const { hrtimeTotNanosec, getDuration } = require('./time-helpers')
+const { hrtimeTotNanosec, getDurationNs } = require('./time-helpers')
 
-module.exports.getDuration = getDuration
+module.exports.getDurationNs = getDurationNs
 
 /**
  * NOTE: Mutates traceNode argument
@@ -10,7 +10,7 @@ module.exports.getDuration = getDuration
  */
 function augmentTraceNodeDuration (traceNode) {
   return acc => {
-    traceNode.duration = module.exports.getDuration(traceNode.hrtime)
+    traceNode.durationNs = module.exports.getDurationNs(traceNode.hrtime)
     return acc
   }
 }
@@ -29,7 +29,7 @@ function createTracedAccumulator (accumulator, reducer) {
     id: uniqueId(),
     reducer,
     hrtime,
-    timeStart: hrtimeTotNanosec(hrtime),
+    timeStartNs: hrtimeTotNanosec(hrtime),
     parent: accumulator.traceNode
   }
   return Object.assign({}, accumulator, { traceNode })

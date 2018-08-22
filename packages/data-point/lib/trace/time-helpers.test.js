@@ -16,7 +16,7 @@ describe('hrtimeTotNanosec', () => {
   })
 })
 
-describe('getDuration', () => {
+describe('getDurationNs', () => {
   let mockhrTime
   afterAll(() => {
     mockhrTime.mockRestore()
@@ -25,7 +25,7 @@ describe('getDuration', () => {
     mockhrTime = jest.spyOn(process, 'hrtime').mockImplementation(t => {
       return mockedTime
     })
-    expect(TimeHelpers.getDuration()).toEqual(2000000000)
+    expect(TimeHelpers.getDurationNs()).toEqual(2000000000)
     expect(mockhrTime).toBeCalled()
   })
 })
