@@ -28,7 +28,7 @@ dataPoint.transform([PersonRequest, PersonModel], 1, options).then(output => {
     a file with the name data-point-trace-<timestamp>.json will
     be created.
 
-    File has follows the structure of:
+    File follows the structure of:
 
     {
       "id": "1",
