@@ -210,9 +210,7 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
     outputType
   } = currentAccumulator.reducer.spec
 
-  const trace =
-    currentAccumulator.trace === true ||
-    currentAccumulator.context.params.trace === true
+  const trace = currentAccumulator.context.params.trace === true
 
   let timeId
   if (trace === true) {

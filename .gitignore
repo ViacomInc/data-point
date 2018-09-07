@@ -29,3 +29,4 @@ node_modules
 .vscode
 dump.rdb
 /benchmark
+data-point-trace-*

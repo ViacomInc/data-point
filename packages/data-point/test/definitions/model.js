@@ -2,6 +2,12 @@ module.exports = {
   'model:asIs': {
     value: '$'
   },
+  'model:traced': {
+    value: '$',
+    params: {
+      trace: true
+    }
+  },
   'model:lifecycles': {
     inputType: 'array',
     before: (input, context) => context.locals.before(input),
