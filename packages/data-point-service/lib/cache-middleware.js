@@ -1,11 +1,22 @@
 const Promise = require('bluebird')
-const defaultTo = require('lodash/defaultTo')
 const set = require('lodash/fp/set')
 const debug = require('debug')('data-point-service:cache')
-const { deprecate } = require('util')
-const ms = require('ms')
+const { getCacheParams } = require('./entity-cache-params')
 
-const SWR_CONTROL = 'SWR-CONTROL'
+const {
+  setEntry,
+  getEntry,
+  setSWRStaleEntry,
+  setSWRControlEntry,
+  getSWRStaleEntry,
+  getSWRControlEntry
+} = require('./redis-controller')
+
+/**
+ * Flag for redis control entry flag, when set it means the stored result should
+ * be considered stale
+ */
+const SWR_CONTROL_STALE = 'SWR-CONTROL-STALE'
 
 /**
  * @param {Function} cacheKey function to generate a cache key
@@ -14,84 +25,6 @@ const SWR_CONTROL = 'SWR-CONTROL'
  */
 function generateKey (cacheKey, ctx) {
   return cacheKey ? cacheKey(ctx) : `entity:${ctx.context.id}`
-}
-
-/**
- * @param {String} key cache key
- * @returns {String} key postfixed with "swr.stale"
- */
-function createSWRStaleKey (key) {
-  return `${key}:swr.stale`
-}
-
-/**
- * @param {String} key cache key
- * @returns {String} key postfixed with "swr.control"
- */
-function createSWRControlKey (key) {
-  return `${key}:swr.control`
-}
-
-/**
- * @param {Service} service Service instance
- * @param {String} key entry key
- * @returns {Promise<Object|undefined>} entry value
- */
-function getEntry (service, key) {
-  return service.cache.get(key)
-}
-
-/**
- * @param {Service} service Service instance
- * @param {String} key entry key
- * @returns {Promise<Object|undefined>} entry value
- */
-function getSWRStaleEntry (service, key) {
-  return service.cache.get(createSWRStaleKey(key))
-}
-
-/**
- * @param {Service} service Service instance
- * @param {String} key entry key
- * @returns {Promise<Object|undefined>} entry value
- */
-function getSWRControlEntry (service, key) {
-  return getEntry(service, createSWRControlKey(key)).then(
-    result => result === SWR_CONTROL
-  )
-}
-
-/**
- * @param {Service} service Service instance
- * @param {String} key entry key
- * @param {Object} value entry value
- * @param {String} ttl time to live value supported by https://github.com/zeit/ms
- * @returns {Promise}
- */
-function setEntry (service, key, value, ttl) {
-  return service.cache.set(key, value, ttl)
-}
-
-/**
- * When stale is provided the value is calculated as ttl + stale
- * @param {Service} service Service instance
- * @param {String} key entry key
- * @param {Object} value entry value
- * @param {Number|String} ttl time to live value supported by https://github.com/zeit/ms
- * @returns {Promise}
- */
-function setSWRStaleEntry (service, key, value, ttl) {
-  return setEntry(service, createSWRStaleKey(key), value, ttl)
-}
-
-/**
- * @param {Service} service Service instance
- * @param {String} key entry key
- * @param {String} ttl time to live value supported by https://github.com/zeit/ms
- * @returns {Promise}
- */
-function setSWRControlEntry (service, key, ttl) {
-  return setEntry(service, createSWRControlKey(key), SWR_CONTROL, ttl)
 }
 
 /**
@@ -107,7 +40,9 @@ function setStaleWhileRevalidateEntry (service, entryKey, value, cache) {
     entryKey,
     value,
     cache.staleWhileRevalidateTtl
-  ).then(() => setSWRControlEntry(service, entryKey, cache.ttl))
+  ).then(() =>
+    setSWRControlEntry(service, entryKey, cache.ttl, SWR_CONTROL_STALE)
+  )
 }
 
 /**
@@ -170,6 +105,17 @@ function handleRevalidateError (entityId, entryKey) {
 }
 
 /**
+ * @param {*} staleEntry value of entry stored in cache stores
+ * @param {RevalidationState} revalidationState cacheKey's revalidation state
+ */
+function shouldTriggerRevalidate (staleEntry, revalidationState) {
+  // we only want to revalidate if:
+  //  - stale response exists
+  //  - external control entry has expired
+  return staleEntry && typeof revalidationState === 'undefined'
+}
+
+/**
  * @param {Service} service Service instance
  * @param {String} entryKey entry key
  * @param {Object} cache cache configuration
@@ -184,12 +130,13 @@ function revalidateEntry (service, entryKey, cache, ctx) {
     entryKey
   }
 
-  // use this to bypass cache middleware
+  // this object serves as a flag is set to bypass cache middleware execution
   const revalidateContext = set(
     'locals.revalidatingCache',
     revalidatingCache,
     ctx
   )
+
   debug('Revalidating entityId: %s with cache key: %s', entityId, entryKey)
 
   return service.dataPoint
@@ -215,6 +162,10 @@ function isRevalidatingCacheKey (ctx, currentEntryKey) {
  * to resolve the entity, this thread is not meant to be chained to the main
  * Promise chain.
  *
+ * When this function returns undefined it is telling the caller it should
+ * make a standard resolution of the entity instead of using the
+ * stale-while-revalidate process.
+ *
  * @param {Service} service Service instance
  * @param {String} entryKey entry key
  * @param {Object} cache cache configuration
@@ -236,102 +187,18 @@ function resolveStaleWhileRevalidateEntry (service, entryKey, cache, ctx) {
   ]
 
   return Promise.all(tasks).then(results => {
-    const controlEntry = results[0]
+    const revalidationState = results[0]
     const staleEntry = results[1]
 
-    // we only want to revalidate if entry exprired but a stale response
-    // already exists, otherwise means its a cold start and must be resolved
-    // normally
-    if (staleEntry && controlEntry === false) {
-      // IMPORTANT: creates new thread
+    if (shouldTriggerRevalidate(staleEntry, revalidationState)) {
+      // IMPORTANT: revalidateEntry operates on a new thread
       // NOTE: using through module.exports allows us to test if it was called
       module.exports.revalidateEntry(service, entryKey, cache, ctx)
-    }
+    } // Otherwise means its a cold start and must be resolved outside
+
     // return stale entry regardless
     return staleEntry
   })
-}
-
-const looseCacheParamsDeprecationWarning = deprecate(() => {},
-'Usage of params.ttl, params.cacheKey and params.staleWhileRevalidate will be deprecated. Please configure through params.cache object instead')
-
-/**
- * Logs deprecation warning if loose cache params were used
- * @param {Object} params entity's custom params
- */
-function warnLooseParamsCacheDeprecation (params) {
-  if (params.ttl || params.cacheKey || params.staleWhileRevalidate) {
-    module.exports.looseCacheParamsDeprecationWarning()
-  }
-}
-
-/**
- * @param {String|Number} value value in string ms format, or number milliseconds
- * @returns {Number}
- */
-function parseMs (value) {
-  return typeof value === 'string' ? ms(value) : value
-}
-
-/**
- * @param {String|Number|Boolean} staleWhileRevalidate if true will calculate twice the ttl
- * @param {String|Number} ttl
- * @returns {Number} in milliseconds
- */
-function getStaleWhileRevalidateTtl (staleWhileRevalidate, ttl) {
-  return staleWhileRevalidate === true
-    ? parseMs(ttl) * 2 // default value
-    : parseMs(ttl) + parseMs(staleWhileRevalidate)
-}
-
-/**
- * @param {String|Number|Boolean}  value
- * @returns {Bolean}
- */
-function shouldUseStaleWhileRevalidate (value) {
-  return (
-    typeof value === 'string' || typeof value === 'number' || value === true
-  )
-}
-
-/**
- * @param {Object} params entity's custom params
- * @returns {Object} normalized values
- */
-function getCacheParams (params) {
-  warnLooseParamsCacheDeprecation(params)
-  const cache = defaultTo(params.cache, {})
-  const ttl = defaultTo(cache.ttl, params.ttl)
-
-  let useStaleWhileRevalidate
-  let staleWhileRevalidateTtl
-
-  // we only want to calculate below values if ttl is set
-  if (typeof ttl !== 'undefined') {
-    const staleWhileRevalidate = defaultTo(
-      cache.staleWhileRevalidate,
-      params.staleWhileRevalidate
-    )
-
-    useStaleWhileRevalidate = shouldUseStaleWhileRevalidate(
-      staleWhileRevalidate
-    )
-
-    // only calculate stale's ttl if we need to
-    if (useStaleWhileRevalidate) {
-      staleWhileRevalidateTtl = getStaleWhileRevalidateTtl(
-        staleWhileRevalidate,
-        ttl
-      )
-    }
-  }
-
-  return {
-    ttl,
-    cacheKey: defaultTo(cache.cacheKey, params.cacheKey),
-    useStaleWhileRevalidate,
-    staleWhileRevalidateTtl
-  }
 }
 
 /**
@@ -407,23 +274,10 @@ function after (service, ctx, next) {
 
 module.exports = {
   generateKey,
-  createSWRStaleKey,
-  createSWRControlKey,
-  getEntry,
-  getSWRControlEntry,
-  setEntry,
-  setSWRStaleEntry,
-  setSWRControlEntry,
   isRevalidatingCacheKey,
   resolveStaleWhileRevalidateEntry,
   revalidateEntry,
   setStaleWhileRevalidateEntry,
-  looseCacheParamsDeprecationWarning,
-  warnLooseParamsCacheDeprecation,
-  parseMs,
-  getStaleWhileRevalidateTtl,
-  shouldUseStaleWhileRevalidate,
-  getCacheParams,
   before,
   after
 }
