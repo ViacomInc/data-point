@@ -66,115 +66,6 @@ describe('genrateKey', () => {
   })
 })
 
-describe('createSWRStaleKey', () => {
-  it('should create stale key', () => {
-    expect(CacheMiddleware.createSWRStaleKey('key')).toEqual('key:swr.stale')
-  })
-})
-
-describe('createSWRStaleKey', () => {
-  it('should create control key', () => {
-    expect(CacheMiddleware.createSWRControlKey('key')).toEqual(
-      'key:swr.control'
-    )
-  })
-})
-
-describe('getEntry', () => {
-  it('should call cache.get from service to fetch a key', () => {
-    const service = {
-      cache: {
-        get: key => Promise.resolve(`${key}:value`)
-      }
-    }
-    return CacheMiddleware.getEntry(service, 'test').then(result => {
-      expect(result).toEqual('test:value')
-    })
-  })
-})
-
-describe('getSWRControlEntry', () => {
-  it('should return true if key exists with valid wrapper ', () => {
-    const service = {
-      cache: {
-        get: jest.fn(key => Promise.resolve('SWR-CONTROL'))
-      }
-    }
-    return CacheMiddleware.getSWRControlEntry(service, 'test').then(result => {
-      expect(service.cache.get).toBeCalledWith('test:swr.control')
-      expect(result).toEqual(true)
-    })
-  })
-
-  it('should return true if key exists with valid wrapper ', () => {
-    const service = {
-      cache: {
-        get: jest.fn(key => Promise.resolve(undefined))
-      }
-    }
-    return CacheMiddleware.getSWRControlEntry(service, 'test').then(result => {
-      expect(service.cache.get).toBeCalledWith('test:swr.control')
-      expect(result).toEqual(false)
-    })
-  })
-})
-
-describe('setEntry', () => {
-  it('should pass all arguments to cache.set', () => {
-    const service = {
-      cache: {
-        set: jest.fn()
-      }
-    }
-    CacheMiddleware.setEntry(service, 'key', 'value', 200)
-    expect(service.cache.set).toBeCalledWith('key', 'value', 200)
-  })
-})
-
-describe('setSWRStaleEntry', () => {
-  it('should create a key that has no ttl', () => {
-    const service = {
-      cache: {
-        set: jest.fn()
-      }
-    }
-    CacheMiddleware.setSWRStaleEntry(service, 'key', 'value', 100)
-    expect(service.cache.set).toBeCalledWith('key:swr.stale', 'value', 100)
-  })
-})
-
-describe('setSWRControlEntry', () => {
-  it('should create a key that has no ttl', () => {
-    const service = {
-      cache: {
-        set: jest.fn()
-      }
-    }
-    CacheMiddleware.setSWRControlEntry(service, 'key', 100)
-    expect(service.cache.set).toBeCalledWith(
-      'key:swr.control',
-      'SWR-CONTROL',
-      100
-    )
-  })
-})
-
-describe('setSWRControlEntry', () => {
-  it('should create a key that has no ttl', () => {
-    const service = {
-      cache: {
-        set: jest.fn()
-      }
-    }
-    CacheMiddleware.setSWRControlEntry(service, 'key', 200)
-    expect(service.cache.set).toBeCalledWith(
-      'key:swr.control',
-      'SWR-CONTROL',
-      200
-    )
-  })
-})
-
 describe('setStaleWhileRevalidateEntry', () => {
   it('should store stale entry and SWR control entry', () => {
     const set = jest.fn(() => Promise.resolve(true))
@@ -196,7 +87,11 @@ describe('setStaleWhileRevalidateEntry', () => {
       cache
     ).then(() => {
       expect(set.mock.calls[0]).toEqual(['key:swr.stale', 'value', 400])
-      expect(set.mock.calls[1]).toEqual(['key:swr.control', 'SWR-CONTROL', 200])
+      expect(set.mock.calls[1]).toEqual([
+        'key:swr.control',
+        'SWR-CONTROL-STALE',
+        200
+      ])
     })
   })
 })
@@ -399,6 +294,7 @@ describe('resolveStaleWhileRevalidateEntry', () => {
     return result.then(value => {
       expect(spyRevalidateEntry).not.toBeCalled()
       expect(value).toEqual('STALE')
+      spyRevalidateEntry.mockRestore()
     })
   })
 
@@ -434,160 +330,6 @@ describe('resolveStaleWhileRevalidateEntry', () => {
       expect(value).toEqual('STALE')
       spyRevalidateEntry.mockReset()
       spyRevalidateEntry.mockRestore()
-    })
-  })
-})
-
-describe('warnLooseParamsCacheDeprecation', () => {
-  const looseCacheParamsDeprecationWarning =
-    CacheMiddleware.looseCacheParamsDeprecationWarning
-  afterAll(() => {
-    CacheMiddleware.looseCacheParamsDeprecationWarning = looseCacheParamsDeprecationWarning
-  })
-  it('should call deprecate if params.ttl is set', () => {
-    CacheMiddleware.looseCacheParamsDeprecationWarning = jest.fn()
-    expect(
-      CacheMiddleware.warnLooseParamsCacheDeprecation({
-        ttl: true
-      })
-    )
-    expect(CacheMiddleware.looseCacheParamsDeprecationWarning).toBeCalled()
-  })
-
-  it('should call deprecate if params.cacheKey is set', () => {
-    CacheMiddleware.looseCacheParamsDeprecationWarning = jest.fn()
-
-    expect(
-      CacheMiddleware.warnLooseParamsCacheDeprecation({
-        cacheKey: true
-      })
-    )
-
-    expect(CacheMiddleware.looseCacheParamsDeprecationWarning).toBeCalled()
-  })
-
-  it('should call deprecate if params.staleWhileRevalidate is set', () => {
-    CacheMiddleware.looseCacheParamsDeprecationWarning = jest.fn()
-
-    expect(
-      CacheMiddleware.warnLooseParamsCacheDeprecation({
-        staleWhileRevalidate: true
-      })
-    )
-
-    expect(CacheMiddleware.looseCacheParamsDeprecationWarning).toBeCalled()
-  })
-})
-
-describe('parseMs', () => {
-  it('should return number if ms string is provided', () => {
-    expect(CacheMiddleware.parseMs('1s')).toEqual(1000)
-  })
-  it('should return number if number is provided', () => {
-    expect(CacheMiddleware.parseMs(1000)).toEqual(1000)
-  })
-})
-
-describe('getStaleWhileRevalidateTtl', () => {
-  it('should return double the value of ttl if staleWhileRevalidate is true', () => {
-    expect(CacheMiddleware.getStaleWhileRevalidateTtl(true, 1000)).toEqual(2000)
-  })
-  it('should return addition of ttl and staleWhileRevalidate if staleWhileRevalidate different to true (string or number)', () => {
-    expect(CacheMiddleware.getStaleWhileRevalidateTtl(500, 1000)).toEqual(1500)
-    expect(CacheMiddleware.getStaleWhileRevalidateTtl('5s', 1000)).toEqual(6000)
-  })
-})
-
-describe('shouldUseStaleWhileRevalidate', () => {
-  it('should be true for "true", number and string', () => {
-    expect(CacheMiddleware.shouldUseStaleWhileRevalidate(true)).toEqual(true)
-    expect(CacheMiddleware.shouldUseStaleWhileRevalidate(200)).toEqual(true)
-    expect(CacheMiddleware.shouldUseStaleWhileRevalidate('20m')).toEqual(true)
-  })
-  it('should be false for "false" and undefined', () => {
-    expect(CacheMiddleware.shouldUseStaleWhileRevalidate(false)).toEqual(false)
-    expect(CacheMiddleware.shouldUseStaleWhileRevalidate(undefined)).toEqual(
-      false
-    )
-    expect(CacheMiddleware.shouldUseStaleWhileRevalidate(null)).toEqual(false)
-  })
-})
-
-describe('getCacheParams', () => {
-  it('should have backwards compatability with params loose properties', () => {
-    const params = {
-      ttl: '20s',
-      cacheKey: () => true,
-      staleWhileRevalidate: '10s'
-    }
-    const cache = CacheMiddleware.getCacheParams(params)
-    expect(cache).toEqual({
-      ttl: params.ttl,
-      cacheKey: params.cacheKey,
-      useStaleWhileRevalidate: true,
-      staleWhileRevalidateTtl: 30000
-    })
-  })
-  it('should get values from params.cache property', () => {
-    const params = {
-      cache: {
-        ttl: '20s',
-        cacheKey: () => true,
-        staleWhileRevalidate: '10s'
-      }
-    }
-    const cache = CacheMiddleware.getCacheParams(params)
-    expect(cache).toEqual({
-      ttl: params.cache.ttl,
-      cacheKey: params.cache.cacheKey,
-      useStaleWhileRevalidate: true,
-      staleWhileRevalidateTtl: 30000
-    })
-  })
-  it('should have params.cache priority over loose param cache settings', () => {
-    const params = {
-      ttl: '10s',
-      cacheKey: () => true,
-      staleWhileRevalidate: '20ms',
-      cache: {
-        ttl: '20s',
-        cacheKey: () => true
-      }
-    }
-    const cache = CacheMiddleware.getCacheParams(params)
-    expect(cache).toEqual({
-      ttl: params.cache.ttl,
-      cacheKey: params.cache.cacheKey,
-      // this key will use the loose value since its not being set through
-      // params.cache
-      useStaleWhileRevalidate: true,
-      staleWhileRevalidateTtl: 20020
-    })
-  })
-  it('should not calculate stale values if ttl is not set', () => {
-    const params = {
-      cache: {}
-    }
-    const cache = CacheMiddleware.getCacheParams(params)
-    expect(cache).toEqual({
-      ttl: undefined,
-      cacheKey: undefined,
-      useStaleWhileRevalidate: undefined,
-      staleWhileRevalidateTtl: undefined
-    })
-  })
-  it('should not calculate stale ttl if staleWhileRevalidate is not set', () => {
-    const params = {
-      cache: {
-        ttl: '20s'
-      }
-    }
-    const cache = CacheMiddleware.getCacheParams(params)
-    expect(cache).toEqual({
-      ttl: '20s',
-      cacheKey: undefined,
-      useStaleWhileRevalidate: false,
-      staleWhileRevalidateTtl: undefined
     })
   })
 })
