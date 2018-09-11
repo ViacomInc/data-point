@@ -11,6 +11,7 @@ function Accumulator () {
   this.reducer = undefined
   this.trace = false
   this.context = undefined
+  this.traceGraph = []
 }
 
 module.exports.Accumulator = Accumulator

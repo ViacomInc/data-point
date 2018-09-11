@@ -3,6 +3,8 @@ const nock = require('nock')
 module.exports = () => {
   nock('https://swapi.co')
     .get('/api/planets/1')
+    .optionally()
+    .delay(100)
     .reply(200, {
       name: 'Tatooine',
       rotation_period: '23',
@@ -22,6 +24,8 @@ module.exports = () => {
 
   nock('https://swapi.co')
     .get('/api/people/1/')
+    .optionally()
+    .delay(100)
     .reply(200, {
       name: 'Luke Skywalker',
       height: '172',
@@ -34,6 +38,8 @@ module.exports = () => {
 
   nock('https://swapi.co')
     .get('/api/people/2/')
+    .optionally()
+    .delay(100)
     .reply(200, {
       name: 'C-3PO',
       height: '167',
@@ -47,6 +53,8 @@ module.exports = () => {
 
   nock('https://swapi.co')
     .get('/api/people/4/')
+    .optionally()
+    .delay(100)
     .reply(200, {
       name: 'Darth Vader',
       height: '202',

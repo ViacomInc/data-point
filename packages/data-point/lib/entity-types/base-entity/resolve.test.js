@@ -222,7 +222,7 @@ describe('ResolveEntity.resolveEntity', () => {
     const consoleTimeEnd = console.timeEnd
     console.time = jest.fn()
     console.timeEnd = jest.fn()
-    return resolveEntity('model:asIs', 'foo', {
+    return resolveEntity('model:traced', 'foo', {
       trace: true
     }).then(acc => {
       expect(console.time).toBeCalled()

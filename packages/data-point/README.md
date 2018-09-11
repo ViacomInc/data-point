@@ -61,6 +61,7 @@ npm install --save data-point
 - [Middleware](#middleware)
   - [dataPoint.use](#api-data-point-use)
 - [Custom Entity Types](#custom-entity-types)
+- [Tracing](#tracing)
 - [Integrations](#integrations)
 - [Patterns and Best Practices](#patterns-best-practices)
 - [Contributing](#contributing)
@@ -3541,6 +3542,54 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
 
 
 Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
+
+## <a name="tracing">Tracing DataPoint calls</a>
+
+To trace a DataPoint transformation you can set the value `trace:true` to the options object passed to the `datapoint.transform()` method. 
+
+This tool will write a JSON file to disk (on the current execution path) that exposes all of the reducers that are being executed within a transformation. It provides information such as time start and duration of each process as well as information regarding the reducer that was executed.
+
+
+### Example: 
+
+```js
+const DataPoint = require('data-point')
+const mocks = require('./async-example.mocks')
+
+// mock request calls
+mocks()
+
+const {
+  Model,
+  Request
+} = DataPoint.entities
+
+const PersonRequest = Request('PersonRequest', {
+  url: 'https://swapi.co/api/people/{value}/'
+})
+
+const PersonModel = Model('PersonModel', {
+  value: {
+    name: '$name',
+    birthYear: '$birth_year'
+  }
+})
+
+const options = {
+  trace: true 
+}
+
+const dataPoint = DataPoint.create()
+
+dataPoint
+  .transform([PersonRequest, PersonModel], 1, options)
+  .then((output) => {
+    // a file with the name data-point-trace-<timestamp>.json will
+    // be created.
+  })
+```
+
+Example at: [examples/trace.js](examples/trace.js)
 
 ## <a name="integrations">Integrations</a>
 

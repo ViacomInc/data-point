@@ -4,6 +4,7 @@ const _ = require('lodash')
 const nock = require('nock')
 const FixtureStore = require('../../test/utils/fixture-store')
 const TestData = require('../../test/data.json')
+const Promise = require('bluebird')
 
 let dataPoint
 
@@ -222,34 +223,41 @@ test('Model Entity Instance', () => {
 })
 
 describe('trace feature', () => {
-  test('trace via options parameter', () => {
-    const consoleTime = console.time
-    const consoleTimeEnd = console.timeEnd
+  let mockDateNow
+  let mockWriteFileP
+  let mockhrTime
+  afterEach(() => {
+    mockDateNow.mockRestore()
+    mockWriteFileP.mockRestore()
+    mockhrTime.mockRestore()
+  })
 
-    const timeIds = []
-    console.time = id => {
-      timeIds.push({
-        type: 'time',
-        id: id
+  test('trace via options parameter', () => {
+    let calls = 0
+    const NS_PER_SEC = 1e9
+    mockhrTime = jest.spyOn(process, 'hrtime').mockImplementation(t => {
+      calls++
+      return [calls, NS_PER_SEC * calls]
+    })
+    mockDateNow = jest.spyOn(Date, 'now').mockImplementation(() => {
+      return 123
+    })
+    const TraceGraph = require('../trace/trace-graph')
+    mockWriteFileP = jest
+      .spyOn(TraceGraph, 'writeFileP')
+      .mockImplementation(() => {
+        return Promise.resolve(true)
       })
-    }
-    console.timeEnd = id => {
-      timeIds.push({
-        type: 'timeEnd',
-        id: id
-      })
-    }
+
     return dataPoint
       .transform('model:tracedViaOptions', TestData, {
         trace: true
       })
       .then(result => {
-        console.time = consoleTime
-        console.timeEnd = consoleTimeEnd
-        const ids = _.map(timeIds, 'id')
-        expect(ids[0]).toContain('⧖ model:tracedViaOptions:')
+        expect(mockWriteFileP.mock.calls).toMatchSnapshot()
       })
   })
+
   test('trace via entity params', () => {
     const consoleTime = console.time
     const consoleTimeEnd = console.timeEnd

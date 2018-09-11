@@ -9,6 +9,8 @@ const ReducerPath = require('./reducer-path')
 const ReducerHelpers = require('./reducer-helpers').reducers
 const { DEFAULT_VALUE } = require('./reducer-symbols')
 
+const trace = require('../trace')
+
 const reducers = Object.assign({}, ReducerHelpers, {
   [ReducerEntity.type]: ReducerEntity,
   [ReducerEntityId.type]: ReducerEntityId,
@@ -43,7 +45,10 @@ function getResolveFunction (reducer) {
 }
 
 /**
- * apply a Reducer to an accumulator
+ * Applies a Reducer to an accumulator
+ *
+ * If Accumulator.trace is true it will execute tracing actions
+ *
  * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
@@ -57,13 +62,27 @@ function resolveReducer (manager, accumulator, reducer) {
     return Promise.resolve(accumulator)
   }
 
+  const isTracing = accumulator.trace
+
+  const acc = isTracing
+    ? trace.augmentAccumulatorTrace(accumulator, reducer)
+    : accumulator
+
+  const traceNode = acc.traceNode
+
   const resolve = getResolveFunction(reducer)
+
   // NOTE: recursive call
-  const result = resolve(manager, resolveReducer, accumulator, reducer)
+  let result = resolve(manager, resolveReducer, acc, reducer)
+
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
     const resolveDefault = reducers.ReducerDefault.resolve
-    return result.then(acc => resolveDefault(acc, _default))
+    result = result.then(acc => resolveDefault(acc, _default))
+  }
+
+  if (isTracing) {
+    result = result.then(trace.augmentTraceNodeDuration(traceNode))
   }
 
   return result
