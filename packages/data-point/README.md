@@ -2637,7 +2637,7 @@ For examples of hash entities, see the [Examples](examples), on the unit tests: 
 
 A Collection entity enables you to operate over an array. Its API provides basic reducers to manipulate the elements in the array.
 
-To prevent unexpected results, a **Collection** can only return arrays. If a collection resolves to a different type, it will throw an eror. This type check occurs *before* the value is passed to the (optional) `outputType` reducer.
+To prevent unexpected results, a **Collection** can only return arrays. If a collection resolves to a different type, it will throw an error. This type check occurs *before* the value is passed to the (optional) `outputType` reducer.
 
 **IMPORTANT:** Keep in mind that in DataPoint, **all** operations are asynchronous. If your operations do NOT need to be asynchronous, iterating over a large array might result in slower execution. In such cases, consider using a function reducer where you can implement a synchronous solution.
 
@@ -3372,7 +3372,7 @@ dataPoint.use(id:String, callback:Function)
 
 ### <a name="middleware-accumulator-object">Middleware Accumulator object</a>
 
-This is the current [Accumulator](#accumulator) object with a `resolve(value)` method appended to it. If `acc.resolve(value)` is called inside a middleware function, the entity will resolve to that value without executing any remaining methods. This allows you to skip unecessary work if, for example, a cached return value was found.
+This is the current [Accumulator](#accumulator) object with a `resolve(value)` method appended to it. If `acc.resolve(value)` is called inside a middleware function, the entity will resolve to that value without executing any remaining methods. This allows you to skip unnecessary work if, for example, a cached return value was found.
 
 **NOTE**: It's still required to call `next()` after `acc.resolve(value)`; otherwise, the function will hang indefinitely.
 
