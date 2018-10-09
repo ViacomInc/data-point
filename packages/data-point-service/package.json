@@ -18,7 +18,7 @@
     "bluebird": "3.5.1",
     "data-point-cache": "^3.2.1-0",
     "debug": "3.x",
-    "lodash": "4.x",
+    "lodash": "^4.17.11",
     "ms": "2.x"
   },
   "peerDependencies": {
