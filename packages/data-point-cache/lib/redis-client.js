@@ -49,6 +49,7 @@ function create (options = {}) {
     redis: null,
     set: null,
     get: null,
+    del: null,
     exists: null,
     options
   }
@@ -65,6 +66,7 @@ function create (options = {}) {
 function bootstrap (cache) {
   cache.set = set.bind(null, cache)
   cache.get = get.bind(null, cache)
+  cache.del = del.bind(null, cache)
   cache.exists = exists.bind(null, cache)
   return cache
 }
@@ -115,6 +117,14 @@ function exists (cache, key) {
     .then(res => res[0][1] === 1)
 }
 
+function del (cache, key) {
+  const redis = cache.redis
+  return redis
+    .pipeline()
+    .del(key)
+    .exec()
+}
+
 module.exports = {
   redisDecorator,
   getFromRedisResult,
@@ -124,6 +134,7 @@ module.exports = {
   bootstrap,
   set,
   get,
+  del,
   exists,
   encode,
   decode

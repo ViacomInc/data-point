@@ -65,6 +65,7 @@ describe('create', () => {
       expect(typeof redisClient.redis.set === 'function').toBeTruthy()
       expect(typeof redisClient.get === 'function').toBeTruthy()
       expect(typeof redisClient.set === 'function').toBeTruthy()
+      expect(typeof redisClient.del === 'function').toBeTruthy()
       expect(typeof redisClient.exists === 'function').toBeTruthy()
     })
   })
@@ -180,6 +181,29 @@ describe('get/set/exists', () => {
       return redisClient.exists('invalid').then(value => {
         expect(value).toEqual(false)
       })
+    })
+  })
+
+  test('It should delete a key', () => {
+    return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
+
+      return redis
+        .pipeline()
+        .set('toBeRemoved', 'foo')
+        .exec()
+        .then(() => {
+          return redisClient.del('toBeRemoved')
+        })
+        .then(() => {
+          return redis
+            .pipeline()
+            .get('toBeRemoved')
+            .exec()
+        })
+        .then(result => {
+          expect(result).toEqual([[null, null]])
+        })
     })
   })
 })
