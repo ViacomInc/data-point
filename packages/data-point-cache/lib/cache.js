@@ -26,7 +26,7 @@ function set (cache, key, value, ttl = '20m') {
 /**
  * @param {Object} cache cache store
  * @param {String} key cache key
- * @returns {Promise<*|undefined>} returns value whenr esolved or undefined
+ * @returns {Promise<*>} undefined should be interpreted as not found
  */
 function getFromStore (cache, key) {
   return Promise.resolve(cache.local.get(key)).then(entry => {
