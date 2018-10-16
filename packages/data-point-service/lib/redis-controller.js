@@ -26,6 +26,15 @@ function getEntry (service, key) {
 /**
  * @param {Service} service Service instance
  * @param {String} key entry key
+ * @returns {Promise}
+ */
+function deleteEntry (service, key) {
+  return service.cache.del(key)
+}
+
+/**
+ * @param {Service} service Service instance
+ * @param {String} key entry key
  * @returns {Promise<Object|undefined>} entry value
  */
 function getSWRStaleEntry (service, key) {
@@ -74,9 +83,21 @@ function setSWRControlEntry (service, key, ttl, value) {
   return setEntry(service, createSWRControlKey(key), value, ttl)
 }
 
+/**
+ * @param {Service} service Service instance
+ * @param {String} key entry key
+ * @param {String} ttl time to live value supported by https://github.com/zeit/ms
+ * @returns {Promise}
+ */
+function deleteSWRControlEntry (service, key) {
+  return deleteEntry(service, createSWRControlKey(key))
+}
+
 module.exports = {
   createSWRControlKey,
   createSWRStaleKey,
+  deleteEntry,
+  deleteSWRControlEntry,
   getEntry,
   getSWRControlEntry,
   getSWRStaleEntry,

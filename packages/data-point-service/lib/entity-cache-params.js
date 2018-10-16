@@ -55,6 +55,7 @@ function getCacheParams (params) {
 
   let useStaleWhileRevalidate
   let staleWhileRevalidateTtl
+  let revalidateTimeout
 
   // we only want to calculate below values if ttl is set
   if (typeof ttl !== 'undefined') {
@@ -73,6 +74,9 @@ function getCacheParams (params) {
         staleWhileRevalidate,
         ttl
       )
+
+      // 5 seconds default
+      revalidateTimeout = defaultTo(parseMs(cache.revalidateTimeout), 5000)
     }
   }
 
@@ -80,7 +84,8 @@ function getCacheParams (params) {
     ttl,
     cacheKey: defaultTo(cache.cacheKey, params.cacheKey),
     useStaleWhileRevalidate,
-    staleWhileRevalidateTtl
+    staleWhileRevalidateTtl,
+    revalidateTimeout
   }
 }
 

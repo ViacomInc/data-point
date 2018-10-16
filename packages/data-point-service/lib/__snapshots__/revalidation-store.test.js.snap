@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`clear should remove expired keys 1`] = `
+Array [
+  Array [
+    "local revalidation flags that timed out: t2",
+  ],
+]
+`;
+
+exports[`create implementation should clear entries 1`] = `
+Map {
+  "t1" => Array [
+    1000,
+    100,
+  ],
+}
+`;
+
+exports[`create should create a new store that matches snapshot api 1`] = `
+Object {
+  "add": [Function],
+  "clear": [Function],
+  "exists": [Function],
+  "remove": [Function],
+  "store": Map {},
+}
+`;
