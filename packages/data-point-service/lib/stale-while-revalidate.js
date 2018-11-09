@@ -81,7 +81,7 @@ function getEntry (service, entryKey) {
  * @returns {Promise}
  */
 function addRevalidationFlags (revalidation, entryKey, revalidateTimeout) {
-  // local (node instance) flag is set to imediatly prevent concurrent calls
+  // local (node instance) flag is set to immediately prevent concurrent calls
   revalidation.local.add(entryKey, revalidateTimeout)
   // external (redis) flag is set to prevent multiple instances from duplicating
   // revalidation efforts
