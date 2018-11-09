@@ -5,7 +5,10 @@ jest.mock('debug', () => {
   return () => mockDebug
 })
 
-const mockthrottle = jest.fn(fn => fn)
+const mockThrottle = jest.fn(fn => fn)
+jest.mock('lodash/throttle', () => {
+  return mockThrottle
+})
 jest.mock('lodash/throttle', () => {
   return mockthrottle
 })
