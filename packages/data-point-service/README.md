@@ -172,6 +172,7 @@ DataPointService.create({
 revalidateTimeout: String|Number
 ```
 
+*defaults to*: `5s`
 
 `revalidateTimeout` is the time a revalidation process has before it times-out, the value is expected to be written as a string (eg. `'20m'`) following the format supported by [ms](https://www.npmjs.com/package/ms). When revalidation starts a **revalidation flag** is set which blocks revalidation duplicates from happening. Once the revalidation times-out the revalidation flag will be removed and the **key** will be unblocked for being revalidated again. If omitted it defaults to 5 seconds. 
 

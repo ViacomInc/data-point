@@ -18,6 +18,7 @@ const THROTTLE_WAIT = 1000 // milliseconds
 /**
  * It marks and deletes all the keys that have their ttl expired
  * @param {Map} store Map Object that stores all the cached keys
+ * @returns {Number} ammount of entries deleted
  */
 function clear (store) {
   const forDeletion = []
@@ -30,13 +31,15 @@ function clear (store) {
     }
   }
 
+  const forDeletionLength = forDeletion.length
   // if nothing to clean then exit
-  if (forDeletion.length === 0) {
-    return
+  if (forDeletionLength === 0) {
+    return 0
   }
 
   debug(`local revalidation flags that timed out: ${forDeletion}`)
   forDeletion.forEach(key => store.delete(key))
+  return forDeletionLength
 }
 
 /**
@@ -44,6 +47,7 @@ function clear (store) {
  * @param {Number} maxStoreSize Size to limit the store, if above this number keys will no longer be saved
  * @param {String} key key value
  * @param {Number} ttl time the key will be alive, expressed in milliseconds
+ * @returns {Boolean} true if added, false if otherwise
  */
 function add (store, maxStoreSize, key, ttl) {
   // do not add more than 10000 keys
@@ -55,6 +59,7 @@ function add (store, maxStoreSize, key, ttl) {
 /**
  * @param {Map} store Map Object that stores all the cached keys
  * @param {String} key key value
+ * @returns {Boolean} true, yes always true
  */
 function remove (store, key) {
   store.delete(key)
@@ -65,6 +70,7 @@ function remove (store, key) {
  * True if a key exists, and it has not expired
  * @param {Map} store Map Object that stores all the cached keys
  * @param {String} key key value
+ * @returns {Boolean} true if key exists, false otherwise
  */
 function exists (store, key) {
   const entry = store.get(key)
@@ -73,7 +79,17 @@ function exists (store, key) {
 }
 
 /**
+ * @typedef {Object} RevalidationStore
+ * @property {Map} store internal store instnace
+ * @property {function} add (key:String, ttl:Number) add entry
+ * @property {function} remove (key:String) remove entry
+ * @property {function} exists (key:String) check if entry exists
+ * @property {function} clear () clears any key that has ttl expired, this method is throttled
+ */
+
+/**
  * Creates an in-memory Revalidation Controller
+ * @returns {RevalidationStore}  Object
  */
 function create () {
   const store = new Map()
