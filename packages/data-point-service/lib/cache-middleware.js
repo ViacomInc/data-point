@@ -16,6 +16,7 @@ function generateKey (cacheKey, ctx) {
 }
 
 /**
+ * @param {Service} service Service instance
  * @param {String} entityId entity Id
  * @param {String} entryKey entity cache key
  * @returns {Function<Boolean>} function that returns true
@@ -69,7 +70,10 @@ function catchRevalidateError (service, entityId, entryKey) {
     )
 
     // remove revalidation flags to allow a new revalidation to happen
-    // if there is an error at this point we might not want to bubble it up
+    // if there is an error at this point will not bubble it up, this is
+    // because we are running on a new thread opened in
+    // `resolveStaleWhileRevalidateEntry` which at the moment does not provide
+    // any custom error handling. PRs welcomed
     return service.staleWhileRevalidate
       .clearAllRevalidationFlags(entryKey)
       .catch(clearError => {
@@ -258,10 +262,8 @@ function before (service, ctx, next) {
       if (value !== undefined) {
         ctx.resolve(value)
       }
-      return next()
     })
-    .catch(next)
-    .done()
+    .asCallback(next)
 
   return true
 }
@@ -297,9 +299,7 @@ function after (service, ctx, next) {
       entryKey,
       ctx.value,
       cache
-    ).then(() => {
-      next()
-    })
+    )
   } else {
     // adds a cache entry
     resolution = RedisController.setEntry(
@@ -310,10 +310,7 @@ function after (service, ctx, next) {
     )
   }
 
-  resolution
-    .then(() => next())
-    .catch(next)
-    .done()
+  resolution.asCallback(next)
 
   return true
 }

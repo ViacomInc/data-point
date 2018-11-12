@@ -10,7 +10,7 @@ jest.mock('lodash/throttle', () => {
   return mockThrottle
 })
 jest.mock('lodash/throttle', () => {
-  return mockthrottle
+  return mockThrottle
 })
 
 describe('add', () => {
@@ -19,8 +19,8 @@ describe('add', () => {
     const store = new Map()
     RevalidationStore.add(store, 10, 'test', 1000)
     const result = store.get('test')
-    expect(typeof result[0]).toEqual('number')
-    expect(result[1]).toEqual(1000)
+    expect(typeof result.created).toEqual('number')
+    expect(result.ttl).toEqual(1000)
   })
   it('should not add key if store size is more than MAX_STORE_SIZE', () => {
     const RevalidationStore = require('./revalidation-store')
@@ -47,7 +47,7 @@ describe('exists', () => {
   it('should check if key exists and has not expired', () => {
     const RevalidationStore = require('./revalidation-store')
     const store = new Map()
-    store.set('foo', [Date.now() + 100000, 100])
+    store.set('foo', { created: Date.now() + 100000, ttl: 100 })
     expect(RevalidationStore.exists(store, 'foo')).toEqual(true)
   })
 
@@ -90,7 +90,7 @@ describe('clear', () => {
   it('should remove expired keys', () => {
     const RevalidationStore = require('./revalidation-store')
     const store = new Map()
-    store.set('t2', [NOW - 10, 2]) // expired
+    store.set('t2', { created: NOW - 10, ttl: 2 }) // expired
     RevalidationStore.clear(store)
     expect(store.size).toEqual(0)
     expect(mockDebug).toBeCalled()
@@ -100,8 +100,8 @@ describe('clear', () => {
   it('should remove only expired keys', () => {
     const RevalidationStore = require('./revalidation-store')
     const store = new Map()
-    store.set('t1', [NOW, 2]) // has not expired
-    store.set('t2', [NOW - 10, 2]) // expired
+    store.set('t1', { created: NOW, ttl: 2 }) // has not expired
+    store.set('t2', { created: NOW - 10, ttl: 2 }) // expired
     RevalidationStore.clear(store)
     expect(store.size).toEqual(1)
     expect(store.get('t1')).not.toBeUndefined()
@@ -134,7 +134,7 @@ describe('create', () => {
       const store = RevalidationStore.create()
 
       store.add('t1', 100)
-      expect(store.store.get('t1')).toEqual([NOW, 100])
+      expect(store.store.get('t1')).toEqual({ created: NOW, ttl: 100 })
     })
 
     it('should remove entry', () => {

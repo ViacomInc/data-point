@@ -10,10 +10,10 @@ Array [
 
 exports[`create implementation should clear entries 1`] = `
 Map {
-  "t1" => Array [
-    1000,
-    100,
-  ],
+  "t1" => Object {
+    "created": 1000,
+    "ttl": 100,
+  },
 }
 `;
 

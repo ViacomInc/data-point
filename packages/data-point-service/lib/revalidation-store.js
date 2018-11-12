@@ -1,8 +1,19 @@
 const debug = require('debug')('data-point-service:cache')
 const throttle = require('lodash/throttle')
 
+/**
+ * Maximum number of entries to store
+ * NOTE: This value is only meant to add a cap to the keys we store. If there
+ * is any strong feeling on making this part smarter such as creating a FIFO
+ * sort of logic PRs are welcomed
+ */
 const MAX_STORE_SIZE = 10000
-const THROTTLE_WAIT = 1000 // cleanup in every 1 seconds
+
+/**
+ * Time to wait for cleanup to trigger in case it's called more than once within
+ * the range placed.
+ */
+const THROTTLE_WAIT = 1000 // milliseconds
 
 /**
  * It marks and deletes all the keys that have their ttl expired
@@ -12,17 +23,19 @@ function clear (store) {
   const forDeletion = []
   const now = Date.now()
 
-  for (const entry of store) {
+  for (const [key, entry] of store) {
     // mark for deletion entries that have timed out
-    if (now - entry[1][0] > entry[1][1]) {
-      forDeletion.push(entry[0])
+    if (now - entry.created > entry.ttl) {
+      forDeletion.push(key)
     }
   }
 
-  if (forDeletion.length > 0) {
-    debug(`local revalidation flags that timed out: ${forDeletion}`)
+  // if nothing to clean then exit
+  if (forDeletion.length === 0) {
+    return
   }
 
+  debug(`local revalidation flags that timed out: ${forDeletion}`)
   forDeletion.forEach(key => store.delete(key))
 }
 
@@ -35,7 +48,7 @@ function clear (store) {
 function add (store, maxStoreSize, key, ttl) {
   // do not add more than 10000 keys
   if (store.size > maxStoreSize) return false
-  store.set(key, [Date.now(), ttl])
+  store.set(key, { created: Date.now(), ttl })
   return true
 }
 
@@ -56,7 +69,7 @@ function remove (store, key) {
 function exists (store, key) {
   const entry = store.get(key)
   // checks entry exists and it has not timed-out
-  return !!entry && Date.now() - entry[0] < entry[1]
+  return !!entry && Date.now() - entry.created < entry.ttl
 }
 
 /**

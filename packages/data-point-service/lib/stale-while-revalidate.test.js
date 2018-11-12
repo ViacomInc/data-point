@@ -203,10 +203,10 @@ describe('getRevalidationState', () => {
 
 describe('createRevalidationManager', () => {
   it('should create revalidation controller', () => {
-    const reavidation = StaleWhileRevalidate.createRevalidationManager()
+    const revalidation = StaleWhileRevalidate.createRevalidationManager()
 
-    expect(reavidation).toHaveProperty('local.add')
-    expect(reavidation).toHaveProperty('external.add')
+    expect(revalidation).toHaveProperty('local.add')
+    expect(revalidation).toHaveProperty('external.add')
   })
 })
 
