@@ -1,5 +1,8 @@
 /* eslint-env jest */
 
+const util = require('util')
+util.deprecate = jest.fn(fn => fn)
+
 const EntityCacheParams = require('./entity-cache-params')
 
 describe('warnLooseParamsCacheDeprecation', () => {
@@ -97,7 +100,8 @@ describe('getCacheParams', () => {
       ttl: params.ttl,
       cacheKey: params.cacheKey,
       useStaleWhileRevalidate: true,
-      staleWhileRevalidateTtl: 30000
+      staleWhileRevalidateTtl: 30000,
+      revalidateTimeout: 5000
     })
   })
   it('should get values from params.cache property', () => {
@@ -113,7 +117,8 @@ describe('getCacheParams', () => {
       ttl: params.cache.ttl,
       cacheKey: params.cache.cacheKey,
       useStaleWhileRevalidate: true,
-      staleWhileRevalidateTtl: 30000
+      staleWhileRevalidateTtl: 30000,
+      revalidateTimeout: 5000
     })
   })
   it('should have params.cache priority over loose param cache settings', () => {
@@ -133,9 +138,46 @@ describe('getCacheParams', () => {
       // this key will use the loose value since its not being set through
       // params.cache
       useStaleWhileRevalidate: true,
-      staleWhileRevalidateTtl: 20020
+      staleWhileRevalidateTtl: 20020,
+      revalidateTimeout: 5000
     })
   })
+
+  it('should set params.cache.revalidateTimeout to default if not set', () => {
+    const params = {
+      cache: {
+        ttl: '20s',
+        staleWhileRevalidate: '20ms'
+      }
+    }
+    const cache = EntityCacheParams.getCacheParams(params)
+    expect(cache).toEqual({
+      ttl: params.cache.ttl,
+      cacheKey: undefined,
+      useStaleWhileRevalidate: true,
+      staleWhileRevalidateTtl: 20020,
+      revalidateTimeout: 5000
+    })
+  })
+
+  it('should set params.cache.revalidateTimeout when provided', () => {
+    const params = {
+      cache: {
+        ttl: '20s',
+        staleWhileRevalidate: '20ms',
+        revalidateTimeout: '10m'
+      }
+    }
+    const cache = EntityCacheParams.getCacheParams(params)
+    expect(cache).toEqual({
+      ttl: params.cache.ttl,
+      cacheKey: undefined,
+      useStaleWhileRevalidate: true,
+      staleWhileRevalidateTtl: 20020,
+      revalidateTimeout: 600000
+    })
+  })
+
   it('should not calculate stale values if ttl is not set', () => {
     const params = {
       cache: {}

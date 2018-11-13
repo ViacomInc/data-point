@@ -98,7 +98,8 @@ To configure an entity's cache settings you must set cache configuration through
   params: {
     cache: {
       ttl: String|Number,
-      staleWhileRevalidate: String|Number
+      staleWhileRevalidate: String|Number|Boolean,
+      revalidateTimeout: String|Number
     }
   }
 }
@@ -110,7 +111,7 @@ To configure an entity's cache settings you must set cache configuration through
 ttl: String|Number
 ```
 
-Use `cache.ttl` to set an entity's cache entry **Time To Live** value. This value is expected to be written as a string following the format supported by [ms](https://www.npmjs.com/package/ms).
+Use `cache.ttl` to set an entity's cache entry **Time To Live** value. When this value is a `string` it is expected to be written using the format supported by [ms](https://www.npmjs.com/package/ms).
 
 **Example:**
 
@@ -134,11 +135,15 @@ DataPointService.create({
 
 ### cache.staleWhileRevalidate
 
-`staleWhileRevalidate = delta-seconds`
+```js
+staleWhileRevalidate: String|Number|Boolean (defaults to `5s` if set to `true`)
+```
+
+`staleWhileRevalidate = time to serve stale while revalidating`
 
 `staleWhileRevalidate` value is expected to be written as a string following the format supported by [ms](https://www.npmjs.com/package/ms). Alternately it may also be set to `true`, which tells the entity to use double the time of the value of its `ttl`.
 
-Use `cache.staleWhileRevalidate` in conjunction with a valid `cache.ttl` to use the Stale While Revalidate cache pattern. When present, caches MAY serve the response in which it appears after it becomes stale, up to the indicated `ttl`. The cache SHOULD attempt to revalidate it asynchronously while still serving stale responses. If delta-seconds passes without the cached entity being revalidated, it SHOULD NOT continue to be served stale.
+Use `cache.staleWhileRevalidate` in conjunction with a valid `cache.ttl` to use the Stale While Revalidate cache pattern. When present, caches MAY serve the response in which it appears after it becomes stale, up to the indicated `ttl`. The cache SHOULD attempt to revalidate it asynchronously while still serving stale responses. If `staleWhileRevalidate` time has passed without the cached entity being revalidated, it SHOULD NOT continue to be served stale.
 
 **Example:**
 
@@ -160,6 +165,28 @@ DataPointService.create({
   }
 })
 ```
+
+### cache.revalidateTimeout
+
+```js
+revalidateTimeout: String|Number
+```
+
+*defaults to*: `5s`
+
+`revalidateTimeout` is the time a revalidation process has before it times-out, the value is expected to be written as a string (eg. `'20m'`) following the format supported by [ms](https://www.npmjs.com/package/ms). When revalidation starts a **revalidation flag** is set which blocks revalidation duplicates from happening. Once the revalidation times-out the revalidation flag will be removed and the **key** will be unblocked for being revalidated again. If omitted it defaults to 5 seconds. 
+
+This value is only used when `staleWhileRevalidate` is also set.
+
+## Revalidation and concurrency
+
+When an entity is requested for the first time it will be considered a _cold lookup_, once the entity is resolved a cache entry will be saved on **redis**. For the key's life set by the entity's `ttl` (and `staleWhileRevalidate`) the entity will return the value (considered **stale**) from the **redis** store. Once a new request is made for the key and it's `ttl` has expired a revalidation will be triggered _on the background_; when a revalidation starts a revalidation **flag** will be added to prevent new calls of duplicating the revalidation process. 
+
+Revalidation flags are saved **locally** (in memory - they get cleared once their timeout expires) and also added to the redis store to be accessed by multiple node instances sharing the same keys. The **local** flag is to prevent duplicate revalidation by a single instance, because it is in memory it is an instant lookup; the **remote** flag (redis) is to prevent multiple instances of attempting to revalidate the same request.  
+
+In the case the revalidation fails the flag will be removed to allow a new revalidation to be triggered.
+
+It is important to know that once the `staleWhileRevalidate` delta has also expired a background revalidation will no longer be triggered and cold lookup will be triggered instead. For this reason it is important to carefully set the cache settings to have a solid caching strategy.
 
 ## <a name="contributing">Contributing</a>
 

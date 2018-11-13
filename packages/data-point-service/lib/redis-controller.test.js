@@ -29,6 +29,33 @@ describe('getEntry', () => {
   })
 })
 
+describe('deletetEntry', () => {
+  it('should call cache.del from service to delete a key', () => {
+    const service = {
+      cache: {
+        del: jest.fn(() => Promise.resolve())
+      }
+    }
+    return RedisController.deleteEntry(service, 'test').then(result => {
+      expect(service.cache.del).toBeCalledWith('test')
+    })
+  })
+})
+
+describe('getSWRStaleEntry', () => {
+  it('should return true if key exists with valid wrapper ', () => {
+    const service = {
+      cache: {
+        get: jest.fn(key => Promise.resolve('SWR-STALE'))
+      }
+    }
+    return RedisController.getSWRStaleEntry(service, 'test').then(result => {
+      expect(service.cache.get).toBeCalledWith('test:swr.stale')
+      expect(result).toEqual('SWR-STALE')
+    })
+  })
+})
+
 describe('getSWRControlEntry', () => {
   it('should return true if key exists with valid wrapper ', () => {
     const service = {
@@ -106,5 +133,17 @@ describe('setSWRControlEntry', () => {
       'SWR-CONTROL',
       200
     )
+  })
+})
+
+describe('deleteSWRControlEntry', () => {
+  it('should create a key that has no ttl', () => {
+    const service = {
+      cache: {
+        del: jest.fn()
+      }
+    }
+    RedisController.deleteSWRControlEntry(service, 'key')
+    expect(service.cache.del).toBeCalledWith('key:swr.control')
   })
 })
