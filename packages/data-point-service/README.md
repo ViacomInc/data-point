@@ -6,7 +6,7 @@
 
 ## Requirements
 
-- Node 6 LTS (or higher)
+- Node 8 LTS (or higher)
 - [Redis](https://redis.io/) (Optional for development)
 
 ## Install

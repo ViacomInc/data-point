@@ -13,7 +13,7 @@
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
   "engines": {
-    "node": ">=4",
+    "node": ">=8",
     "npm": ">=2"
   },
   "author": {
