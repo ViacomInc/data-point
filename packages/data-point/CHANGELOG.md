@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.4.0"></a>
+# [3.4.0](https://github.com/ViacomInc/data-point/compare/data-point@3.3.2-1...data-point@3.4.0) (2018-12-19)
+
+
+### Features
+
+* **base-entity:** Do not freeze entity instances ([#300](https://github.com/ViacomInc/data-point/issues/300)) ([84aa093](https://github.com/ViacomInc/data-point/commit/84aa093)), closes [#299](https://github.com/ViacomInc/data-point/issues/299)
+* **data-point:** improved tracing mechanism ([#302](https://github.com/ViacomInc/data-point/issues/302)) ([01ebaad](https://github.com/ViacomInc/data-point/commit/01ebaad)), closes [#301](https://github.com/ViacomInc/data-point/issues/301)
+
+
+
+
 <a name="3.3.1"></a>
 ## [3.3.1](https://github.com/ViacomInc/data-point/compare/data-point@3.3.0...data-point@3.3.1) (2018-05-11)
 

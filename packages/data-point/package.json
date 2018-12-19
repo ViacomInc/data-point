@@ -1,6 +1,6 @@
 {
   "name": "data-point",
-  "version": "3.3.2-1",
+  "version": "3.4.0",
   "description": "Data Processing and Transformation Utility",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -60,10 +60,10 @@
     "bluebird": "3.5.0",
     "debug": "3.x",
     "deep-freeze": "0.0.1",
+    "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.11",
     "request": "2.82.0",
-    "request-promise": "4.2.2",
-    "json-stringify-safe": "^5.0.1"
+    "request-promise": "4.2.2"
   },
   "devDependencies": {
     "benchmark": "2.1.4",

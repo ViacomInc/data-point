@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.3.0"></a>
+# [3.3.0](https://github.com/ViacomInc/data-point/compare/data-point-cache@3.2.1-0...data-point-cache@3.3.0) (2018-12-19)
+
+
+### Features
+
+* **data-point-cache:** adds delete functionality ([#308](https://github.com/ViacomInc/data-point/issues/308)) ([f77bdf5](https://github.com/ViacomInc/data-point/commit/f77bdf5))
+
+
+
+
 <a name="3.2.0"></a>
 # [3.2.0](https://github.com/ViacomInc/data-point/compare/v3.1.0...v3.2.0) (2018-05-02)
 

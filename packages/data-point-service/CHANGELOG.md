@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="4.2.0"></a>
+# [4.2.0](https://github.com/ViacomInc/data-point/compare/data-point-service@4.1.3-1...data-point-service@4.2.0) (2018-12-19)
+
+
+### Features
+
+* **data-point-service:** support revalidation concurrency ([#309](https://github.com/ViacomInc/data-point/issues/309)) ([dac2133](https://github.com/ViacomInc/data-point/commit/dac2133)), closes [#303](https://github.com/ViacomInc/data-point/issues/303)
+
+
+
+
 <a name="4.1.2"></a>
 ## [4.1.2](https://github.com/ViacomInc/data-point/compare/data-point-service@4.1.1...data-point-service@4.1.2) (2018-05-11)
 
