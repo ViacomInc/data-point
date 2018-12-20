@@ -77,19 +77,67 @@ describe('resolveUrlInjections', () => {
 })
 
 describe('resolveUrl', () => {
-  test('It should set acc.url value', () => {
-    const acc = Resolve.resolveUrl({
+  test('It should get spec.url', () => {
+    const result = Resolve.resolveUrl({
       reducer: {
         spec: {
           url: 'http://foo'
         }
       }
     })
-    expect(acc).toHaveProperty('url', 'http://foo')
+    expect(result).toBe('http://foo')
+  })
+
+  it('should fallback on acc.value when spec.url is not present', () => {
+    const result = Resolve.resolveUrl({
+      value: 'http://fallback.com',
+      reducer: {
+        spec: {
+          url: undefined
+        }
+      }
+    })
+    expect(result).toBe('http://fallback.com')
+  })
+
+  it('should not fallback on acc.value if acc.value is empty', () => {
+    const result = Resolve.resolveUrl({
+      value: '',
+      reducer: {
+        spec: {
+          url: undefined
+        }
+      }
+    })
+    expect(result).toBe(undefined)
+  })
+
+  it('should return undefined if Request.url is empty and acc.value empty but both are strings', () => {
+    const result = Resolve.resolveUrl({
+      value: '',
+      reducer: {
+        spec: {
+          url: ''
+        }
+      }
+    })
+    expect(result).toBe(undefined)
+  })
+
+  it('should return undefined when neither spec.url is present or value is string', () => {
+    const result = Resolve.resolveUrl({
+      value: {}, // not a string
+      reducer: {
+        spec: {
+          url: undefined
+        }
+      }
+    })
+    expect(result).toBe(undefined)
   })
 
   test('It should do injections', () => {
-    const acc = Resolve.resolveUrl({
+    const result = Resolve.resolveUrl({
       value: 'bar',
       reducer: {
         spec: {
@@ -97,7 +145,7 @@ describe('resolveUrl', () => {
         }
       }
     })
-    expect(acc).toHaveProperty('url', 'http://foo/bar')
+    expect(result).toBe('http://foo/bar')
   })
 })
 
@@ -329,6 +377,22 @@ describe('resolve', () => {
     })
   })
 
+  it('should use acc.value as url when request.url is not defined', () => {
+    nock('http://remote.test')
+      .get('/source1')
+      .reply(200, {
+        ok: true
+      })
+
+    return transform('request:a3', 'http://remote.test/source1').then(
+      result => {
+        expect(result.value).toEqual({
+          ok: true
+        })
+      }
+    )
+  })
+
   test("interpolate data that's returned from the value lifecycle method", () => {
     nock('http://remote.test')
       .get('/source5')
@@ -353,28 +417,6 @@ describe('resolve', () => {
       })
 
     return transform('request:a1.0', {}).then(result => {
-      expect(result.value).toEqual({
-        ok: true
-      })
-    })
-  })
-
-  test('use contextPath', () => {
-    nock('http://remote.test')
-      .get('/source1')
-      .reply(200, {
-        ok: true
-      })
-
-    return transform(
-      'request:a3',
-      {},
-      {
-        initialValue: {
-          itemPath: '/source1'
-        }
-      }
-    ).then(result => {
       expect(result.value).toEqual({
         ok: true
       })

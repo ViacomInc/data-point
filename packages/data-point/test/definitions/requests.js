@@ -40,17 +40,9 @@ module.exports = {
     value: () => ({ source: 'source5' }),
     url: 'http://remote.test/{value.source}'
   },
-  'request:a2': {
-    url: 'http://remote.test',
-    options: {
-      url: options => options.url + '/source1'
-    }
-  },
-  'request:a3': {
-    url: 'http://remote.test',
-    options: {
-      url: (options, acc) => acc.url + acc.initialValue.itemPath
-    }
+  'request:a3': {},
+  'request:a3.1': {
+    value: () => 'http://remote.test/source1'
   },
   'request:a3.2': {
     url: 'http://remote.test{locals.itemPath}'

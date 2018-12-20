@@ -127,9 +127,7 @@ describe('resolve#reducer.resolve - reducer request', () => {
   test('multiple models for reducer request', () => {
     nock('http://remote.test')
       .get('/source1')
-      .reply(200, {
-        itemPath: '/source2'
-      })
+      .reply(200, 'http://remote.test/source2')
 
     nock('http://remote.test')
       .get('/source2')

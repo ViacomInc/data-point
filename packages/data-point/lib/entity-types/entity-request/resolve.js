@@ -41,10 +41,10 @@ module.exports.getRequestOptions = getRequestOptions
  * @return {Promise<Accumulator>}
  */
 function resolveOptions (accumulator, resolveReducer) {
-  accumulator = resolveUrl(accumulator)
+  const url = resolveUrl(accumulator)
   const specOptions = accumulator.reducer.spec.options
   return resolveReducer(accumulator, specOptions).then(acc => {
-    const options = getRequestOptions(acc.url, acc.value)
+    const options = getRequestOptions(url, acc.value)
     return utils.assign(accumulator, { options })
   })
 }
@@ -74,9 +74,18 @@ module.exports.resolveUrlInjections = resolveUrlInjections
  * @return {Accumulator}
  */
 function resolveUrl (acc) {
-  const entity = acc.reducer.spec
-  const url = resolveUrlInjections(entity.url, acc)
-  return utils.assign(acc, { url })
+  let urlToResolve = acc.reducer.spec.url
+
+  // use acc.value when Request.url is not set
+  if (!urlToResolve && typeof acc.value === 'string' && acc.value) {
+    urlToResolve = acc.value
+  }
+
+  // prevent from executing resolveUrlInjections when
+  // urlToResolve is empty string
+  return urlToResolve && typeof urlToResolve === 'string'
+    ? resolveUrlInjections(urlToResolve, acc)
+    : undefined
 }
 
 module.exports.resolveUrl = resolveUrl

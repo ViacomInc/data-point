@@ -45,6 +45,20 @@ test('Entry#resolve - branch/leaf nesting', () => {
     })
 })
 
+test('Request should use resolved value as url, when url is missing', () => {
+  const expected = {
+    ok: true
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, expected)
+
+  return dataPoint.transform('request:a3.1', {}).then(result => {
+    expect(result.value).toEqual(expected)
+  })
+})
+
 test('Entry#resolve - resolve request', () => {
   const expected = {
     ok: true
