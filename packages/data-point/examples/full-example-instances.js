@@ -4,9 +4,7 @@ const DataPoint = require('../')
 // create DataPoint instance
 const dataPoint = DataPoint.create()
 
-const { Request, Model, Schema } = DataPoint.entities
-
-const { map } = DataPoint.helpers
+const { Request, Model, Schema, map } = DataPoint
 
 // schema to verify data input
 const PlanetSchema = Schema('PlanetSchema', {

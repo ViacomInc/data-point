@@ -4,8 +4,6 @@ const assert = require('assert')
 const DataPoint = require('../')
 const dataPoint = DataPoint.create()
 
-const { map } = DataPoint.helpers
-
 const value = [
   {
     a: 1
@@ -17,7 +15,7 @@ const value = [
 
 // applies the $a reducer to each
 // item in the array
-const reducer = map(['$a', input => input * 2])
+const reducer = DataPoint.map(['$a', input => input * 2])
 
 dataPoint.resolve(reducer, value).then(output => {
   assert.deepEqual(output, [2, 4])

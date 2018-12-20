@@ -1,5 +1,5 @@
 const reducers = require('../utils/reducers')
-const { assign } = require('../../lib').helpers
+const { assign } = require('../../lib')
 
 module.exports = {
   'request:a0.1': {

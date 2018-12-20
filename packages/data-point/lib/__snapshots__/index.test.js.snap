@@ -2,6 +2,16 @@
 
 exports[`lib It should explicity expose set of methods 1`] = `
 Object {
+  "Collection": [Function],
+  "Control": [Function],
+  "Entry": [Function],
+  "Hash": [Function],
+  "Model": [Function],
+  "Reducer": [Function],
+  "Request": [Function],
+  "Schema": [Function],
+  "assign": [Function],
+  "constant": [Function],
   "create": [Function],
   "createEntity": [Function],
   "createReducer": [Function],
@@ -27,6 +37,8 @@ Object {
     "Request": [Function],
     "Schema": [Function],
   },
+  "filter": [Function],
+  "find": [Function],
   "helpers": Object {
     "assign": [Function],
     "constant": [Function],
@@ -38,8 +50,13 @@ Object {
     "pick": [Function],
     "withDefault": [Function],
   },
+  "map": [Function],
+  "omit": [Function],
+  "parallel": [Function],
+  "pick": [Function],
   "reducify": [Function],
   "reducifyAll": [Function],
   "resolveEntity": [Function],
+  "withDefault": [Function],
 }
 `;

@@ -2,7 +2,6 @@ const assert = require('assert')
 const mocks = require('./async-example.mocks')
 const DataPoint = require('../')
 const dataPoint = DataPoint.create()
-const { map } = DataPoint.helpers
 
 dataPoint.addEntities({
   // remote service request
@@ -28,7 +27,7 @@ dataPoint.addEntities({
         // eg. https://swapi.co/api/people/1/
         // where each url gets mapped
         // to a model:Resident
-        residents: ['$residents', map('model:Resident')]
+        residents: ['$residents', DataPoint.map('model:Resident')]
       }
     ]
   },

@@ -2,7 +2,7 @@
 
 const factory = require('./factory')
 const createReducer = require('../index').create
-const constant = require('../..').helpers.constant
+const constant = require('../..').constant
 
 test('ReducerObject.factory#isType', () => {
   expect(factory.isType('$foo')).toBe(false)

@@ -1,7 +1,7 @@
 const assert = require('assert')
 const DataPoint = require('../')
 
-const { Model } = DataPoint.entities
+const { Model } = DataPoint
 
 const input = {
   a: {
