@@ -2105,7 +2105,9 @@ dataPoint.addEntities({
 
 #### <a name="request-url">Request.url</a>
 
-Sets the url to be requested.
+Sets the url to be requested. 
+
+**NOTE:** When `Request.url` is not defined it will use the current `Accumulator.value` (if the value is of type `string`) as the Request's url.
 
 <details>
   <summary>`Request.url` Example</summary>
