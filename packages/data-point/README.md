@@ -125,12 +125,9 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
   const {
     Request,
     Model,
-    Schema
-  } = DataPoint.entities
-
-  const {
+    Schema,
     map
-  } = DataPoint.helpers
+  } = DataPoint
 
   // schema to verify data input
   const PlanetSchema = Schema('PlanetSchema', {
@@ -748,7 +745,7 @@ Example at: [examples/reducer-function-error.js](examples/reducer-function-error
 These are plain objects where the value of each key is a [Reducer](#reducers). They're used to aggregate data or transform objects. You can add constants with the [constant](#reducer-constant) reducer helper, which is more performant than using a function reducer:
 
 ```js
-const { constant } = require('data-point').helpers
+const { constant } = require('data-point')
 
 const objectReducer = {
   // in this case, x and y both resolve to 42, but DataPoint
@@ -932,10 +929,10 @@ See the [Entities](#entities) section for information about the supported entity
   <summary>Entity Reducer Example</summary>
 
   ```js
-  const { 
-    Model, 
-    Request 
-  } = require('data-point').entities
+  const {
+    Model,
+    Request
+  } = require('data-point')
 
   const PersonRequest = Request('PersonRequest', {
     url: 'https://swapi.co/api/people/{value}'
@@ -1118,7 +1115,7 @@ Example at: [examples/reducer-conditional-operator.js](examples/reducer-conditio
 
 ## <a name="reducer-helpers">Reducer Helpers</a>
 
-Reducer helpers are factory functions for creating reducers. They're exposed through `DataPoint.helpers`:
+Reducer helpers are factory functions for creating reducers. They're accessed through the `DataPoint` Object:
 
 ```js
 const {
@@ -1129,7 +1126,7 @@ const {
   map,
   parallel,
   withDefault
-} = require('data-point').helpers
+} = require('data-point')
 ```
 
 ### <a name="reducer-assign">assign</a>
@@ -1154,17 +1151,13 @@ assign(reducer:Reducer):Object
   <summary>Add a key that references a nested value from the accumulator.</summary>
 
   ```js
-  const {
-    assign
-  } = DataPoint.helpers
-
   const input = {
     a: 1
   }
 
   // merges the object reducer with
   // accumulator.value
-  const reducer = assign({
+  const reducer = DataPoint.assign({
     c: '$b.c'
   })
 
@@ -1209,10 +1202,6 @@ map(reducer:Reducer):Array
   <summary>Apply a set of reducers to each item in an array</summary>
 
   ```js
-  const {
-    map
-  } = DataPoint.helpers
-
   const input = [{
     a: 1
   }, {
@@ -1220,7 +1209,7 @@ map(reducer:Reducer):Array
   }]
 
   // get path `a` then multiply by 2
-  const reducer = map(
+  const reducer = DataPoint.map(
     ['$a', (input) => input * 2]
   )
 
@@ -1257,15 +1246,11 @@ filter(reducer:Reducer):Array
   <summary>Find objects where path `a` is greater than 1</summary>
 
   ```js
-  const {
-    map
-  } = DataPoint.helpers
-
   const input = [{ a: 1 }, { a: 2 }]
 
   // filters array elements that are not
   // truthy for the given list reducer
-  const reducer = filter(
+  const reducer = DataPoint.filter(
     ['$a', (input) => input > 1]
   )
 
@@ -1301,15 +1286,11 @@ find(reducer:Reducer):*
   <summary>Find elements where path `b` resolves to _truthy_ value</summary>
 
   ```js
-  const {
-    map
-  } = DataPoint.helpers
-
   const input = [{ a: 1 }, { b: 2 }]
 
   // the $b reducer is truthy for the
   // second element in the array
-  const reducer = find('$b')
+  const reducer = DataPoint.find('$b')
 
   dataPoint
     .resolve(reducer, input) 
@@ -1343,8 +1324,6 @@ constant(value:*):*
   <summary>returning an object constant</summary>
 
   ```js
-  const { constant } = DataPoint.helpers
-
   const input = {
     a: 1,
     b: 2
@@ -1352,7 +1331,7 @@ constant(value:*):*
 
   const reducer = {
     a: '$a',
-    b: constant({
+    b: DataPoint.constant({
       a: '$a',
       b: 3
     })
@@ -1378,8 +1357,6 @@ constant(value:*):*
   <summary>reducers are not evaluated when defined inside of constants</summary>
 
   ```js
-  const { constant } = DataPoint.helpers
-
   const input = {
     b: 1
   }
@@ -1393,7 +1370,7 @@ constant(value:*):*
 
   // both the object and the path will be treated as
   // constants instead of being used to create reducers
-  reducer = constant({
+  reducer = DataPoint.constant({
     a: '$b'
   })
 
@@ -1424,9 +1401,7 @@ parallel(reducers:Array<Reducer>):Array
   <summary>resolving an array of reducers with parallel</summary>
 
   ```js
-  const { parallel } = DataPoint.helpers
-
-  const reducer = parallel([
+  const reducer = DataPoint.parallel([
     '$a',
     ['$b', (input) => input + 2] // list reducer
   ])
@@ -1463,14 +1438,12 @@ The default value is not cloned before it's returned, so it's good practice to w
 **EXAMPLE:**
 
 ```js
-const { withDefault } = DataPoint.helpers
-
 const input = {
   a: undefined
 }
 
 // adds a default to a path reducer
-const r1 = withDefault('$a', 50)
+const r1 = DataPoint.withDefault('$a', 50)
 
 dataPoint.resolve(r1, input) // => 50
 
@@ -1500,7 +1473,7 @@ See **[built-in entities](#built-in-entities)** for information on what each ent
 
 ### <a name="instance-entity">Instance Entity</a>
 
-Entities can be created with these factory functions:
+Entities can be created from these factory functions:
 
 ```js
 const {
@@ -1512,7 +1485,7 @@ const {
   Request,
   Control,
   Schema
-} = require('data-point').entities
+} = require('data-point')
 ```
 
 **SYNOPSIS**
@@ -1535,9 +1508,9 @@ Factory(name:String, spec:Object):EntityInstance
 
 ```js
 const DataPoint = require('data-point')
-const { Model } = DataPoint.entities
+const { Model } = DataPoint
 
-dataPoint = DataPoint.create()
+const dataPoint = DataPoint.create()
 
 const HelloWorld = Model('HelloWorld', {
   value: input => ({
@@ -1637,7 +1610,6 @@ To use built-in type checks, you may set the value of **inputType** or **outputT
 
   ```js
   const dataPoint = DataPoint.create()
-  const helpers = DataPoint.helpers
 
   dataPoint.addEntities({
     'model:getName': {
@@ -2245,7 +2217,6 @@ For more information on acc.locals: [Transform Options](#transform-options) and 
 
   ```js
   const DataPoint = require('data-point')
-  const c = DataPoint.helpers.constant
   const dataPoint = DataPoint.create()
 
   dataPoint.addEntities({
@@ -2256,7 +2227,7 @@ For more information on acc.locals: [Transform Options](#transform-options) and 
       // constants (or just wrap the whole
       // object if all the values are static)
       options: {
-        'content-type': c('application/json'), // constant
+        'content-type': DataPoint.constant('application/json')
         qs: {
           // get path `searchTerm` from input
           // to dataPoint.resolve
@@ -3564,7 +3535,7 @@ mocks()
 const {
   Model,
   Request
-} = DataPoint.entities
+} = DataPoint
 
 const PersonRequest = Request('PersonRequest', {
   url: 'https://swapi.co/api/people/{value}/'

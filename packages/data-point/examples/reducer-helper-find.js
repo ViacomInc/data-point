@@ -4,8 +4,6 @@ const assert = require('assert')
 const DataPoint = require('../')
 const dataPoint = DataPoint.create()
 
-const { find } = DataPoint.helpers
-
 const value = [
   {
     a: 1
@@ -17,7 +15,7 @@ const value = [
 
 // the $b reducer is truthy for the
 // second element in the array
-const reducer = find('$b')
+const reducer = DataPoint.find('$b')
 
 dataPoint.resolve(reducer, value).then(output => {
   assert.deepEqual(output, {

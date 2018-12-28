@@ -4,7 +4,7 @@ const mocks = require('./async-example.mocks')
 // mock request calls
 mocks()
 
-const { Model, Request } = DataPoint.entities
+const { Model, Request } = DataPoint
 
 const PersonRequest = Request('PersonRequest', {
   url: 'https://swapi.co/api/people/{value}/'

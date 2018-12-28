@@ -2,7 +2,7 @@ const assert = require('assert')
 
 const DataPoint = require('../')
 
-const { Model, Request } = DataPoint.entities
+const { Model, Request } = DataPoint
 
 const PersonRequest = Request('PersonRequest', {
   url: 'https://swapi.co/api/people/{value}'

@@ -3,7 +3,7 @@ const mock = require('./entity-request-options.mock')
 
 const DataPoint = require('..')
 
-const c = DataPoint.helpers.constant
+const c = DataPoint.constant
 const dataPoint = DataPoint.create()
 
 dataPoint.addEntities({
