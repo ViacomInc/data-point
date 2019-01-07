@@ -412,13 +412,7 @@ const R = require('ramda')
 const pickPersonFields = R.pick([
   'name',
   'height',
-  'mass',
-  'hair_color',
-  'skin_color',
-  'eye_color',
-  'gender',
-  'homeworld',
-  'starships'
+  'mass'
 ])
 
 dataPoint.resolve([PeopleRequest, pickPersonFields], 10)
