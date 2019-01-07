@@ -455,5 +455,3 @@ dataPoint.resolve(wordsToCamelCase, 'how do you do')
     console.assert(result, 'HowDoYouDo')
   })
 ```
-
-## Anti-patterns
