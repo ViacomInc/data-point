@@ -358,13 +358,7 @@ Instead of this:
 const Person = {
   name: '$name',
   height: '$height',
-  mass: '$mass',
-  hair_color: '$hair_color',
-  skin_color: '$skin_color',
-  eye_color: '$eye_color',
-  gender: '$gender',
-  homeworld: '$homeworld',
-  starships: '$starships'
+  mass: '$mass'
 }
 
 dataPoint.resolve([PeopleRequest, Person], 10)
@@ -382,13 +376,7 @@ const pick = require('lodash/pick')
 const pickPersonFields = (value) => pick(value, [
   'name',
   'height',
-  'mass',
-  'hair_color',
-  'skin_color',
-  'eye_color',
-  'gender',
-  'homeworld',
-  'starships'
+  'mass'
 ])
 
 dataPoint.resolve([PeopleRequest, pickPersonFields], 10)
@@ -406,13 +394,7 @@ const pick = require('lodash/fp/pick')
 const pickPersonFields = pick([
   'name',
   'height',
-  'mass',
-  'hair_color',
-  'skin_color',
-  'eye_color',
-  'gender',
-  'homeworld',
-  'starships'
+  'mass'
 ])
 
 dataPoint.resolve([PeopleRequest, pickPersonFields], 10)
