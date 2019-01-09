@@ -33,6 +33,6 @@ const input = {
 
 // the second parameter to transform is the input value
 dataPoint.resolve('request:searchPeople', input).then(output => {
-  assert.equal(output.results[0].name, 'R2-D2')
+  assert.strictEqual(output.results[0].name, 'R2-D2')
   console.dir(output, { colors: true })
 })

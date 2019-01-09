@@ -18,7 +18,7 @@ const reducer = DataPoint.assign({
 })
 
 dataPoint.resolve(reducer, value).then(output => {
-  assert.deepEqual(output, {
+  assert.deepStrictEqual(output, {
     a: 1,
     b: {
       c: 2

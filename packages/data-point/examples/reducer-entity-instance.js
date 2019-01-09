@@ -18,7 +18,7 @@ const PersonModel = Model('PersonModel', {
 const dataPoint = DataPoint.create()
 
 dataPoint.resolve([PersonRequest, PersonModel], 1).then(output => {
-  assert.deepEqual(output, {
+  assert.deepStrictEqual(output, {
     name: 'Luke Skywalker',
     birthYear: '19BBY'
   })

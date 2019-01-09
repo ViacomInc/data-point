@@ -25,11 +25,11 @@ const input = {
 }
 
 dataPoint.resolve('$a.b', input).then(output => {
-  assert.equal(output, 'Hello World')
+  assert.strictEqual(output, 'Hello World')
   console.log(output)
 })
 
 dataPoint.resolve('$d.e[]', input.c).then(output => {
-  assert.deepEqual(output, [1, 2, 3])
+  assert.deepStrictEqual(output, [1, 2, 3])
   console.log(output)
 })

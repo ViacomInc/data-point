@@ -75,11 +75,11 @@ const input = {
 mocks()
 
 dataPoint.resolve('model:Planet', input).then(output => {
-  assert.equal(output.name, 'Tatooine')
-  assert.equal(output.population, '200000')
+  assert.strictEqual(output.name, 'Tatooine')
+  assert.strictEqual(output.population, '200000')
   assert.ok(output.residents.length > 0)
 
-  assert.deepEqual(output.residents[0], {
+  assert.deepStrictEqual(output.residents[0], {
     name: 'Luke Skywalker',
     gender: 'male',
     birthYear: '19BBY'

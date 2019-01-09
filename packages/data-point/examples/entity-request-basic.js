@@ -12,7 +12,7 @@ dataPoint.addEntities({
 mockRequest()
 
 dataPoint.resolve('request:getLuke', {}).then(output => {
-  assert.equal(output.name, 'Luke Skywalker')
-  assert.equal(output.height, '172')
+  assert.strictEqual(output.name, 'Luke Skywalker')
+  assert.strictEqual(output.height, '172')
   console.dir(output, { colors: true })
 })

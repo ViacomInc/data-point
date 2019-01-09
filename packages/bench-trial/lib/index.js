@@ -1,7 +1,7 @@
 const assert = require('assert')
 
 function testSync (method, expected) {
-  return () => assert.deepEqual(method(), expected)
+  return () => assert.deepStrictEqual(method(), expected)
 }
 
 function testAsync (method, expected) {
@@ -11,7 +11,7 @@ function testAsync (method, expected) {
         return done(err)
       }
       try {
-        assert.deepEqual(value, expected)
+        assert.deepStrictEqual(value, expected)
         done(null, value)
       } catch (e) {
         done(e)

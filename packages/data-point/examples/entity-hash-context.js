@@ -17,7 +17,7 @@ dataPoint.addEntities({
 })
 
 dataPoint.resolve('hash:helloWorld', input).then(output => {
-  assert.deepEqual(output, {
+  assert.deepStrictEqual(output, {
     c: 'Hello',
     d: ' World!!'
   })

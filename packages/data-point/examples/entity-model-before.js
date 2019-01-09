@@ -13,5 +13,5 @@ dataPoint.addEntities({
 })
 
 dataPoint.resolve('model:foo', 100).then(output => {
-  assert.deepEqual(output, [100])
+  assert.deepStrictEqual(output, [100])
 })

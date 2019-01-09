@@ -19,6 +19,6 @@ const getMax = () => input => {
 }
 
 dataPoint.resolve(['$a.b.c', getMax(), multiplyBy(10)], input).then(output => {
-  assert.equal(output, 30)
+  assert.strictEqual(output, 30)
   console.log(output)
 })

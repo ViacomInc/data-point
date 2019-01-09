@@ -25,5 +25,5 @@ const myModel = Model('myModel', {
 
 const dataPoint = DataPoint.create()
 dataPoint.resolve(myModel, input).then(output => {
-  assert.equal(output, 30)
+  assert.strictEqual(output, 30)
 })

@@ -6,6 +6,6 @@ const reducer = (input, acc, next) => {
 }
 
 dataPoint.resolve(reducer, 'Hello').then(output => {
-  assert.equal(output, 'Hello World')
+  assert.strictEqual(output, 'Hello World')
   console.log(output)
 })
