@@ -8,6 +8,6 @@ const addStr = word => input => {
 const reducers = [addStr(' World'), addStr('!!')]
 
 dataPoint.resolve(reducers, 'Hello').then(output => {
-  assert.equal(output, 'Hello World!!')
+  assert.strictEqual(output, 'Hello World!!')
   console.log(output)
 })

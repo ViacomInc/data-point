@@ -35,7 +35,7 @@ const expectedResult = {
 
 dataPoint.resolve('hash:composeExmple', input).then(output => {
   console.log(output)
-  assert.deepEqual(output, expectedResult)
+  assert.deepStrictEqual(output, expectedResult)
   /*
   {
     orgName: 'Node.js Foundation',

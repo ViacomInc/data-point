@@ -7,5 +7,5 @@ const reducer = input => {
 
 dataPoint.resolve(reducer, 'Hello').then(output => {
   console.log(output)
-  assert.equal(output, 'Hello World')
+  assert.strictEqual(output, 'Hello World')
 })
