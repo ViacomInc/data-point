@@ -1,6 +1,6 @@
-const IORedis = require('ioredis')
-const Promise = require('bluebird')
 const ms = require('ms')
+const Promise = require('bluebird')
+const IORedis = require('./io-redis')
 
 function reconnectOnError (err) {
   console.error('ioredis - reconnectOnError', err.toString())

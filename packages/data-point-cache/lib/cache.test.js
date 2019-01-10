@@ -1,8 +1,6 @@
 /* eslint-env jest */
 
-jest.mock('ioredis', () => {
-  return require('ioredis-mock')
-})
+jest.mock('./io-redis')
 
 const _ = require('lodash')
 const Cache = require('./cache')
