@@ -2266,7 +2266,8 @@ You may inspect a Request entity through the `params.inspect` property.
 dataPoint.addEntities({
   'request:<entityId>': {
     params: {
-      inspect: Boolean|Function
+      inspect: Boolean|Function,
+      requestDebug: Boolean
     }
   }
 })
@@ -2276,6 +2277,11 @@ If `params.inspect` is `true` it will output the entity's information to the con
 
 If `params.inspect` is a `function`, you may execute custom debugging code to be executed before the actual request gets made. The function receives the current accumulator value as its only parameter.
 
+If `params.requestDebug` is `true`, it will initialize the [request-debug](https://www.npmjs.com/package/request-debug) library. The exact behavior depends on the value of `inspect`:
+
+  - If `params.inspect` is a `function`, it will be used as a callback for `request-debug` events (i.e. `'request'` and `'response'`). After calling `inspect` with the accumulator as the only parameter, these events will be called with the signature `(accumulator, type, data, r)`, where the extra parameters are described [here](https://www.npmjs.com/package/request-debug#usage).
+
+  - If `params.inspect` is *not* a `function`, then `request-debug` will be initialized without a callback, and it will log data instead.
 
 ### Hash
 

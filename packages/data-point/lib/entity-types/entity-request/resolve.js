@@ -91,14 +91,48 @@ function resolveUrl (acc) {
 module.exports.resolveUrl = resolveUrl
 
 /**
- * @param {Accumulator} acc
+ * @param {Function} callback
+ * @returns {Function} a new callback, that calls the original one
  */
-function inspect (acc) {
-  const paramInspect = acc.params && acc.params.inspect
+function getRequestPromiseWithDebugging (callback) {
+  const debugModule = require('request-debug')
+  delete require.cache['request-promise']
+  const rpDebug = require('request-promise')
+  delete require.cache['request-promise']
+  if (callback) {
+    debugModule(rpDebug, callback)
+  } else {
+    debugModule(rpDebug)
+  }
+  return rpDebug
+}
 
-  if (typeof paramInspect === 'function') {
+module.exports.getRequestPromiseWithDebugging = getRequestPromiseWithDebugging
+
+/**
+ * @param {Function} requestFn - default request-promise function
+ * @param {Accumulator} acc
+ * @returns {Function} request-promise function, with
+ *                     optional debugging attached
+ */
+function inspect (requestFn, acc) {
+  const paramInspect = acc.params && acc.params.inspect
+  const isFunction = typeof paramInspect === 'function'
+  if (isFunction) {
     paramInspect(acc)
-    return true
+  }
+
+  if (acc.params && acc.params.requestDebug === true) {
+    let callback
+    if (isFunction) {
+      // This will register params.inspect as a callback
+      // for the request-debug library, so it will be
+      // called like this: inspect(acc[, type, data, r])
+      callback = (...args) => paramInspect(acc, ...args)
+    }
+    // If the callback is undefined, then request-debug will be
+    // initialized to log data when requests are made and received
+    requestFn = getRequestPromiseWithDebugging(callback)
   }
 
   if (paramInspect === true) {
@@ -106,10 +140,9 @@ function inspect (acc) {
       options: acc.options,
       value: acc.value
     })
-    return true
   }
 
-  return false
+  return requestFn
 }
 
 module.exports.inspect = inspect
@@ -120,8 +153,8 @@ module.exports.inspect = inspect
  * @return {Promise<Accumulator>}
  */
 function resolveRequest (acc, resolveReducer) {
-  inspect(acc)
-  return rp(acc.options)
+  const _request = inspect(rp, acc)
+  return _request(acc.options)
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {
       // remove auth objects from acc and error for printing to console
@@ -149,6 +182,12 @@ function resolveRequest (acc, resolveReducer) {
       // attaching to error so it can be exposed by a handler outside datapoint
       error.message = `${error.message}\n\n${message}`
       throw error
+    })
+    .finally(() => {
+      // request-debug adds this function
+      if (typeof _request.stopDebugging === 'function') {
+        _request.stopDebugging()
+      }
     })
 }
 

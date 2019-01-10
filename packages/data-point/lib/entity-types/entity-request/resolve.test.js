@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const nock = require('nock')
+const requestDebug = require('request-debug')
 const Resolve = require('./resolve')
 
 const AccumulatorFactory = require('../../accumulator/factory')
@@ -13,6 +14,8 @@ const FixtureStore = require('../../../test/utils/fixture-store')
 
 const helpers = require('../../helpers')
 const utils = require('../../utils')
+
+jest.mock('request-debug')
 
 let dataPoint
 let resolveReducerBound
@@ -53,6 +56,28 @@ beforeAll(() => {
 
 beforeEach(() => {
   dataPoint.middleware.clear()
+})
+
+afterEach(() => {
+  requestDebug.mockReset()
+})
+
+describe('getRequestPromiseWithDebugging', () => {
+  test('call request-debug without a callback', () => {
+    Resolve.getRequestPromiseWithDebugging(false)
+    expect(requestDebug.mock.calls).toEqual([[expect.any(Function)]])
+  })
+  test('call request-debug with a callback', () => {
+    const callback = jest.fn()
+    Resolve.getRequestPromiseWithDebugging(callback)
+    expect(requestDebug.mock.calls).toEqual([
+      [expect.any(Function), expect.any(Function)]
+    ])
+    const callbackWrapper = requestDebug.mock.calls[0][1]
+    const callbackArgs = ['TYPE', 'DATA', 'R']
+    callbackWrapper(...callbackArgs)
+    expect(callback).toHaveBeenCalledWith(...callbackArgs)
+  })
 })
 
 describe('resolveUrlInjections', () => {
@@ -310,55 +335,117 @@ describe('resolveRequest', () => {
   })
 })
 
+describe('request-debug cleanup', () => {
+  let _request
+  beforeEach(() => {
+    requestDebug.mockImplementationOnce((...args) => {
+      _request = args[0]
+      _request.stopDebugging = jest.fn()
+    })
+  })
+  const initializeTest = statusCode => {
+    nock('http://remote.test')
+      .get('/source1')
+      .reply(statusCode)
+    const acc = {
+      params: {
+        requestDebug: true,
+        inspect: jest.fn()
+      },
+      options: {
+        json: true,
+        url: 'http://remote.test/source1'
+      }
+    }
+    return Resolve.resolveRequest(acc)
+  }
+  const makeAssertions = () => {
+    expect(requestDebug).toHaveBeenCalledTimes(1)
+    expect(_request.stopDebugging).toHaveBeenCalledTimes(1)
+    delete _request.stopDebugging
+  }
+
+  test('call stopDebugging after request-promise resolves successfully', () => {
+    expect.assertions(2)
+    return initializeTest(200).then(result => {
+      makeAssertions()
+    })
+  })
+  test('call stopDebugging after request-promise has an error', () => {
+    expect.assertions(2)
+    return initializeTest(404).catch(result => {
+      makeAssertions()
+    })
+  })
+})
+
 describe('inspect', () => {
-  let consoleInfo
+  let inspectSpy
   function getAcc () {
-    const acc = {}
-    _.set(acc, 'reducer.spec.id', 'test:test')
-    _.set(acc, 'params.inspect', true)
+    const acc = {
+      params: {},
+      reducer: _.set({}, 'spec.id', 'test:test')
+    }
     return acc
   }
   beforeAll(() => {
-    consoleInfo = console.info
+    inspectSpy = jest.spyOn(utils, 'inspect').mockReturnValue(undefined)
   })
   afterEach(() => {
-    console.info = consoleInfo
+    inspectSpy.mockClear()
+  })
+  afterAll(() => {
+    inspectSpy.mockRestore()
   })
   test('It should not execute custom inspect or utils.inspect', () => {
-    const utilsIinspectSpy = jest.spyOn(utils, 'inspect')
     const acc = getAcc()
     acc.params.inspect = undefined
 
-    Resolve.inspect(acc)
-    expect(utilsIinspectSpy).not.toBeCalled()
-
-    utilsIinspectSpy.mockReset()
-    utilsIinspectSpy.mockRestore()
+    Resolve.inspect(jest.fn(), acc)
+    expect(inspectSpy).not.toBeCalled()
+    expect(requestDebug).not.toHaveBeenCalled()
   })
   test('It should execute custom inspect when provided, not execute utils.inspect', () => {
-    const utilsIinspectSpy = jest.spyOn(utils, 'inspect')
     const acc = getAcc()
     acc.params.inspect = jest.fn()
 
-    Resolve.inspect(acc)
-    expect(utilsIinspectSpy).not.toBeCalled()
+    Resolve.inspect(jest.fn(), acc)
+    expect(inspectSpy).not.toBeCalled()
     expect(acc.params.inspect).toBeCalledWith(acc)
-
-    utilsIinspectSpy.mockReset()
-    utilsIinspectSpy.mockRestore()
+    expect(requestDebug).not.toHaveBeenCalled()
   })
   test('It should execute utils.inspect when params.inspect === true', () => {
-    const utilsIinspectSpy = jest
-      .spyOn(utils, 'inspect')
-      .mockImplementation(() => true)
     const acc = getAcc()
     acc.params.inspect = true
 
-    Resolve.inspect(acc)
-    expect(utilsIinspectSpy).toBeCalled()
+    Resolve.inspect(jest.fn(), acc)
+    expect(inspectSpy).toBeCalled()
+    expect(requestDebug).not.toHaveBeenCalled()
+  })
+  test('It should use "request-debug" when inspect === true', () => {
+    const acc = getAcc()
+    acc.params.requestDebug = true
+    acc.params.inspect = true
 
-    utilsIinspectSpy.mockReset()
-    utilsIinspectSpy.mockRestore()
+    Resolve.inspect(jest.fn(), acc)
+    expect(inspectSpy).toBeCalled()
+    expect(requestDebug.mock.calls).toEqual([[expect.any(Function)]])
+  })
+  test('It should use "request-debug" when inspect is a function', () => {
+    const acc = getAcc()
+    acc.params.requestDebug = true
+    acc.params.inspect = jest.fn()
+
+    Resolve.inspect(jest.fn(), acc)
+    expect(inspectSpy).not.toBeCalled()
+    expect(requestDebug.mock.calls).toEqual([
+      [expect.any(Function), expect.any(Function)]
+    ])
+    const callback = acc.params.inspect
+    const callbackWrapper = requestDebug.mock.calls[0][1]
+    const callbackArgs = ['TYPE', 'DATA', 'R']
+    callbackWrapper(...callbackArgs)
+    expect(callback).toHaveBeenCalledWith(acc, ...callbackArgs)
   })
 })
 
