@@ -69,12 +69,9 @@
     "benchmark": "2.1.4",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.0.0",
-    "jest": "21.1.0",
     "nock": "^8.0.0",
-    "prettier-standard": "6.0.0",
     "semver": "5.4.1",
     "snazzy": "7.0.0",
-    "standard": "10.0.3",
     "standard-version": "4.2.0"
   },
   "config": {

@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-jest.mock('ioredis', () => {
+jest.mock('../../data-point-cache/lib/io-redis', () => {
   return require('ioredis-mock')
 })
 

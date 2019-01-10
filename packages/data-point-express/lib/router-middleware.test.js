@@ -1,9 +1,5 @@
 /* eslint-env jest */
 
-jest.mock('ioredis', () => {
-  return require('ioredis-mock')
-})
-
 const RouterMiddleware = require('./router-middleware')
 const Express = require('express')
 const request = require('supertest')
