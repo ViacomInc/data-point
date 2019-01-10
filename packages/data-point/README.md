@@ -3596,7 +3596,7 @@ app.listen(3000, function () {
 
 ## Patterns and Best Practices
 
-For recommended patterns and best practices please visit [docs/best-practices.md](docs/best-practices.md)
+For recommended patterns and best practices, please visit [docs/best-practices.md](docs/best-practices.md)
 
 ## Contributing
 
