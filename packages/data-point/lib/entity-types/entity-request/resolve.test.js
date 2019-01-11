@@ -365,17 +365,13 @@ describe('request-debug cleanup', () => {
     delete _request.stopDebugging
   }
 
-  test('call stopDebugging after request-promise resolves successfully', () => {
-    expect.assertions(2)
-    return initializeTest(200).then(result => {
-      makeAssertions()
-    })
+  test('call stopDebugging after request-promise resolves successfully', async () => {
+    await expect(initializeTest(200)).resolves.not.toThrow()
+    makeAssertions()
   })
-  test('call stopDebugging after request-promise has an error', () => {
-    expect.assertions(2)
-    return initializeTest(404).catch(result => {
-      makeAssertions()
-    })
+  test('call stopDebugging after request-promise has an error', async () => {
+    await expect(initializeTest(404)).rejects.toThrow()
+    makeAssertions()
   })
 })
 
