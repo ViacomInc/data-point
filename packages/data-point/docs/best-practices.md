@@ -93,7 +93,7 @@ Testing DataPoint transformations should not be any different from any other
 
 ### Function Reducer
 
-[Function Reducer](https://github.com/ViacomInc/data-point/tree/master/packages/data-point#function-reducer) should be tested as any other Javascript function, the singularity of a reducer is its second parameter the accumulator which at times you might need to mock the Accumulator object to be able to test your reducer. On most cases testing a function reducer does not need an instance of DataPoint to test its functionality.
+[Function Reducer](https://github.com/ViacomInc/data-point/tree/master/packages/data-point#function-reducer) should be tested as any other Javascript function. A function reducer receives an accumulator object as its second parameter which at times you might need to [mock](#mocking-accumulator-object) to be able to test your reducer. On most cases testing a function reducer does not need an instance of DataPoint to test its functionality.
 
 ### Object Reducer
 
@@ -267,7 +267,7 @@ describe('PersonByIdRequest', () => {
 
 ## Asynchronous execution
 
-By design DataPoint transformations are asynchronous, this provides maximum flexibility for writing your code but it also means that there are some things we must take into account and some patterns to be avoided to provide the best performance. It is important to know that to resolve all asynchronous processes DataPoint relies heavily on Promises([Bluebird](http://bluebirdjs.com)), take this into account when optimizing your code and how bluebird handles its promises.
+By design DataPoint transformations are asynchronous, this provides maximum flexibility for writing your code but it also means that there are some things we must take into account and some patterns to be avoided to provide the best performance
 
 Patterns related to this topic:
 
@@ -284,7 +284,9 @@ We should think of DataPoint only as a transformation tool, your transformations
 
 - Given the same inputs, always returns the same output.
 - [Referential transparency](https://medium.com/@olxc/referential-transparency-93352c2dd713) - if the expression can be replaced with its value without changing the program’s behavior.
-- Produce no side effects - the expression should not alter any external state (this includes not mutating any of the parameter values).
+- **Produce no side effects** - the expression should not alter any external state (this includes not mutating any of the parameter values).
+
+⚠️ It should be stressed that you should not modify the accumulator object (because it's very tempting to modify it directly). Since everything is async, modifying the accumulator could have unpredictable results if multiple reducers have a reference to the same object.
 
 ### Higher Order Reducers
 
@@ -336,9 +338,10 @@ dataPoint.resolve(PeopleRequest, 10).then((result) => {
 
 ### Picking/omitting keys from an object
 
-The Object reducer can come in very handy when mapping properties from an input. However, its execution is asynchronous where each property it maps is executed asynchronously in parallel; this can potentially be something you might want to avoid to keep things as performant as possible.
-
 Using utilities like lodash's [_.pick](https://lodash.com/docs/4.17.11#pick) and [_.omit](https://lodash.com/docs/4.17.11#omit) can help you around this, especially if you do not intend to change any of the key's name.
+
+️️⚠️ It can be tempting to use the Object reducer **only** to pick properties from an input source, this is not be the best usage of this reducer, mainly because the resolution of each key is executed asynchronously.
+
 
 💡 Lodash by default does not support currying or value at the end, for this you may want to look into [lodash/fp](https://github.com/lodash/lodash/wiki/FP-Guide) or [ramda](https://ramdajs.com/docs/#pick)
 
@@ -350,7 +353,7 @@ pick({a: 1, b: {c: 2, d: 3}}, ['a', 'b.d']) -> {a: 1, b: {d: 3}}
 
 **Examples:**
 
-NOTE: assume `PeopleRequest` makes an external request to SWAPI to get a Person Object
+NOTE: assume `PeopleRequest` makes a request to an external API to get a Person Object.
 
 Instead of this:
 
