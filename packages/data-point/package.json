@@ -58,6 +58,7 @@
   "dependencies": {
     "ajv": "5.2.3",
     "bluebird": "3.5.0",
+    "clear-module": "^3.1.0",
     "debug": "3.x",
     "deep-freeze": "0.0.1",
     "json-stringify-safe": "^5.0.1",

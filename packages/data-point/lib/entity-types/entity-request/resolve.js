@@ -2,6 +2,7 @@ const _ = require('lodash')
 const fp = require('lodash/fp')
 const Promise = require('bluebird')
 const rp = require('request-promise')
+const clearModule = require('clear-module')
 
 const utils = require('../../utils')
 
@@ -96,9 +97,9 @@ module.exports.resolveUrl = resolveUrl
  */
 function getRequestPromiseWithDebugging (callback) {
   const debugModule = require('request-debug')
-  delete require.cache['request-promise']
+  clearModule('request-promise')
   const rpDebug = require('request-promise')
-  delete require.cache['request-promise']
+  clearModule('request-promise')
   if (callback) {
     debugModule(rpDebug, callback)
   } else {
