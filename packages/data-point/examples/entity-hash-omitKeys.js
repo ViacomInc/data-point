@@ -18,6 +18,6 @@ const input = {
 }
 
 dataPoint.resolve('hash:omitKeys', input).then(output => {
-  assert.deepEqual(output, expectedResult)
+  assert.deepStrictEqual(output, expectedResult)
   console.log(output)
 })

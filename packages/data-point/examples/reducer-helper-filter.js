@@ -18,5 +18,5 @@ const value = [
 const reducer = DataPoint.filter(['$a', input => input > 1])
 
 dataPoint.resolve(reducer, value).then(output => {
-  assert.deepEqual(output, [{ a: 2 }])
+  assert.deepStrictEqual(output, [{ a: 2 }])
 })

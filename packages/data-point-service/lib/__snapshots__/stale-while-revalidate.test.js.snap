@@ -8,6 +8,6 @@ Object {
   "getEntry": [Function],
   "getRevalidationState": [Function],
   "invalidateLocalFlags": [Function],
-  "removeLocalRevalidationFlag": [Function],
+  "removeLocalRevalidationFlag": [MockFunction],
 }
 `;

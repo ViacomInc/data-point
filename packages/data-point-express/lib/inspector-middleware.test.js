@@ -1,9 +1,5 @@
 /* eslint-env jest */
 
-jest.mock('ioredis', () => {
-  return require('ioredis-mock')
-})
-
 const InspectorMiddleware = require('./inspector-middleware')
 const Express = require('express')
 const DataPoint = require('data-point')

@@ -18,5 +18,5 @@ const value = [
 const reducer = DataPoint.map(['$a', input => input * 2])
 
 dataPoint.resolve(reducer, value).then(output => {
-  assert.deepEqual(output, [2, 4])
+  assert.deepStrictEqual(output, [2, 4])
 })

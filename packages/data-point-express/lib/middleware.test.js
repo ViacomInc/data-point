@@ -1,9 +1,5 @@
 /* eslint-env jest */
 
-jest.mock('ioredis', () => {
-  return require('ioredis-mock')
-})
-
 const fp = require('lodash/fp')
 const Middleware = require('./middleware')
 const Express = require('express')

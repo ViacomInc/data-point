@@ -19,6 +19,6 @@ const input = {
 }
 
 dataPoint.resolve('model:string', input).then(output => {
-  assert.equal(output, 'DataPoint')
+  assert.strictEqual(output, 'DataPoint')
   console.log(output)
 })

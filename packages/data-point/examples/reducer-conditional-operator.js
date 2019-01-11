@@ -29,7 +29,7 @@ dataPoint.addEntities({
 mockRequests()
 
 dataPoint.resolve('reducer:getPerson[]', people).then(output => {
-  assert.deepEqual(output, [
+  assert.deepStrictEqual(output, [
     {
       name: 'Luke Skywalker',
       birthYear: '19BBY'

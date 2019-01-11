@@ -25,12 +25,12 @@
     "all-contributors-cli": "^4.10.1",
     "commitizen": "latest",
     "cz-conventional-changelog": "latest",
-    "jest": "latest",
+    "jest": "^23.6.0",
     "lerna": "^2.5.1",
     "lint-staged": "latest",
-    "prettier-standard": "^7.0.3",
+    "prettier-standard": "^8.0.1",
     "snazzy": "latest",
-    "standard": "latest",
+    "standard": "^12.0.1",
     "standard-version": "latest",
     "supertest": "^3.0.0"
   },
@@ -43,7 +43,8 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/test/utils/",
-      "/test/definitions/"
+      "/test/definitions/",
+      "<rootDir>/packages/data-point-cache/lib/cache.js"
     ],
     "coverageThreshold": {
       "global": {
@@ -58,7 +59,6 @@
     "*.js": [
       "prettier-standard",
       "git add",
-      "standard",
       "jest --bail --findRelatedTests"
     ]
   },

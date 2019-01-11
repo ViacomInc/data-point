@@ -496,7 +496,7 @@ A path reducer is a `string` that extracts a path from the current [Accumulator]
   dataPoint
     .resolve('$', input)
     .then((output) => {
-      assert.equal(output, input)
+      assert.strictEqual(output, input)
     })
   ```
 </details>
@@ -522,7 +522,7 @@ A path reducer is a `string` that extracts a path from the current [Accumulator]
   dataPoint
     .resolve('$..value', input)
     .then(output => {
-      assert.equal(output input)
+      assert.strictEqual(output input)
     })
   ```
 </details>
@@ -548,7 +548,7 @@ A path reducer is a `string` that extracts a path from the current [Accumulator]
   dataPoint
     .resolve('$a.b[0]', input)
     .then(output => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -586,7 +586,7 @@ Example at: [examples/reducer-path.js](examples/reducer-path.js)
   dataPoint
     .resolve('$a.b[]', input)
     .then(output => {
-      assert.deepEqual(output, ['Hello World', 'Hello Solar System', 'Hello Universe'])
+      assert.deepStrictEqual(output, ['Hello World', 'Hello Solar System', 'Hello Universe'])
     })
   ```
 </details>
@@ -633,7 +633,7 @@ const name = (input:*, acc:Accumulator) => {
   dataPoint
     .resolve(reducer, 'Hello')
     .then((output) => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -672,7 +672,7 @@ const name = (input:*, acc:Accumulator) => {
   dataPoint
     .resolve(reducer, 'Hello')
     .then((output) => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -711,7 +711,7 @@ const name = (input:*, acc:Accumulator, next:function) => {
   dataPoint
     .resolve(reducer, 'Hello')
     .then((output) => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -949,7 +949,7 @@ See the [Entities](#entities) section for information about the supported entity
   dataPoint
     .resolve([PersonRequest, PersonModel], 1)
     .then((output) => {
-      assert.deepEqual(output, {
+      assert.deepStrictEqual(output, {
         name: 'Luke Skywalker',
         birthYear: '19BBY'
       })
@@ -1006,7 +1006,7 @@ See the [Entities](#entities) section for information about the supported entity
   dataPoint
     .resolve(['reducer:getGreeting | reducer:toUpperCase'], input)
     .then((output) => {
-      assert.equal(output, 'HELLO WORLD')
+      assert.strictEqual(output, 'HELLO WORLD')
     })
   ```
 </details>
@@ -1035,10 +1035,10 @@ See the [Entities](#entities) section for information about the supported entity
   dataPoint
     .resolve(['$a | reducer:toUpperCase[]'], input)
     .then((output) => {
-      assert.equal(output[0], 'HELLO WORLD')
-      assert.equal(output[1], 'HELLO LAIA')
-      assert.equal(output[2], 'HELLO DAREK')
-      assert.equal(output[3], 'HELLO ITALY')
+      assert.strictEqual(output[0], 'HELLO WORLD')
+      assert.strictEqual(output[1], 'HELLO LAIA')
+      assert.strictEqual(output[2], 'HELLO DAREK')
+      assert.strictEqual(output[3], 'HELLO ITALY')
     })
   ```
 </details>
@@ -1097,7 +1097,7 @@ dataPoint.addEntities({
 dataPoint
   .resolve('reducer:getPerson[]', people)
   .then((output) => {
-    assert.deepEqual(output, [
+    assert.deepStrictEqual(output, [
       {
         name: 'Luke Skywalker',
         birthYear: '19BBY'
@@ -1758,7 +1758,7 @@ dataPoint.addEntities({
   dataPoint
     .resolve('reducer:foo', input)
     .then((output) => {
-      assert.equal(output, 30)
+      assert.strictEqual(output, 30)
     })
   ```
 </details>
@@ -1826,7 +1826,7 @@ dataPoint.addEntities({
   dataPoint
     .resolve('model:foo', input)
     .then((output) => {
-      assert.equal(output, 30)
+      assert.strictEqual(output, 30)
     })
   ```
 </details>
@@ -1856,7 +1856,7 @@ Example at: [examples/entity-model-basic.js](examples/entity-model-basic.js)
   dataPoint
     .resolve('model:foo', 100)
     .then((output) => {
-      assert.deepEqual(output, [100])
+      assert.deepStrictEqual(output, [100])
     })
   ```
 </details>
@@ -1892,7 +1892,7 @@ Example at: [examples/entity-model-before.js](examples/entity-model-before.js)
   dataPoint
     .resolve('model:foo', input)
     .then((output) => {
-      assert.deepEqual(output, [3, 15])
+      assert.deepStrictEqual(output, [3, 15])
     })
   ```
 </details>
@@ -1943,7 +1943,7 @@ Passing a value as the second argument will stop the propagation of the error.
   dataPoint
     .resolve('model:getArray', input)
     .then((output) => {
-      assert.deepEqual(output, [])
+      assert.deepStrictEqual(output, [])
     })
   ```
 </details>
@@ -2009,7 +2009,7 @@ The params object is used to pass custom data to your entity. This Object is exp
   dataPoint
     .resolve('model:multiply', 200)
     .then((output) => {
-      assert.deepEqual(output, 20000)
+      assert.deepStrictEqual(output, 20000)
     })
   ```
 </details>
@@ -2030,7 +2030,7 @@ The params object is used to pass custom data to your entity. This Object is exp
   
   dataPoint.resolve('model:getParam')
     .then((output) => {
-      assert.deepEqual(output, 100)
+      assert.deepStrictEqual(output, 100)
     })
   ```
 </details>
@@ -2245,7 +2245,7 @@ For more information on acc.locals: [Transform Options](#transform-options) and 
   dataPoint
     .resolve('request:searchPeople', input)
     .then(output => {
-      assert.equal(output.results[0].name, 'R2-D2')
+      assert.strictEqual(output.results[0].name, 'R2-D2')
     })
   ```
 </details>
@@ -2349,7 +2349,7 @@ Hash entities expose a set of optional reducers: [mapKeys](#hashmapkeys), [omitK
   dataPoint
     .resolve('hash:helloWorld', input)
     .then((output) => {
-      assert.deepEqual(output, {
+      assert.deepStrictEqual(output, {
         c: 'Hello',
         d: ' World!!'
       })
@@ -2396,7 +2396,7 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
   }
 
   dataPoint.resolve('hash:mapKeys', input).then(output => {
-    assert.deepEqual(output, {
+    assert.deepStrictEqual(output, {
       name: 'DataPoint',
       url: 'https://github.com/ViacomInc/data-point'
     })
@@ -2431,7 +2431,7 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
   }
 
   dataPoint.resolve('hash:addKeys', input).then(output => {
-    assert.deepEqual(output, {
+    assert.deepStrictEqual(output, {
       name: 'DataPoint',
       nameLowerCase: 'datapoint',
       url: 'https://github.com/ViacomInc/data-point'
@@ -2467,7 +2467,7 @@ The next example is similar to the previous example. However, instead of mapping
   dataPoint.resolve('hash:pickKeys', input).then(output => {
     // notice how name is no longer 
     // in the object
-    assert.deepEqual(output, {
+    assert.deepStrictEqual(output, {
       url: 'https://github.com/ViacomInc/data-point'
     })
   })
@@ -2504,7 +2504,7 @@ This example will only **omit** some keys, and let the rest pass through:
   }
 
   dataPoint.resolve('hash:omitKeys', input).then(output => {
-    assert.deepEqual(output, expectedResult)
+    assert.deepStrictEqual(output, expectedResult)
   })
   ```
 </details>
@@ -2545,7 +2545,7 @@ Sometimes you just want to add a hard-coded value to your current `acc.value`.
   dataPoint
     .resolve('hash:addValues')
     .then((output) => {
-      assert.deepEqual(output, expectedResult)
+      assert.deepStrictEqual(output, expectedResult)
     })
   ```
 </details>
@@ -2595,7 +2595,7 @@ You can add multiple reducers to your Hash spec.
   dataPoint
     .resolve('entry:orgInfo', { org: 'nodejs' })
     .then((output) => {
-      assert.deepEqual(output, expectedResult)
+      assert.deepStrictEqual(output, expectedResult)
     })
   ```
 </details>
@@ -3505,7 +3505,7 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise<Accumulator>
   dataPoint
     .resolve('render:HelloWorld', input)
     .then((output) => {
-      assert.equal(output, '<h1>Hello World!!</h1>')
+      assert.strictEqual(output, '<h1>Hello World!!</h1>')
     })
   ```
 </details>

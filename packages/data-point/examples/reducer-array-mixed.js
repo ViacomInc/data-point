@@ -12,6 +12,6 @@ const toUpperCase = input => {
 }
 
 dataPoint.resolve(['$a.b', toUpperCase], input).then(output => {
-  assert.equal(output, 'HELLO WORLD')
+  assert.strictEqual(output, 'HELLO WORLD')
   console.log(output)
 })
