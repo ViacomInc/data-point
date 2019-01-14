@@ -93,19 +93,43 @@ module.exports.resolveUrl = resolveUrl
 /**
  * @param {Accumulator} acc
  */
-function inspect (acc) {
+function inspect (acc, request) {
   const paramInspect = acc.params && acc.params.inspect
-
-  if (typeof paramInspect === 'function') {
-    paramInspect(acc)
-    return true
-  }
-
   if (paramInspect === true) {
     utils.inspect(acc, {
       options: acc.options,
       value: acc.value
     })
+    return true
+  }
+
+  if (typeof paramInspect === 'function') {
+    // some of this logic borrows from https://github.com/request/request-debug
+    const data = {
+      type: 'request',
+      uri: request.uri.href,
+      method: request.method,
+      headers: _.cloneDeep(request.headers)
+    }
+    if (request.body) {
+      data.body = request.body.toString('utf8')
+    }
+    paramInspect(acc, data)
+    request
+      .then(res => {
+        paramInspect(acc, {
+          type: 'response',
+          statusCode: res.statusCode,
+          headers: res.headers
+        })
+      })
+      .catch(error => {
+        paramInspect(acc, {
+          type: 'error',
+          statusCode: error.statusCode,
+          headers: error.headers
+        })
+      })
     return true
   }
 
@@ -120,36 +144,39 @@ module.exports.inspect = inspect
  * @return {Promise<Accumulator>}
  */
 function resolveRequest (acc, resolveReducer) {
-  inspect(acc)
-  return rp(acc.options)
-    .then(result => utils.set(acc, 'value', result))
-    .catch(error => {
-      // remove auth objects from acc and error for printing to console
-      const redactedAcc = fp.set('options.auth', '[omitted]', acc)
-      const redactedError = fp.set('options.auth', '[omitted]', error)
+  const options = Object.assign({}, acc.options, {
+    resolveWithFullResponse: true
+  })
 
-      const message = [
-        'Entity info:',
-        '\n  - Id: ',
-        _.get(redactedAcc, 'reducer.spec.id'),
-        '\n',
-        utils.inspectProperties(
-          redactedAcc,
-          ['options', 'params', 'value'],
-          '  '
-        ),
-        '\n  Request:\n',
-        utils.inspectProperties(
-          redactedError,
-          ['error', 'message', 'statusCode', 'options', 'body'],
-          '  '
-        )
-      ].join('')
+  const request = rp(options)
+  inspect(acc, request)
+  return request.then(res => utils.set(acc, 'value', res.body)).catch(error => {
+    // remove auth objects from acc and error for printing to console
+    const redactedAcc = fp.set('options.auth', '[omitted]', acc)
+    const redactedError = fp.set('options.auth', '[omitted]', error)
 
-      // attaching to error so it can be exposed by a handler outside datapoint
-      error.message = `${error.message}\n\n${message}`
-      throw error
-    })
+    const message = [
+      'Entity info:',
+      '\n  - Id: ',
+      _.get(redactedAcc, 'reducer.spec.id'),
+      '\n',
+      utils.inspectProperties(
+        redactedAcc,
+        ['options', 'params', 'value'],
+        '  '
+      ),
+      '\n  Request:\n',
+      utils.inspectProperties(
+        redactedError,
+        ['error', 'message', 'statusCode', 'options', 'body'],
+        '  '
+      )
+    ].join('')
+
+    // attaching to error so it can be exposed by a handler outside datapoint
+    error.message = `${error.message}\n\n${message}`
+    throw error
+  })
 }
 
 module.exports.resolveRequest = resolveRequest

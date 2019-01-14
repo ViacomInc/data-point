@@ -2272,10 +2272,33 @@ dataPoint.addEntities({
 })
 ```
 
-If `params.inspect` is `true` it will output the entity's information to the console.
+**Boolean**
 
-If `params.inspect` is a `function`, you may execute custom debugging code to be executed before the actual request gets made. The function receives the current accumulator value as its only parameter.
+If `params.inspect` is `true`, it will output the entity's information to the console.
 
+**Function**
+
+If `params.inspect` is a function, it will be called twice: once before the request is made, and once when the request is resolved. It should have the signature ```(accumulator: Object, data: Object)```.
+
+The `inspect` function is first called just before initiating the request. The first argument is the `accumulator`, and the second is a `data` object with these properties:
+
+```js
+{
+  type: 'request',
+  method: String, // ex: 'GET'
+  uri: String, // fully-formed URI
+  [body]: String // the value of request.body (or undefined)
+}
+```
+
+It's then called when the request succeeds or fails. The `data` object will have a `type` property of either `'response'` or `'error'`:
+
+```js
+{
+  type: 'response|error',
+  statusCode: Number,
+}
+```
 
 ### Hash
 

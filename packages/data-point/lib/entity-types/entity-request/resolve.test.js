@@ -1,6 +1,7 @@
 /* eslint-env jest */
 
 const _ = require('lodash')
+const rp = require('request-promise')
 const nock = require('nock')
 const Resolve = require('./resolve')
 
@@ -53,6 +54,10 @@ beforeAll(() => {
 
 beforeEach(() => {
   dataPoint.middleware.clear()
+})
+
+afterEach(() => {
+  nock.cleanAll()
 })
 
 describe('resolveUrlInjections', () => {
@@ -311,54 +316,155 @@ describe('resolveRequest', () => {
 })
 
 describe('inspect', () => {
-  let consoleInfo
-  function getAcc () {
-    const acc = {}
-    _.set(acc, 'reducer.spec.id', 'test:test')
-    _.set(acc, 'params.inspect', true)
-    return acc
-  }
+  let utilsInspectSpy
   beforeAll(() => {
-    consoleInfo = console.info
+    utilsInspectSpy = jest.spyOn(utils, 'inspect').mockReturnValue(undefined)
   })
   afterEach(() => {
-    console.info = consoleInfo
+    utilsInspectSpy.mockClear()
   })
-  test('It should not execute custom inspect or utils.inspect', () => {
-    const utilsIinspectSpy = jest.spyOn(utils, 'inspect')
-    const acc = getAcc()
+  afterAll(() => {
+    utilsInspectSpy.mockRestore()
+  })
+
+  function createAcc () {
+    const acc = {
+      value: 'boomerang',
+      params: {},
+      options: {},
+      reducer: _.set({}, 'spec.id', 'test:test')
+    }
+    return acc
+  }
+  function createMockRequest (options) {
+    let { statusCode, requestType, rpOptions } = options
+    requestType = requestType.toLowerCase()
+    nock('http://remote.test')
+      [requestType]('/')
+      .reply(statusCode, { statusCode })
+    return rp[requestType]({
+      uri: 'http://remote.test',
+      resolveWithFullResponse: true,
+      ...rpOptions
+    })
+  }
+
+  test('It should not execute params.inspect or utils.inspect when inspect is undefined', async () => {
+    const acc = createAcc()
     acc.params.inspect = undefined
-
-    Resolve.inspect(acc)
-    expect(utilsIinspectSpy).not.toBeCalled()
-
-    utilsIinspectSpy.mockReset()
-    utilsIinspectSpy.mockRestore()
+    const request = createMockRequest({ statusCode: 200, requestType: 'GET' })
+    await expect(request).resolves.toBeTruthy()
+    Resolve.inspect(acc, request)
+    expect(utilsInspectSpy).not.toBeCalled()
   })
-  test('It should execute custom inspect when provided, not execute utils.inspect', () => {
-    const utilsIinspectSpy = jest.spyOn(utils, 'inspect')
-    const acc = getAcc()
-    acc.params.inspect = jest.fn()
-
-    Resolve.inspect(acc)
-    expect(utilsIinspectSpy).not.toBeCalled()
-    expect(acc.params.inspect).toBeCalledWith(acc)
-
-    utilsIinspectSpy.mockReset()
-    utilsIinspectSpy.mockRestore()
+  test('It should not execute params.inspect or utils.inspect when inspect is false', async () => {
+    const acc = createAcc()
+    acc.params.inspect = false
+    const request = createMockRequest({ statusCode: 200, requestType: 'GET' })
+    await expect(request).resolves.toBeTruthy()
+    Resolve.inspect(acc, request)
+    expect(utilsInspectSpy).not.toBeCalled()
   })
-  test('It should execute utils.inspect when params.inspect === true', () => {
-    const utilsIinspectSpy = jest
-      .spyOn(utils, 'inspect')
-      .mockImplementation(() => true)
-    const acc = getAcc()
+  test('It should execute utils.inspect when params.inspect === true', async () => {
+    const acc = createAcc()
     acc.params.inspect = true
-
-    Resolve.inspect(acc)
-    expect(utilsIinspectSpy).toBeCalled()
-
-    utilsIinspectSpy.mockReset()
-    utilsIinspectSpy.mockRestore()
+    const request = createMockRequest({ statusCode: 200, requestType: 'GET' })
+    Resolve.inspect(acc, request)
+    await expect(request).resolves.toBeTruthy()
+    expect(utilsInspectSpy).toBeCalledWith(
+      acc,
+      expect.objectContaining({
+        options: acc.options,
+        value: acc.value
+      })
+    )
+  })
+  test('It should execute params.inspect when rp.then is called', async () => {
+    const statusCode = 200
+    const requestType = 'GET'
+    const rpOptions = {}
+    const acc = createAcc()
+    acc.params.inspect = jest.fn()
+    const request = createMockRequest({ statusCode, requestType, rpOptions })
+    Resolve.inspect(acc, request)
+    await expect(request).resolves.toBeTruthy()
+    expect(utilsInspectSpy).not.toBeCalled()
+    expect(acc.params.inspect.mock.calls).toEqual([
+      [
+        acc,
+        expect.objectContaining({
+          type: 'request',
+          method: requestType.toUpperCase(),
+          uri: expect.stringMatching('http://remote.test')
+        })
+      ],
+      [
+        acc,
+        expect.objectContaining({
+          statusCode,
+          type: 'response'
+        })
+      ]
+    ])
+  })
+  test('It should execute params.inspect when rp.catch is called', async () => {
+    const statusCode = 404
+    const requestType = 'GET'
+    const rpOptions = {}
+    const acc = createAcc()
+    acc.params.inspect = jest.fn()
+    const request = createMockRequest({ statusCode, requestType, rpOptions })
+    Resolve.inspect(acc, request)
+    await expect(request).rejects.toBeTruthy()
+    expect(utilsInspectSpy).not.toBeCalled()
+    expect(acc.params.inspect.mock.calls).toEqual([
+      [
+        acc,
+        expect.objectContaining({
+          type: 'request',
+          method: requestType.toUpperCase(),
+          uri: expect.stringMatching('http://remote.test')
+        })
+      ],
+      [
+        acc,
+        expect.objectContaining({
+          statusCode,
+          type: 'error'
+        })
+      ]
+    ])
+  })
+  test('It should include the body in the event', async () => {
+    const statusCode = 200
+    const requestType = 'POST'
+    const bodyData = JSON.stringify({ test: true })
+    const rpOptions = { body: bodyData }
+    const acc = createAcc()
+    acc.params.inspect = jest.fn()
+    const request = createMockRequest({ statusCode, requestType, rpOptions })
+    Resolve.inspect(acc, request)
+    await expect(request).resolves.toBeTruthy()
+    const mockArguments = acc.params.inspect.mock.calls.slice(0, 2)
+    expect(utilsInspectSpy).not.toBeCalled()
+    expect(mockArguments).toEqual([
+      [
+        acc,
+        expect.objectContaining({
+          type: 'request',
+          method: requestType.toUpperCase(),
+          uri: expect.stringMatching('http://remote.test'),
+          body: expect.stringMatching(bodyData)
+        })
+      ],
+      [
+        acc,
+        expect.objectContaining({
+          statusCode,
+          type: 'response'
+        })
+      ]
+    ])
   })
 })
 
