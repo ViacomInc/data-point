@@ -338,10 +338,8 @@ describe('inspect', () => {
   }
   function createMockRequest (options) {
     let { statusCode, requestType, rpOptions } = options
-    requestType = requestType.toLowerCase()
-    nock('http://remote.test')
-      [requestType]('/')
-      .reply(statusCode, { statusCode })
+    const nockInstance = nock('http://remote.test')
+    nockInstance[requestType]('/').reply(statusCode, { statusCode })
     return rp[requestType]({
       uri: 'http://remote.test',
       resolveWithFullResponse: true,
@@ -352,7 +350,7 @@ describe('inspect', () => {
   test('It should not execute params.inspect or utils.inspect when inspect is undefined', async () => {
     const acc = createAcc()
     acc.params.inspect = undefined
-    const request = createMockRequest({ statusCode: 200, requestType: 'GET' })
+    const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
     Resolve.inspect(acc, request)
     expect(utilsInspectSpy).not.toBeCalled()
@@ -360,7 +358,7 @@ describe('inspect', () => {
   test('It should not execute params.inspect or utils.inspect when inspect is false', async () => {
     const acc = createAcc()
     acc.params.inspect = false
-    const request = createMockRequest({ statusCode: 200, requestType: 'GET' })
+    const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
     Resolve.inspect(acc, request)
     expect(utilsInspectSpy).not.toBeCalled()
@@ -368,7 +366,7 @@ describe('inspect', () => {
   test('It should execute utils.inspect when params.inspect === true', async () => {
     const acc = createAcc()
     acc.params.inspect = true
-    const request = createMockRequest({ statusCode: 200, requestType: 'GET' })
+    const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     Resolve.inspect(acc, request)
     await expect(request).resolves.toBeTruthy()
     expect(utilsInspectSpy).toBeCalledWith(
@@ -380,12 +378,13 @@ describe('inspect', () => {
     )
   })
   test('It should execute params.inspect when rp.then is called', async () => {
-    const statusCode = 200
-    const requestType = 'GET'
-    const rpOptions = {}
     const acc = createAcc()
     acc.params.inspect = jest.fn()
-    const request = createMockRequest({ statusCode, requestType, rpOptions })
+    const request = createMockRequest({
+      statusCode: 200,
+      requestType: 'get',
+      rpOptions: {}
+    })
     Resolve.inspect(acc, request)
     await expect(request).resolves.toBeTruthy()
     expect(utilsInspectSpy).not.toBeCalled()
@@ -394,26 +393,27 @@ describe('inspect', () => {
         acc,
         expect.objectContaining({
           type: 'request',
-          method: requestType.toUpperCase(),
+          method: 'GET',
           uri: expect.stringMatching('http://remote.test')
         })
       ],
       [
         acc,
         expect.objectContaining({
-          statusCode,
+          statusCode: 200,
           type: 'response'
         })
       ]
     ])
   })
   test('It should execute params.inspect when rp.catch is called', async () => {
-    const statusCode = 404
-    const requestType = 'GET'
-    const rpOptions = {}
     const acc = createAcc()
     acc.params.inspect = jest.fn()
-    const request = createMockRequest({ statusCode, requestType, rpOptions })
+    const request = createMockRequest({
+      statusCode: 404,
+      requestType: 'get',
+      rpOptions: {}
+    })
     Resolve.inspect(acc, request)
     await expect(request).rejects.toBeTruthy()
     expect(utilsInspectSpy).not.toBeCalled()
@@ -422,27 +422,30 @@ describe('inspect', () => {
         acc,
         expect.objectContaining({
           type: 'request',
-          method: requestType.toUpperCase(),
+          method: 'GET',
           uri: expect.stringMatching('http://remote.test')
         })
       ],
       [
         acc,
         expect.objectContaining({
-          statusCode,
+          statusCode: 404,
           type: 'error'
         })
       ]
     ])
   })
   test('It should include the body in the event', async () => {
-    const statusCode = 200
-    const requestType = 'POST'
-    const bodyData = JSON.stringify({ test: true })
-    const rpOptions = { body: bodyData }
     const acc = createAcc()
     acc.params.inspect = jest.fn()
-    const request = createMockRequest({ statusCode, requestType, rpOptions })
+    const bodyData = JSON.stringify({ test: true })
+    const request = createMockRequest({
+      statusCode: 200,
+      requestType: 'post',
+      rpOptions: {
+        body: bodyData
+      }
+    })
     Resolve.inspect(acc, request)
     await expect(request).resolves.toBeTruthy()
     const mockArguments = acc.params.inspect.mock.calls.slice(0, 2)
@@ -452,7 +455,7 @@ describe('inspect', () => {
         acc,
         expect.objectContaining({
           type: 'request',
-          method: requestType.toUpperCase(),
+          method: 'POST',
           uri: expect.stringMatching('http://remote.test'),
           body: expect.stringMatching(bodyData)
         })
@@ -460,7 +463,7 @@ describe('inspect', () => {
       [
         acc,
         expect.objectContaining({
-          statusCode,
+          statusCode: 200,
           type: 'response'
         })
       ]
