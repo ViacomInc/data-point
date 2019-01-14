@@ -348,14 +348,14 @@ describe('inspect', () => {
     })
   }
 
-  test('It should ignore params.inspect and utils.inspect when params.inspect is undefined', async () => {
+  test('It should ignore params.inspect and utils.inspect when params.inspect === undefined', async () => {
     const acc = createAcc({ inspect: undefined })
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
     Resolve.inspect(acc, request)
     expect(utilsInspectSpy).not.toBeCalled()
   })
-  test('It should ignore params.inspect and utils.inspect when params.inspect is false', async () => {
+  test('It should ignore params.inspect and utils.inspect when params.inspect === false', async () => {
     const acc = createAcc({ inspect: false })
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
@@ -431,7 +431,7 @@ describe('inspect', () => {
       ]
     ])
   })
-  test('It should include the body in the event', async () => {
+  test('It should pass the body option to params.inspect', async () => {
     const acc = createAcc({ inspect: jest.fn() })
     const bodyData = JSON.stringify({ test: true })
     const request = createMockRequest({
