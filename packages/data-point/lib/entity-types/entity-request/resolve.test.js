@@ -327,12 +327,12 @@ describe('inspect', () => {
     utilsInspectSpy.mockRestore()
   })
 
-  function createAcc (inspectParam) {
+  function createAcc ({ inspect }) {
     return {
       value: 'boomerang',
       options: {},
       params: {
-        inspect: inspectParam
+        inspect
       },
       reducer: _.set({}, 'spec.id', 'test:test')
     }
@@ -349,21 +349,21 @@ describe('inspect', () => {
   }
 
   test('It should ignore params.inspect and utils.inspect when params.inspect is undefined', async () => {
-    const acc = createAcc(undefined)
+    const acc = createAcc({ inspect: undefined })
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
     Resolve.inspect(acc, request)
     expect(utilsInspectSpy).not.toBeCalled()
   })
   test('It should ignore params.inspect and utils.inspect when params.inspect is false', async () => {
-    const acc = createAcc(false)
+    const acc = createAcc({ inspect: false })
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
     Resolve.inspect(acc, request)
     expect(utilsInspectSpy).not.toBeCalled()
   })
   test('It should execute utils.inspect when params.inspect === true', async () => {
-    const acc = createAcc(true)
+    const acc = createAcc({ inspect: true })
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     Resolve.inspect(acc, request)
     await expect(request).resolves.toBeTruthy()
@@ -376,7 +376,7 @@ describe('inspect', () => {
     )
   })
   test('It should execute params.inspect when rp.then is called', async () => {
-    const acc = createAcc(jest.fn())
+    const acc = createAcc({ inspect: jest.fn() })
     const request = createMockRequest({
       statusCode: 200,
       requestType: 'get',
@@ -404,7 +404,7 @@ describe('inspect', () => {
     ])
   })
   test('It should execute params.inspect when rp.catch is called', async () => {
-    const acc = createAcc(jest.fn())
+    const acc = createAcc({ inspect: jest.fn() })
     const request = createMockRequest({
       statusCode: 404,
       requestType: 'get',
@@ -432,7 +432,7 @@ describe('inspect', () => {
     ])
   })
   test('It should include the body in the event', async () => {
-    const acc = createAcc(jest.fn())
+    const acc = createAcc({ inspect: jest.fn() })
     const bodyData = JSON.stringify({ test: true })
     const request = createMockRequest({
       statusCode: 200,
