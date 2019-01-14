@@ -154,8 +154,8 @@ module.exports.inspect = inspect
  * @return {Promise<Accumulator>}
  */
 function resolveRequest (acc, resolveReducer) {
-  const _request = inspect(rp, acc)
-  return _request(acc.options)
+  const request = inspect(rp, acc)
+  return request(acc.options)
     .then(result => utils.set(acc, 'value', result))
     .catch(error => {
       // remove auth objects from acc and error for printing to console
@@ -186,8 +186,8 @@ function resolveRequest (acc, resolveReducer) {
     })
     .finally(() => {
       // request-debug adds this function
-      if (typeof _request.stopDebugging === 'function') {
-        _request.stopDebugging()
+      if (typeof request.stopDebugging === 'function') {
+        request.stopDebugging()
       }
     })
 }
