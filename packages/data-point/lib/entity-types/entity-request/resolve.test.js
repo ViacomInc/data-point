@@ -327,14 +327,15 @@ describe('inspect', () => {
     utilsInspectSpy.mockRestore()
   })
 
-  function createAcc () {
-    const acc = {
+  function createAcc (inspectParam) {
+    return {
       value: 'boomerang',
-      params: {},
       options: {},
+      params: {
+        inspect: inspectParam
+      },
       reducer: _.set({}, 'spec.id', 'test:test')
     }
-    return acc
   }
   function createMockRequest (options) {
     let { statusCode, requestType, rpOptions } = options
@@ -347,25 +348,22 @@ describe('inspect', () => {
     })
   }
 
-  test('It should not execute params.inspect or utils.inspect when inspect is undefined', async () => {
-    const acc = createAcc()
-    acc.params.inspect = undefined
+  test('It should ignore params.inspect and utils.inspect when params.inspect is undefined', async () => {
+    const acc = createAcc(undefined)
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
     Resolve.inspect(acc, request)
     expect(utilsInspectSpy).not.toBeCalled()
   })
-  test('It should not execute params.inspect or utils.inspect when inspect is false', async () => {
-    const acc = createAcc()
-    acc.params.inspect = false
+  test('It should ignore params.inspect and utils.inspect when params.inspect is false', async () => {
+    const acc = createAcc(false)
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     await expect(request).resolves.toBeTruthy()
     Resolve.inspect(acc, request)
     expect(utilsInspectSpy).not.toBeCalled()
   })
   test('It should execute utils.inspect when params.inspect === true', async () => {
-    const acc = createAcc()
-    acc.params.inspect = true
+    const acc = createAcc(true)
     const request = createMockRequest({ statusCode: 200, requestType: 'get' })
     Resolve.inspect(acc, request)
     await expect(request).resolves.toBeTruthy()
@@ -378,8 +376,7 @@ describe('inspect', () => {
     )
   })
   test('It should execute params.inspect when rp.then is called', async () => {
-    const acc = createAcc()
-    acc.params.inspect = jest.fn()
+    const acc = createAcc(jest.fn())
     const request = createMockRequest({
       statusCode: 200,
       requestType: 'get',
@@ -407,8 +404,7 @@ describe('inspect', () => {
     ])
   })
   test('It should execute params.inspect when rp.catch is called', async () => {
-    const acc = createAcc()
-    acc.params.inspect = jest.fn()
+    const acc = createAcc(jest.fn())
     const request = createMockRequest({
       statusCode: 404,
       requestType: 'get',
@@ -436,8 +432,7 @@ describe('inspect', () => {
     ])
   })
   test('It should include the body in the event', async () => {
-    const acc = createAcc()
-    acc.params.inspect = jest.fn()
+    const acc = createAcc(jest.fn())
     const bodyData = JSON.stringify({ test: true })
     const request = createMockRequest({
       statusCode: 200,
