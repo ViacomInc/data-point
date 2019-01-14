@@ -115,6 +115,9 @@ function inspect (acc, request) {
       data.body = request.body.toString('utf8')
     }
     paramInspect(acc, data)
+    // This promise chain should not be returned,
+    // because it is only being used to trigger
+    // the paramInspect callback
     request
       .then(res => {
         paramInspect(acc, {
