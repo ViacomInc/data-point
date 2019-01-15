@@ -2254,7 +2254,7 @@ Example at: [examples/entity-request-options.js](examples/entity-request-options
 
 For more examples of request entities, see the [Examples](examples), the [Integration Examples](test/definitions/integrations.js), and the unit tests: [Request Definitions](test/definitions/requests.js).
 
-#### Inspecting Request
+#### Inspecting Request Entities
 
 You may inspect a Request entity through the `params.inspect` property.
 
@@ -2285,17 +2285,25 @@ The `inspect` function is first called just before initiating the request. The f
 ```js
 {
   type: 'request',
-  method: String, // ex: 'GET'
-  uri: String, // fully-formed URI
-  [body]: String // the value of request.body (or undefined)
+  // unique ID that is shared with the 'response' object
+  debugId: Number,
+  // ex: 'GET'
+  method: String,
+  // fully-formed URI
+  uri: String,
+  // the value of request.body (or undefined)
+  [body]: String
 }
 ```
 
-It's then called when the request succeeds or fails. The `data` object will have a `type` property of either `'response'` or `'error'`:
+It's then called when the request succeeds or fails. The `data` object will have a `type` property of either `'response'` or `'error'`. The `debugId` can be used to match the response with the corresponding request.
 
 ```js
 {
   type: 'response|error',
+  // unique ID that is shared with the 'request' object
+  debugId: Number,
+  // http status code
   statusCode: Number,
 }
 ```
