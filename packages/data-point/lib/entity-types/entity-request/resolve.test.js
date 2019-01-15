@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const rp = require('request-promise')
 const nock = require('nock')
-const Resolve = require('./resolve')
+let Resolve = require('./resolve')
 
 const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer-types/factory')
@@ -13,7 +13,7 @@ const ResolveEntity = require('../base-entity/resolve')
 const FixtureStore = require('../../../test/utils/fixture-store')
 
 const helpers = require('../../helpers')
-const utils = require('../../utils')
+let utils = require('../../utils')
 
 let dataPoint
 let resolveReducerBound
@@ -317,7 +317,12 @@ describe('resolveRequest', () => {
 
 describe('inspect', () => {
   let utilsInspectSpy
-  beforeAll(() => {
+  beforeEach(() => {
+    // debugIdCounter is a local variable in
+    // resolve.js, so this resets it to zero
+    jest.resetModules()
+    Resolve = require('./resolve')
+    utils = require('../../utils')
     utilsInspectSpy = jest.spyOn(utils, 'inspect').mockReturnValue(undefined)
   })
   afterEach(() => {
@@ -379,8 +384,7 @@ describe('inspect', () => {
     const acc = createAcc({ inspect: jest.fn() })
     const request = createMockRequest({
       statusCode: 200,
-      requestType: 'get',
-      rpOptions: {}
+      requestType: 'get'
     })
     Resolve.inspect(acc, request)
     await expect(request).resolves.toBeTruthy()
@@ -389,6 +393,7 @@ describe('inspect', () => {
       [
         acc,
         expect.objectContaining({
+          debugId: 1,
           type: 'request',
           method: 'GET',
           uri: expect.stringMatching('http://remote.test')
@@ -397,6 +402,7 @@ describe('inspect', () => {
       [
         acc,
         expect.objectContaining({
+          debugId: 1,
           statusCode: 200,
           type: 'response'
         })
@@ -407,8 +413,7 @@ describe('inspect', () => {
     const acc = createAcc({ inspect: jest.fn() })
     const request = createMockRequest({
       statusCode: 404,
-      requestType: 'get',
-      rpOptions: {}
+      requestType: 'get'
     })
     Resolve.inspect(acc, request)
     await expect(request).rejects.toBeTruthy()
@@ -417,6 +422,7 @@ describe('inspect', () => {
       [
         acc,
         expect.objectContaining({
+          debugId: 1,
           type: 'request',
           method: 'GET',
           uri: expect.stringMatching('http://remote.test')
@@ -425,6 +431,7 @@ describe('inspect', () => {
       [
         acc,
         expect.objectContaining({
+          debugId: 1,
           statusCode: 404,
           type: 'error'
         })
@@ -449,6 +456,7 @@ describe('inspect', () => {
       [
         acc,
         expect.objectContaining({
+          debugId: 1,
           type: 'request',
           method: 'POST',
           uri: expect.stringMatching('http://remote.test'),
@@ -458,11 +466,46 @@ describe('inspect', () => {
       [
         acc,
         expect.objectContaining({
+          debugId: 1,
           statusCode: 200,
           type: 'response'
         })
       ]
     ])
+  })
+  test('It should use incrementing debugId values', async () => {
+    const executeRequest = async (resolveWithSuccess, expectedDebugId) => {
+      const acc = createAcc({ inspect: jest.fn() })
+      const request = createMockRequest({
+        statusCode: resolveWithSuccess ? 200 : 404,
+        requestType: 'get'
+      })
+      Resolve.inspect(acc, request)
+      if (resolveWithSuccess) {
+        await expect(request).resolves.toBeTruthy()
+      } else {
+        await expect(request).rejects.toBeTruthy()
+      }
+      expect(utilsInspectSpy).not.toBeCalled()
+      expect(acc.params.inspect.mock.calls).toEqual([
+        [
+          acc,
+          expect.objectContaining({
+            debugId: expectedDebugId
+          })
+        ],
+        [
+          acc,
+          expect.objectContaining({
+            debugId: expectedDebugId
+          })
+        ]
+      ])
+    }
+    await executeRequest(true, 1)
+    await executeRequest(false, 2)
+    await executeRequest(false, 3)
+    await executeRequest(true, 4)
   })
 })
 

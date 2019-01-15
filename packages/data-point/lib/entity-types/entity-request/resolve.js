@@ -5,6 +5,8 @@ const rp = require('request-promise')
 
 const utils = require('../../utils')
 
+let debugIdCounter = 0
+
 /**
  * request's default options
  * @type {Object}
@@ -105,7 +107,9 @@ function inspect (acc, request) {
 
   if (typeof paramInspect === 'function') {
     // some of this logic borrows from https://github.com/request/request-debug
+    const debugId = ++debugIdCounter
     const data = {
+      debugId,
       type: 'request',
       uri: request.uri.href,
       method: request.method,
@@ -121,6 +125,7 @@ function inspect (acc, request) {
     request
       .then(res => {
         _.attempt(paramInspect, acc, {
+          debugId,
           type: 'response',
           statusCode: res.statusCode,
           headers: res.headers
@@ -128,6 +133,7 @@ function inspect (acc, request) {
       })
       .catch(error => {
         _.attempt(paramInspect, acc, {
+          debugId,
           type: 'error',
           statusCode: error.statusCode,
           headers: error.headers
