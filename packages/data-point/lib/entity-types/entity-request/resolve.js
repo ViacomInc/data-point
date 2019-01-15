@@ -120,14 +120,14 @@ function inspect (acc, request) {
     // the paramInspect callback
     request
       .then(res => {
-        paramInspect(acc, {
+        _.attempt(paramInspect, acc, {
           type: 'response',
           statusCode: res.statusCode,
           headers: res.headers
         })
       })
       .catch(error => {
-        paramInspect(acc, {
+        _.attempt(paramInspect, acc, {
           type: 'error',
           statusCode: error.statusCode,
           headers: error.headers
