@@ -18,10 +18,10 @@ Entity info:
   method: 'GET',
   json: true,
   url: 'http://remote.test/source1',
+  resolveWithFullResponse: true,
   callback: [Function: RP$callback],
   transform: undefined,
   simple: true,
-  resolveWithFullResponse: false,
   transform2xxOnly: false }
 "
 `;
@@ -42,10 +42,10 @@ Entity info:
   - statusCode: 404
   - options: { json: true,
   url: 'http://remote.test/source1',
+  resolveWithFullResponse: true,
   callback: [Function: RP$callback],
   transform: undefined,
   simple: true,
-  resolveWithFullResponse: false,
   transform2xxOnly: false,
   auth: '[omitted]' }
 "
