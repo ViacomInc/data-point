@@ -2254,7 +2254,7 @@ Example at: [examples/entity-request-options.js](examples/entity-request-options
 
 For more examples of request entities, see the [Examples](examples), the [Integration Examples](test/definitions/integrations.js), and the unit tests: [Request Definitions](test/definitions/requests.js).
 
-#### Inspecting Request
+#### Inspecting Request Entities
 
 You may inspect a Request entity through the `params.inspect` property.
 
@@ -2272,10 +2272,41 @@ dataPoint.addEntities({
 })
 ```
 
-If `params.inspect` is `true` it will output the entity's information to the console.
+**Boolean**
 
-If `params.inspect` is a `function`, you may execute custom debugging code to be executed before the actual request gets made. The function receives the current accumulator value as its only parameter.
+If `params.inspect` is `true`, it will output the entity's information to the console.
 
+**Function**
+
+If `params.inspect` is a function, it will be called twice: once before the request is made, and once when the request is resolved. It should have the signature ```(accumulator: Object, data: Object)```.
+
+The `inspect` function is first called just before initiating the request. The first argument is the `accumulator`, and the second is a `data` object with these properties:
+
+```js
+{
+  type: 'request',
+  // unique ID that is shared with the 'response' object
+  debugId: Number,
+  // ex: 'GET'
+  method: String,
+  // fully-formed URI
+  uri: String,
+  // the value of request.body (or undefined)
+  [body]: String
+}
+```
+
+It's then called when the request succeeds or fails. The `data` object will have a `type` property of either `'response'` or `'error'`. The `debugId` can be used to match the response with the corresponding request.
+
+```js
+{
+  type: 'response|error',
+  // unique ID that is shared with the 'request' object
+  debugId: Number,
+  // http status code
+  statusCode: Number,
+}
+```
 
 ### Hash
 
