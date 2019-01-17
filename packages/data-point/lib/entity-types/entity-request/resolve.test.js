@@ -381,7 +381,12 @@ describe('inspect', () => {
     )
   })
   test('It should execute params.inspect when rp.then is called', async () => {
-    const acc = createAcc({ inspect: jest.fn() })
+    const acc = createAcc({
+      inspect: jest.fn(() => {
+        // This helps verify that _.attempt is used when calling inspect
+        throw new Error()
+      })
+    })
     const request = createMockRequest({
       statusCode: 200,
       requestType: 'get'
@@ -410,7 +415,12 @@ describe('inspect', () => {
     ])
   })
   test('It should execute params.inspect when rp.catch is called', async () => {
-    const acc = createAcc({ inspect: jest.fn() })
+    const acc = createAcc({
+      inspect: jest.fn(() => {
+        // This helps verify that _.attempt is used when calling inspect
+        throw new Error()
+      })
+    })
     const request = createMockRequest({
       statusCode: 404,
       requestType: 'get'
