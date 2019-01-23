@@ -3,6 +3,10 @@
   "version": "3.1.1",
   "description": "DataPoint Codemods",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-codemods"
+  },
   "engines": {
     "node": ">=8"
   },
