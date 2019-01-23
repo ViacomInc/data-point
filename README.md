@@ -10,6 +10,8 @@
 - [data-point-express](packages/data-point-express)
 - [data-point-service](packages/data-point-service)
 - [data-point-cache](packages/data-point-cache)
+- [data-point-codemods](packages/data-point-codemods)
+- [bench-trial](packages/bench-trial)
 
 ## Contributing
 
