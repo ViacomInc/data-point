@@ -4,6 +4,10 @@
   "description": "DataPoint as a Service",
   "main": "lib/index.js",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service"
+  },
   "engines": {
     "node": ">=8"
   },
