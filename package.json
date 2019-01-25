@@ -22,7 +22,7 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "all-contributors-cli": "^4.11.2",
+    "all-contributors-cli": "^4.10.1",
     "commitizen": "latest",
     "cz-conventional-changelog": "latest",
     "jest": "^23.6.0",
