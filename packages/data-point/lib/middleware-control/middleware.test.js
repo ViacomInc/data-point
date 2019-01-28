@@ -126,6 +126,45 @@ test('middleware#run - exit chain when ___done set to true', () => {
   })
 })
 
+test('middleware#run - exit when next is called with two parameters, value should be second parameter', () => {
+  const stack = [
+    (acc, next) => {
+      next(null)
+    },
+    (acc, next) => {
+      next(null, 'b')
+    },
+    (acc, next) => {
+      /* istanbul ignore next */
+      next(null, 'c')
+    }
+  ]
+
+  const acc = {}
+
+  return middleware.execute(acc, stack).then(context => {
+    expect(context.value).toEqual('b')
+  })
+})
+
+test('middleware#run - only one call to next with resolved value should be used', async () => {
+  const stack = [
+    (acc, next) => {
+      next()
+    },
+    (acc, next) => {
+      next(null, 'a')
+      setInterval(next, null, 'b')
+    }
+  ]
+
+  const acc = {}
+  await expect(middleware.execute(acc, stack)).resolves.toHaveProperty(
+    'value',
+    'a'
+  )
+})
+
 test('middleware#run - exit chain on error', () => {
   const stack = [
     (acc, next) => {

@@ -181,8 +181,7 @@ describe('ResolveEntity.resolveMiddleware', () => {
 
   test('It should execute a middleware that forces an error to bypass the promise chain', () => {
     dataPoint.middleware.use('request:before', (acc, next) => {
-      acc.resolve('bar')
-      next(null)
+      next(null, 'bar')
     })
 
     const acc = helpers.createAccumulator('foo')
@@ -237,8 +236,7 @@ describe('ResolveEntity.resolveEntity', () => {
 
   test('It should resolve through bypass', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
-      acc.resolve({ data: 'bar' })
-      next(null)
+      next(null, { data: 'bar' })
     })
     return resolveEntity('hash:asIs', 'foo').then(acc => {
       expect(acc.value).toEqual({ data: 'bar' })
@@ -290,8 +288,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if middleware before returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('model:before', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')
@@ -303,8 +300,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if global before middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('before', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')
@@ -324,8 +320,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if after middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('model:after', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')
@@ -337,8 +332,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if global after middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('after', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')

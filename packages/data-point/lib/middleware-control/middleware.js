@@ -1,4 +1,6 @@
-const _ = require('lodash')
+const once = require('lodash/once')
+const attempt = require('lodash/attempt')
+const isError = require('lodash/isError')
 const Promise = require('bluebird')
 
 /**
@@ -15,24 +17,31 @@ function run (accumulator, stackSpec, done) {
 
   const stack = stackSpec.slice(0)
 
-  function next (err) {
+  const onceDone = once(done)
+  function next (err, value) {
     if (err) {
-      return done(err, accumulator)
+      return onceDone(err, accumulator)
+    }
+
+    if (arguments.length === 2) {
+      accumulator.value = value
+      accumulator.___resolve = true
+      accumulator.___done = true
     }
 
     if (accumulator.___done === true) {
-      return done(null, accumulator)
+      return onceDone(null, accumulator)
     }
 
     const middlewareFunc = stack.shift()
 
     if (typeof middlewareFunc === 'undefined') {
-      return done(null, accumulator)
+      return onceDone(null, accumulator)
     }
 
-    const execError = _.attempt(middlewareFunc, accumulator, next)
+    const execError = attempt(middlewareFunc, accumulator, next)
 
-    if (_.isError(execError)) {
+    if (isError(execError)) {
       next(execError)
     }
 
