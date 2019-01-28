@@ -3401,7 +3401,7 @@ dp.resolve(MyModel, true)
 
 ### Exiting Middleware chain
 
-To exit the middleware chain with a resolved value you must pass a second parameter to the `next(err, val)` function provided by the middleware handler. By calling this function with `null` as first parameter and the any value as a second parameter the entity will resolve to that value without executing any remaining methods in the middleware chain. This allows you to skip unnecessary work if, for example, a cached return value was found.
+To exit the middleware chain with a resolved value you must pass a second parameter to the `next(err, val)` function provided by the middleware handler. By calling the `next` function with `null` as first parameter and a value as a second parameter (eg. `next(null, newValue`) the entity will resolve to that value without executing any remaining methods in the middleware chain. This allows you to skip unnecessary work if, for example, a cached return value was found.
 
 **NOTE**: the `next` method should be called only once per middleware handler, multiple calls will be ignored.
 
