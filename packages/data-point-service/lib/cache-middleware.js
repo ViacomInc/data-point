@@ -260,7 +260,7 @@ function before (service, ctx, next) {
     })
     .then(value => {
       if (value !== undefined) {
-        ctx.resolve(value)
+        next(null, value)
       }
     })
     .asCallback(next)
@@ -310,7 +310,9 @@ function after (service, ctx, next) {
     )
   }
 
-  resolution.asCallback(next)
+  // ensuring we call next only with one parameter to prevent from
+  // exiting the middleware chain
+  resolution.asCallback(error => next(error))
 
   return true
 }
