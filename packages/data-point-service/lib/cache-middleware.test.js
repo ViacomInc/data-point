@@ -41,8 +41,7 @@ function createContext () {
     context: {
       params: {},
       id: 'model:Foo'
-    },
-    resolve: () => true
+    }
   }
 
   return ctx
@@ -520,14 +519,12 @@ describe('before', () => {
   function createMocks () {
     const mocks = {}
     mocks.ctx = createContext()
-    mocks.ctx.resolve = jest.fn()
     mocks.service = {}
     mocks.cache = {
       ttl: '20m',
       cacheKey: () => true,
       useStaleWhileRevalidate: true
     }
-
     mocks.next = jest.fn()
 
     mocks.getCacheParams = jest
@@ -578,7 +575,7 @@ describe('before', () => {
     const mocks = createMocks()
 
     const next = createNext(done, () => {
-      expect(mocks.ctx.resolve).toBeCalledWith('staleResult')
+      expect(next).toBeCalledWith(null, 'staleResult')
       expect(mocks.resolveStaleWhileRevalidateEntry).toBeCalledWith(
         mocks.service,
         'mockCacheKey',
@@ -598,7 +595,7 @@ describe('before', () => {
     mocks.cache.useStaleWhileRevalidate = false
 
     const next = createNext(done, () => {
-      expect(mocks.ctx.resolve).toBeCalledWith('noTTLEntry')
+      expect(next).toBeCalledWith(null, 'noTTLEntry')
       expect(mocks.resolveStaleWhileRevalidateEntry).not.toBeCalled()
       expect(mocks.getEntry).toBeCalledWith(mocks.service, 'mockCacheKey')
     })
@@ -611,7 +608,7 @@ describe('before', () => {
     const mocks = createMocks()
 
     const next = createNext(done, () => {
-      expect(mocks.ctx.resolve).not.toBeCalled()
+      expect(next).toBeCalledWith(null)
       expect(mocks.resolveStaleWhileRevalidateEntry).toBeCalledWith(
         mocks.service,
         'mockCacheKey',
@@ -631,7 +628,6 @@ describe('after', () => {
     const mocks = {}
     mocks.ctx = createContext()
     mocks.ctx.value = 'resolvedValue'
-    mocks.ctx.resolve = jest.fn()
     mocks.service = {}
     mocks.cache = {
       ttl: '20m',
@@ -692,6 +688,18 @@ describe('after', () => {
     })
 
     mocks.cache.useStaleWhileRevalidate = true
+    const result = CacheMiddleware.after(mocks.service, mocks.ctx, next)
+    expect(result).toEqual(true)
+  })
+
+  it('should call next with only 1 argument to avoid exiting the middleware chain', done => {
+    const mocks = createMocks()
+
+    const next = createNext(done, () => {
+      expect(next).toBeCalledWith(null)
+    })
+
+    mocks.cache.useStaleWhileRevalidate = false
     const result = CacheMiddleware.after(mocks.service, mocks.ctx, next)
     expect(result).toEqual(true)
   })

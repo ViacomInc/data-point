@@ -7,28 +7,8 @@ const _ = require('lodash')
  */
 function MiddlewareContext () {
   this.___done = false
-  this.___resolve = false
+  this.___resolve = 0
 }
-
-/**
- * @param {*} value
- * @throws if it's been called more than once
- */
-MiddlewareContext.prototype.resolve = function resolve (value) {
-  if (this.___resolve === true || this.___done === true) {
-    throw new Error('can not execute resolve() more than once per stack chain.')
-  }
-
-  // only assign if an argument is passed, regardless of the value
-  if (arguments.length) {
-    this.value = value
-    this.___resolve = true
-  }
-
-  this.___done = true
-}
-
-module.exports.MiddlewareContext = MiddlewareContext
 
 /**
  * @param {Object} spec

@@ -3369,28 +3369,84 @@ dataPoint.use(id:String, callback:Function)
 | Argument | Type | Description |
 |:---|:---|:---|
 | *id* | `string` | This ID is a string with the form `<EntityType>:<EventType>`, where `<EntityType>` is any registered entity type and `<EventType>` is either `'before'` or `'after'`. |
-| *callback* | `Function` | This is the callback function that will be executed once an entity event is triggered. The callback has the form `(acc, next)`, where `acc` is the current middleware [Middleware Accumulator](#middleware-accumulator-object) object, and next is a function callback to be executed once the middleware is done executing. The `next` callback uses the form of `(error)`. |
+| *callback* | `Function` | This is the callback function that will be executed once an entity event is triggered. The callback has the form `(acc, next)`, where `acc` is the current middleware [Middleware Accumulator](#middleware-accumulator-object) object, and next is a function callback to be executed once the middleware is done executing. The `next` callback uses the form of `(error, resolvedValue)`. |
 
-### Middleware Accumulator object
-
-This is the current [Accumulator](#accumulator) object with a `resolve(value)` method appended to it. If `acc.resolve(value)` is called inside a middleware function, the entity will resolve to that value without executing any remaining methods. This allows you to skip unnecessary work if, for example, a cached return value was found.
-
-**NOTE**: It's still required to call `next()` after `acc.resolve(value)`; otherwise, the function will hang indefinitely.
-
-**SYNOPSIS**
+**EXAMPLE:**
 
 ```js
-{ // extends Accumulator
-  resolve: Function,
-  ...
-}
+const dp = DataPoint.create()
+
+dp.use('before', (acc, next) => {
+  console.log(`Entity ${acc.reducer.id} is being called`)
+  next()
+})
+
+dp.use('after', (acc, next) => {
+  console.log(`Entity ${acc.reducer.id} was called`)
+  next()
+})
+
+const MyModel = DataPoint.Model('MyModel', {
+  value: () => 'new value'
+})
+
+dp.resolve(MyModel, true)
+  // console output: 
+  //   Entity model:MyModel is being called
+  //   Entity model:MyModel was called
+  .then(() => {
+
+  })
 ```
 
-**API:**
+### Exiting Middleware chain
 
-| Key | Type | Description |
-|:---|:---|:---|
-| `resolve` | `Function` | Will resolve the entire entity with the value passed. This function has the form of: `(value)` |
+To exit the middleware chain with a resolved value you must pass a second parameter to the `next(err, val)` function provided by the middleware handler. By calling the `next` function with `null` as first parameter and a value as a second parameter (eg. `next(null, newValue`) the entity will resolve to that value without executing any remaining methods in the middleware chain. This allows you to skip unnecessary work if, for example, a cached return value was found.
+
+**NOTE**: the `next` method should be called only once per middleware handler, multiple calls will be ignored.
+
+
+<details>
+  <summary>hijacking the value of an entity</summary>
+
+  ```js
+  const dp = DataPoint.create()
+
+  dp.use('before', (acc, next) => {
+    console.log('Entity model:MyModel is being called')
+    next()
+  })
+
+  dp.use('before', (acc, next) => {
+    console.log('hijacking')
+    next(null, 'hijacked')
+  })
+
+  dp.use('before', (acc, next) => {
+    console.log('never got here')
+    next()
+  })
+
+  const MyModel = DataPoint.Model('MyModel', {
+    value: () => {
+      // this will not be executed because the entity was hijacked
+      console.log('processing')
+      return 'hello'
+    }
+  })
+
+  dp.resolve(MyModel, true)
+    // console output:
+    //   Entity model:MyModel is being called
+    //   hijacking
+    .then((value) => {
+      assert.strictEqual(value, 'hijacked')
+    })
+  ```
+
+</details>
+
+Example at: [examples/middleware-exit-chain.js](examples/middleware-exit-chain.js)
 
 ## Custom Entity Types
 
