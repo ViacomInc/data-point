@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`verify It should throw error if entities not provided 1`] = `"DataPoint options.entities should not be Empty"`;

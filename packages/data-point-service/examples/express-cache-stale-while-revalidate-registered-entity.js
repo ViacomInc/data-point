@@ -2,6 +2,24 @@ const express = require('express')
 const DataPoint = require('data-point')
 const DataPointService = require('../lib')
 
+const Model = DataPoint.Model('HelloWorld', {
+  value: (input, acc) => {
+    const person = acc.locals.query.person
+    if (!person) {
+      throw new Error(
+        'Url query parameter "person" is missing. Try appending ?person=Darek at the end of the URL'
+      )
+    }
+    return `Hello ${person}!!`
+  },
+  params: {
+    cache: {
+      ttl: '30s',
+      staleWhileRevalidate: '3m'
+    }
+  }
+})
+
 function server (dataPoint) {
   const app = express()
 
@@ -14,7 +32,7 @@ function server (dataPoint) {
       }
     }
     dataPoint
-      .resolve(`model:HelloWorld`, {}, options)
+      .resolve(Model, {}, options)
       .then(value => {
         const responseText = `${value} (person = "${req.query.person}")`
         res.send(responseText)
@@ -31,26 +49,7 @@ function server (dataPoint) {
 
 function createService () {
   return DataPointService.create({
-    DataPoint,
-    entities: {
-      'model:HelloWorld': {
-        value: (input, acc) => {
-          const person = acc.locals.query.person
-          if (!person) {
-            throw new Error(
-              'Url query parameter "person" is missing. Try appending ?person=Darek at the end of the URL'
-            )
-          }
-          return `Hello ${person}!!`
-        },
-        params: {
-          cache: {
-            ttl: '1m',
-            staleWhileRevalidate: '3m'
-          }
-        }
-      }
-    }
+    DataPoint
   }).then(service => {
     return service.dataPoint
   })

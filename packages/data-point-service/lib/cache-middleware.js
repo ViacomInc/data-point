@@ -102,6 +102,20 @@ function shouldTriggerRevalidate (staleEntry, revalidationState) {
   )
 }
 
+function addRevalidationFlags (service, entryKey, revalidateTimeout) {
+  return service.staleWhileRevalidate.addRevalidationFlags(
+    entryKey,
+    revalidateTimeout
+  )
+}
+
+function resolveFromAccumulator (service, entryKey, reducer, accumulator) {
+  return () => {
+    debug('Resolve entryKey: %s with entityId: %s', entryKey, reducer.id)
+    return service.dataPoint.resolveFromAccumulator(reducer, accumulator)
+  }
+}
+
 /**
  * @param {Service} service Service instance
  * @param {String} entryKey entry key
@@ -126,22 +140,16 @@ function revalidateEntry (service, entryKey, cache, ctx) {
 
   debug('Revalidating entityId: %s with cache key: %s', entityId, entryKey)
 
-  const tasks = [
-    service.staleWhileRevalidate.addRevalidationFlags(
-      entryKey,
-      cache.revalidateTimeout
-    ),
-    service.dataPoint.resolveFromAccumulator(entityId, revalidateContext)
-  ]
-
   const {
     updateSWREntry,
     revalidateSuccess,
     catchRevalidateError
   } = module.exports
 
-  return Promise.all(tasks)
-    .then(results => results[1])
+  return addRevalidationFlags(service, entryKey, cache.revalidateTimeout)
+    .then(
+      resolveFromAccumulator(service, entryKey, ctx.context, revalidateContext)
+    )
     .then(updateSWREntry(service, entryKey, cache))
     .then(revalidateSuccess(service, entityId, entryKey))
     .catch(catchRevalidateError(service, entityId, entryKey))

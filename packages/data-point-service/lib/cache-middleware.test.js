@@ -196,7 +196,7 @@ describe('revalidateEntry', () => {
       .spyOn(CacheMiddleware, 'catchRevalidateError')
       .mockImplementation(() => () => Promise.resolve('catchRevalidateError'))
 
-    mocks.addRevalidationFlags = jest.fn(() => () => Promise.resolve('flags'))
+    mocks.addRevalidationFlags = jest.fn(() => Promise.resolve('flags'))
     mocks.service = {}
     _.set(
       mocks.service,
@@ -268,7 +268,7 @@ describe('revalidateEntry', () => {
       const resolveFromAccumulatorArgs =
         mocks.resolveFromAccumulator.mock.calls[0]
 
-      expect(resolveFromAccumulatorArgs[0]).toEqual('model:Foo')
+      expect(resolveFromAccumulatorArgs[0]).toEqual(ctx.context)
       expect(resolveFromAccumulatorArgs[1]).toHaveProperty(
         'locals.revalidatingCache',
         {

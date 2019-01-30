@@ -1,12 +1,6 @@
-const _ = require('lodash')
-
 function verify (options) {
   if (!options.DataPoint) {
     throw new Error('DataPoint module must be provided')
-  }
-
-  if (_.isEmpty(options.entities)) {
-    throw new Error('DataPoint options.entities should not be Empty')
   }
 
   return options

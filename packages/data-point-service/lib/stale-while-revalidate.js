@@ -1,6 +1,9 @@
 const revalidationStoreFactory = require('./revalidation-store').create
 
 const RedisController = require('./redis-controller')
+const debug = require('debug')(
+  'data-point-service:cache:stale-while-revalidate'
+)
 
 /**
  * Flag for redis control entry flag, when set it means the stored result should
@@ -22,6 +25,12 @@ const SWR_CONTROL_REVALIDATING = 'SWR-CONTROL-REVALIDATING'
 function revalidationExternalFactory (service) {
   return {
     add: (entryKey, ttl) => {
+      debug(
+        'Setting control to status: %s (%sms ttl) - %s',
+        SWR_CONTROL_REVALIDATING,
+        ttl,
+        entryKey
+      )
       return RedisController.setSWRControlEntry(
         service,
         entryKey,
@@ -30,11 +39,16 @@ function revalidationExternalFactory (service) {
       )
     },
     remove: entryKey => {
+      debug('Removing external Control - %s', entryKey)
       return RedisController.deleteSWRControlEntry(service, entryKey)
     },
     exists: entryKey => {
       return RedisController.getSWRControlEntry(service, entryKey).then(
-        value => typeof value !== 'undefined'
+        controlEntryValue => {
+          const entryExists = typeof controlEntryValue !== 'undefined'
+          debug('External control exists: %s - %s', entryExists, entryKey)
+          return entryExists
+        }
       )
     }
   }
@@ -48,19 +62,21 @@ function revalidationExternalFactory (service) {
  * @returns {Promise}
  */
 function addEntry (service, entryKey, value, cache) {
+  debug('Adding entry - %s', entryKey)
   return RedisController.setSWRStaleEntry(
     service,
     entryKey,
     value,
     cache.staleWhileRevalidateTtl
-  ).then(() =>
-    RedisController.setSWRControlEntry(
+  ).then(() => {
+    debug('Setting control to status: %s - %s', SWR_CONTROL_STALE, entryKey)
+    return RedisController.setSWRControlEntry(
       service,
       entryKey,
       cache.ttl,
       SWR_CONTROL_STALE
     )
-  )
+  })
 }
 
 /**
@@ -74,13 +90,18 @@ function getEntry (service, entryKey) {
 
 /**
  * Adds revalidation flags locally (node instance) and external (redis) to
- * prevent duplicated revalidations of same key.
+ * prevent duplicated revalidation of same key.
  * @param {Object} revalidation revalidation API
  * @param {String} entryKey cache entry key
  * @param {Number} revalidateTimeout time to timeout revalidation in milliseconds
  * @returns {Promise}
  */
 function addRevalidationFlags (revalidation, entryKey, revalidateTimeout) {
+  debug(
+    'Add revalidation control flags - timeout: %sms - %s',
+    revalidateTimeout,
+    entryKey
+  )
   // local (node instance) flag is set to immediately prevent concurrent calls
   revalidation.local.add(entryKey, revalidateTimeout)
   // external (redis) flag is set to prevent multiple instances from duplicating
@@ -93,6 +114,7 @@ function addRevalidationFlags (revalidation, entryKey, revalidateTimeout) {
  * @param {String} entryKey cache entry key
  */
 function clearAllRevalidationFlags (revalidation, entryKey) {
+  debug('Clear revalidation control flags - %s', entryKey)
   revalidation.local.remove(entryKey)
   return revalidation.external.remove(entryKey)
 }
@@ -110,14 +132,13 @@ function clearAllRevalidationFlags (revalidation, entryKey) {
  * @returns {Promise<RevalidationState>} Object with revalidation state
  */
 function getRevalidationState (revalidation, entryKey) {
-  return revalidation.external
-    .exists(entryKey)
-    .then(hasExternalEntryExpired => {
-      return {
-        hasExternalEntryExpired,
-        isRevalidatingLocally: () => revalidation.local.exists(entryKey)
-      }
-    })
+  return revalidation.external.exists(entryKey).then(externalEntryExists => {
+    const hasExternalEntryExpired = externalEntryExists === false
+    return {
+      hasExternalEntryExpired,
+      isRevalidatingLocally: () => revalidation.local.exists(entryKey)
+    }
+  })
 }
 
 /**
