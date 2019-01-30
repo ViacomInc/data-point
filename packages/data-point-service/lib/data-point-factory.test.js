@@ -23,14 +23,6 @@ describe('verify', () => {
       })
     }).toThrowError(/provided/)
   })
-
-  test('It should throw error if entities not provided', () => {
-    expect(() => {
-      DataPointFactory.verify({
-        DataPoint
-      })
-    }).toThrowErrorMatchingSnapshot()
-  })
 })
 
 describe('createDataPoint', () => {

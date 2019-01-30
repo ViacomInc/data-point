@@ -187,14 +187,29 @@ describe('getRevalidationState', () => {
     _.set(
       revalidation,
       'external.exists',
-      jest.fn(() => Promise.resolve('externalState'))
+      jest.fn(() => Promise.resolve(false))
     )
 
     return StaleWhileRevalidate.getRevalidationState(
       revalidation,
       'entryKey'
     ).then(result => {
-      expect(result.hasExternalEntryExpired).toEqual('externalState')
+      expect(result.hasExternalEntryExpired).toEqual(true)
+      expect(result.isRevalidatingLocally).toBeInstanceOf(Function)
+      expect(result.isRevalidatingLocally()).toEqual('localState')
+    })
+  })
+
+  it('should return hasExternalEntryExpired === true if exists == false', () => {
+    const revalidation = {}
+    _.set(revalidation, 'local.exists', jest.fn(() => 'localState'))
+    _.set(revalidation, 'external.exists', jest.fn(() => Promise.resolve(true)))
+
+    return StaleWhileRevalidate.getRevalidationState(
+      revalidation,
+      'entryKey'
+    ).then(result => {
+      expect(result.hasExternalEntryExpired).toEqual(false)
       expect(result.isRevalidatingLocally).toBeInstanceOf(Function)
       expect(result.isRevalidatingLocally()).toEqual('localState')
     })

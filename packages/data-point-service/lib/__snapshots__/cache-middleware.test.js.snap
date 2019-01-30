@@ -36,6 +36,11 @@ Array [
     "model:Foo",
     "entryKey",
   ],
+  Array [
+    "Resolve entryKey: %s with entityId: %s",
+    "entryKey",
+    "model:Foo",
+  ],
 ]
 `;
 
