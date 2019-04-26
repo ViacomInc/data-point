@@ -42,14 +42,6 @@
     "compose",
     "aggregate"
   ],
-  "scripts": {
-    "precommit": "lint-staged",
-    "commit": "git-cz",
-    "test": "jest --coverage",
-    "watch:test": "jest --coverage --watch",
-    "lint": "standard --verbose | snazzy",
-    "release": "standard-version"
-  },
   "files": [
     "LICENSE",
     "index.js",
@@ -67,16 +59,8 @@
   },
   "devDependencies": {
     "benchmark": "2.1.4",
-    "commitizen": "2.9.6",
-    "cz-conventional-changelog": "2.0.0",
     "nock": "^8.0.0",
     "semver": "5.4.1",
-    "snazzy": "7.0.0",
-    "standard-version": "4.2.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+    "snazzy": "7.0.0"
   }
 }
