@@ -3,7 +3,7 @@ node_js:
   - 8
   - 10
   - 12
-2sudo: false
+sudo: false
 before_install:
   - npm install -g codecov
 cache:
