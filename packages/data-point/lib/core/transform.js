@@ -36,8 +36,9 @@ function reducerResolve (manager, reducerSource, value, options) {
     values: manager.values.getStore()
   })
 
-  const result = resolveFromAccumulator(manager, reducerSource, context)
-    .then(value => utils.set(context, 'value', value))
+  const result = resolveFromAccumulator(manager, reducerSource, context).then(
+    value => utils.set(context, 'value', value)
+  )
 
   return !context.trace ? result : result.then(Trace.traceReducer)
 }

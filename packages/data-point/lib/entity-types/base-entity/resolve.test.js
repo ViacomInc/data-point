@@ -185,11 +185,7 @@ describe('ResolveEntity.resolveMiddleware', () => {
     })
 
     const acc = helpers.createAccumulator('foo')
-    return ResolveEntity.resolveMiddleware(
-      dataPoint,
-      acc,
-      'request:before'
-    )
+    return ResolveEntity.resolveMiddleware(dataPoint, acc, 'request:before')
       .catch(reason => reason)
       .then(reason => {
         expect(reason).toBeInstanceOf(Error)
@@ -443,10 +439,11 @@ describe('ResolveEntity.resolve', () => {
   })
 
   test('It should execute resolver only on non empty items of collection if hasEmptyConditional is set', () => {
-    return resolve('?model:asIs[]', ['a', undefined, 'b', null, 'c'])
-      .then(result => {
+    return resolve('?model:asIs[]', ['a', undefined, 'b', null, 'c']).then(
+      result => {
         expect(result).toEqual(['a', undefined, 'b', null, 'c'])
-      })
+      }
+    )
   })
 })
 

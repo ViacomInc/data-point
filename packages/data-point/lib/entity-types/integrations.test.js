@@ -17,32 +17,30 @@ beforeEach(() => {
 })
 
 test('Entry#resolve - branch/leaf nesting', () => {
-  return dataPoint
-    .resolve('hash:branchLeafNesting', TestData)
-    .then(result => {
-      expect(result).toEqual({
-        label: '1',
-        leafs: [
-          {
-            label: '1.0',
-            leafs: []
-          },
-          {
-            label: '1.1',
-            leafs: [
-              {
-                label: '1.1.0',
-                leafs: []
-              },
-              {
-                label: '1.1.1',
-                leafs: []
-              }
-            ]
-          }
-        ]
-      })
+  return dataPoint.resolve('hash:branchLeafNesting', TestData).then(result => {
+    expect(result).toEqual({
+      label: '1',
+      leafs: [
+        {
+          label: '1.0',
+          leafs: []
+        },
+        {
+          label: '1.1',
+          leafs: [
+            {
+              label: '1.1.0',
+              leafs: []
+            },
+            {
+              label: '1.1.1',
+              leafs: []
+            }
+          ]
+        }
+      ]
     })
+  })
 })
 
 test('Request should use resolved value as url, when url is missing', () => {
@@ -289,14 +287,12 @@ describe('trace feature', () => {
         id: id
       })
     }
-    return dataPoint
-      .resolve('model:tracedViaParams', TestData)
-      .then(result => {
-        console.time = consoleTime
-        console.timeEnd = consoleTimeEnd
-        const ids = _.map(timeIds, 'id')
-        expect(ids[0]).toContain('⧖ model:tracedViaParams:')
-      })
+    return dataPoint.resolve('model:tracedViaParams', TestData).then(result => {
+      console.time = consoleTime
+      console.timeEnd = consoleTimeEnd
+      const ids = _.map(timeIds, 'id')
+      expect(ids[0]).toContain('⧖ model:tracedViaParams:')
+    })
   })
 })
 
