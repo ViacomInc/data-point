@@ -1,9 +1,5 @@
 /* eslint-env jest */
 
-jest.mock('ioredis', () => {
-  return require('ioredis-mock')
-})
-
 const RouterMiddleware = require('./router-middleware')
 const Express = require('express')
 const request = require('supertest')
@@ -30,7 +26,7 @@ describe('setupRoutes', () => {
   test('It should error if routes are missing', () => {
     expect(() => {
       RouterMiddleware.setupRouter()
-    }).toThrow()
+    }).toThrowErrorMatchingSnapshot()
   })
 })
 
@@ -39,7 +35,7 @@ describe('create - datapoint routes', () => {
   beforeAll(() => {
     dataPoint = DataPoint.create({
       entities: {
-        'transform:Test': (value, acc) => ({
+        'reducer:Test': (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         })
       }
@@ -53,7 +49,7 @@ describe('create - datapoint routes', () => {
         test: {
           priority: 100,
           path: '/test',
-          middleware: 'transform:Test'
+          middleware: 'reducer:Test'
         }
       })
     )

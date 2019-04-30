@@ -1,10 +1,9 @@
-const IORedis = require('ioredis')
-const Promise = require('bluebird')
-const logger = require('./logger')
 const ms = require('ms')
+const Promise = require('bluebird')
+const IORedis = require('./io-redis')
 
 function reconnectOnError (err) {
-  logger.error('ioredis - reconnectOnError', err.toString())
+  console.error('ioredis - reconnectOnError', err.toString())
   return true
 }
 
@@ -15,7 +14,7 @@ function redisDecorator (redis, resolve, reject) {
       redis.disconnect()
       return reject(error)
     }
-    logger.error('ioredis - error', error.toString())
+    console.error('ioredis - error', error.toString())
   })
 
   redis.on('ready', () => {
@@ -30,7 +29,7 @@ function redisDecorator (redis, resolve, reject) {
   redis.on('connect', () => {
     wasConnected = true
     if (reconnecting) {
-      logger.info('ioredis reconnected')
+      console.info('ioredis reconnected')
     }
   })
 }
@@ -50,6 +49,7 @@ function create (options = {}) {
     redis: null,
     set: null,
     get: null,
+    del: null,
     exists: null,
     options
   }
@@ -66,6 +66,7 @@ function create (options = {}) {
 function bootstrap (cache) {
   cache.set = set.bind(null, cache)
   cache.get = get.bind(null, cache)
+  cache.del = del.bind(null, cache)
   cache.exists = exists.bind(null, cache)
   return cache
 }
@@ -79,19 +80,19 @@ function decode (value) {
 }
 
 const week = ms('7d')
+
 function set (cache, key, value, ttl = week) {
   const redis = cache.redis
   const val = encode(value)
-  return redis
-    .pipeline()
-    .set(key, val)
-    .exec()
-    .then(res =>
-      redis
-        .pipeline()
-        .pexpire(key, ttl.toString())
-        .exec()
-    )
+  const validTTL = typeof ttl === 'number' && ttl > 0
+
+  const pipeline = redis.pipeline().set(key, val)
+
+  if (validTTL) {
+    pipeline.pexpire(key, ttl.toString())
+  }
+
+  return pipeline.exec()
 }
 
 function getFromRedisResult (res) {
@@ -116,6 +117,14 @@ function exists (cache, key) {
     .then(res => res[0][1] === 1)
 }
 
+function del (cache, key) {
+  const redis = cache.redis
+  return redis
+    .pipeline()
+    .del(key)
+    .exec()
+}
+
 module.exports = {
   redisDecorator,
   getFromRedisResult,
@@ -125,6 +134,7 @@ module.exports = {
   bootstrap,
   set,
   get,
+  del,
   exists,
   encode,
   decode

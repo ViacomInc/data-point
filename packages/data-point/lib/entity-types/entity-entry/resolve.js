@@ -1,5 +1,4 @@
-const _ = require('lodash')
-const utils = require('../../utils')
+const defaultTo = require('lodash/defaultTo')
 
 /**
  * @param {Accumulator} accumulator
@@ -7,13 +6,7 @@ const utils = require('../../utils')
  * @return {Promise}
  */
 function resolve (accumulator, resolveReducer) {
-  const contextTransform = accumulator.reducer.spec.value
-  const acc = utils.set(
-    accumulator,
-    'value',
-    _.defaultTo(accumulator.value, {})
-  )
-  return resolveReducer(acc, contextTransform)
+  return defaultTo(accumulator.value, {})
 }
 
 module.exports.resolve = resolve

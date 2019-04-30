@@ -16,7 +16,7 @@ module.exports = [
   {
     async: false,
     name: 'addsNumbersSync',
-    test: () => assert.deepEqual(addsNumbersSync(), expected),
+    test: () => assert.deepStrictEqual(addsNumbersSync(), expected),
     benchmark: addsNumbersSync
   },
   {
@@ -24,7 +24,7 @@ module.exports = [
     name: 'addsNumbersAsync',
     test: done => {
       addsNumbersAsync((e, val) => {
-        assert.deepEqual(val, expected)
+        assert.deepStrictEqual(val, expected)
         done(null)
       })
     },

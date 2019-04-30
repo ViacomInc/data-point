@@ -3,7 +3,7 @@
 const Factory = require('./factory')
 
 test('Factory#create', () => {
-  const control = Factory.create({
+  const control = Factory.create('name', {
     select: [
       { case: '$a', do: '$b' },
       { case: '$c', do: '$d' },
@@ -20,7 +20,7 @@ test('Factory#create', () => {
 
 test('Factory#create enforce default statement', () => {
   expect(() => {
-    Factory.create({
+    Factory.create('name', {
       select: [{ case: 'a()', do: 'b()' }, { case: 'c()', do: 'd()' }]
     })
   }).toThrow(/missing|default/)

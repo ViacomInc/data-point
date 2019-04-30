@@ -23,6 +23,6 @@ dataPoint.addEntities({
 })
 
 dataPoint.resolve('entry:Extended', '').then(output => {
-  assert.equal(output, 'before value after')
+  assert.strictEqual(output, 'before value after')
   console.log(output)
 })

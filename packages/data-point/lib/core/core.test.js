@@ -46,9 +46,9 @@ test('entry#transform - fail if id not found', done => {
 })
 
 describe('addEntityType', () => {
-  function createEntityFactory () {
+  function entityFactory (id, spec) {
     return {
-      create (spec) {},
+      id,
       resolve (accumulator, resolveReducer) {}
     }
   }
@@ -56,22 +56,22 @@ describe('addEntityType', () => {
   test('It should add single new entity type', () => {
     const dataPoint = core.create()
 
-    dataPoint.addEntityType('foo', createEntityFactory())
+    dataPoint.addEntityType('foo', entityFactory)
 
     const entityType = dataPoint.entityTypes.store.get('foo')
-    expect(entityType).toHaveProperty('id', 'foo')
+    expect(entityType).toEqual(entityFactory)
   })
 
   test('It should add multiple entity types', () => {
     const dataPoint = core.create()
 
     dataPoint.addEntityTypes({
-      foo: createEntityFactory(),
-      bar: createEntityFactory()
+      foo: entityFactory,
+      bar: entityFactory
     })
 
     const store = dataPoint.entityTypes.store
-    expect(store.get('foo')).toHaveProperty('id', 'foo')
-    expect(store.get('bar')).toHaveProperty('id', 'bar')
+    expect(store.get('foo')).toEqual(entityFactory)
+    expect(store.get('bar')).toEqual(entityFactory)
   })
 })

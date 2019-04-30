@@ -28,5 +28,5 @@ const input = {
 }
 
 dataPoint.resolve('model:getArray', input).then(output => {
-  assert.deepEqual(output, [])
+  assert.deepStrictEqual(output, [])
 })

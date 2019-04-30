@@ -17,7 +17,7 @@ dataPoint.addEntities({
   'request:getPerson': {
     url: 'https://swapi.co/api/people/{value}'
   },
-  'transform:getPerson': {
+  'reducer:getPerson': {
     name: '$name',
     // request:getPerson will only
     // be executed if swapiId is
@@ -28,8 +28,8 @@ dataPoint.addEntities({
 
 mockRequests()
 
-dataPoint.resolve('transform:getPerson[]', people).then(output => {
-  assert.deepEqual(output, [
+dataPoint.resolve('reducer:getPerson[]', people).then(output => {
+  assert.deepStrictEqual(output, [
     {
       name: 'Luke Skywalker',
       birthYear: '19BBY'

@@ -8,13 +8,26 @@ const DefaultSettings = {
   localTTL: ms('2s')
 }
 
+/**
+ * @param {String|Number} value
+ * @returns {Number}
+ */
+function normalizeMilliseconds (value) {
+  return typeof value === 'string' ? ms(value) : value
+}
+
 function set (cache, key, value, ttl = '20m') {
-  const ttlms = ms(ttl)
+  const ttlms = normalizeMilliseconds(ttl)
   return cache.redis
     .set(key, value, ttlms)
     .then(res => cache.local.set(key, value, cache.settings.localTTL))
 }
 
+/**
+ * @param {Object} cache cache store
+ * @param {String} key cache key
+ * @returns {Promise<*>} undefined should be interpreted as not found
+ */
 function getFromStore (cache, key) {
   return Promise.resolve(cache.local.get(key)).then(entry => {
     // if we still have it sotred locally return the value, skip everything else
@@ -29,6 +42,7 @@ function getFromStore (cache, key) {
         return
       }
 
+      // update local cache (short ttl) for any consecutive calls
       cache.local.set(key, value, cache.settings.localTTL)
 
       return value
@@ -39,15 +53,28 @@ function getFromStore (cache, key) {
 function get (cache, key) {
   return cache.redis.exists(key).then(exists => {
     if (exists) {
-      return getFromStore(cache, key)
+      return module.exports.getFromStore(cache, key)
     }
     return cache.local.del(key)
   })
 }
 
+/**
+ * @param {Object} cache cache object instance
+ * @param {Srtring} key cache key
+ */
+function del (cache, key) {
+  return cache.redis.del(key)
+}
+
+/**
+ * Decorates the cache object to add the API
+ * @param {Object} cache object to be decorated
+ */
 function bootstrapAPI (cache) {
   cache.set = set.bind(null, cache)
   cache.get = get.bind(null, cache)
+  cache.del = del.bind(null, cache)
   return cache
 }
 
@@ -58,7 +85,8 @@ function create (options) {
     redis: null,
     local: null,
     set: null,
-    get: null
+    get: null,
+    del: null
   }
   return Promise.resolve(Cache)
     .then(cache => {
@@ -75,8 +103,11 @@ function create (options) {
 }
 
 module.exports = {
+  normalizeMilliseconds,
   create,
   bootstrapAPI,
+  getFromStore,
   set,
-  get
+  get,
+  del
 }

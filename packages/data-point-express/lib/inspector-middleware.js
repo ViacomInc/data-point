@@ -1,7 +1,6 @@
 const url = require('url')
 const Express = require('express')
 const Middleware = require('./middleware')
-const logger = require('./logger')
 const InspectorUi = require('./inspector-ui')
 
 /**
@@ -47,7 +46,7 @@ function create (dataPoint) {
     res.json(entityKeys)
   })
 
-  logger.warn('Inspector is running, make sure it is disabled in production.')
+  console.warn('Inspector is running, make sure it is disabled in production.')
 
   return router
 }

@@ -2,8 +2,6 @@
 
 const RouteMap = require('./route-map')
 const _ = require('lodash')
-const logger = require('./logger')
-logger.clear()
 
 const routes = {
   a: {
@@ -250,7 +248,7 @@ describe('addRoute', () => {
         method: 'foo'
       }
       RouteMap.addRoute(createApp(), '/api', route, () => {})
-    }).toThrowError()
+    }).toThrowErrorMatchingSnapshot()
   })
 
   test('It should add a route', () => {

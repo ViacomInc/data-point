@@ -8,7 +8,7 @@ DataPoint helps you reason with and streamline your data processing layer. With 
 
 **Prerequisites**
 
-Node v6 LTS or higher
+Node v8 LTS or higher
 
 **Installing**
 
@@ -19,64 +19,80 @@ npm install --save data-point
 ## Table of Contents
 
 - [Getting Started](#getting-started)
-- [DataPoint.create](#api-data-point-create)
-- [Transforms](#transforms)
-  - [dataPoint.resolve](#api-data-point-resolve)
-  - [dataPoint.transform](#api-data-point-transform)
-- [Accumulator Object](#accumulator-object)
+  - [Hello World Example](#hello-world-example)
+  - [Fetching remote services](#fetching-remote-services)
+- [API](#api)
+  - [create](#create)
+  - [createReducer](#createreducer)
+  - [resolve](#resolve)
+  - [transform](#transform)
+  - [addEntities](#addentities)
+  - [addValue](#addvalue)
+- [Accumulator](#accumulator)
 - [Reducers](#reducers)
-  - [PathReducer](#path-reducer)
-  - [FunctionReducer](#function-reducer)
-  - [ObjectReducer](#object-reducer)
-  - [EntityReducer](#entity-reducer)
-  - [ListReducer](#list-reducer)
+  - [function](#function-reducer)
+  - [object](#object-reducer)
+  - [entity](#entity-reducer)
+  - [entity-id](#entity-by-id-reducer)
+  - [list](#list-reducer)
 - [Reducer Helpers](#reducer-helpers)
-  - [assign](#reducer-assign)
-  - [map](#reducer-map)
-  - [filter](#reducer-filter)
-  - [find](#reducer-find)
-  - [constant](#reducer-constant)
-  - [parallel](#reducer-parallel)
-  - [withDefault](#reducer-default)
+  - [assign](#assign)
+  - [map](#map)
+  - [filter](#filter)
+  - [find](#find)
+  - [constant](#constant)
+  - [parallel](#parallel)
+  - [withDefault](#withdefault)
 - [Entities](#entities)
-  - [dataPoint.addEntities](#api-data-point-add-entities)
-  - [Entity factories](#entity-factories)
-  - [Built-in entities](#built-in-entities)
-    - [Reducer / Transform](#reducer-entity)
-    - [Model](#model-entity)
-    - [Entry](#entry-entity)
-    - [Request](#request-entity)
-    - [Hash](#hash-entity)
-    - [Collection](#collection-entity)
-    - [Control](#control-entity)
-    - [Schema](#schema-entity)
-  - [Entity type checking](#entity-type-check)
+  - [Instance Entity](#instance-entity)
+  - [Registered Entity](#registered-entity)
+  - [Entity Base API](#entity-base-api)
+  - [Entity type check](#entity-type-check)
+  - [Entity types](#entity-types)
+    - [Reducer](#reducer)
+    - [Model](#model)
+    - [Entry](#entry)
+    - [Request](#request)
+    - [Hash](#hash)
+    - [Collection](#collection)
+    - [Control](#control)
+    - [Schema](#schema)
   - [Entity ComposeReducer](#entity-compose-reducer)
   - [Extending Entities](#extending-entities)
-- [dataPoint.use](#api-data-point-use)
-- [dataPoint.addValue](#api-data-point-add-value)
+  - [Global Entity Options](#global-entity-options)
+- [Middleware](#middleware)
+  - [dataPoint.use](#datapointuse)
 - [Custom Entity Types](#custom-entity-types)
+- [Tracing DataPoint calls](#tracing-datapoint-calls)
 - [Integrations](#integrations)
-- [Patterns and Best Practices](#patterns-best-practices)
+- [Patterns and Best Practices](#patterns-and-best-practices)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Getting Started
 
-This section is meant to get you started with basic concepts of DataPoint's API, for detailed API Documentation you can jump into [DataPoint.create](#api-data-point-create) section and move from there.
+DataPoint provides the following mechanisms for transforming data:
 
-Additionally there is a [Hello World](https://www.youtube.com/watch?v=3VxP-FIWgF0) youtube tutorial that explains the data-point basics.
+- [Reducers](#reducers) - these are the simplest transformations; think of them as DataPoint "primitives"
 
-### <a name="hello-world">Hello World Example</a>
+- [Entities](#entities) - these are more complex transformations that are defined using one or more reducers
 
-Trivial example of transforming a given **input** with a [FunctionReducer](#function-reducer).
+- [Middleware](#middleware) - middleware functions give the user more control when resolving entities; they're useful to implement caching and other metatasks
+
+The following examples demonstrate some of these concepts. For detailed API documentation, you can jump into the [DataPoint.create](#create) section and move from there.
+
+Additionally, there is a [Hello World](https://www.youtube.com/watch?v=3VxP-FIWgF0) YouTube tutorial that explains the basics of DataPoint.
+
+### Hello World Example
+
+Trivial example of transforming a given **input** with a [function reducer](#function-reducer).
 
 ```js
 const DataPoint = require('data-point')
 // create DataPoint instance
 const dataPoint = DataPoint.create()
 
-// reducer function that concatenates 
+// function reducer that concatenates
 // accumulator.value with 'World'
 const reducer = (input) => {
   return input + ' World'
@@ -104,81 +120,86 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
 
   ```js
   const DataPoint = require('data-point')
+
   // create DataPoint instance
   const dataPoint = DataPoint.create()
-  const { map } = DataPoint.helpers
 
-  // add entities to dataPoint instance
-  dataPoint.addEntities({
-    // remote service request
-    'request:Planet': {
-      // {value.planetId} injects the
-      // value from the accumulator
-      // creates: https://swapi.co/api/planets/1/
-      url: 'https://swapi.co/api/planets/{value.planetId}'
-    },
+  const {
+    Request,
+    Model,
+    Schema,
+    map
+  } = DataPoint
 
-    // model entity to resolve a Planet
-    'model:Planet': {
-      inputType: 'schema:DataInput',
-      value: [
-        // hit request:Planet data source
-        'request:Planet',
-        // map result to ObjectReducer
-        {
-          // map name key
-          name: '$name',
-          population: '$population',
-          // residents is an array of urls
-          // eg. https://swapi.co/api/people/1/
-          // where each url gets mapped
-          // to a model:Resident
-          residents: ['$residents', map('model:Resident')]
-        }
-      ]
-    },
-
-    // model entity to resolve a Planet
-    'model:Resident': {
-      inputType: 'string',
-      value: [
-        // hit request:Resident
-        'request:Resident',
-        // extract data
-        {
-          name: '$name',
-          gender: '$gender',
-          birthYear: '$birth_year'
-        }
-      ]
-    },
-
-    'request:Resident': {
-      // check input is string
-      inputType: 'string',
-      url: '{value}'
-    },
-
-    // schema to verify data input
-    'schema:DataInput': {
-      schema: {
-        type: 'object',
-        properties: {
-          planetId: {
-            $id: '/properties/planet',
-            type: 'integer'
-          }
+  // schema to verify data input
+  const PlanetSchema = Schema('PlanetSchema', {
+    schema: {
+      type: 'object',
+      properties: {
+        planetId: {
+          $id: '/properties/planet',
+          type: 'integer'
         }
       }
     }
+  })
+
+  // remote service request
+  const PlanetRequest = Request('Planet', {
+    // {value.planetId} injects the
+    // value from the accumulator
+    // creates: https://swapi.co/api/planets/1/
+    url: 'https://swapi.co/api/planets/{value.planetId}'
+  })
+
+  const ResidentRequest = Request('Resident', {
+    // check input is string
+    inputType: 'string',
+    url: '{value}'
+  })
+
+  // model entity to resolve a Planet
+  const ResidentModel = Model('Resident', {
+    inputType: 'string',
+    value: [
+      // hit request:Resident
+      ResidentRequest,
+      // extract data
+      {
+        name: '$name',
+        gender: '$gender',
+        birthYear: '$birth_year'
+      }
+    ]
+  })
+
+  // model entity to resolve a Planet
+  const PlanetModel = Model('Planet', {
+    inputType: PlanetSchema,
+    value: [
+      // hit request:Planet data source
+      PlanetRequest,
+      // map result to an object reducer
+      {
+        // map name key
+        name: '$name',
+        population: '$population',
+        // residents is an array of urls
+        // eg. https://swapi.co/api/people/1/
+        // where each url gets mapped
+        // to a model:Resident
+        residents: ['$residents', map(ResidentModel)]
+      }
+    ]
   })
 
   const input = {
     planetId: 1
   }
 
-  dataPoint.resolve('model:Planet', input)
+  dataPoint.resolve(PlanetModel, input)
     .then((output) => {
+      console.log(output)
       /*
       output -> 
       { 
@@ -197,14 +218,13 @@ Based on an initial feed, fetch and aggregate results from multiple remote servi
   ```
 </details>
 
+Example at: [examples/full-example-instances.js](examples/full-example-instances.js)
 
-Example at: [examples/async-example.js](examples/async-example.js)
+## API
 
-## <a name="api-data-point-create">DataPoint.create()</a>
+### create
 
-Static method that creates a DataPoint instance object.
-
-To set up DataPoint, you must first create a DataPoint object (that is, an instance of DataPoint) and specify options (if any).
+Static method that creates a DataPoint instance.
 
 **SYNOPSIS**
 
@@ -216,22 +236,21 @@ DataPoint.create([options])
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *options* | `Object` (_optional_) | This parameter is optional, as are its properties (reducers, values, and entities). You may configure the instance later through the instance's API. |
+| *options* | `Object` (_optional_) | This parameter is optional, as are its properties (values, entities, and entityTypes). You may configure the instance later through the instance's API. |
 
 The following table describes the properties of the `options` argument. 
 
 | Property | Type | Description |
 |:---|:---|:---|
-| *values* | `Object` | Hash with values you want exposed to every [reducer](#reducers) |
+| *values* | `Object` | Hash with values you want exposed to every [Reducer](#reducers) |
 | *entities* | `Object` | Application's defined [entities](#entities) |
 | *entityTypes* | `Object` | [Custom Entity Types](#custom-entity-types) |
-| *reducers* | `Object` | Reducers you want exposed to DataPoint transforms |
 
 **RETURNS**
 
 DataPoint instance.
 
-<a name="setup-examples">**SETUP EXAMPLES**</a>
+#### DataPoint.create example
 
 <details>
   <summary>Create a DataPoint object without configuring options</summary>
@@ -251,7 +270,7 @@ DataPoint instance.
         foo: 'bar'
       },
       entities: {
-        'transform:HelloWorld': (input) => {
+        'reducer:HelloWorld': (input) => {
           return `hello ${input}!!`
         }
       }
@@ -260,11 +279,33 @@ DataPoint instance.
 </details>
 
 
-## <a name="transforms">Transform</a>
+### createReducer
+Static method that creates a reducer, which can be executed with [resolve](#resolve) or [transform](#transform).
 
-### <a name="api-data-point-resolve">dataPoint.resolve()</a>
+**SYNOPSIS**
 
-Execute a [Reducer](#reducers) against an input value. This function supports currying and will get executed when at least the first *2* parameters are provided.
+```js
+DataPoint.createReducer(source:*, [options:Object]):Reducer
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *source* | `*` | Spec for any of the supported [Reducer types](#reducers) |
+| *options* | `Object` | Optional config object  |
+
+
+**Options**
+
+| Property | Type | Description |
+|:---|:---|:---|
+| *default* | `*` | Default value for the reducer. Setting this value is equivalent to using the [withDefault](#withdefault) reducer helper. |
+
+
+### resolve
+
+Execute a [Reducer](#reducers) against an input value. This function supports currying and will be executed when at least the first *2* parameters are provided.
 
 **SYNOPSIS**
 
@@ -280,21 +321,20 @@ This method returns a **Promise** with the final output value.
 |:---|:---|:---|
 | *reducer* | [Reducer](#reducers) | Reducer that manipulates the input. |
 | *input* | `*` | Input value that you want to transform. If **none**, pass `null` or empty object `{}`. |
-| *options* | [Object](#transform-options) | Options within the scope of the current transformation |
+| *options* | `Object` | Options within the scope of the current transformation. More details available [here](#transform-options). |
 
 **EXAMPLES:**
 
-- [Hello World](#hello-world) example.
+- [Hello World](#hello-world-example) example.
 - [With options](#acc-locals-example) example.
-- [With constants in options](#options-with-constants) example.
-
-### <a name="api-data-point-transform">dataPoint.transform()</a>
 
 
-This method is similar to [dataPoint.resolve()](#api-data-point-resolve). The differences between this method and dataPoint.resolve are:
+### transform
+
+This method is similar to [dataPoint.resolve](#resolve). The differences between the methods are:
 
 - `.transform()` accepts an optional third parameter for node style callback.
-- `.transform()` returns a Promise that when resolved it will return the **full** [Accumulator](#accumulator) object instead of the `accumulator.value`. This may come in handy if you want to inspect other values from the transformation.  
+- `.transform()` returns a Promise that resolves to the **full** [Accumulator](#accumulator) object instead of `accumulator.value`. This may come in handy if you want to inspect other values from the transformation.
 
 **SYNOPSIS**
 
@@ -313,12 +353,10 @@ This method will return a **Promise** if `done` is omitted.
 |:---|:---|:---|
 | *reducer* | [Reducer](#reducers) | Reducer that manipulates the input. |
 | *input* | `*` | Input value that you want to transform. If **none**, pass `null` or empty object `{}`. |
-| *options* | [Reducer](#reducers) | Request options. See this [example](#options-with-constants) for using constants in the reducer |
-| *done* | `function` _(optional)_ | Error-first callback [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks) that has the arguments `(error, result)`, where `result` contains the final resolved [Accumulator](#accumulator). The actual transformation result will be inside the `result.value` property. |
+| *options* | `Object` | Options within the scope of the current transformation |
+| *done* | `function` _(optional)_ | Error-first [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks) with the arguments `(error, accumulator)`. The second parameter is an [Accumulator](#accumulator) object where `accumulator.value` is the actual result of the transformation.
 
-**<a name="transform-options">Options</a>**
-
-Options within the scope of the current transformation.
+### transform options
 
 The following table describes the properties of the `options` argument. 
 
@@ -327,8 +365,68 @@ The following table describes the properties of the `options` argument.
 | *locals* | `Object` | Hash with values you want exposed to every reducer. See [example](#acc-locals-example). |
 | *trace* | `boolean` | Set this to `true` to trace the entities and the time each one is taking to execute. **Use this option for debugging.** |
 
+### resolveFromAccumulator
 
-## <a name="accumulator-object">Accumulator Object</a>
+Execute a [Reducer](#reducers) from a provided Accumulator. This function will attempt at resolving a reducer providing an already constructed Accumulator Object. It will take the value provided in the Accumulator object to use as the input.
+
+**SYNOPSIS**
+
+```js
+dataPoint.resolveFromAccumulator(reducer:Reducer, acc:Accumulator):Promise(acc:Accumulator)
+```
+
+This method returns a **Promise** with the final output value.
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *reducer* | [Reducer](#reducers) | Reducer that manipulates the input. |
+| *acc* | [Accumulator](#accumulator) | Reducer's accumulator Object. The main property is `value`, which is the value the  reducer will use as its input. |
+
+### addEntities
+
+This method adds new [entities](#entities) to a DataPoint instance.
+
+**SYNOPSIS**
+
+When defining new entities, `<EntityType>` must refer to either a [built-in type](#entity-types) like `'model'` or a [custom entity type](#custom-entity-types). `<EntityId>` should be unique for each type; for example, `model:foo` and `hash:foo` can both use the `foo` ID, but an error is thrown if `model:foo` is defined twice.
+
+
+```js
+dataPoint.addEntities({
+  '<EntityType>:<EntityId>': { ... },
+  '<EntityType>:<EntityId>': { ... },
+  ...
+})
+```
+
+**OPTIONS**
+
+| Part | Type | Description |
+|:---|:---|:---|
+| *EntityType* | `string` | valid entity type |
+| *EntityId* | `string` | unique entity ID |
+
+
+### addValue
+
+Stores any value to be accessible via [Accumulator](#accumulator).values. This object can also be set by passing a `values` property to [DataPoint.create](#create).
+
+**SYNOPSIS**
+
+```js
+dataPoint.addValue(objectPath, value)
+```
+
+**ARGUMENTS**
+
+| Argument | Type | Description |
+|:---|:---|:---|
+| *objectPath* | `string` | object path where you want to add the new value. Uses [_.set](https://lodash.com/docs/4.17.4#set) to append to the values object |
+| *value* | `*` | anything you want to store |
+
+## Accumulator
 
 This object is passed to reducers and middleware callbacks; it has contextual information about the current transformation or middleware that's being resolved.
 
@@ -340,25 +438,26 @@ The `accumulator.value` property is the current input data. This property should
 |:---|:---|:---|
 | *value*  | `Object` | Value to be transformed. |
 | *initialValue*  | `Object` | Initial value passed to the entity. You can use this value as a reference to the initial value passed to your Entity before any reducer was applied. |
-| *values*  | `Object` | Access to the values stored via [dataPoint.addValue](#api-data-point-add-value). |
-| *params*  | `Object` | Value of the current Entity's params property. (for all entities except [Reducer](#reducer-entity)) |
-| *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#api-data-point-transform). |
+| *values*  | `Object` | Access to the values stored via [dataPoint.addValue](#addvalue). |
+| *params*  | `Object` | Value of the current Entity's params property. (for all entities except [Reducer](#reducer)) |
+| *locals*  | `Object` | Value passed from the `options` _argument_ when executing [dataPoint.transform](#transform). |
 | *reducer*  | `Object` | Information relative to the current [Reducer](#reducers) being executed. |
+| *debug*  | `Function` | [debug](https://github.com/visionmedia/debug) method with scope `data-point` |
 
-
-## <a name="reducers">Reducers</a>
+## Reducers
 
 Reducers are used to transform values **asynchronously**. DataPoint supports the following reducer types:
 
-1. [PathReducer](#path-reducer)
-2. [FunctionReducer](#function-reducer)
-3. [ObjectReducer](#object-reducer)
-4. [EntityReducer](#entity-reducer)
-5. [ListReducer](#list-reducer)
+1. [path](#path-reducer)
+2. [function](#function-reducer)
+3. [object](#object-reducer)
+4. [entity](#entity-reducer)
+5. [entity-id](#entity-by-id-reducer)
+6. [list](#list-reducer)
 
-### <a name="path-reducer">PathReducer</a>
+### Path Reducer
 
-PathReducer is a `string` value that extracts a path from the current [Accumulator](#accumulator)`.value` . It uses lodash's [_.get](https://lodash.com/docs/4.17.4#get) behind the scenes.
+A path reducer is a `string` that extracts a path from the current [Accumulator](#accumulator) value (which must be an Object). It uses lodash's [_.get](https://lodash.com/docs/4.17.4#get) behind the scenes.
 
 **SYNOPSIS**
 
@@ -371,11 +470,11 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 | Option | Description |
 |:---|:---|
 | *$* | Reference to current `accumulator.value`. |
-| *$..* | Gives you full access to current `accumulator`. |
-| *$path* | Simple Object path notation to extract a path from current `accumulator.value`. |
+| *$..* | Gives full access to `accumulator` properties (i.e. `$..params.myParam`). |
+| *$path* | Object path notation to extract data from `accumulator.value`. |
 | *$path[]* | Appending `[]` will map the reducer to each element of an input array. If the current accumulator value is not an array, the reducer will return `undefined`.
 
-#### <a name="root-path">Root path $</a>
+#### Root path $
 
 **EXAMPLES:**
 
@@ -397,13 +496,13 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
   dataPoint
     .resolve('$', input)
     .then((output) => {
-      assert.equal(output, input)
+      assert.strictEqual(output, input)
     })
   ```
 </details>
 
 
-#### <a name="accumulator-reference">Access accumulator reference $..</a>
+#### Access accumulator reference
 
 <details>
   <summary>Access the reference of the accumulator.</summary>
@@ -423,13 +522,13 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
   dataPoint
     .resolve('$..value', input)
     .then(output => {
-      assert.equal(output input)
+      assert.strictEqual(output input)
     })
   ```
 </details>
 
 
-#### <a name="object-path">Object Path</a>
+#### Object Path
 
 <details>
   <summary>Traverse an object's structure</summary>
@@ -449,7 +548,7 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
   dataPoint
     .resolve('$a.b[0]', input)
     .then(output => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -457,7 +556,7 @@ PathReducer is a `string` value that extracts a path from the current [Accumulat
 
 Example at: [examples/reducer-path.js](examples/reducer-path.js)
 
-#### <a name="object-map">Object Map</a>
+#### Object Map
 
 <details>
   <summary>Map an array by traversing object structures</summary>
@@ -487,24 +586,24 @@ Example at: [examples/reducer-path.js](examples/reducer-path.js)
   dataPoint
     .resolve('$a.b[]', input)
     .then(output => {
-      assert.deepEqual(output, ['Hello World', 'Hello Solar System', 'Hello Universe'])
+      assert.deepStrictEqual(output, ['Hello World', 'Hello Solar System', 'Hello Universe'])
     })
   ```
 </details>
 
 
-### <a name="function-reducer">FunctionReducer</a>
+### Function Reducer
 
-A FunctionReducer allows you to use a function to apply a transformation. There are several ways to define a FunctionReducer:
+A function reducer allows you to use a function to apply a transformation. There are several ways to define a function reducer:
 
 - Synchronous `function` that returns new value
 - Asynchronous `function` that returns a `Promise`
 - Asynchronous `function` with callback parameter
-- Asynchronous through [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) `function` **only if your environment supports it**
+- Asynchronous `function` through [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) **(only if your environment supports it)**
 
-**IMPORTANT:** Be careful with the parameters passed to your reducer function; DataPoint relies on the number of arguments to detect the type of ReducerFunction it should expect.
+**IMPORTANT:** Be careful with the parameters passed to your function reducer; DataPoint relies on the number of arguments to detect the type of function reducer it should expect.
 
-#### <a name="function-reducer">Returning a value</a>
+#### Returning a value
 
 The returned value is used as the new value of the transformation.
 
@@ -524,7 +623,7 @@ const name = (input:*, acc:Accumulator) => {
 | *acc* | [Accumulator](#accumulator) | Current reducer's accumulator Object. The main property is `value`, which is the current reducer's value. |
 
 <details>
-  <summary>Reducer Function Example</summary>
+  <summary>Function Reducer Example</summary>
   
   ```js
    const reducer = (input, acc) => {
@@ -534,7 +633,7 @@ const name = (input:*, acc:Accumulator) => {
   dataPoint
     .resolve(reducer, 'Hello')
     .then((output) => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -542,7 +641,7 @@ const name = (input:*, acc:Accumulator) => {
 
 Example at: [examples/reducer-function-sync.js](examples/reducer-function-sync.js)
 
-#### <a name="function-reducer-returns-a-promise">Returning a Promise</a>
+#### Returning a Promise
 
 If you return a Promise its resolution will be used as the new value of the transformation. Use this pattern to resolve asynchronous logic inside your reducer.
 
@@ -573,7 +672,7 @@ const name = (input:*, acc:Accumulator) => {
   dataPoint
     .resolve(reducer, 'Hello')
     .then((output) => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -581,9 +680,9 @@ const name = (input:*, acc:Accumulator) => {
 
 Example at: [examples/reducer-function-promise.js](examples/reducer-function-promise.js)
 
-#### <a name="function-reducer-with-callback">With a callback parameter</a>
+#### With a callback parameter
 
-Accepting a third parameter as a **callback** allows you to execute an asynchronous block of code. This callback is an error-first callback ([Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks)) that has the arguments `(error, value)`, where value will be the _value_ passed to the _next_ transform; this value becomes the new value of the transformation.
+Accepting a third parameter as a **callback** allows you to execute an asynchronous block of code. This should be an error-first, [Node.js style callback](https://nodejs.org/api/errors.html#errors_node_js_style_callbacks) with the arguments `(error, value)`, where value will be the _value_ passed to the _next_ transform; this value becomes the new value of the transformation.
 
 **SYNOPSIS**
 
@@ -612,7 +711,7 @@ const name = (input:*, acc:Accumulator, next:function) => {
   dataPoint
     .resolve(reducer, 'Hello')
     .then((output) => {
-      assert.equal(output, 'Hello World')
+      assert.strictEqual(output, 'Hello World')
     })
   ```
 </details>
@@ -642,9 +741,20 @@ Example at: [examples/reducer-function-with-callback.js](examples/reducer-functi
 
 Example at: [examples/reducer-function-error.js](examples/reducer-function-error.js)
 
-### <a name="object-reducer">ObjectReducer</a>
+### Object Reducer
 
-These are plain objects where the value of each key is a [reducer](#reducers). They're used to aggregate data or transform objects. For values that should be constants instead of reducers, you can use the [constant](#reducer-constant) reducer helper.
+These are plain objects where the value of each key is a [Reducer](#reducers). They're used to aggregate data or transform objects. You can add constants with the [constant](#constant) reducer helper, which is more performant than using a function reducer:
+
+```js
+const { constant } = require('data-point')
+
+const objectReducer = {
+  // in this case, x and y both resolve to 42, but DataPoint
+  // can optimize the resolution of the constant value
+  x: () => 42,
+  y: constant(42)
+}
+```
 
 <details>
   <summary>Transforming an object</summary>
@@ -746,7 +856,7 @@ Each of the reducers, including the nested ones, are resolved against the same a
 </details>
 
 
-Each of the reducers might contain more ObjectReducers (which might contain reducers, and so on). Notice how the output changes based on the position of the ObjectReducers in the two expressions:
+Each of the reducers might contain more object reducers (which might contain other reducers, and so on). Notice how the output changes based on the position of the object reducers in the two expressions:
 
 <details>
   <summary>Nested Transform Expressions</summary>
@@ -792,7 +902,7 @@ Each of the reducers might contain more ObjectReducers (which might contain redu
   ```
 </details>
 
-An empty `ObjectReducer` will resolve to an empty object:
+An empty object reducer will resolve to an empty object:
 
 ```js
 const reducer = {}
@@ -802,13 +912,61 @@ const input = { a: 1 }
 dataPoint.resolve(reducer, input) // => {}
 ```
 
-### <a name="entity-reducer">EntityReducer</a>
+### Entity Reducer
 
-An EntityReducer is used to execute an entity with the current [Accumulator](#accumulator) as the input.
+An entity instance reducer is used to apply a given entity with to the current [Accumulator](#accumulator).
+
+See the [Entities](#entities) section for information about the supported entity types.
+
+**OPTIONS**
+
+| Option | Type | Description |
+|:---|:---|:---|
+| *?* | `String` | Only execute entity if `acc.value` is not equal to `false`, `null` or `undefined`. |
+| *EntityType* | `String` | Valid Entity type. |
+| *EntityID* | `String` | Valid Entity ID. Appending `[]` will map the reducer to each element of an input array. If the current accumulator value is not an array, the reducer will return `undefined`. |
+
+<details>
+  <summary>Entity Reducer Example</summary>
+
+  ```js
+  const {
+    Model,
+    Request
+  } = require('data-point')
+
+  const PersonRequest = Request('PersonRequest', {
+    url: 'https://swapi.co/api/people/{value}'
+  })
+
+  const PersonModel = Model('PersonModel', {
+    value: {
+      name: '$name',
+      birthYear: '$birth_year'
+    }
+  })
+
+  dataPoint
+    .resolve([PersonRequest, PersonModel], 1)
+    .then((output) => {
+      assert.deepStrictEqual(output, {
+        name: 'Luke Skywalker',
+        birthYear: '19BBY'
+      })
+    })
+  ```
+
+</details>
+
+Example at: [examples/reducer-entity-instance.js](examples/reducer-entity-instance.js)
+
+### Entity By Id Reducer
+
+An entity reducer is used to execute an entity with the current [Accumulator](#accumulator) as the input.
 
 Appending `[]` to an entity reducer will map the given entity to each element of an input array. If the current accumulator value is not an array, the reducer will return `undefined`.
 
-For information about supported (built-in) entities, see the [Entities](#entities) Section.
+See the [Entities](#entities) section for information about the supported entity types.
 
 **SYNOPSIS**
 
@@ -822,7 +980,7 @@ For information about supported (built-in) entities, see the [Entities](#entitie
 |:---|:---|:---|
 | *?* | `String` | Only execute entity if `acc.value` is not equal to `false`, `null` or `undefined`. |
 | *EntityType* | `String` | Valid Entity type. |
-| *EntityID* | `String` | Valid Entity ID. Optionally, you may pass Closed brackets at the end `[]` to indicate collection mapping. |
+| *EntityID* | `String` | Valid Entity ID. Appending `[]` will map the reducer to each element of an input array. If the current accumulator value is not an array, the reducer will return `undefined`. |
 
 <details>
   <summary>Entity Reducer Example</summary>
@@ -839,16 +997,16 @@ For information about supported (built-in) entities, see the [Entities](#entitie
   }
 
   dataPoint.addEntities({
-    'transform:getGreeting': '$a.b',
-    'transform:toUpperCase': toUpperCase,
+    'reducer:getGreeting': '$a.b',
+    'reducer:toUpperCase': toUpperCase,
   })
 
-  // resolve `transform:getGreeting`,
-  // pipe value to `transform:toUpperCase`
+  // resolve `reducer:getGreeting`,
+  // pipe value to `reducer:toUpperCase`
   dataPoint
-    .resolve(['transform:getGreeting | transform:toUpperCase'], input)
+    .resolve(['reducer:getGreeting | reducer:toUpperCase'], input)
     .then((output) => {
-      assert.equal(output, 'HELLO WORLD')
+      assert.strictEqual(output, 'HELLO WORLD')
     })
   ```
 </details>
@@ -871,30 +1029,30 @@ For information about supported (built-in) entities, see the [Entities](#entitie
   }
 
   dataPoint.addEntities({
-    'transform:toUpperCase': toUpperCase
+    'reducer:toUpperCase': toUpperCase
   })
 
   dataPoint
-    .resolve(['$a | transform:toUpperCase[]'], input)
+    .resolve(['$a | reducer:toUpperCase[]'], input)
     .then((output) => {
-      assert.equal(output[0], 'HELLO WORLD')
-      assert.equal(output[1], 'HELLO LAIA')
-      assert.equal(output[2], 'HELLO DAREK')
-      assert.equal(output[3], 'HELLO ITALY')
+      assert.strictEqual(output[0], 'HELLO WORLD')
+      assert.strictEqual(output[1], 'HELLO LAIA')
+      assert.strictEqual(output[2], 'HELLO DAREK')
+      assert.strictEqual(output[3], 'HELLO ITALY')
     })
   ```
 </details>
 
-### <a name="list-reducer">ListReducer</a>
+### List Reducer
 
-A ListReducer is an array of reducers where the result of each reducer becomes the input to the next reducer. The reducers are executed serially and **asynchronously**. It's possible for a ListReducer to contain other ListReducers.
+A list reducer is an array of reducers where the result of each reducer becomes the input to the next reducer. The reducers are executed serially and **asynchronously**. It's possible for a list reducer to contain other list reducers.
 
-| ListReducer | Description |
+| List Reducer | Description |
 |:---|:---|
 | `['$a.b', (input) => { ... }]` | Get path `a.b`, pipe value to function reducer |
 | `['$a.b', (input) => { ... }, 'hash:Foo']` | Get path `a.b`, pipe value to function reducer, pipe result to `hash:Foo` |
 
-**IMPORTANT**: an empty `ListReducer` will resolve to `undefined`. This mirrors the behavior of empty functions.
+**IMPORTANT**: an empty list reducer will resolve to `undefined`. This mirrors the behavior of empty functions.
 
 ```js
 const reducer = []
@@ -904,7 +1062,7 @@ const input = 'INPUT'
 dataPoint.resolve(reducer, input) // => undefined
 ```
 
-### <a name="reducer-conditional-operator">Conditionally execute an entity</a>
+### Conditionally execute an entity
 
 Only execute an entity if the accumulator value is **not** equal to `false`, `null` or `undefined`. If the conditional is not met, the entity will not be executed and the value will remain the same.
 
@@ -927,7 +1085,7 @@ dataPoint.addEntities({
   'request:getPerson': {
     url: 'https://swapi.co/api/people/{value}'
   },
-  'transform:getPerson': {
+  'reducer:getPerson': {
     name: '$name',
     // request:getPerson will only
     // be executed if swapiId is
@@ -937,9 +1095,9 @@ dataPoint.addEntities({
 })
 
 dataPoint
-  .resolve('transform:getPerson[]', people)
+  .resolve('reducer:getPerson[]', people)
   .then((output) => {
-    assert.deepEqual(output, [
+    assert.deepStrictEqual(output, [
       {
         name: 'Luke Skywalker',
         birthYear: '19BBY'
@@ -956,22 +1114,25 @@ dataPoint
 
 Example at: [examples/reducer-conditional-operator.js](examples/reducer-conditional-operator.js)
 
-## <a name="reducer-helpers">Reducer Helpers</a>
+## Reducer Helpers
 
-Reducer helpers are factory functions for creating reducers. They're exposed through `DataPoint.helpers`:
+Reducer helpers are factory functions for creating reducers. They're accessed through the `DataPoint` Object:
 
 ```js
 const {
   assign,
-  map,
+  constant,
   filter,
-  find
-} = require('data-point').helpers
+  find,
+  map,
+  parallel,
+  withDefault
+} = require('data-point')
 ```
 
-### <a name="reducer-assign">assign</a>
+### assign
 
-The **assign** reducer creates a new Object by copying the values of all enumerable own properties resulting from the provided [Reducer](#reducers) with the current accumulator value. It uses [Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) internally.
+The **assign** reducer creates a new Object by resolving the provided [Reducer](#reducers) and merging the result with the current accumulator value. It uses [Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) internally.
 
 **SYNOPSIS**
 
@@ -983,7 +1144,7 @@ assign(reducer:Reducer):Object
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *reducer* | [Reducer](#reducers) | Result from the provided reducer will be merged into the current accumulator.value |
+| *reducer* | [Reducer](#reducers) | Result from this reducer will be merged into the current `accumulator.value`. By convention, this reducer should return an Object. |
 
 **EXAMPLE:**
 
@@ -991,17 +1152,13 @@ assign(reducer:Reducer):Object
   <summary>Add a key that references a nested value from the accumulator.</summary>
 
   ```js
-  const {
-    assign
-  } = DataPoint.helpers
-
   const input = {
     a: 1
   }
 
-  // merges the ReducerObject with
+  // merges the object reducer with
   // accumulator.value
-  const reducer = assign({
+  const reducer = DataPoint.assign({
     c: '$b.c'
   })
 
@@ -1022,9 +1179,9 @@ assign(reducer:Reducer):Object
   ```
 </details>
 
-Example at: [examples/reducer-assign.js](examples/reducer-assign.js)
+Example at: [examples/reducer-helper-assign.js](examples/reducer-helper-assign.js)
 
-### <a name="reducer-map">map</a>
+### map
 
 The **map** reducer creates a new array with the results of applying the provided [Reducer](#reducers) to every element in the input array.
 
@@ -1046,10 +1203,6 @@ map(reducer:Reducer):Array
   <summary>Apply a set of reducers to each item in an array</summary>
 
   ```js
-  const {
-    map
-  } = DataPoint.helpers
-
   const input = [{
     a: 1
   }, {
@@ -1057,7 +1210,7 @@ map(reducer:Reducer):Array
   }]
 
   // get path `a` then multiply by 2
-  const reducer = map(
+  const reducer = DataPoint.map(
     ['$a', (input) => input * 2]
   )
 
@@ -1072,7 +1225,7 @@ map(reducer:Reducer):Array
 
 Example at: [examples/reducer-helper-map.js](examples/reducer-helper-map.js)
 
-### <a name="reducer-filter">filter</a>
+### filter
 
 The **filter** reducer creates a new array with elements that resolve as *truthy* when passed to the given [Reducer](#reducers).
 
@@ -1094,15 +1247,11 @@ filter(reducer:Reducer):Array
   <summary>Find objects where path `a` is greater than 1</summary>
 
   ```js
-  const {
-    map
-  } = DataPoint.helpers
-
   const input = [{ a: 1 }, { a: 2 }]
 
   // filters array elements that are not
-  // truthy for the given reducer list
-  const reducer = filter(
+  // truthy for the given list reducer
+  const reducer = DataPoint.filter(
     ['$a', (input) => input > 1]
   )
 
@@ -1116,7 +1265,7 @@ filter(reducer:Reducer):Array
 
 Example at: [examples/reducer-helper-filter.js](examples/reducer-helper-filter.js)
 
-### <a name="reducer-find">find</a>
+### find
 
 The **find** reducer returns the first element of an array that resolves to _truthy_ when passed through the provided [Reducer](#reducers). It returns `undefined` if no match is found.
 
@@ -1138,15 +1287,11 @@ find(reducer:Reducer):*
   <summary>Find elements where path `b` resolves to _truthy_ value</summary>
 
   ```js
-  const {
-    map
-  } = DataPoint.helpers
-
   const input = [{ a: 1 }, { b: 2 }]
 
   // the $b reducer is truthy for the
   // second element in the array
-  const reducer = find('$b')
+  const reducer = DataPoint.find('$b')
 
   dataPoint
     .resolve(reducer, input) 
@@ -1158,9 +1303,9 @@ find(reducer:Reducer):*
 
 Example at: [examples/reducer-helper-find.js](examples/reducer-helper-find.js)
 
-### <a name="reducer-constant">constant</a>
+### constant
 
-The **constant** reducer always returns the given value. If a reducer is passed it will not be evaluated.
+The **constant** reducer always returns the given value. If a reducer is passed it will not be evaluated. This is primarily meant to be used in [object reducers](#object-reducer).
 
 **SYNOPSIS**
 
@@ -1180,8 +1325,6 @@ constant(value:*):*
   <summary>returning an object constant</summary>
 
   ```js
-  const { constant } = DataPoint.helpers
-
   const input = {
     a: 1,
     b: 2
@@ -1189,7 +1332,7 @@ constant(value:*):*
 
   const reducer = {
     a: '$a',
-    b: constant({
+    b: DataPoint.constant({
       a: '$a',
       b: 3
     })
@@ -1215,13 +1358,11 @@ constant(value:*):*
   <summary>reducers are not evaluated when defined inside of constants</summary>
 
   ```js
-  const { constant } = DataPoint.helpers
-
   const input = {
     b: 1
   }
 
-  // ReducerObject that contains a ReducerPath ('$a')
+  // object reducer that contains a path reducer ('$a')
   let reducer = {
     a: '$b'
   }
@@ -1230,7 +1371,7 @@ constant(value:*):*
 
   // both the object and the path will be treated as
   // constants instead of being used to create reducers
-  reducer = constant({
+  reducer = DataPoint.constant({
     a: '$b'
   })
 
@@ -1238,10 +1379,10 @@ constant(value:*):*
   ```
 </details>
 
-### <a name="reducer-parallel">parallel</a>
+### parallel
 
 This resolves an array of reducers. The output is a new array where each element is the output of a reducer;
-this contrasts with `ListReducer`, which returns the output from the last reducer in the array.
+this contrasts with list reducers, which return the output from the last reducer in the array.
 
 **SYNOPSIS**
 
@@ -1261,11 +1402,9 @@ parallel(reducers:Array<Reducer>):Array
   <summary>resolving an array of reducers with parallel</summary>
 
   ```js
-  const { parallel } = DataPoint.helpers
-
-  const reducer = parallel([
+  const reducer = DataPoint.parallel([
     '$a',
-    ['$b', (input) => input + 2] // ReducerList
+    ['$b', (input) => input + 2] // list reducer
   ])
 
   const input = {
@@ -1277,7 +1416,7 @@ parallel(reducers:Array<Reducer>):Array
   ```
 </details>
 
-### <a name="reducer-default">withDefault</a>
+### withDefault
 
 The **withDefault** reducer adds a default value to any reducer type. If the reducer resolves to `null`, `undefined`, `NaN`, or `''`,
 the default is returned instead.
@@ -1292,7 +1431,7 @@ withDefault(source:*, value:*):*
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *source* | * | Source data for creating a [reducer](#reducers)  |
+| *source* | * | Source data for creating a [Reducer](#reducers)  |
 | *value* | * | The default value to use (or a function that returns the default value) |
 
 The default value is not cloned before it's returned, so it's good practice to wrap any Objects in a function.
@@ -1300,14 +1439,12 @@ The default value is not cloned before it's returned, so it's good practice to w
 **EXAMPLE:**
 
 ```js
-const { withDefault } = DataPoint.helpers
-
 const input = {
   a: undefined
 }
 
-// adds a default to a PathReducer
-const r1 = withDefault('$a', 50)
+// adds a default to a path reducer
+const r1 = DataPoint.withDefault('$a', 50)
 
 dataPoint.resolve(r1, input) // => 50
 
@@ -1321,41 +1458,23 @@ dataPoint.resolve(r2, input) // => { b: 1 }
 
 ```
 
-## <a name="entities">Entities</a>
+## Entities
 
-Entities are artifacts that transform data. An entity is represented by a data structure (spec) that defines how the entity behaves. 
+Entities are used to transform data by composing multiple reducers, they can be created as non-registered or registered entities.
 
-Entities may be added in two ways: 
+- **<a name="instance-entity-type">Instance entities</a>** - are entity objects created directly with an Entity Factory, they are meant to be used as a [entity reducer](#entity-reducer).
+- **<a name="entity-id-type">Registered entities</a>** - are entity objects which are registered and cached in a DataPoint instance, they are meant to be used as a [registered entity reducer](#entity-by-id-reducer).
 
-1. On the DataPoint constructor, as explained in [setup examples](#setup-examples).
-2. Through the `dataPoint.addEntities()` method, explained in [addEntities](#api-data-point-add-entities).
+**Registered entities** may be added to DataPoint in two different ways:
 
-### <a name="api-data-point-add-entities">dataPoint.addEntities</a>
+1. With the `DataPoint.create` method (as explained in the [setup examples](#datapointcreate-example))
+2. With the [dataPoint.addEntities](#addentities) instance method
 
-In DataPoint, *entities* are used to model the data. They specify how the data should be transformed. For more information about entities, see the [Entities Section](#entities).
+See **[built-in entities](#entity-types)** for information on what each entity does.
 
-When adding entity objects to DataPoint, only valid (registered) entity types are allowed.
+### Instance Entity
 
-**SYNOPSIS**
-
-```js
-dataPoint.addEntities({
-  '<EntityType>:<EntityId>': { ... },
-  '<EntityType>:<EntityId>': { ... },
-  ...
-})
-```
-
-**OPTIONS**
-
-| Part | Type | Description |
-|:---|:---|:---|
-| *EntityType* | `string` | valid entity type to associate with the EntityObject |
-| *EntityId* | `string` | unique entity ID associated with the EntityObject |
-
-### <a name="entity-factories">Entity factories</a>
-
-Entities can be defined with object literals, or with these factory functions:
+Entities can be created from these factory functions:
 
 ```js
 const {
@@ -1367,13 +1486,15 @@ const {
   Request,
   Control,
   Schema
-} = require('data-point').entityFactories
+} = require('data-point')
 ```
+
+**SYNOPSIS**
 
 Each factory has the following signature:
 
 ```js
-Factory(name:String, spec:Object):Object
+Factory(name:String, spec:Object):EntityInstance
 ```
 
 **ARGUMENTS**
@@ -1383,73 +1504,61 @@ Factory(name:String, spec:Object):Object
 | *name* | `string` | The name of the entity; this will be used to generate an entity ID with the format `<entityType>:<name>` |
 | *spec* | `Object` | The source for generating the entity |
 
-Using these factories is optional, and the following examples are equivalent:
 
-**Example #1 (with object literal)**
+**Example**
 
 ```js
-dataPoint.addEntities({
-  'model:hello-world': {
-    value: input => ({
+const DataPoint = require('data-point')
+const { Model } = DataPoint
+
+const dataPoint = DataPoint.create()
+
+const HelloWorld = Model('HelloWorld', {
+  value: input => ({
+    hello: 'world'
+  })
+})
+
+// to reference it we use the actual entity instance
+dataPoint.resolve(HelloWorld, {})
+  .then(value => {
+    console.assert(value, {
       hello: 'world'
     })
+  })
+```
+
+### Registered Entity
+
+You may register an entity through [DataPoint.create](#create) or [dataPoint.addEntities](#addentities).
+
+**Example**
+
+```js
+const DataPoint = require('data-point')
+
+dataPoint = DataPoint.create({
+  entities: {
+    'model:HelloWorld', {
+      value: input => ({
+        hello: 'world'
+      } 
+    }
   }
 })
-```
 
-**Example #2 (with factory and assignment)**
-
-```js
-const { Model } = DataPoint.entityFactories
-
-const model = Model('hello-world', {
-  value: input => ({
-    hello: 'world'
+// to reference it we use a string with its registered id
+dataPoint.resolve('model:HelloWorld', {})
+  .then(value => {
+    console.assert(value, {
+      hello: 'world'
+    })
   })
-})
-
-const entities = {}
-
-assert.equal(model.id, 'model:hello-world')
-
-entities[model.id] = model.spec
-
-dataPoint.addEntities(entities)
 ```
 
-**Example #3 (with factory and spread syntax)**
+### Entity Base API
 
-```js
-const { Model } = DataPoint.entityFactories
-
-const model = Model('hello-world', {
-  value: input => ({
-    hello: 'world'
-  })
-})
-
-const entities = { ...model }
-
-dataPoint.addEntities(entities)
-```
-
-
-### <a name="built-in-entities">Built-in Entities</a> 
-
-DataPoint comes with the following built-in entities: 
-
-- [Reducer / Transform](#reducer-entity)
-- [Model](#model-entity)
-- [Entry](#entry-entity)
-- [Request](#request-entity)
-- [Hash](#hash-entity)
-- [Collection](#collection-entity)
-- [Control](#control-entity)
-- [Schema](#schema-entity)
-
-#### <a name="entity-base-api">Entity Base API</a>
-
-All entities share a common API (except for [Reducer](#reducer-entity)).
+All entities share a common API (except for [Reducer](#reducer)).
 
 ```js
 {
@@ -1483,13 +1592,12 @@ All entities share a common API (except for [Reducer](#reducer-entity)).
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |
-| *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
-| *params*  | `Object` | User defined Hash that will be passed to every transform within the context of the transform's execution |
+| *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error (including errors thrown from the `inputType` and `outputType` reducers) |
+| *params*  | `Object` | user defined Hash that will be passed to every transform within the context of the transform's execution |
 
+### Entity type check
 
-##### <a name="entity-type-check">Entity type checking</a>
-
-You may use **inputType** and **outputType** to type check the values being passed and returned from entities. Type checking does not mutate the result.
+You can use **inputType** and **outputType** for type checking an entity's input and output values. Type checking does not mutate the result. 
 
 **Built in type checks:**
 
@@ -1498,11 +1606,10 @@ To use built-in type checks, you may set the value of **inputType** or **outputT
 <details>
   <summary>Check if a model outputs an string</summary>
 
-  This example uses a Model Entity, for information on what a model is please go to the [Model Entity](#model-entity) section.
+  This example uses a Model Entity, for information on what a model is please go to the [Model Entity](#model) section.
 
   ```js
   const dataPoint = DataPoint.create()
-  const helpers = DataPoint.helpers
 
   dataPoint.addEntities({
     'model:getName': {
@@ -1525,7 +1632,7 @@ To use built-in type checks, you may set the value of **inputType** or **outputT
 
 **Custom type checking:**
 
-You may also type check with a [Schema Entity](#schema-entity), or by creating a [Reducer](#reducers) with the `createTypeCheckReducer` function.
+You may also type check with a [Schema Entity](#schema), or by creating a [Reducer](#reducers) with the `createTypeCheckReducer` function.
 
 **SYNOPSIS**
 
@@ -1540,10 +1647,9 @@ DataPoint.createTypeCheckReducer(typeCheckFunction, [expectedType])
 | *typeCheckFunction* | `Function<Boolean|String>` | Return `true` when the input is valid; otherwise, an error will be thrown. If the function returns a string, that will be appended to the error message. |
 | *expectedType* | `string` _(optional)_ | The expected type; this will also be used in the error message. |
 
-<details>
-  <summary>Custom type check</a></summary>
+  <summary>Custom type check with a <a href="#function-reducer">function reducer</a></summary>
 
-  ```js
+```js
   const DataPoint = require('data-point')
 
   const { createTypeCheckReducer } = DataPoint
@@ -1561,10 +1667,9 @@ DataPoint.createTypeCheckReducer(typeCheckFunction, [expectedType])
   ```
 </details>
 
-<details>
   <summary>Custom type check with a schema</summary>
 
-  In this example we are using a [Schema Entity](#schema-entity) to check the inputType.
+  In this example we are using a [Schema Entity](#schema) to check the inputType.
 
   ```js
   const dataPoint = DataPoint.create()
@@ -1591,8 +1696,20 @@ DataPoint.createTypeCheckReducer(typeCheckFunction, [expectedType])
 
 </details>
 
+## Entity Types
 
-#### <a name="reducer-entity">Reducer Entity</a>
+DataPoint comes with the following built-in entity types: 
+
+- [Reducer / Transform](#reducer)
+- [Model](#model)
+- [Entry](#entry)
+- [Request](#request)
+- [Hash](#hash)
+- [Collection](#collection)
+- [Control](#control)
+- [Schema](#schema)
+
+### Reducer
 
 A Reducer entity is a 'snippet' that you can re-use in other entities. It does not expose the before/after/error/params API that other entities have.
 
@@ -1610,7 +1727,7 @@ For backwards compatibility, the keyword **transform** can be used in place of *
 
 ```js
 dataPoint.addEntities({
-  'transform:<entityId>': Reducer
+  'reducer:<entityId>': Reducer
 })
 ```
 
@@ -1641,15 +1758,15 @@ dataPoint.addEntities({
   dataPoint
     .resolve('reducer:foo', input)
     .then((output) => {
-      assert.equal(output, 30)
+      assert.strictEqual(output, 30)
     })
   ```
 </details>
 
 
-#### <a name="model-entity">Model Entity</a>
+### Model
 
-A Model entity is a generic entity that provides the [base modifiers](#entity-base-api).
+A Model entity is a generic entity that provides the [base methods](#entity-base-api).
 
 **SYNOPSIS**
 
@@ -1676,9 +1793,9 @@ dataPoint.addEntities({
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
-| *params*  | `Object` | User defined Hash that will be passed to every transform within the context of the transform's execution |
+| *params*  | `Object` | user defined Hash that will be passed to every transform within the context of the transform's execution |
 
-##### <a name="model-value">Model.value</a>
+#### Model.value
 
 <details>
   <summary>Using the `value` property to transform an input</summary>
@@ -1709,7 +1826,7 @@ dataPoint.addEntities({
   dataPoint
     .resolve('model:foo', input)
     .then((output) => {
-      assert.equal(output, 30)
+      assert.strictEqual(output, 30)
     })
   ```
 </details>
@@ -1717,7 +1834,7 @@ dataPoint.addEntities({
 
 Example at: [examples/entity-model-basic.js](examples/entity-model-basic.js)
 
-##### <a name="model-before">Model.before</a>
+#### Model.before
 
 <details>
   <summary>Checking whether the value passed to an entity is an array</summary>
@@ -1739,7 +1856,7 @@ Example at: [examples/entity-model-basic.js](examples/entity-model-basic.js)
   dataPoint
     .resolve('model:foo', 100)
     .then((output) => {
-      assert.deepEqual(output, [100])
+      assert.deepStrictEqual(output, [100])
     })
   ```
 </details>
@@ -1747,7 +1864,7 @@ Example at: [examples/entity-model-basic.js](examples/entity-model-basic.js)
 
 Example at: [examples/entity-model-before.js](examples/entity-model-before.js)
 
-##### <a name="model-after">Model.after</a>
+#### Model.after
 
 <details>
   <summary>Using `after` transform</summary>
@@ -1775,12 +1892,12 @@ Example at: [examples/entity-model-before.js](examples/entity-model-before.js)
   dataPoint
     .resolve('model:foo', input)
     .then((output) => {
-      assert.deepEqual(output, [3, 15])
+      assert.deepStrictEqual(output, [3, 15])
     })
   ```
 </details>
 
-##### <a name="model-error">Model.error</a>
+#### Model.error
 
 Any error that happens within the scope of the Entity can be handled by the `error` transform. To respect the API, error reducers have the same API.
 
@@ -1826,7 +1943,7 @@ Passing a value as the second argument will stop the propagation of the error.
   dataPoint
     .resolve('model:getArray', input)
     .then((output) => {
-      assert.deepEqual(output, [])
+      assert.deepStrictEqual(output, [])
     })
   ```
 </details>
@@ -1868,12 +1985,12 @@ Example at: [examples/entity-model-error-handled.js](examples/entity-model-error
 
 Example at: [examples/entity-model-error-rethrow.js](examples/entity-model-error-rethrow.js)
 
-##### <a name="model-params">Entry.params</a>
+#### Model.params
 
-The params object is used to pass custom data to your entity. This Object is exposed as a property of the [Accumulator](#accumulator) Object. Which can be accessed via a [FunctionReducer](#function-reducer), as well as through a [PathReducer](#path-reducer) expression.
+The params object is used to pass custom data to your entity. This Object is exposed as a property of the [Accumulator](#accumulator) Object. Which can be accessed via a [function reducer](#function-reducer), as well as through a [path reducer](#path-reducer) expression.
 
 <details>
-  <summary>On a FunctionReducer</summary>
+  <summary>On a Function Reducer</summary>
   
   ```js
   const multiplyValue = (input, acc) => {
@@ -1892,14 +2009,14 @@ The params object is used to pass custom data to your entity. This Object is exp
   dataPoint
     .resolve('model:multiply', 200)
     .then((output) => {
-      assert.deepEqual(output, 20000)
+      assert.deepStrictEqual(output, 20000)
     })
   ```
 </details>
 
 
 <details>
-  <summary>On a PathReducer</summary>
+  <summary>On a Path Reducer</summary>
   
   ```js
   dataPoint.addEntities({
@@ -1913,14 +2030,14 @@ The params object is used to pass custom data to your entity. This Object is exp
   
   dataPoint.resolve('model:getParam')
     .then((output) => {
-      assert.deepEqual(output, 100)
+      assert.deepStrictEqual(output, 100)
     })
   ```
 </details>
 
-#### <a name="entry-entity">Entry Entity</a>
+### Entry
 
-This entity is very similar to the [Model entity](#model-entity). Its main difference is that this entity will default to an empty object `{ }` as its initial value if none was passed. As a best practice, use it as your starting point, and use it to call more complex entities.
+This entity is very similar to the [Model entity](#model). Its main difference is that this entity will default to an empty object `{ }` as its initial value if none was passed. As a best practice, use it as your starting point, and use it to call more complex entities.
 
 **SYNOPSIS**
 
@@ -1947,12 +2064,12 @@ dataPoint.addEntities({
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
-| *params*  | `Object` | User defined Hash that will be passed to every transform within the context of the transform's execution |
+| *params*  | `Object` | user defined Hash that will be passed to every transform within the context of the transform's execution |
 
 
-#### <a name="request-entity">Request Entity</a>
+### Request
 
-Requests a remote source, using [request](https://github.com/request/request) behind the scenes. The features supported by `request` are exposed/supported by Request entity.
+Requests a remote source, using [request-promise](https://github.com/request/request-promise) behind the scenes. The features supported by `request-promise` are exposed/supported by Request entity.
 
 **SYNOPSIS**
 
@@ -1979,16 +2096,18 @@ dataPoint.addEntities({
 | *inputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's input value, but does not mutate it |
 | *before*     | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value*      | [Reducer](#reducers) | the result of this reducer is the input when resolving **url** and **options**
-| *url*        | [StringTemplate](#string-template) | String value to resolve the request's url |
-| *options*    | [Reducer](#reducers) | reducer that returns an object to use as [request.js](https://github.com/request/request) options
+| *url*        | [StringTemplate](#requesturl-as-stringtemplate) | String value to resolve the request's url |
+| *options*    | [Reducer](#reducers) | reducer that returns an object to use as [request-promise](https://github.com/request/request-promise) options
 | *after*      | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *error*      | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *outputType* | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |
-| *params*     | `Object` | User defined Hash that will be passed to every reducer within the context of the transform function's execution |
+| *params*     | `Object` | user defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
-##### <a name="request-url">Request.url</a>
+#### Request.url
 
 Sets the url to be requested.
+
+**NOTE:** When `Request.url` is not defined it will use the current `Accumulator.value` (if the value is of type `string`) as the Request's url.
 
 <details>
   <summary>`Request.url` Example</summary>
@@ -2017,7 +2136,7 @@ Sets the url to be requested.
 
 Example at: [examples/entity-request-basic.js](examples/entity-request-basic.js)
 
-##### <a name="string-template">StringTemplate</a>
+#### Request.url as StringTemplate
 
 StringTemplate is a string that supports a **minimal** templating system. You may inject any value into the string by enclosing it within `{ObjectPath}` curly braces. **The context of the string is the Request's [Accumulator](#accumulator) Object**, meaning you have access to any property within it. 
 
@@ -2098,7 +2217,6 @@ For more information on acc.locals: [Transform Options](#transform-options) and 
 
   ```js
   const DataPoint = require('data-point')
-  const c = DataPoint.helpers.constant
   const dataPoint = DataPoint.create()
 
   dataPoint.addEntities({
@@ -2109,7 +2227,7 @@ For more information on acc.locals: [Transform Options](#transform-options) and 
       // constants (or just wrap the whole
       // object if all the values are static)
       options: {
-        'content-type': c('application/json'), // constant
+        'content-type': DataPoint.constant('application/json')
         qs: {
           // get path `searchTerm` from input
           // to dataPoint.resolve
@@ -2127,16 +2245,16 @@ For more information on acc.locals: [Transform Options](#transform-options) and 
   dataPoint
     .resolve('request:searchPeople', input)
     .then(output => {
-      assert.equal(output.results[0].name, 'R2-D2')
+      assert.strictEqual(output.results[0].name, 'R2-D2')
     })
   ```
 </details>
 
 Example at: [examples/entity-request-options.js](examples/entity-request-options.js)
 
-For more examples of request entities, see the [Examples](examples), the [Integration Examples](test/definitions/integrations.js), and the unit tests: [Request Definitions](test/definitions/sources.js).
+For more examples of request entities, see the [Examples](examples), the [Integration Examples](test/definitions/integrations.js), and the unit tests: [Request Definitions](test/definitions/requests.js).
 
-### <a name="request-inspect">Inspecting Request</a>
+#### Inspecting Request Entities
 
 You may inspect a Request entity through the `params.inspect` property.
 
@@ -2154,12 +2272,43 @@ dataPoint.addEntities({
 })
 ```
 
-If `params.inspect` is `true` it will output the entity's information to the console.
+**Boolean**
 
-If `params.inspect` is a `function`, you may execute custom debugging code to be executed before the actual request gets made. The function receives the current accumulator value as its only parameter.
+If `params.inspect` is `true`, it will output the entity's information to the console.
 
+**Function**
 
-#### <a name="hash-entity">Hash Entity</a>
+If `params.inspect` is a function, it will be called twice: once before the request is made, and once when the request is resolved. It should have the signature ```(accumulator: Object, data: Object)```.
+
+The `inspect` function is first called just before initiating the request. The first argument is the `accumulator`, and the second is a `data` object with these properties:
+
+```js
+{
+  type: 'request',
+  // unique ID that is shared with the 'response' object
+  debugId: Number,
+  // ex: 'GET'
+  method: String,
+  // fully-formed URI
+  uri: String,
+  // the value of request.body (or undefined)
+  [body]: String
+}
+```
+
+It's then called when the request succeeds or fails. The `data` object will have a `type` property of either `'response'` or `'error'`. The `debugId` can be used to match the response with the corresponding request.
+
+```js
+{
+  type: 'response|error',
+  // unique ID that is shared with the 'request' object
+  debugId: Number,
+  // http status code
+  statusCode: Number,
+}
+```
+
+### Hash
 
 A Hash entity transforms a _Hash_ like data structure. It enables you to manipulate the keys within a Hash. 
 
@@ -2194,23 +2343,20 @@ dataPoint.addEntities({
 | *inputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's input value, but does not mutate it |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value* | [Reducer](#reducers) | The value to which the Entity resolves |
-| *mapKeys* | [ObjectReducer](#object-reducer) | Map to a new set of key/values. Each value accepts a reducer |
-| *omitKeys* | `String[]` | Omits keys from acc.value. Internally, this uses the [omit](#reducer-omit) reducer helper |
-| *pickKeys* | `String[]` | Picks keys from acc.value. Internally, this uses the [pick](#reducer-pick) reducer helper |
-| *addKeys* | [ObjectReducer](#object-reducer) | Add/Override key/values. Each value accepts a reducer. Internally, this uses the [assign](#reducer-assign) reducer helper |
-| *addValues* | `Object` | Add/Override hard-coded key/values. Internally, this uses the [assign](#reducer-assign) reducer helper |
-| *compose* | [ComposeReducer](#compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one operation gets passed to the next one|
+| *mapKeys* | [Object Reducer](#object-reducer) | Map to a new set of key/values. Each value accepts a reducer |
+| *omitKeys* | `String[]` | Omits keys from acc.value. Internally. |
+| *pickKeys* | `String[]` | Picks keys from acc.value. Internally. |
+| *addKeys* | [Object Reducer](#object-reducer) | Add/Override key/values. Each value accepts a reducer. Internally, this uses the [assign](#assign) reducer helper |
+| *addValues* | `Object` | Add/Override hard-coded key/values. Internally, this uses the [assign](#assign) reducer helper |
+| *compose* | [ComposeReducer](#entity-compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one operation gets passed to the next one|
 | *after*   | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it. Collection only supports custom outputType reducers, and not the built-in types like **string**, **number**, etc. |
 | *error*   | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params*    | `Object` | User-defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
-##### <a name="hash-entity-reducers">Hash Reducers</a>
+Hash entities expose a set of optional reducers: [mapKeys](#hashmapkeys), [omitKeys](#hashomitkeys), [pickKeys](#hashpickkeys), [addKeys](#hashaddkeys), and [addValues](#hashaddvalues). When using more than one of these reducers, they should be defined through the `compose` property.
 
-Hash entities expose a set of optional reducers: [mapKeys](#hash-mapKeys), [omitKeys](#hash-omitKeys), [pickKeys](#hash-pickKeys), [addKeys](#hash-addKeys), and [addValues](#hash-addValues). When using more than one of these reducers, they should be defined through the `compose` property.
-
-
-##### <a name="hash-value">Hash.value</a>
+#### Hash.value
 
 <details>
   <summary>Resolve accumulator.value to a hash</summary>
@@ -2234,7 +2380,7 @@ Hash entities expose a set of optional reducers: [mapKeys](#hash-mapKeys), [omit
   dataPoint
     .resolve('hash:helloWorld', input)
     .then((output) => {
-      assert.deepEqual(output, {
+      assert.deepStrictEqual(output, {
         c: 'Hello',
         d: ' World!!'
       })
@@ -2245,9 +2391,9 @@ Hash entities expose a set of optional reducers: [mapKeys](#hash-mapKeys), [omit
 
 Example at: [examples/entity-hash-context.js](examples/entity-hash-context.js)
 
-##### <a name="hash-mapKeys">Hash.mapKeys</a>
+#### Hash.mapKeys
 
-Maps to a new set of key/value pairs through a [ObjectReducer](#object-reducer), where each value is a [Reducer](#reducers).
+Maps to a new set of key/value pairs through a [object reducer](#object-reducer), where each value is a [Reducer](#reducers).
 
 Going back to our GitHub API examples, let's map some keys from the result of a request:
 
@@ -2262,10 +2408,10 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
       mapKeys: {
         // map to acc.value.name
         name: '$name',
-        // uses a ReducerList to 
+        // uses a list reducer to
         // map to acc.value.name
         // and generate a string with
-        // a ReducerFunction
+        // a function reducer
         url: [
           '$name',
           input => {
@@ -2281,7 +2427,7 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
   }
 
   dataPoint.resolve('hash:mapKeys', input).then(output => {
-    assert.deepEqual(output, {
+    assert.deepStrictEqual(output, {
       name: 'DataPoint',
       url: 'https://github.com/ViacomInc/data-point'
     })
@@ -2292,7 +2438,7 @@ Going back to our GitHub API examples, let's map some keys from the result of a 
 
 Example at: [examples/entity-hash-mapKeys.js](examples/entity-hash-mapKeys.js)
 
-##### <a name="hash-addKeys">Hash.addKeys</a>
+#### Hash.addKeys
 
 Adds keys to the current Hash value. If an added key already exists, it will be overridden. 
 
@@ -2316,7 +2462,7 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
   }
 
   dataPoint.resolve('hash:addKeys', input).then(output => {
-    assert.deepEqual(output, {
+    assert.deepStrictEqual(output, {
       name: 'DataPoint',
       nameLowerCase: 'datapoint',
       url: 'https://github.com/ViacomInc/data-point'
@@ -2328,7 +2474,7 @@ Hash.addKeys is very similar to Hash.mapKeys, but the difference is that `mapKey
 
 Example at: [examples/entity-hash-addKeys.js](examples/entity-hash-addKeys.js)
 
-##### <a name="hash-pickKeys">Hash.pickKeys</a>
+#### Hash.pickKeys
 
 Picks a list of keys from the current Hash value.
 
@@ -2352,7 +2498,7 @@ The next example is similar to the previous example. However, instead of mapping
   dataPoint.resolve('hash:pickKeys', input).then(output => {
     // notice how name is no longer 
     // in the object
-    assert.deepEqual(output, {
+    assert.deepStrictEqual(output, {
       url: 'https://github.com/ViacomInc/data-point'
     })
   })
@@ -2362,7 +2508,7 @@ The next example is similar to the previous example. However, instead of mapping
 
 Example at: [examples/entity-hash-pickKeys.js](examples/entity-hash-pickKeys.js)
 
-##### <a name="hash-omitKeys">Hash.omitKeys</a>
+#### Hash.omitKeys
 
 Omits keys from the Hash value.
 
@@ -2389,15 +2535,14 @@ This example will only **omit** some keys, and let the rest pass through:
   }
 
   dataPoint.resolve('hash:omitKeys', input).then(output => {
-    assert.deepEqual(output, expectedResult)
+    assert.deepStrictEqual(output, expectedResult)
   })
   ```
 </details>
 
-
 Example at: [examples/entity-hash-omitKeys.js](examples/entity-hash-omitKeys.js)
 
-##### <a name="hash-addValues">Hash.addValues</a>
+#### Hash.addValues
 
 Adds hard-coded values to the Hash value.
 
@@ -2405,7 +2550,7 @@ Sometimes you just want to add a hard-coded value to your current `acc.value`.
 
 <details>
   <summary>Hash.addValues Example</summary>
-  
+
   ```js
   dataPoint.addEntities({
     'hash:addValues': {
@@ -2418,7 +2563,7 @@ Sometimes you just want to add a hard-coded value to your current `acc.value`.
       } 
     }
   })
-  
+
   // keys came out intact
   const expectedResult = {
     foo: 'value',
@@ -2427,18 +2572,17 @@ Sometimes you just want to add a hard-coded value to your current `acc.value`.
       a: 'a'
     }
   }
-  
-  
+
   dataPoint
     .resolve('hash:addValues')
     .then((output) => {
-      assert.deepEqual(output, expectedResult)
+      assert.deepStrictEqual(output, expectedResult)
     })
   ```
 </details>
 
 
-##### Hash - adding multiple reducers
+#### Hash - adding multiple reducers
 
 You can add multiple reducers to your Hash spec.
 
@@ -2482,7 +2626,7 @@ You can add multiple reducers to your Hash spec.
   dataPoint
     .resolve('entry:orgInfo', { org: 'nodejs' })
     .then((output) => {
-      assert.deepEqual(output, expectedResult)
+      assert.deepStrictEqual(output, expectedResult)
     })
   ```
 </details>
@@ -2490,13 +2634,13 @@ You can add multiple reducers to your Hash spec.
 
 For examples of hash entities, see the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/hash.js), and [Integration Examples](test/definitions/integrations.js)
 
-#### <a name="collection-entity">Collection Entity</a>
+### Collection
 
 A Collection entity enables you to operate over an array. Its API provides basic reducers to manipulate the elements in the array.
 
-To prevent unexpected results, a **Collection** can only return arrays. If a collection resolves to a different type, it will throw an eror. This type check occurs *before* the value is passed to the (optional) `outputType` reducer.
+To prevent unexpected results, a **Collection** can only return arrays. If a collection resolves to a different type, it will throw an error. This type check occurs *before* the value is passed to the (optional) `outputType` reducer.
 
-**IMPORTANT:** Keep in mind that in DataPoint, **all** operations are asynchronous. If your operations do NOT need to be asynchronous, iterating over a large array might result in slower execution. In such cases, consider using a reducer function where you can implement a synchronous solution.
+**IMPORTANT:** Keep in mind that in DataPoint, **all** operations are asynchronous. If your operations do NOT need to be asynchronous, iterating over a large array might result in slower execution. In such cases, consider using a function reducer where you can implement a synchronous solution.
 
 **SYNOPSIS**
 
@@ -2525,20 +2669,20 @@ dataPoint.addEntities({
 | *inputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's input value, but does not mutate it |
 | *before*  | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value* | [Reducer](#reducers) | The value to which the Entity resolves |
-| *map* | [Reducer](#reducers) | Maps the items of an array. Internally, this uses the [map](#reducer-map) reducer helper |
-| *find* | [Reducer](#reducers) | Find an item in the array. Internally, this uses the [find](#reducer-find) reducer helper |
-| *filter* | [Reducer](#reducers) | Filters the items of an array. Internally, this uses the [filter](#reducer-filter) reducer helper |
-| *compose* | [ComposeReducer](#compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one object gets passed to the next one |
+| *map* | [Reducer](#reducers) | Maps the items of an array. Internally, this uses the [map](#map) reducer helper |
+| *find* | [Reducer](#reducers) | Find an item in the array. Internally, this uses the [find](#find) reducer helper |
+| *filter* | [Reducer](#reducers) | Filters the items of an array. Internally, this uses the [filter](#filter) reducer helper |
+| *compose* | [ComposeReducer](#entity-compose-reducer)`[]` | Modify the value of accumulator through an Array of `ComposeReducer` objects. Think of it as a [Compose/Flow Operation](https://en.wikipedia.org/wiki/Function_composition_(computer_science)), where the result of one object gets passed to the next one |
 | *after* | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it. Hash only supports custom outputType reducers, and not the built-in types like **string**, **number**, etc. |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *params* | `Object` | User-defined Hash that will be passed to every reducer within the context of the transform function's execution |
 
-##### <a name="collection-entity-reducers">Collection Reducers</a>
+#### Collection Reducers
 
-Collection entities expose a set of optional reducers: [map](#collection-map), [find](#collection-find), and [filter](#collection-filter). When using more than one of these reducers, they should be defined with the `compose` property.
+Collection entities expose a set of optional reducers: [map](#collectionmap), [find](#collectionfind), and [filter](#collectionfilter). When using more than one of these reducers, they should be defined with the `compose` property.
 
-##### <a name="collection-map">Collection.map</a>
+#### Collection.map
 
 Maps a transformation to each element in a collection.
 
@@ -2683,7 +2827,7 @@ dataPoint
   })
 ```
 
-##### <a name="collection-filter">Collection.filter</a>
+#### Collection.filter
 
 Creates a new array with all elements that pass the test implemented by the provided transform.
 
@@ -2779,7 +2923,7 @@ The following example gets all the repos that are actually forks. In this case, 
 </details>
 
 
-##### <a name="collection-find">Collection.find</a>
+#### Collection.find
 
 Returns the value of the first element in the array that satisfies the provided testing transform. Otherwise, `undefined` is returned.
 
@@ -2826,7 +2970,7 @@ Returns the value of the first element in the array that satisfies the provided 
 </details>
 
 
-##### <a name="collection-compose">Collection.compose</a>
+#### Collection.compose
 
 `Collection.compose` receives an array of **modifiers**  (filter, map, find). You may add as many modifiers as you need, in any order, by _composition_.
 
@@ -2935,7 +3079,7 @@ Returns the value of the first element in the array that satisfies the provided 
 
 For more examples of collection entities, see the [Examples](examples), on the unit tests: [Request Definitions](test/definitions/collection.js), and [Integration Examples](test/definitions/integrations.js)
 
-#### <a name="control-entity">Control Entity</a>
+### Control
 
 The Flow Control entity allows you to control the flow of your transformations.
 
@@ -2965,13 +3109,13 @@ dataPoint.addEntities({
 |:---|:---|:---|
 | *inputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's input value, but does not mutate it |
 | *before* | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
-| *select* | [Case Statements](#case-statements)`[]` | Array of case statements, and a default fallback |
+| *select* | [Case Statements](#controlselect)`[]` | Array of case statements, and a default fallback |
 | *params* | `Object` | User-defined Hash that will be passed to every transform within the context of the transform's execution |
 | *after* | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *outputType*  | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |
 | *error* | [Reducer](#reducers) | reducer to be resolved in case of an error |
 
-##### <a name="case-statements">Case Statements</a>
+#### Control.select
 
 The `select` array may contain one or more case statements, similar to a `switch` in plain JavaScript. It executes from top to bottom, until it finds a case statement that results in a `truthy` value. Once it finds a match, it will execute its `do` reducer to resolve the entity.
 
@@ -3025,7 +3169,7 @@ dataPoint.resolve('control:fruitPrices', 'plum')
 
 For examples of control entities, see the ones used on the unit tests: [Control Definitions](test/definitions/control.js), and [Integration Examples](test/definitions/integrations.js)
 
-#### <a name="schema-entity">Schema Entity</a>
+### Schema
 
  Runs a JSON Schema against a data structure [Ajv](https://github.com/epoberezkin/ajv) behind the scenes.
 
@@ -3065,11 +3209,11 @@ dataPoint.addEntities({
 
 For examples of Schema entities, see the ones used on the unit tests: [Schema Definitions](test/definitions/schema.js), and [Integration Examples](test/definitions/integrations.js)
 
-#### <a name="entity-compose-reducer">Entity Compose Reducer</a>
+## Entity Compose Reducer
 
-This reducer is an `Array` of [ComposeReducer](#compose-reducer) objects. Each reducer gets executed asynchronously. You may add as many supported reducers as you want by the entity. The result of each reducer gets passed to the next reducer in sequence. 
+This reducer is an `Array` of **ComposeReducer** objects. Each reducer gets executed asynchronously. You may add as many supported reducers as you want by the entity. The result of each reducer gets passed to the next reducer in sequence. 
 
-<a name="compose-reducer">**ComposeReducer**</a>: is an object with a single 'key'. The key is the type of reducer you want to execute, and its value is the body of the reducer.
+**ComposeReducer**: is an object with a single 'key'. The key is the type of reducer you want to execute, and its value is the body of the reducer.
 
 **SYNOPSIS**
 
@@ -3088,7 +3232,7 @@ compose: [
 
 For examples of the hash entity compose implementation, see [Hash Compose Example](examples/entity-hash-compose.js).
 
-### <a name="extending-entities">Extending Entities</a>
+## Extending Entities
 
 You may extend entity definitions. This functionality is mainly used with the DRY principle. It is not meant to work as an inheritance pattern, but can be used in cases where you want to override entity A with entity B. 
 
@@ -3183,87 +3327,136 @@ Example at: [examples/extend-entity-keys.js](examples/extend-entity-keys.js)
 
 Example at: [examples/extend-entity-reusability.js](examples/extend-entity-reusability.js)
 
-### <a name="api-data-point-use">dataPoint.use</a>
+## Global Entity Options
 
-Adds a middleware method. Middleware, in the DataPoint context, is a place to add logic that you want to be executed `before` and `after` the execution of all the entities DataPoint has registered.
+You may set global params for entry types, allowing you to set these options once and have them be consistent. We do this using `entityOverrides` within the options object.
 
-This middleware layer allows you to control the execution of entities. 
-
-**SYNOPSIS**
+**EXAMPLE**
 
 ```js
-dataPoint.use(id, callback)
-```
-
-**ARGUMENTS**
-
-| Argument | Type | Description |
-|:---|:---|:---|
-| *id* | `string` | middleware ID is a two part string in the form of `<EntityType>:<EventType>`, where `<EntityType>` may be `entry`, `model`, `request`, or any other registered entity type. `<EventType>` is either `before` or `after`. |
-| *callback* | `Function` | This is the callback function that will be executed once an entity event is triggered. The callback has the form `(acc, next)`, where `acc` is the current middleware [Middleware Accumulator](#middleware-accumulator-object) object, and next is a function callback to be executed once the middleware is done executing. `next` callback uses the form of `(error)`. |
-
-### <a name="middleware-accumulator-object">Middleware Accumulator object</a>
-
-This object is a copy of the currently executing entity's [Accumulator](#accumulator) object with a method `resolve(value)` appended to it. The `resolve(value)` method allows you to control the execution of the middleware chain. When/if `acc.resolve(value)` is called inside a middleware callback, it will skip the execution of the entity and immediately resolve to the value that was passed. 
-
-**SYNOPSIS**
-
-```js
-{ // extends Accumulator
-  resolve: Function,
-  ...
+const options = {
+  entityOverrides: {
+    'request': {
+      params: {
+        inspect: true
+      }
+    }
+  }
 }
+
+dataPoint.resolve('request:xyz', {}, options)
 ```
+The preceding example will make it so every `'request'` entity will have the inspect param set to true. This can be done with any entity and its respective parameters.
 
-**API:**
+Example at: [examples/entity-request-options-override.js](examples/entity-request-options-override.js)
 
-| Key | Type | Description |
-|:---|:---|:---|
-| `resolve` | `Function` | Will resolve the entire entity with the value passed. This function has the form of: `(value)` |
+## Middleware
 
-### <a name="api-data-point-add-value">dataPoint.addValue</a>
+Middleware, in the DataPoint context, is a place to add logic that will execute `before` and `after` the resolution of specified entity types. The middleware layer adds a `resolve` method to the [Accumulator](#middleware-accumulator-object) object, which allows you to control the resolution of entities.
 
-Stores any value to be accessible via [Accumulator](#accumulator).values.
+### dataPoint.use
+
+Adds a middleware method.
 
 **SYNOPSIS**
 
 ```js
-dataPoint.addValue(objectPath, value)
+dataPoint.use(id:String, callback:Function)
 ```
 
 **ARGUMENTS**
 
 | Argument | Type | Description |
 |:---|:---|:---|
-| *objectPath* | `string` | object path where you want to add the new value. Uses [_.set](https://lodash.com/docs/4.17.4#set) to append to the values object |
-| *value* | `*` | anything you want to store |
+| *id* | `string` | This ID is a string with the form `<EntityType>:<EventType>`, where `<EntityType>` is any registered entity type and `<EventType>` is either `'before'` or `'after'`. |
+| *callback* | `Function` | This is the callback function that will be executed once an entity event is triggered. The callback has the form `(acc, next)`, where `acc` is the current middleware [Middleware Accumulator](#middleware-accumulator-object) object, and next is a function callback to be executed once the middleware is done executing. The `next` callback uses the form of `(error, resolvedValue)`. |
 
-## <a name="custom-entity-types">Custom Entity Types</a>
+**EXAMPLE:**
+
+```js
+const dp = DataPoint.create()
+
+dp.use('before', (acc, next) => {
+  console.log(`Entity ${acc.reducer.id} is being called`)
+  next()
+})
+
+dp.use('after', (acc, next) => {
+  console.log(`Entity ${acc.reducer.id} was called`)
+  next()
+})
+
+const MyModel = DataPoint.Model('MyModel', {
+  value: () => 'new value'
+})
+
+dp.resolve(MyModel, true)
+  // console output: 
+  //   Entity model:MyModel is being called
+  //   Entity model:MyModel was called
+  .then(() => {
+
+  })
+```
+
+### Exiting Middleware chain
+
+To exit the middleware chain with a resolved value you must pass a second parameter to the `next(err, val)` function provided by the middleware handler. By calling the `next` function with `null` as first parameter and a value as a second parameter (eg. `next(null, newValue`) the entity will resolve to that value without executing any remaining methods in the middleware chain. This allows you to skip unnecessary work if, for example, a cached return value was found.
+
+**NOTE**: the `next` method should be called only once per middleware handler, multiple calls will be ignored.
+
+
+<details>
+  <summary>hijacking the value of an entity</summary>
+
+  ```js
+  const dp = DataPoint.create()
+
+  dp.use('before', (acc, next) => {
+    console.log('Entity model:MyModel is being called')
+    next()
+  })
+
+  dp.use('before', (acc, next) => {
+    console.log('hijacking')
+    next(null, 'hijacked')
+  })
+
+  dp.use('before', (acc, next) => {
+    console.log('never got here')
+    next()
+  })
+
+  const MyModel = DataPoint.Model('MyModel', {
+    value: () => {
+      // this will not be executed because the entity was hijacked
+      console.log('processing')
+      return 'hello'
+    }
+  })
+
+  dp.resolve(MyModel, true)
+    // console output:
+    //   Entity model:MyModel is being called
+    //   hijacking
+    .then((value) => {
+      assert.strictEqual(value, 'hijacked')
+    })
+  ```
+
+</details>
+
+Example at: [examples/middleware-exit-chain.js](examples/middleware-exit-chain.js)
+
+## Custom Entity Types
 
 DataPoint exposes a set of methods to help you build your own Custom Entity types. With them you can build on top of the [base entity API](#entity-base-api).
 
-### <a name="adding-entity-types">Adding new Entity types</a>
+### Adding a new Entity type
 
-You can add custom Entity types when creating a DataPoint instance with [DataPoint.create](#api-data-point-create); you can also add them later with [dataPoint.addEntityType](#data-point-add-entity-type) and/or [dataPoint.addEntityTypes](#data-point-add-entity-types).
+You can register custom Entity types when creating a DataPoint instance with [DataPoint.create](#create); you can also register them later with [dataPoint.addEntityType](#addentitytype) and/or [dataPoint.addEntityTypes](#addentitytypes).
 
-#### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
-
-Add a new Entity type to the DataPoint instance.
-
-**SYNOPSIS**
-
-```js
-dataPoint.addEntityType(id:String, spec:Object)
-```
-
-**ARGUMENTS**
-
-| Argument | Type | Description |
-|:---|:---|:---|
-| *id* | `String` | The name of the new Entity type. |
-| *spec* | `Object` | The Entity spec. |
-
-#### <a name="data-point-add-entity-types">dataPoint.addEntityType</a>
+#### addEntityType
 
 Adds a single Entity type to the DataPoint instance.
 
@@ -3280,7 +3473,7 @@ dataPoint.addEntityType(name:String, spec:Object)
 | *name* | `Object` | Name of the new Entity type |
 | *spec* | `Object` | New [Entity spec](#custom-entity-spec) API |
 
-#### <a name="data-point-add-entity-types">dataPoint.addEntityTypes</a>
+#### addEntityTypes
 
 Adds one or more Entity Types to the DataPoint instance.
 
@@ -3296,7 +3489,7 @@ dataPoint.addEntityTypes(specs:Object)
 |:---|:---|:---|
 | *specs* | `Object` | Key/value hash where each key is the name of the new Entity type and value is the [Entity spec](#custom-entity-spec) API. |
 
-#### <a name="custom-entity-spec">Custom Entity Spec</a>
+### Custom Entity Spec
 
 Every Entity must expose two methods:
 
@@ -3305,15 +3498,15 @@ Every Entity must expose two methods:
 
 Because you are extending the base entity API, you get before, value, after, params and error values. You only have to take care of resolving value and any other custom property you added to your custom entity. Everything else will be resolved by the core DataPoint resolver. 
 
-#### <a name="entity-create">Entity.create</a>
+#### Entity.create
 
 This is a factory method, it receives a raw entity spec, and expects to return a new entity instance object.
 
 ```js
-function create(spec:Object):Object
+function create(name:String, spec:Object):Object
 ```
 
-#### <a name="entity-resolve">Entity.resolve</a>
+#### Entity.resolve
 
 This is where your entity resolution logic is to be implemented. It follows the following syntax: 
 
@@ -3341,7 +3534,9 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise
   */
   function create (spec, id) {
     // create an entity instance
-    const entity = DataPoint.createEntity(RenderTemplate, spec, id)
+    const entity = mew RenderTemplate()
+    entity.spec = spec
+    entity.resolve = resolve
     // set/create template from spec.template value
     entity.template = _.template(_.defaultTo(spec.template, ''))
     return entity
@@ -3356,25 +3551,20 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise
   function resolve (accumulator, resolveReducer) {
     // get Entity Spec
     const spec = accumulator.reducer.spec
-    // resolve 'spec.value' reducer against accumulator
-    return resolveReducer(accumulator, spec.value)
-      .then((acc) => {
-        // execute lodash template against accumulator value
-        const output = spec.template(acc.value)
-        // creates a new acc object with new value
-        return Object.assign({}, acc, {
-          value: output
-        })
-      })
+    // execute lodash template against
+    // accumulator value
+    const value = spec.template(accumulator.value)
+    // set new accumulator.value
+    // this method creates a new acc object
+    return Object.assign({}, accumulator, {
+      value
+    })
   }
 
   /**
   * RenderEntity API
   */
-  const RenderEntity = {
-    create,
-    resolve
-  }
+  const RenderEntity = DataPoint.createEntity('render', create)
 
   // Create DataPoint instance
   const dataPoint = DataPoint.create({
@@ -3402,7 +3592,7 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise
   dataPoint
     .resolve('render:HelloWorld', input)
     .then((output) => {
-      assert.equal(output, '<h1>Hello World!!</h1>')
+      assert.strictEqual(output, '<h1>Hello World!!</h1>')
     })
   ```
 </details>
@@ -3410,7 +3600,55 @@ function resolve(acc:Accumulator, resolveReducer:function):Promise
 
 Example at: [examples/custom-entity-type.js](examples/custom-entity-type.js)
 
-## <a name="integrations">Integrations</a>
+## Tracing DataPoint calls
+
+To trace a DataPoint transformation you can set the value `trace:true` to the options object passed to the `datapoint.transform()` method. 
+
+This tool will write a JSON file to disk (on the current execution path) that exposes all of the reducers that are being executed within a transformation. It provides information such as time start and duration of each process as well as information regarding the reducer that was executed.
+
+
+### Example: 
+
+```js
+const DataPoint = require('data-point')
+const mocks = require('./async-example.mocks')
+
+// mock request calls
+mocks()
+
+const {
+  Model,
+  Request
+} = DataPoint
+
+const PersonRequest = Request('PersonRequest', {
+  url: 'https://swapi.co/api/people/{value}/'
+})
+
+const PersonModel = Model('PersonModel', {
+  value: {
+    name: '$name',
+    birthYear: '$birth_year'
+  }
+})
+
+const options = {
+  trace: true 
+}
+
+const dataPoint = DataPoint.create()
+
+dataPoint
+  .transform([PersonRequest, PersonModel], 1, options)
+  .then((output) => {
+    // a file with the name data-point-trace-<timestamp>.json will
+    // be created.
+  })
+```
+
+Example at: [examples/trace.js](examples/trace.js)
+
+## Integrations
 
 ### Basic Express Example
 
@@ -3443,89 +3681,14 @@ app.listen(3000, function () {
 })
 ```
 
-## <a name="patterns-best-practices">Patterns and Best Practices</a>
+## Patterns and Best Practices
 
-This section documents some of the patterns and best practices we have found useful while using DataPoint.
+For recommended patterns and best practices, please visit [docs/best-practices.md](docs/best-practices.md)
 
-### Parameterize a FunctionReducer
-
-You may use a [higher order function](https://medium.com/javascript-scene/higher-order-functions-composing-software-5365cf2cbe99) to parameterize a [FunctionReducer](#function-reducer). To do this you will create a function that **must** return a [FunctionReducer](#function-reducer).
-
-```js
-// sync
-const name = (param1, param2, ...) => (input:*, acc:Accumulator) => {
-  return newValue
-}
-// async via promise
-const name = (param1, param2, ...) => (input:*, acc:Accumulator) => {
-  return Promise.resolve(newValue)
-}
-// async via callback
-const name = (param1, param2, ...) => (input:*, acc:Accumulator, next:function) => {
-  next(error:Error, newValue:*)
-}
-```
-
-<details>
-  <summary>Higher Order Reducer Example</summary>
-  
-  ```js
-  const addStr = (newString) => (input) => {
-    return `${input}${newString}`
-  }
-  
-  dataPoint
-    .resolve(addStr(' World!!'), 'Hello')
-    .then((output) => {
-      assert.equal(output, 'Hello World!!')
-    })
-  ```
-</details>
-
-
-Example at: [examples/reducer-function-closure.js](examples/reducer-function-closure.js)
-
-### Keeping your FunctionReducers pure
-
-When it comes to creating your own reducer functions you want them to be [pure functions](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.r4iqvt9f0); this is so they do not produce any side effects. 
-
-In the context of a [FunctionReducer](#function-reducer) it means you should never change directly (or indirectly) the value of the [Accumulator.value](#accumulator). 
-
-<details>
-  <summary>Example</summary>
-
-  ```js
-  const badReducer = () => (input) => {
-    // never ever modify the value object.
-    input[1].username = 'foo'
-
-    // keep in mind JS is by reference
-    // so this means this is also
-    // modifying the value object
-    const image = input[1]
-    image.username = 'foo'
-
-    // pass value to next reducer
-    return input
-  }
-
-  // this is better
-  const fp = require('lodash/fp')
-  const goodReducer = () => (input) => {
-    // https://github.com/lodash/lodash/wiki/FP-Guide
-    // this will cause no side effects
-    const newValue = fp.set('[1].username', 'foo', input)
-
-    // pass value to next reducer
-    return newValue
-  }
-  ```
-</details>
-
-## <a name="contributing">Contributing</a>
+## Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/ViacomInc/data-point/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## <a name="license">License</a>
+## License
 
 This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details

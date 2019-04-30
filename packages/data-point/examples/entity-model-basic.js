@@ -1,6 +1,7 @@
 const assert = require('assert')
 const DataPoint = require('../')
-const dataPoint = DataPoint.create()
+
+const { Model } = DataPoint
 
 const input = {
   a: {
@@ -18,12 +19,11 @@ const multiplyBy = number => input => {
   return input * number
 }
 
-dataPoint.addEntities({
-  'model:foo': {
-    value: ['$a.b.c', getMax, multiplyBy(10)]
-  }
+const myModel = Model('myModel', {
+  value: ['$a.b.c', getMax, multiplyBy(10)]
 })
 
-dataPoint.resolve('model:foo', input).then(output => {
-  assert.equal(output, 30)
+const dataPoint = DataPoint.create()
+dataPoint.resolve(myModel, input).then(output => {
+  assert.strictEqual(output, 30)
 })

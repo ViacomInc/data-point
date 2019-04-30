@@ -39,7 +39,7 @@ describe('ReducerOmit#resolve', () => {
         b: '$b'
       },
       ['$c', input => input + 2],
-      DataPoint.helpers.parallel(['$a', '$b', '$c'])
+      DataPoint.parallel(['$a', '$b', '$c'])
     ])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {

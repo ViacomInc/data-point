@@ -3,7 +3,7 @@
 const Factory = require('./factory')
 
 test('Factory#create', () => {
-  const obj = Factory.create({
+  const obj = Factory.create('name', {
     value: ['$foo', (acc, done) => {}]
   })
 

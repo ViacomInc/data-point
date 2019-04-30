@@ -50,26 +50,14 @@ describe('Hash entity type checking', () => {
   })
 })
 
-describe('entity.hash.value', () => {
-  test('should resolve contxt Transform', () => {
-    return transform('hash:a.1', testData).then(result => {
-      expect(result).toEqual({
-        h1: 1,
-        h2: 2,
-        h3: 3
-      })
-    })
-  })
-})
-
 describe('entity.hash.mapKeys', () => {
   test('should map hash to new keys', () => {
-    return transform('hash:b.1', testData).then(result => {
+    return transform('hash:b.1', testData.a.h).then(result => {
       expect(result).toEqual({ h: 2 })
     })
   })
   test('returns empty object if mapKeys is empty', () => {
-    return transform('hash:b.2', testData).then(result => {
+    return transform('hash:b.2', testData.a.g).then(result => {
       expect(result).toEqual({})
     })
   })
@@ -77,7 +65,7 @@ describe('entity.hash.mapKeys', () => {
 
 describe('entity.hash.addKeys', () => {
   test('should add new keys to hash', () => {
-    return transform('hash:c.1', testData).then(result => {
+    return transform('hash:c.1', testData.a.h).then(result => {
       expect(result).toEqual({
         h1: 1,
         h2: 2,
@@ -87,7 +75,7 @@ describe('entity.hash.addKeys', () => {
     })
   })
   test('it should do nothing if addKeys is empty', () => {
-    return transform('hash:c.2', testData).then(result => {
+    return transform('hash:c.2', testData.a.g).then(result => {
       expect(result).toEqual({ g1: 1 })
     })
   })
@@ -95,14 +83,14 @@ describe('entity.hash.addKeys', () => {
 
 describe('entity.hash.omitKeys', () => {
   test('should omit keys from hash', () => {
-    return transform('hash:d.1', testData).then(result => {
+    return transform('hash:d.1', testData.a.h).then(result => {
       expect(result).toEqual({
         h3: 3
       })
     })
   })
   test('it should do nothing if omitKeys is empty', () => {
-    return transform('hash:d.2', testData).then(result => {
+    return transform('hash:d.2', testData.a.g).then(result => {
       expect(result).toEqual({ g1: 1 })
     })
   })
@@ -110,7 +98,7 @@ describe('entity.hash.omitKeys', () => {
 
 describe('entity.hash.pickKeys', () => {
   test('should only pick keys from hash', () => {
-    return transform('hash:e.1', testData).then(result => {
+    return transform('hash:e.1', testData.a.h).then(result => {
       expect(result).toEqual({
         h1: 1,
         h2: 2
@@ -118,7 +106,7 @@ describe('entity.hash.pickKeys', () => {
     })
   })
   test('returns empty object if pickKeys is empty', () => {
-    return transform('hash:e.2', testData).then(result => {
+    return transform('hash:e.2', testData.a.g).then(result => {
       expect(result).toEqual({})
     })
   })
@@ -126,7 +114,7 @@ describe('entity.hash.pickKeys', () => {
 
 describe('entity.hash.addValues', () => {
   test('should add values to hash', () => {
-    return transform('hash:f.1', testData).then(result => {
+    return transform('hash:f.1', testData.a.h).then(result => {
       expect(result).toEqual({
         h0: 0,
         h1: 1,
@@ -136,7 +124,7 @@ describe('entity.hash.addValues', () => {
     })
   })
   test('it should do nothing if addValues is empty', () => {
-    return transform('hash:f.2', testData).then(result => {
+    return transform('hash:f.2', testData.a.g).then(result => {
       expect(result).toEqual({ g1: 1 })
     })
   })
@@ -144,7 +132,7 @@ describe('entity.hash.addValues', () => {
 
 describe('entity.hash.compose', () => {
   test('should resolved composed modifiers', () => {
-    return transform('hash:h.1', testData).then(result => {
+    return transform('hash:h.1', testData.a.e.e1).then(result => {
       expect(result).toEqual({
         e3: 'eThree'
       })

@@ -10,14 +10,12 @@ const BaseEntity = require('../../entity-types/base-entity/resolve')
  * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
-  const reducerEntityType = reducer.entityType
-  const EntityType = manager.entityTypes.get(reducerEntityType)
   return BaseEntity.resolve(
     manager,
     resolveReducer,
     accumulator,
     reducer,
-    EntityType.resolve
+    reducer.entity
   )
 }
 

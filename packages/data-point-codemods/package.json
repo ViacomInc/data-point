@@ -1,10 +1,14 @@
 {
   "name": "data-point-codemods",
-  "version": "3.1.0",
+  "version": "3.1.2-0",
   "description": "DataPoint Codemods",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-codemods"
+  },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "author": {
     "name": "Acatl Pacheco",
@@ -16,7 +20,7 @@
   "dependencies": {
     "jscodeshift": "0.x",
     "lib-upgrader": "1.x",
-    "lodash": "4.x"
+    "lodash": "^4.17.11"
   },
   "keywords": [
     "data-point",

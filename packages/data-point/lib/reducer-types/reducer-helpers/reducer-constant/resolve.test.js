@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
 const DataPoint = require('../../../index')
-const constant = DataPoint.helpers.constant
+const constant = DataPoint.constant
 
 const dataPoint = DataPoint.create()
 

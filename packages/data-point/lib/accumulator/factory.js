@@ -1,4 +1,5 @@
 const merge = require('lodash/merge')
+const debug = require('debug')('data-point')
 
 /**
  * @class
@@ -10,6 +11,7 @@ function Accumulator () {
   this.reducer = undefined
   this.trace = false
   this.context = undefined
+  this.traceGraph = []
 }
 
 module.exports.Accumulator = Accumulator
@@ -27,12 +29,13 @@ function create (spec) {
   accumulator.reducer = {
     spec: spec.context
   }
-
+  accumulator.entityOverrides = merge({}, spec.entityOverrides)
   accumulator.locals = merge({}, spec.locals)
   accumulator.values = spec.values
   accumulator.trace = spec.trace
+  accumulator.debug = debug
 
-  return Object.freeze(accumulator)
+  return accumulator
 }
 
 module.exports.create = create

@@ -1,13 +1,9 @@
 /* eslint-env jest */
 
-jest.mock('ioredis', () => {
-  return require('ioredis-mock')
-})
+jest.mock('./io-redis')
 
+const ms = require('ms')
 const RedisClient = require('./redis-client')
-
-const logger = require('./logger')
-logger.clear()
 
 describe('factory', () => {
   test('It should create a new redis instance', () => {
@@ -19,10 +15,14 @@ describe('factory', () => {
 })
 
 describe('reconnectOnError', () => {
+  const consoleError = console.error
+  afterAll(() => {
+    console.error = consoleError
+  })
   test('It should log error', () => {
-    logger.error = jest.fn()
+    console.error = jest.fn()
     const result = RedisClient.reconnectOnError(new Error('test'))
-    expect(logger.error).toBeCalled()
+    expect(console.error).toBeCalled()
     expect(result).toEqual(true)
   })
 })
@@ -63,33 +63,156 @@ describe('create', () => {
       expect(typeof redisClient.redis.set === 'function').toBeTruthy()
       expect(typeof redisClient.get === 'function').toBeTruthy()
       expect(typeof redisClient.set === 'function').toBeTruthy()
+      expect(typeof redisClient.del === 'function').toBeTruthy()
       expect(typeof redisClient.exists === 'function').toBeTruthy()
     })
   })
 })
 
 describe('get/set/exists', () => {
-  test('It should test get/set functionality', () => {
+  test('It should test get/set/exists functionality', () => {
     return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
+      return redisClient
+        .set('test', 'test', 2000)
+        .then(() => {
+          const jobs = [
+            redis
+              .pipeline()
+              .get('test')
+              .exec(),
+            redis
+              .pipeline()
+              .pttl('test')
+              .exec(),
+            redisClient.get('test'),
+            redisClient.exists('test')
+          ]
+          return Promise.all(jobs)
+        })
+        .then(results => {
+          const rawValue = results[0][0][1]
+          const ttl = results[1][0][1]
+          const value = results[2]
+          const exists = results[3]
+
+          expect(JSON.parse(rawValue)).toEqual({
+            d: 'test'
+          })
+          expect(ttl).toBeGreaterThan(1900)
+          expect(value).toEqual('test')
+          expect(exists).toEqual(true)
+        })
+    })
+  })
+
+  test('It should test set with no ttl', () => {
+    return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
+      return redisClient
+        .set('stale', 'test', 0)
+        .then(() => {
+          const jobs = [
+            redis
+              .pipeline()
+              .get('stale')
+              .exec(),
+            redis
+              .pipeline()
+              .pttl('stale')
+              .exec()
+          ]
+          return Promise.all(jobs)
+        })
+        .then(results => {
+          const rawValue = results[0][0][1]
+          const ttl = results[1][0][1]
+
+          expect(JSON.parse(rawValue)).toEqual({
+            d: 'test'
+          })
+          expect(ttl).toBe(-1)
+        })
+    })
+  })
+
+  test('It should set ttl to 2 weeks if not provided', () => {
+    return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
       return redisClient
         .set('test', 'test')
         .then(() => {
-          return redisClient.get('test')
+          const jobs = [
+            redis
+              .pipeline()
+              .get('test')
+              .exec(),
+            redis
+              .pipeline()
+              .pttl('test')
+              .exec()
+          ]
+          return Promise.all(jobs)
         })
-        .then(val => {
-          expect(val).toEqual('test')
+        .then(results => {
+          const rawValue = results[0][0][1]
+          const ttl = results[1][0][1]
+
+          expect(JSON.parse(rawValue)).toEqual({
+            d: 'test'
+          })
+          expect(ttl).toBeGreaterThan(ms('6d'))
+        })
+    })
+  })
+
+  test('It should test get on non existent key', () => {
+    return RedisClient.create().then(redisClient => {
+      return redisClient.get('invalid').then(value => {
+        expect(value).toEqual(undefined)
+      })
+    })
+  })
+
+  test('It should test exists on non existent key', () => {
+    return RedisClient.create().then(redisClient => {
+      return redisClient.exists('invalid').then(value => {
+        expect(value).toEqual(false)
+      })
+    })
+  })
+
+  test('It should delete a key', () => {
+    return RedisClient.create().then(redisClient => {
+      const redis = redisClient.redis
+
+      return redis
+        .pipeline()
+        .set('toBeRemoved', 'foo')
+        .exec()
+        .then(() => {
+          return redisClient.del('toBeRemoved')
         })
         .then(() => {
-          return redisClient.exists('test')
+          return redis
+            .pipeline()
+            .get('toBeRemoved')
+            .exec()
         })
-        .then(val => {
-          expect(val).toEqual(true)
+        .then(result => {
+          expect(result).toEqual([[null, null]])
         })
     })
   })
 })
 
 describe('redisDecorator', () => {
+  const consoleError = console.error
+  const consoleInfo = console.info
+  afterAll(() => {
+    console.error = consoleError
+    console.info = consoleInfo
+  })
   test('It should execute resolve when ready', done => {
     const EventEmitter = require('events')
     const redis = new EventEmitter()
@@ -116,21 +239,21 @@ describe('redisDecorator', () => {
   test('It should log error when already connected', () => {
     const EventEmitter = require('events')
     const redis = new EventEmitter()
-    logger.error = jest.fn()
+    console.error = jest.fn()
     RedisClient.redisDecorator(redis, () => {})
     redis.emit('connect')
     redis.emit('error', new Error('test'))
-    expect(logger.error).toBeCalled()
+    expect(console.error).toBeCalled()
   })
 
   test('It should log when reconnected', () => {
     const EventEmitter = require('events')
     const redis = new EventEmitter()
-    logger.info = jest.fn()
+    console.info = jest.fn()
 
     RedisClient.redisDecorator(redis)
     redis.emit('reconnecting')
     redis.emit('connect')
-    expect(logger.info).toBeCalled()
+    expect(console.info).toBeCalled()
   })
 })

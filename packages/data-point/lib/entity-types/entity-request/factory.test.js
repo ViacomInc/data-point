@@ -8,9 +8,9 @@ const { isReducer } = require('../../reducer-types')
 
 describe('create', () => {
   let request
-  beforeAll(() => {
+  beforeEach(() => {
     const requestSpec = requests['request:a0.1']
-    request = requestFactory.create(requestSpec)
+    request = requestFactory.create('name', requestSpec)
   })
   test('It should have defaults', () => {
     expect(request).toHaveProperty('id')
@@ -26,7 +26,7 @@ describe('create', () => {
     expect(isReducer(request.options)).toBe(true)
   })
   test('It should have the default options reducer', () => {
-    const newRequest = requestFactory.create(requests['request:a1.0'])
+    const newRequest = requestFactory.create('name', requests['request:a1.0'])
     expect(isReducer(newRequest.options)).toBe(true)
     expect(newRequest.options.body).toEqual(requestFactory.defaultOptions)
   })

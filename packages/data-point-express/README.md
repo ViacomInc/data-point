@@ -6,7 +6,7 @@
 
 ## Requirements
 
-- Node 6 LTS (or higher)
+- Node 8 LTS (or higher)
 - [Redis](https://redis.io/) (Optional for development)
 - Peer dependencies: [data-point](https://www.npmjs.com/package/data-point), [Express](https://www.npmjs.com/package/express)
 
@@ -194,7 +194,7 @@ app.use('/api', service.router({
     priority: 100,
     path: '/hello-world',
     method: 'GET',
-    middleware: 'transform:HelloWorld'
+    middleware: 'reducer:HelloWorld'
   },
   addUser: {
     priority: 200,

@@ -1,8 +1,11 @@
 const _ = require('lodash')
 const fp = require('lodash/fp')
+const Promise = require('bluebird')
 const rp = require('request-promise')
 
 const utils = require('../../utils')
+
+let debugIdCounter = 0
 
 /**
  * request's default options
@@ -40,10 +43,10 @@ module.exports.getRequestOptions = getRequestOptions
  * @return {Promise<Accumulator>}
  */
 function resolveOptions (accumulator, resolveReducer) {
-  accumulator = resolveUrl(accumulator)
+  const url = resolveUrl(accumulator)
   const specOptions = accumulator.reducer.spec.options
   return resolveReducer(accumulator, specOptions).then(value => {
-    const options = getRequestOptions(accumulator.url, value)
+    const options = getRequestOptions(url, value)
     return utils.assign(accumulator, { options })
   })
 }
@@ -73,9 +76,18 @@ module.exports.resolveUrlInjections = resolveUrlInjections
  * @return {Accumulator}
  */
 function resolveUrl (acc) {
-  const entity = acc.reducer.spec
-  const url = resolveUrlInjections(entity.url, acc)
-  return utils.assign(acc, { url })
+  let urlToResolve = acc.reducer.spec.url
+
+  // use acc.value when Request.url is not set
+  if (!urlToResolve && typeof acc.value === 'string' && acc.value) {
+    urlToResolve = acc.value
+  }
+
+  // prevent from executing resolveUrlInjections when
+  // urlToResolve is empty string
+  return urlToResolve && typeof urlToResolve === 'string'
+    ? resolveUrlInjections(urlToResolve, acc)
+    : undefined
 }
 
 module.exports.resolveUrl = resolveUrl
@@ -83,24 +95,71 @@ module.exports.resolveUrl = resolveUrl
 /**
  * @param {Accumulator} acc
  */
-function inspect (acc) {
-  if (acc.params && acc.params.inspect) {
+function inspect (acc, request) {
+  const paramInspect = acc.params && acc.params.inspect
+  if (paramInspect === true) {
     utils.inspect(acc, {
       options: acc.options,
       value: acc.value
     })
+    return true
   }
+
+  if (typeof paramInspect === 'function') {
+    // some of this logic borrows from https://github.com/request/request-debug
+    const debugId = ++debugIdCounter
+    const data = {
+      debugId,
+      type: 'request',
+      uri: request.uri.href,
+      method: request.method,
+      headers: _.cloneDeep(request.headers)
+    }
+    if (request.body) {
+      data.body = request.body.toString('utf8')
+    }
+    _.attempt(paramInspect, acc, data)
+    // This promise chain should not be returned,
+    // because it is only being used to trigger
+    // the paramInspect callback
+    request
+      .then(res => {
+        _.attempt(paramInspect, acc, {
+          debugId,
+          type: 'response',
+          statusCode: res.statusCode,
+          headers: res.headers
+        })
+      })
+      .catch(error => {
+        _.attempt(paramInspect, acc, {
+          debugId,
+          type: 'error',
+          statusCode: error.statusCode,
+          headers: error.headers
+        })
+      })
+    return true
+  }
+
+  return false
 }
 
 module.exports.inspect = inspect
 
 /**
  * @param {Accumulator} acc
- * @return {Promise}
+ * @param {Function} resolveReducer
+ * @return {Promise<Accumulator>}
  */
-function resolveRequest (acc) {
-  inspect(acc)
-  return rp(acc.options).catch(error => {
+function resolveRequest (acc, resolveReducer) {
+  const options = Object.assign({}, acc.options, {
+    resolveWithFullResponse: true
+  })
+
+  const request = rp(options)
+  inspect(acc, request)
+  return request.then(res => res.body).catch(error => {
     // remove auth objects from acc and error for printing to console
     const redactedAcc = fp.set('options.auth', '[omitted]', acc)
     const redactedError = fp.set('options.auth', '[omitted]', error)
@@ -134,15 +193,12 @@ module.exports.resolveRequest = resolveRequest
 /**
  * @param {Accumulator} acc
  * @param {Function} resolveReducer
- * @return {Promise}
+ * @return {Promise<Accumulator>}
  */
 function resolve (acc, resolveReducer) {
-  const entity = acc.reducer.spec
-  return resolveReducer(acc, entity.value)
-    .then(value => {
-      return resolveOptions(utils.set(acc, 'value', value), resolveReducer)
-    })
-    .then(itemContext => resolveRequest(itemContext))
+  return Promise.resolve(acc)
+    .then(itemContext => resolveOptions(itemContext, resolveReducer))
+    .then(itemContext => resolveRequest(itemContext, resolveReducer))
 }
 
 module.exports.resolve = resolve

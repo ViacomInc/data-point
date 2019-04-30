@@ -1,3 +1,5 @@
+const Promise = require('bluebird')
+
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer

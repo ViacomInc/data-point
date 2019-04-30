@@ -2,7 +2,7 @@
 
 const factory = require('./factory')
 const createReducer = require('../index').create
-const constant = require('../..').helpers.constant
+const constant = require('../..').constant
 
 test('ReducerObject.factory#isType', () => {
   expect(factory.isType('$foo')).toBe(false)
@@ -26,7 +26,7 @@ describe('ReducerObject.factory#getProps', () => {
         a2: ['$a2', () => false],
         b2: [
           {
-            a3: 'transform:entity-name',
+            a3: 'reducer:entity-name',
             b3: '$b1.b2.b3',
             c3: constant('CONSTANT')
           }

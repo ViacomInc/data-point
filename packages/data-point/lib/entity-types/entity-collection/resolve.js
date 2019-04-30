@@ -1,5 +1,3 @@
-const utils = require('../../utils')
-
 /**
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
@@ -7,10 +5,7 @@ const utils = require('../../utils')
  */
 function resolve (accumulator, resolveReducer) {
   const entity = accumulator.reducer.spec
-  return resolveReducer(accumulator, entity.value).then(value => {
-    const acc = utils.set(accumulator, 'value', value)
-    return resolveReducer(acc, entity.compose)
-  })
+  return resolveReducer(accumulator, entity.compose)
 }
 
 module.exports.resolve = resolve

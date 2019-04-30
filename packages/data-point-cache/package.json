@@ -1,11 +1,15 @@
 {
   "name": "data-point-cache",
-  "version": "3.1.0",
+  "version": "3.3.1-0",
   "description": "DataPoint Cache Layer",
   "main": "lib/index.js",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache"
+  },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "author": {
     "name": "Acatl Pacheco",
@@ -17,9 +21,8 @@
   "dependencies": {
     "bluebird": "3.5.1",
     "ioredis": "3.1.4",
-    "lodash": "4.x",
-    "ms": "2.x",
-    "winston": "2.x"
+    "lodash": "^4.17.11",
+    "ms": "2.x"
   },
   "keywords": [
     "cache",

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getDefaultSettings should return default settings 1`] = `
+Object {
+  "cache": Object {
+    "isRequired": false,
+  },
+}
+`;
+
+exports[`handleCacheError It should throw error if cache is required 1`] = `"error"`;
+
+exports[`prefixDeprecationError should warn when cache.prefix is set 1`] = `"options.cache.prefix is now deprecated, please use options.cache.redis.keyPrefix instead."`;

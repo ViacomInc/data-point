@@ -8,13 +8,81 @@ jest.mock('data-point-cache', () => {
   }
 })
 
+let os = require('os')
 let Factory = require('./factory')
 const DataPoint = require('data-point')
 const _ = require('lodash')
 
-const logger = require('./logger')
+describe('getDefaultSettings', () => {
+  it('should return default settings', () => {
+    expect(Factory.getDefaultSettings()).toMatchSnapshot()
+  })
+})
 
-logger.clear()
+describe('prefixDeprecationError', () => {
+  it('should do nothing if cache.prefix is undefined', () => {
+    expect(() => {
+      Factory.prefixDeprecationError({})
+    }).not.toThrowError()
+  })
+
+  it('should warn when cache.prefix is set', () => {
+    expect(() => {
+      Factory.prefixDeprecationError({
+        cache: {
+          prefix: 'something'
+        }
+      })
+    }).toThrowErrorMatchingSnapshot()
+  })
+})
+
+describe('getCachePrefix', () => {
+  const hostname = os.hostname
+  const warn = console.warn
+  afterEach(() => {
+    os.hostname = hostname
+    console.warn = warn
+  })
+
+  it('should return os.hostname if not set', () => {
+    const options = {}
+    os.hostname = () => 'test'
+    expect(Factory.getCachePrefix(options)).toEqual('test:')
+  })
+  it('should use cache.redis.keyPrefix ', () => {
+    const options = {
+      cache: {
+        redis: {
+          keyPrefix: 'keyPrefix'
+        }
+      }
+    }
+    expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
+  })
+  it('should use cache.redis.keyPrefix over cache.prefix ', () => {
+    const options = {
+      cache: {
+        redis: {
+          keyPrefix: 'keyPrefix'
+        }
+      }
+    }
+    console.warn = () => {}
+    expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
+  })
+  it('should use not add colon(:) twice', () => {
+    const options = {
+      cache: {
+        redis: {
+          keyPrefix: 'keyPrefix:'
+        }
+      }
+    }
+    console.warn = () => {}
+    expect(Factory.getCachePrefix(options)).toEqual('keyPrefix:')
+  })
+})
 
 describe('createServiceObject', () => {
   test('It should create a default ServiceObject', () => {
@@ -22,14 +90,15 @@ describe('createServiceObject', () => {
     const Service = Factory.createServiceObject()
     expect(Service).toEqual({
       cache: null,
-      cachePrefix: os.hostname(),
       dataPoint: null,
       isCacheAvailable: false,
       isCacheRequired: false,
       settings: {
         cache: {
           isRequired: false,
-          prefix: os.hostname()
+          redis: {
+            keyPrefix: `${os.hostname()}:`
+          }
         }
       }
     })
@@ -44,14 +113,15 @@ describe('createServiceObject', () => {
     })
     expect(Service).toEqual({
       cache: null,
-      cachePrefix: os.hostname(),
       dataPoint: null,
       isCacheAvailable: false,
       isCacheRequired: true,
       settings: {
         cache: {
           isRequired: true,
-          prefix: os.hostname()
+          redis: {
+            keyPrefix: `${os.hostname()}:`
+          }
         }
       }
     })
@@ -62,14 +132,14 @@ function saveRestoreLogs () {
   let loggerError
   let loggerWarn
   beforeEach(() => {
-    loggerError = logger.error
-    loggerWarn = logger.warn
-    logger.error = () => {}
-    logger.warn = () => {}
+    loggerError = console.error
+    loggerWarn = console.warn
+    console.error = () => {}
+    console.warn = () => {}
   })
   afterEach(() => {
-    logger.error = loggerError
-    logger.warn = loggerWarn
+    console.error = loggerError
+    console.warn = loggerWarn
   })
 }
 
@@ -84,15 +154,15 @@ describe('handleCacheError', () => {
   })
 
   test('It should inform user', () => {
-    logger.error = jest.fn()
-    logger.warn = jest.fn()
+    console.error = jest.fn()
+    console.warn = jest.fn()
 
     Factory.handleCacheError(new Error(), {
       settings: {}
     })
 
-    expect(logger.error).toBeCalled()
-    expect(logger.warn).toBeCalled()
+    expect(console.error).toBeCalled()
+    expect(console.warn).toBeCalled()
   })
 
   test('It should throw error if cache is required', () => {
@@ -101,7 +171,7 @@ describe('handleCacheError', () => {
         isCacheRequired: true,
         settings: {}
       })
-    }).toThrowError('error')
+    }).toThrowErrorMatchingSnapshot()
   })
 
   test('It should set isCacheAvailable as false if not error not thrown', () => {
@@ -168,7 +238,7 @@ describe('create', () => {
         isRequired: false
       },
       entities: {
-        'transform:foo': '$'
+        'reducer:foo': '$'
       }
     })
       .then(service => {
@@ -192,12 +262,7 @@ describe('create', () => {
       }
     })
 
-    const mockLogError = jest.fn()
-    jest.mock('./logger', () => {
-      return {
-        error: mockLogError
-      }
-    })
+    console.error = jest.fn()
 
     Factory = require('./factory')
 
@@ -207,7 +272,7 @@ describe('create', () => {
         isRequired: true
       },
       entities: {
-        'transform:foo': '$'
+        'reducer:foo': '$'
       }
     })
       .then(service => {
@@ -218,7 +283,7 @@ describe('create', () => {
       })
       .catch(error => error)
       .then(res => {
-        expect(mockLogError).toBeCalled()
+        expect(console.error).toBeCalled()
         expect(res).toHaveProperty('message', 'FAILED')
       })
   })

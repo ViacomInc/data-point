@@ -1,8 +1,9 @@
 /* eslint-env jest */
 
 const _ = require('lodash')
+const rp = require('request-promise')
 const nock = require('nock')
-const Resolve = require('./resolve')
+let Resolve = require('./resolve')
 
 const AccumulatorFactory = require('../../accumulator/factory')
 const ReducerFactory = require('../../reducer-types/factory')
@@ -12,6 +13,7 @@ const ResolveEntity = require('../base-entity/resolve')
 const FixtureStore = require('../../../test/utils/fixture-store')
 
 const helpers = require('../../helpers')
+let utils = require('../../utils')
 
 let dataPoint
 let resolveReducerBound
@@ -37,7 +39,8 @@ function helperMockContext (accumulatorData, reducerSource, requestName) {
     values
   })
   const reducer = ReducerFactory.create(reducerSource)
-  return ResolveEntity.createCurrentAccumulator(dataPoint, accumulator, reducer)
+  const entity = dataPoint.entities.get(reducer.id)
+  return ResolveEntity.createCurrentAccumulator(accumulator, reducer, entity)
 }
 
 beforeAll(() => {
@@ -51,6 +54,10 @@ beforeAll(() => {
 
 beforeEach(() => {
   dataPoint.middleware.clear()
+})
+
+afterEach(() => {
+  nock.cleanAll()
 })
 
 describe('resolveUrlInjections', () => {
@@ -75,19 +82,67 @@ describe('resolveUrlInjections', () => {
 })
 
 describe('resolveUrl', () => {
-  test('It should set acc.url value', () => {
-    const acc = Resolve.resolveUrl({
+  test('It should get spec.url', () => {
+    const result = Resolve.resolveUrl({
       reducer: {
         spec: {
           url: 'http://foo'
         }
       }
     })
-    expect(acc).toHaveProperty('url', 'http://foo')
+    expect(result).toBe('http://foo')
+  })
+
+  it('should fallback on acc.value when spec.url is not present', () => {
+    const result = Resolve.resolveUrl({
+      value: 'http://fallback.com',
+      reducer: {
+        spec: {
+          url: undefined
+        }
+      }
+    })
+    expect(result).toBe('http://fallback.com')
+  })
+
+  it('should not fallback on acc.value if acc.value is empty', () => {
+    const result = Resolve.resolveUrl({
+      value: '',
+      reducer: {
+        spec: {
+          url: undefined
+        }
+      }
+    })
+    expect(result).toBe(undefined)
+  })
+
+  it('should return undefined if Request.url is empty and acc.value empty but both are strings', () => {
+    const result = Resolve.resolveUrl({
+      value: '',
+      reducer: {
+        spec: {
+          url: ''
+        }
+      }
+    })
+    expect(result).toBe(undefined)
+  })
+
+  it('should return undefined when neither spec.url is present or value is string', () => {
+    const result = Resolve.resolveUrl({
+      value: {}, // not a string
+      reducer: {
+        spec: {
+          url: undefined
+        }
+      }
+    })
+    expect(result).toBe(undefined)
   })
 
   test('It should do injections', () => {
-    const acc = Resolve.resolveUrl({
+    const result = Resolve.resolveUrl({
       value: 'bar',
       reducer: {
         spec: {
@@ -95,7 +150,7 @@ describe('resolveUrl', () => {
         }
       }
     })
-    expect(acc).toHaveProperty('url', 'http://foo/bar')
+    expect(result).toBe('http://foo/bar')
   })
 })
 
@@ -261,37 +316,206 @@ describe('resolveRequest', () => {
 })
 
 describe('inspect', () => {
-  let consoleInfo
-  function getAcc () {
-    const acc = {}
-    _.set(acc, 'reducer.spec.id', 'test:test')
-    _.set(acc, 'params.inspect', true)
-    return acc
-  }
-  beforeAll(() => {
-    consoleInfo = console.info
+  let utilsInspectSpy
+  beforeEach(() => {
+    // debugIdCounter is a local variable in
+    // resolve.js, so this resets it to zero
+    jest.resetModules()
+    Resolve = require('./resolve')
+    utils = require('../../utils')
+    utilsInspectSpy = jest.spyOn(utils, 'inspect').mockReturnValue(undefined)
   })
   afterEach(() => {
-    console.info = consoleInfo
+    utilsInspectSpy.mockClear()
   })
-  test('It should not execute utils.inspect', () => {
-    console.info = jest.fn()
-    const acc = getAcc()
-    acc.params.inspect = undefined
-    Resolve.inspect(acc)
-    expect(console.info).not.toBeCalled()
+  afterAll(() => {
+    utilsInspectSpy.mockRestore()
   })
-  test('It should not execute utils.inspect', () => {
-    console.info = jest.fn()
-    Resolve.inspect(getAcc())
-    expect(console.info.mock.calls[0]).toContain('test:test')
+
+  function createAcc ({ inspect }) {
+    return {
+      value: 'boomerang',
+      options: {},
+      params: {
+        inspect
+      },
+      reducer: _.set({}, 'spec.id', 'test:test')
+    }
+  }
+  function createMockRequest (options) {
+    let { statusCode, requestType, rpOptions } = options
+    const nockInstance = nock('http://remote.test')
+    nockInstance[requestType]('/').reply(statusCode, { statusCode })
+    return rp[requestType]({
+      uri: 'http://remote.test',
+      resolveWithFullResponse: true,
+      ...rpOptions
+    })
+  }
+
+  test('It should ignore params.inspect and utils.inspect when params.inspect === undefined', async () => {
+    const acc = createAcc({ inspect: undefined })
+    const request = createMockRequest({ statusCode: 200, requestType: 'get' })
+    await expect(request).resolves.toBeTruthy()
+    Resolve.inspect(acc, request)
+    expect(utilsInspectSpy).not.toBeCalled()
   })
-  test('It should output options', () => {
-    console.info = jest.fn()
-    const acc = getAcc()
-    _.set(acc, 'options', { options: 1 })
-    Resolve.inspect(acc)
-    expect(console.info.mock.calls[0]).toContain('\noptions:')
+  test('It should ignore params.inspect and utils.inspect when params.inspect === false', async () => {
+    const acc = createAcc({ inspect: false })
+    const request = createMockRequest({ statusCode: 200, requestType: 'get' })
+    await expect(request).resolves.toBeTruthy()
+    Resolve.inspect(acc, request)
+    expect(utilsInspectSpy).not.toBeCalled()
+  })
+  test('It should execute utils.inspect when params.inspect === true', async () => {
+    const acc = createAcc({ inspect: true })
+    const request = createMockRequest({ statusCode: 200, requestType: 'get' })
+    Resolve.inspect(acc, request)
+    await expect(request).resolves.toBeTruthy()
+    expect(utilsInspectSpy).toBeCalledWith(
+      acc,
+      expect.objectContaining({
+        options: acc.options,
+        value: acc.value
+      })
+    )
+  })
+  test('It should execute params.inspect when rp.then is called', async () => {
+    const acc = createAcc({
+      inspect: jest.fn(() => {
+        // This helps verify that _.attempt is used when calling inspect
+        throw new Error()
+      })
+    })
+    const request = createMockRequest({
+      statusCode: 200,
+      requestType: 'get'
+    })
+    Resolve.inspect(acc, request)
+    await expect(request).resolves.toBeTruthy()
+    expect(utilsInspectSpy).not.toBeCalled()
+    expect(acc.params.inspect.mock.calls).toEqual([
+      [
+        acc,
+        expect.objectContaining({
+          debugId: 1,
+          type: 'request',
+          method: 'GET',
+          uri: expect.stringMatching('http://remote.test')
+        })
+      ],
+      [
+        acc,
+        expect.objectContaining({
+          debugId: 1,
+          statusCode: 200,
+          type: 'response'
+        })
+      ]
+    ])
+  })
+  test('It should execute params.inspect when rp.catch is called', async () => {
+    const acc = createAcc({
+      inspect: jest.fn(() => {
+        // This helps verify that _.attempt is used when calling inspect
+        throw new Error()
+      })
+    })
+    const request = createMockRequest({
+      statusCode: 404,
+      requestType: 'get'
+    })
+    Resolve.inspect(acc, request)
+    await expect(request).rejects.toBeTruthy()
+    expect(utilsInspectSpy).not.toBeCalled()
+    expect(acc.params.inspect.mock.calls).toEqual([
+      [
+        acc,
+        expect.objectContaining({
+          debugId: 1,
+          type: 'request',
+          method: 'GET',
+          uri: expect.stringMatching('http://remote.test')
+        })
+      ],
+      [
+        acc,
+        expect.objectContaining({
+          debugId: 1,
+          statusCode: 404,
+          type: 'error'
+        })
+      ]
+    ])
+  })
+  test('It should pass the body option to params.inspect', async () => {
+    const acc = createAcc({ inspect: jest.fn() })
+    const bodyData = JSON.stringify({ test: true })
+    const request = createMockRequest({
+      statusCode: 200,
+      requestType: 'post',
+      rpOptions: {
+        body: bodyData
+      }
+    })
+    Resolve.inspect(acc, request)
+    await expect(request).resolves.toBeTruthy()
+    const mockArguments = acc.params.inspect.mock.calls.slice(0, 2)
+    expect(utilsInspectSpy).not.toBeCalled()
+    expect(mockArguments).toEqual([
+      [
+        acc,
+        expect.objectContaining({
+          debugId: 1,
+          type: 'request',
+          method: 'POST',
+          uri: expect.stringMatching('http://remote.test'),
+          body: expect.stringMatching(bodyData)
+        })
+      ],
+      [
+        acc,
+        expect.objectContaining({
+          debugId: 1,
+          statusCode: 200,
+          type: 'response'
+        })
+      ]
+    ])
+  })
+  test('It should use incrementing debugId values', async () => {
+    const executeRequest = async (resolveWithSuccess, expectedDebugId) => {
+      const acc = createAcc({ inspect: jest.fn() })
+      const request = createMockRequest({
+        statusCode: resolveWithSuccess ? 200 : 404,
+        requestType: 'get'
+      })
+      Resolve.inspect(acc, request)
+      if (resolveWithSuccess) {
+        await expect(request).resolves.toBeTruthy()
+      } else {
+        await expect(request).rejects.toBeTruthy()
+      }
+      expect(utilsInspectSpy).not.toBeCalled()
+      expect(acc.params.inspect.mock.calls).toEqual([
+        [
+          acc,
+          expect.objectContaining({
+            debugId: expectedDebugId
+          })
+        ],
+        [
+          acc,
+          expect.objectContaining({
+            debugId: expectedDebugId
+          })
+        ]
+      ])
+    }
+    await executeRequest(true, 1)
+    await executeRequest(false, 2)
+    await executeRequest(false, 3)
+    await executeRequest(true, 4)
   })
 })
 
@@ -310,6 +534,22 @@ describe('resolve', () => {
     })
   })
 
+  it('should use acc.value as url when request.url is not defined', () => {
+    nock('http://remote.test')
+      .get('/source1')
+      .reply(200, {
+        ok: true
+      })
+
+    return transform('request:a3', 'http://remote.test/source1').then(
+      result => {
+        expect(result).toEqual({
+          ok: true
+        })
+      }
+    )
+  })
+
   test("interpolate data that's returned from the value lifecycle method", () => {
     nock('http://remote.test')
       .get('/source5')
@@ -317,7 +557,9 @@ describe('resolve', () => {
         ok: true
       })
 
-    return transform('request:a1.4', null).then(result => {
+    return transform('request:a1.4', {
+      source: 'source5'
+    }).then(result => {
       expect(result).toEqual({
         ok: true
       })
@@ -332,28 +574,6 @@ describe('resolve', () => {
       })
 
     return transform('request:a1.0', {}).then(result => {
-      expect(result).toEqual({
-        ok: true
-      })
-    })
-  })
-
-  test('use contextPath', () => {
-    nock('http://remote.test')
-      .get('/source1')
-      .reply(200, {
-        ok: true
-      })
-
-    return transform(
-      'request:a3',
-      {},
-      {
-        initialValue: {
-          itemPath: '/source1'
-        }
-      }
-    ).then(result => {
       expect(result).toEqual({
         ok: true
       })

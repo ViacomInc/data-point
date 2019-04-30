@@ -4,7 +4,7 @@
  * @return {Promise}
  */
 function resolve (accumulator, resolveReducer) {
-  return resolveReducer(accumulator, accumulator.reducer.spec.value)
+  return accumulator.value
 }
 
 module.exports.resolve = resolve

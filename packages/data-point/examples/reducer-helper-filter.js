@@ -4,8 +4,6 @@ const assert = require('assert')
 const DataPoint = require('../')
 const dataPoint = DataPoint.create()
 
-const { filter } = DataPoint.helpers
-
 const value = [
   {
     a: 1
@@ -17,8 +15,8 @@ const value = [
 
 // filters array elements that are not
 // truthy for the given reducer list
-const reducer = filter(['$a', input => input > 1])
+const reducer = DataPoint.filter(['$a', input => input > 1])
 
 dataPoint.resolve(reducer, value).then(output => {
-  assert.deepEqual(output, [{ a: 2 }])
+  assert.deepStrictEqual(output, [{ a: 2 }])
 })

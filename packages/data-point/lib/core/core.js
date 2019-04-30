@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const Transform = require('./transform')
 const normalizeEntities = require('./normalize-entities')
-const entities = require('../entity-types').definitions
+const entityTypeDefinitions = require('../entity-types').definitions
 
 const storeValues = require('../stores/values')
 const storeEntities = require('../stores/entities')
@@ -37,7 +37,6 @@ function addEntitiesToStore (store, entities) {
 function create (spec) {
   const options = _.defaultTo(spec, {
     values: {},
-    reducers: {},
     entities: {},
     entityTypes: {}
   })
@@ -64,13 +63,9 @@ function create (spec) {
   manager.addEntities = addEntitiesToStore.bind(null, manager.entities)
 
   // built-in entity types
-  _.forOwn(entities, (definition, key) => {
-    manager.addEntityType(key.toLowerCase(), definition)
+  _.forOwn(entityTypeDefinitions, (entityType, key) => {
+    manager.addEntityType(key.toLowerCase(), entityType)
   })
-
-  // for backwards compatibility
-  manager.addEntityType('transform', entities.Reducer)
-  manager.addEntityType('source', entities.Request)
 
   addToStore(manager.values, options.values, true)
 
@@ -81,6 +76,11 @@ function create (spec) {
   manager.resolve = Transform.resolve(manager)
   // does not support currying
   manager.transform = Transform.transform.bind(null, manager)
+  // does not support currying
+  manager.resolveFromAccumulator = Transform.resolveFromAccumulator.bind(
+    null,
+    manager
+  )
 
   return manager
 }

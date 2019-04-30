@@ -1,6 +1,6 @@
 {
   "name": "data-point",
-  "version": "3.1.0",
+  "version": "3.4.1-0",
   "description": "Data Processing and Transformation Utility",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -13,7 +13,7 @@
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
   "engines": {
-    "node": ">=4",
+    "node": ">=8",
     "npm": ">=2"
   },
   "author": {
@@ -42,14 +42,6 @@
     "compose",
     "aggregate"
   ],
-  "scripts": {
-    "precommit": "lint-staged",
-    "commit": "git-cz",
-    "test": "jest --coverage",
-    "watch:test": "jest --coverage --watch",
-    "lint": "standard --verbose | snazzy",
-    "release": "standard-version"
-  },
   "files": [
     "LICENSE",
     "index.js",
@@ -58,26 +50,17 @@
   "dependencies": {
     "ajv": "5.2.3",
     "bluebird": "3.5.0",
+    "debug": "3.x",
     "deep-freeze": "0.0.1",
-    "lodash": "4.17.4",
+    "json-stringify-safe": "^5.0.1",
+    "lodash": "^4.17.11",
     "request": "2.82.0",
     "request-promise": "4.2.2"
   },
   "devDependencies": {
     "benchmark": "2.1.4",
-    "commitizen": "2.9.6",
-    "cz-conventional-changelog": "2.0.0",
-    "jest": "21.1.0",
     "nock": "^8.0.0",
-    "prettier-standard": "6.0.0",
     "semver": "5.4.1",
-    "snazzy": "7.0.0",
-    "standard": "10.0.3",
-    "standard-version": "4.2.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+    "snazzy": "7.0.0"
   }
 }

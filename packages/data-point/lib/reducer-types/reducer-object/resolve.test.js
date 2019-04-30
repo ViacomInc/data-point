@@ -6,7 +6,7 @@ const createReducer = require('../index').create
 const resolveReducer = require('../index').resolve
 const AccumulatorFactory = require('../../accumulator/factory')
 const FixtureStore = require('../../../test/utils/fixture-store')
-const constant = require('../..').helpers.constant
+const constant = require('../..').constant
 
 let dataPoint
 

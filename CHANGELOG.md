@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/ViacomInc/data-point/compare/v3.1.0...v3.2.0) (2018-05-02)
+
+
+### Bug Fixes
+
+* **bench-trial:** Fix equation for calculating percentage increase / decrease ([#255](https://github.com/ViacomInc/data-point/issues/255)) ([75d4b9a](https://github.com/ViacomInc/data-point/commit/75d4b9a))
+* **data-point:** Allow find reducers to return falsy values ([#257](https://github.com/ViacomInc/data-point/issues/257)) ([4fe693b](https://github.com/ViacomInc/data-point/commit/4fe693b)), closes [#256](https://github.com/ViacomInc/data-point/issues/256)
+* **factory.js:** Fixed some small typos in factory.js output messages. ([#241](https://github.com/ViacomInc/data-point/issues/241)) ([d212e83](https://github.com/ViacomInc/data-point/commit/d212e83))
+
+
+### Features
+
+* **data-point:** Add createTypeCheckReducer to public API ([#251](https://github.com/ViacomInc/data-point/issues/251)) ([cd10bf6](https://github.com/ViacomInc/data-point/commit/cd10bf6)), closes [#247](https://github.com/ViacomInc/data-point/issues/247)
+* **data-point:** Replace _.partial with Array.bind ([#260](https://github.com/ViacomInc/data-point/issues/260)) ([5d4675e](https://github.com/ViacomInc/data-point/commit/5d4675e))
+* **data-point:** Replace the Locals class with a plain object ([#254](https://github.com/ViacomInc/data-point/issues/254)) ([a379930](https://github.com/ViacomInc/data-point/commit/a379930))
+* **data-point-service:** adds staleWhileRevalidate feature ([#267](https://github.com/ViacomInc/data-point/issues/267)) ([a121249](https://github.com/ViacomInc/data-point/commit/a121249)), closes [#265](https://github.com/ViacomInc/data-point/issues/265)
+
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/ViacomInc/data-point/compare/v3.0.0...v3.1.0) (2018-03-07)
 

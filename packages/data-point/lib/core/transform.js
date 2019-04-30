@@ -3,63 +3,57 @@ const Promise = require('bluebird')
 
 const Reducer = require('../reducer-types')
 const AccumulatorFactory = require('../accumulator/factory')
+const Trace = require('../trace')
 const utils = require('../utils')
 
+function getOptions (spec) {
+  return _.defaults({}, spec, {
+    locals: {},
+    entityOverrides: {}
+  })
+}
+
 /**
- * @param {Object} manager
- * @param {*} value
- * @param {Object} options
- * @return {Object}
+ * @param {DataPoint} manager DataPoint instance
+ * @param {Object} reducerSource reducer source
+ * @param {Accumulator} context accumulator object
+ * @returns {Promise<Accumulator>} resolved reducer context
  */
-function getAccumulator (manager, value, options = {}) {
-  return AccumulatorFactory.create({
-    value,
-    locals: options.locals || {},
-    trace: options.trace || false,
+function resolveFromAccumulator (manager, reducerSource, context) {
+  const reducer = Reducer.create(reducerSource)
+  return Reducer.resolve(manager, context, reducer)
+}
+
+module.exports.resolveFromAccumulator = resolveFromAccumulator
+
+function reducerResolve (manager, reducerSource, value, options) {
+  const contextOptions = getOptions(options)
+  const context = AccumulatorFactory.create({
+    value: value,
+    locals: contextOptions.locals,
+    entityOverrides: contextOptions.entityOverrides,
+    trace: contextOptions.trace,
     values: manager.values.getStore()
   })
+
+  const result = resolveFromAccumulator(manager, reducerSource, context)
+    .then(value => utils.set(context, 'value', value))
+
+  return !context.trace ? result : result.then(Trace.traceReducer)
 }
 
-/**
- * @param {Object} manager
- * @param {*} reducerSource
- * @param {Object} accumulator
- * @return {Promise}
- */
-function reducerResolve (manager, reducerSource, accumulator) {
-  return Promise.try(() => {
-    const reducer = Reducer.create(reducerSource)
-    return Reducer.resolve(manager, accumulator, reducer)
-  })
-}
-
-/**
- * @param {Object} manager
- * @param {*} reducerSource
- * @param {*} value
- * @param {Object} options
- * @param {Function} done
- * @return {Promise}
- */
 function transform (manager, reducerSource, value, options, done) {
-  const accumulator = getAccumulator(manager, value, options)
-  return reducerResolve(manager, reducerSource, accumulator)
-    .then(value => utils.set(accumulator, 'value', value))
+  return Promise.resolve()
+    .then(() => reducerResolve(manager, reducerSource, value, options))
     .asCallback(done)
 }
 
 module.exports.transform = transform
 
-/**
- * @param {Object} manager
- * @param {*} reducerSource
- * @param {*} value
- * @param {Object} options
- * @return {Promise}
- */
 function resolve (manager, reducerSource, value, options) {
-  const accumulator = getAccumulator(manager, value, options)
-  return reducerResolve(manager, reducerSource, accumulator)
+  return Promise.resolve()
+    .then(() => reducerResolve(manager, reducerSource, value, options))
+    .then(acc => acc.value)
 }
 
 module.exports.resolve = _.curry(resolve, 3)

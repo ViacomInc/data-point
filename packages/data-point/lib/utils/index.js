@@ -59,11 +59,6 @@ function inspect (acc, data) {
   }
 
   console.info.apply(null, log)
-
-  if (typeof acc.params.inspect === 'function') {
-    console.info('\ncustom:')
-    _.attempt(acc.params.inspect, acc)
-  }
 }
 
 module.exports.inspect = inspect
@@ -78,7 +73,7 @@ function inspectProperties (obj, props, indent = '') {
     const val = obj[key]
     if (typeof val !== 'undefined') {
       return `${acc}${indent}- ${key}: ${util.inspect(obj[key], {
-        breakLength: 0
+        breakLength: 60
       })}\n`
     }
     return acc

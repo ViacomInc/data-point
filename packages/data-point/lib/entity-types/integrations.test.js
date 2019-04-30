@@ -4,6 +4,7 @@ const _ = require('lodash')
 const nock = require('nock')
 const FixtureStore = require('../../test/utils/fixture-store')
 const TestData = require('../../test/data.json')
+const Promise = require('bluebird')
 
 let dataPoint
 
@@ -17,9 +18,9 @@ beforeEach(() => {
 
 test('Entry#resolve - branch/leaf nesting', () => {
   return dataPoint
-    .transform('hash:branchLeafNesting', TestData)
+    .resolve('hash:branchLeafNesting', TestData)
     .then(result => {
-      expect(result.value).toEqual({
+      expect(result).toEqual({
         label: '1',
         leafs: [
           {
@@ -44,6 +45,20 @@ test('Entry#resolve - branch/leaf nesting', () => {
     })
 })
 
+test('Request should use resolved value as url, when url is missing', () => {
+  const expected = {
+    ok: true
+  }
+
+  nock('http://remote.test')
+    .get('/source1')
+    .reply(200, expected)
+
+  return dataPoint.resolve('request:a3.1', {}).then(result => {
+    expect(result).toEqual(expected)
+  })
+})
+
 test('Entry#resolve - resolve request', () => {
   const expected = {
     ok: true
@@ -53,8 +68,8 @@ test('Entry#resolve - resolve request', () => {
     .get('/source1')
     .reply(200, expected)
 
-  return dataPoint.transform('entry:callRequest', {}).then(result => {
-    expect(result.value).toEqual(expected)
+  return dataPoint.resolve('entry:callRequest', {}).then(result => {
+    expect(result).toEqual(expected)
   })
 })
 
@@ -73,9 +88,9 @@ test('Entry#resolve - request uses locals object', () => {
     }
   }
   return dataPoint
-    .transform('entry:callDynamicRequestFromLocals', {}, options)
+    .resolve('entry:callDynamicRequestFromLocals', {}, options)
     .then(result => {
-      expect(result.value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 })
 
@@ -88,8 +103,8 @@ test('Entry#resolve - resolve hash with request', () => {
     .get('/source1')
     .reply(200, expected)
 
-  return dataPoint.transform('entry:hashThatCallsRequest').then(result => {
-    expect(result.value).toEqual(expected)
+  return dataPoint.resolve('entry:hashThatCallsRequest', {}).then(result => {
+    expect(result).toEqual(expected)
   })
 })
 
@@ -106,9 +121,9 @@ test('Entry#resolve - resolve hash with request and hash reducers', () => {
     })
 
   return dataPoint
-    .transform('entry:callHashWithRequestAndExtendResult')
+    .resolve('entry:callHashWithRequestAndExtendResult', {})
     .then(result => {
-      expect(result.value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 })
 
@@ -131,9 +146,9 @@ test('Entry#resolve - resolve model with multiple sources', () => {
     })
 
   return dataPoint
-    .transform('entry:callHashThatCallsMultipleRequests')
+    .resolve('entry:callHashThatCallsMultipleRequests', {})
     .then(result => {
-      expect(result.value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 })
 
@@ -173,8 +188,8 @@ test('Entry#resolve - resolve model with dynamic sources collection', () => {
     })
 
   return dataPoint
-    .transform('entry:nestedRequests')
-    .then(result => expect(result.value).toEqual(expected))
+    .resolve('entry:nestedRequests', {})
+    .then(result => expect(result).toEqual(expected))
 })
 
 test('Entry#resolve:middleware(entry:after) - gets called', () => {
@@ -193,53 +208,70 @@ test('Entry#resolve:middleware(entry:after) - gets called', () => {
     next(null)
   })
 
-  return dataPoint.transform('entry:callRequest', {}).then(result => {
-    expect(result.value).toEqual(expected)
+  return dataPoint.resolve('entry:callRequest', {}).then(result => {
+    expect(result).toEqual(expected)
   })
 })
 
 test('Entry#resolve - run schema, fail if invalid', () => {
   return dataPoint
-    .transform('schema:checkHashSchemaInvalid', TestData)
+    .resolve('schema:checkHashSchemaInvalid', TestData)
     .catch(err => err)
     .then(result => expect(result).toBeInstanceOf(Error))
 })
 
 test('Entry#resolve - run schema, pass value if valid', () => {
   return dataPoint
-    .transform('schema:checkHashSchemaValid', TestData)
-    .then(result => expect(result.value).toBeTruthy())
+    .resolve('schema:checkHashSchemaValid', TestData)
+    .then(result => expect(result).toBeTruthy())
+})
+
+test('Model Entity Instance', () => {
+  const Model = require('./entity-model')
+  const model = Model('myModel', {
+    value: value => value * 10
+  })
+  return dataPoint
+    .resolve(model, 10)
+    .then(result => expect(result).toEqual(100))
 })
 
 describe('trace feature', () => {
-  test('trace via options parameter', () => {
-    const consoleTime = console.time
-    const consoleTimeEnd = console.timeEnd
+  let mockDateNow
+  let mockWriteFileP
+  let mockhrTime
+  afterEach(() => {
+    mockDateNow.mockRestore()
+    mockWriteFileP.mockRestore()
+    mockhrTime.mockRestore()
+  })
 
-    const timeIds = []
-    console.time = id => {
-      timeIds.push({
-        type: 'time',
-        id: id
+  test('trace via options parameter', () => {
+    let calls = 0
+    const NS_PER_SEC = 1e9
+    mockhrTime = jest.spyOn(process, 'hrtime').mockImplementation(t => {
+      calls++
+      return [calls, NS_PER_SEC * calls]
+    })
+    mockDateNow = jest.spyOn(Date, 'now').mockImplementation(() => {
+      return 123
+    })
+    const TraceGraph = require('../trace/trace-graph')
+    mockWriteFileP = jest
+      .spyOn(TraceGraph, 'writeFileP')
+      .mockImplementation(() => {
+        return Promise.resolve(true)
       })
-    }
-    console.timeEnd = id => {
-      timeIds.push({
-        type: 'timeEnd',
-        id: id
-      })
-    }
+
     return dataPoint
-      .transform('model:tracedViaOptions', TestData, {
+      .resolve('model:tracedViaOptions', TestData, {
         trace: true
       })
       .then(result => {
-        console.time = consoleTime
-        console.timeEnd = consoleTimeEnd
-        const ids = _.map(timeIds, 'id')
-        expect(ids[0]).toContain('⧖ model:tracedViaOptions(')
+        expect(mockWriteFileP.mock.calls).toMatchSnapshot()
       })
   })
+
   test('trace via entity params', () => {
     const consoleTime = console.time
     const consoleTimeEnd = console.timeEnd
@@ -258,12 +290,12 @@ describe('trace feature', () => {
       })
     }
     return dataPoint
-      .transform('model:tracedViaParams', TestData)
+      .resolve('model:tracedViaParams', TestData)
       .then(result => {
         console.time = consoleTime
         console.timeEnd = consoleTimeEnd
         const ids = _.map(timeIds, 'id')
-        expect(ids[0]).toContain('⧖ model:tracedViaParams(')
+        expect(ids[0]).toContain('⧖ model:tracedViaParams:')
       })
   })
 })
@@ -271,7 +303,7 @@ describe('trace feature', () => {
 describe('handle undefined value', () => {
   test('HashEntity - should throw error', () => {
     return dataPoint
-      .transform('hash:noValue')
+      .resolve('hash:noValue', {})
       .catch(e => e)
       .then(res => {
         expect(res).toBeInstanceOf(Error)
@@ -280,7 +312,7 @@ describe('handle undefined value', () => {
 
   test('CollectionEntity - should throw error', () => {
     return dataPoint
-      .transform('collection:noValue')
+      .resolve('collection:noValue', {})
       .catch(e => e)
       .then(res => {
         expect(res).toBeInstanceOf(Error)
@@ -294,10 +326,10 @@ describe('handle undefined value', () => {
         ok: true
       })
     return dataPoint
-      .transform('request:a1')
+      .resolve('request:a1', {})
       .catch(e => e)
       .then(res => {
-        expect(res.value).toEqual({
+        expect(res).toEqual({
           ok: true
         })
       })

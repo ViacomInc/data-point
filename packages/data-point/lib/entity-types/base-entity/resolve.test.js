@@ -1,14 +1,31 @@
 /* eslint-env jest */
 
+const Promise = require('bluebird')
+
 const ResolveEntity = require('./resolve')
 const createReducer = require('../../reducer-types').create
 const resolveReducer = require('../../reducer-types').resolve
-const createReducerEntity = require('../../reducer-types/reducer-entity').create
+const createReducerEntityId = require('../../reducer-types/reducer-entity-id')
+  .create
 
 const FixtureStore = require('../../../test/utils/fixture-store')
 const helpers = require('../../helpers')
+const utils = require('../../utils')
 
 let dataPoint
+
+const resolveEntity = (entityId, input, options, resolver) => {
+  const racc = helpers.createAccumulator(input, options)
+  const reducer = createReducerEntityId(createReducer, entityId)
+  const entity = dataPoint.entities.get(entityId)
+  return ResolveEntity.resolveEntity(
+    dataPoint,
+    resolveReducer,
+    racc,
+    reducer,
+    entity
+  )
+}
 
 beforeAll(() => {
   dataPoint = FixtureStore.create()
@@ -63,24 +80,74 @@ describe('ResolveEntity.resolveErrorReducers', () => {
   })
 })
 
-describe('ResolveEntity.createCurrentAccumulator', () => {
+describe('getCurrentReducer', () => {
+  it('should return reducer as is if type=ReducerEntity', () => {
+    const reducer = {
+      spec: 'spec'
+    }
+    expect(ResolveEntity.getCurrentReducer(reducer)).toEqual(reducer)
+  })
+  it('should return decorated reducer if type!=ReducerEntity', () => {
+    const reducer = {}
+    expect(ResolveEntity.getCurrentReducer(reducer, 'spec')).toEqual({
+      spec: 'spec'
+    })
+  })
+})
+describe('ResolveEntity.createCurrentAccumulatorWithOverride', () => {
   let acc
-  beforeAll(() => {
-    const reducerEntity = createReducerEntity(createReducer, 'hash:base')
+  let spyGetUID
+  let entity
+  let reducer
+  beforeEach(() => {
+    spyGetUID = jest.spyOn(utils, 'getUID')
+    spyGetUID.mockImplementationOnce(() => 10)
+    reducer = createReducerEntityId(createReducer, 'hash:base')
+    entity = dataPoint.entities.get('hash:base')
     const accumulator = helpers.createAccumulator({
       foo: 'bar'
     })
-    acc = ResolveEntity.createCurrentAccumulator(
-      dataPoint,
-      accumulator,
-      reducerEntity
-    )
+    accumulator.entityOverrides = {
+      hash: {
+        params: {
+          inspect: true
+        }
+      }
+    }
+    acc = ResolveEntity.createCurrentAccumulator(accumulator, reducer, entity)
+  })
+
+  test('It should have entityOverrides', () => {
+    expect(acc).toHaveProperty('params', { base: true, inspect: true })
+  })
+})
+
+describe('ResolveEntity.createCurrentAccumulator', () => {
+  let acc
+  let spyGetUID
+  let entity
+  let reducer
+  beforeEach(() => {
+    spyGetUID = jest.spyOn(utils, 'getUID')
+    spyGetUID.mockImplementationOnce(() => 10)
+    reducer = createReducerEntityId(createReducer, 'hash:base')
+    entity = dataPoint.entities.get('hash:base')
+    const accumulator = helpers.createAccumulator({
+      foo: 'bar'
+    })
+    acc = ResolveEntity.createCurrentAccumulator(accumulator, reducer, entity)
   })
   test('It should set reducer property', () => {
-    expect(acc).toHaveProperty('reducer.spec.id', 'hash:base')
+    expect(acc).toHaveProperty('reducer')
   })
+
+  test('It should create and set uid property', () => {
+    expect(spyGetUID).toBeCalled()
+    expect(acc).toHaveProperty('uid', 'hash:base:10')
+  })
+
   test('It should context as the current Entity', () => {
-    expect(acc).toHaveProperty('context.id', 'hash:base')
+    expect(acc).toHaveProperty('context', entity)
   })
   test('It should initialValue acc.value', () => {
     expect(acc).toHaveProperty('initialValue', {
@@ -88,9 +155,10 @@ describe('ResolveEntity.createCurrentAccumulator', () => {
     })
   })
   test('It should set an initialValue for acc.params', () => {
-    expect(acc).toHaveProperty('params', {
-      base: true
-    })
+    expect(acc).toHaveProperty('params', entity.params)
+  })
+  test('It should override debug method', () => {
+    expect(acc.debug).toBeInstanceOf(Function)
   })
 })
 
@@ -104,8 +172,8 @@ describe('ResolveEntity.resolveMiddleware', () => {
     const acc = helpers.createAccumulator('foo')
     return ResolveEntity.resolveMiddleware(
       dataPoint,
-      'request:before',
-      acc
+      acc,
+      'request:before'
     ).then(result => {
       expect(result).toEqual('bar')
     })
@@ -113,12 +181,15 @@ describe('ResolveEntity.resolveMiddleware', () => {
 
   test('It should execute a middleware that forces an error to bypass the promise chain', () => {
     dataPoint.middleware.use('request:before', (acc, next) => {
-      acc.resolve('bar')
-      next(null)
+      next(null, 'bar')
     })
 
     const acc = helpers.createAccumulator('foo')
-    return ResolveEntity.resolveMiddleware(dataPoint, 'request:before', acc)
+    return ResolveEntity.resolveMiddleware(
+      dataPoint,
+      acc,
+      'request:before'
+    )
       .catch(reason => reason)
       .then(reason => {
         expect(reason).toBeInstanceOf(Error)
@@ -130,20 +201,6 @@ describe('ResolveEntity.resolveMiddleware', () => {
 })
 
 describe('ResolveEntity.resolveEntity', () => {
-  const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc.value)
-
-  const resolveEntity = (entityId, input, options, resolver) => {
-    const acc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
-    return ResolveEntity.resolveEntity(
-      dataPoint,
-      resolveReducer,
-      acc,
-      reducer,
-      resolver || defaultResolver
-    )
-  }
-
   test('It should resolve entity', () => {
     return resolveEntity('model:asIs', 'foo').then(result => {
       expect(result).toBe('foo')
@@ -164,12 +221,14 @@ describe('ResolveEntity.resolveEntity', () => {
     const consoleTimeEnd = console.timeEnd
     console.time = jest.fn()
     console.timeEnd = jest.fn()
-    return resolveEntity('model:asIs', 'foo', {
+    return resolveEntity('model:traced', 'foo', {
       trace: true
     }).then(result => {
       expect(console.time).toBeCalled()
       expect(console.timeEnd).toBeCalled()
-      expect(result).toBe('foo')
+      expect(console.time.mock.calls).toMatchSnapshot()
+      expect(console.timeEnd.mock.calls).toMatchSnapshot()
+      expect(result).toEqual('foo')
       console.time = consoleTime
       console.timeEnd = consoleTimeEnd
     })
@@ -177,8 +236,7 @@ describe('ResolveEntity.resolveEntity', () => {
 
   test('It should resolve through bypass', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
-      acc.resolve({ data: 'bar' })
-      next(null)
+      next(null, { data: 'bar' })
     })
     return resolveEntity('hash:asIs', 'foo').then(result => {
       expect(result).toEqual({ data: 'bar' })
@@ -212,20 +270,6 @@ describe('ResolveEntity.resolveEntity', () => {
 })
 
 describe('ResolveEntity.resolveEntity outputType', () => {
-  const defaultResolver = (acc, resolveReducer) => Promise.resolve(acc.value)
-
-  const resolveEntity = (entityId, input, options, resolver) => {
-    const acc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
-    return ResolveEntity.resolveEntity(
-      dataPoint,
-      resolveReducer,
-      acc,
-      reducer,
-      resolver || defaultResolver
-    )
-  }
-
   test('throws error if value does not pass typeCheck', () => {
     return resolveEntity('model:c.1', 1)
       .catch(e => e)
@@ -244,8 +288,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if middleware before returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('model:before', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')
@@ -257,8 +300,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if global before middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('before', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')
@@ -278,8 +320,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if after middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('model:after', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')
@@ -291,8 +332,7 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 
   test('throws error if global after middleware returns value that does not pass typeCheck', () => {
     dataPoint.middleware.use('after', (acc, next) => {
-      acc.resolve(1)
-      next(null)
+      next(null, 1)
     })
 
     return resolveEntity('model:c.1', 'some string')
@@ -361,73 +401,52 @@ describe('ResolveEntity.resolveEntity outputType', () => {
 })
 
 describe('ResolveEntity.resolve', () => {
-  const resolve = resolver => (entityId, input, options) => {
+  const resolve = (entityId, input, options) => {
     const racc = helpers.createAccumulator(input, options)
-    const reducer = createReducerEntity(createReducer, entityId)
+    const reducer = createReducerEntityId(createReducer, entityId)
+    const entity = dataPoint.entities.get(reducer.id)
     return ResolveEntity.resolve(
       dataPoint,
       resolveReducer,
       racc,
       reducer,
-      resolver
+      entity
     )
   }
 
   test('It should resolve as single entity', () => {
-    const resolver = (acc, resolveReducer) => {
-      return Promise.resolve('bar')
-    }
-    return resolve(resolver)('model:asIs', 'foo').then(result => {
-      expect(result).toBe('bar')
+    return resolve('model:asIs', 'foo').then(result => {
+      expect(result).toEqual('foo')
     })
   })
 
   test('It should resolve as collection', () => {
-    const resolver = (acc, resolveReducer) => {
-      return Promise.resolve('bar')
-    }
-    return resolve(resolver)('model:asIs[]', ['foo']).then(result => {
-      expect(result).toEqual(['bar'])
+    return resolve('model:asIs[]', ['foo']).then(result => {
+      expect(result).toEqual(['foo'])
     })
   })
   test('It should return undefined if accumulator is not Array', () => {
-    const resolver = (acc, resolveReducer) => {
-      return Promise.resolve(acc.value)
-    }
-    return resolve(resolver)('model:asIs[]', {}).then(result => {
+    return resolve('model:asIs[]', {}).then(result => {
       expect(result).toBeUndefined()
     })
   })
   test('It should not execute resolver if flag hasEmptyConditional is true and value is empty', () => {
-    const resolver = jest.fn()
-    return resolve(resolver)('?model:asIs', undefined).then(acc => {
-      expect(resolver).not.toHaveBeenCalled()
+    return resolve('?model:asIs', undefined).then(result => {
+      expect(result).toBeUndefined()
     })
   })
 
   test('It should execute resolver if flag hasEmptyConditional is true and value is not empty', () => {
-    const resolver = (acc, resolveReducer) => {
-      return Promise.resolve('bar')
-    }
-    return resolve(resolver)('?model:asIs', 'foo').then(result => {
-      expect(result).toBe('bar')
+    return resolve('?model:asIs', 'foo').then(result => {
+      expect(result).toEqual('foo')
     })
   })
 
   test('It should execute resolver only on non empty items of collection if hasEmptyConditional is set', () => {
-    let count = 0
-    const resolver = (acc, resolveReducer) => {
-      return Promise.resolve(count++)
-    }
-    return resolve(resolver)('?model:asIs[]', [
-      'a',
-      undefined,
-      'b',
-      null,
-      'c'
-    ]).then(result => {
-      expect(result).toEqual([0, undefined, 1, null, 2])
-    })
+    return resolve('?model:asIs[]', ['a', undefined, 'b', null, 'c'])
+      .then(result => {
+        expect(result).toEqual(['a', undefined, 'b', null, 'c'])
+      })
   })
 })
 

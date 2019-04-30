@@ -1,33 +1,57 @@
 const os = require('os')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const logger = require('./logger')
 
 const DataPointFactory = require('./data-point-factory')
 const { setupMiddleware } = require('./setup-middleware')
 
 const Cache = require('data-point-cache')
 
-const settingsDefault = {
-  cache: {
-    isRequired: false,
-    prefix: os.hostname()
+/**
+ * @returns {Object} Default module's options
+ */
+function getDefaultSettings () {
+  return {
+    cache: {
+      isRequired: false
+    }
   }
 }
 
+/**
+ * @param {Object} options module's options
+ * @returns {undefined}
+ */
+function prefixDeprecationError (options) {
+  const prefix = _.get(options, 'cache.prefix')
+  if (typeof prefix !== 'undefined') {
+    throw new Error(
+      'options.cache.prefix is now deprecated, please use options.cache.redis.keyPrefix instead.'
+    )
+  }
+}
+
+/**
+ * @param {Object} settings module's settings object
+ * @returns {String} cache prefix defaults to os.hostname()
+ */
+function getCachePrefix (settings) {
+  const keyPrefix = _.get(settings, 'cache.redis.keyPrefix')
+  const prefix = keyPrefix || os.hostname()
+  const separator = prefix.endsWith(':') ? '' : ':'
+  return `${prefix}${separator}`
+}
+
 function createServiceObject (options) {
-  const settings = _.merge({}, settingsDefault, options)
+  prefixDeprecationError(options)
 
-  const cachePrefix = _.defaultTo(
-    _.get(settings, 'cache.prefix'),
-    os.hostname()
-  )
-
+  const settings = _.merge({}, getDefaultSettings(), options)
   const isCacheRequired = _.defaultTo(_.get(settings, 'cache.isRequired'), true)
+
+  _.set(settings, 'cache.redis.keyPrefix', getCachePrefix(settings))
 
   return {
     isCacheRequired,
-    cachePrefix,
     settings,
     isCacheAvailable: false,
     cache: null,
@@ -36,12 +60,12 @@ function createServiceObject (options) {
 }
 
 function handleCacheError (err, Service) {
-  logger.error('Could not connect to REDIS', Service.settings.cache)
+  console.error('Could not connect to REDIS', Service.settings.cache)
 
   if (Service.isCacheRequired) {
     throw err
   } else {
-    logger.warn(
+    console.warn(
       'REDIS is flagged as not required, this is NOT recommended for production environments.'
     )
   }
@@ -75,7 +99,7 @@ function createDataPoint (service) {
 
 function bootstrapDataPoint (bootstrap, service) {
   if (!service.isCacheAvailable) {
-    logger.warn(
+    console.warn(
       'REDIS is not available, there will be no cacheing mechanism for',
       'DataPoint - we wish you the best of luck in your adventure.'
     )
@@ -91,12 +115,15 @@ function create (options) {
     .then(() => createCache(Service))
     .then(() => createDataPoint(Service))
     .catch(err => {
-      logger.error('DataPoint could not initialize')
+      console.error('DataPoint could not initialize')
       throw err
     })
 }
 
 module.exports = {
+  getDefaultSettings,
+  prefixDeprecationError,
+  getCachePrefix,
   create,
   createServiceObject,
   successCreateCache,
