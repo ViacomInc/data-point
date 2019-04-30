@@ -214,13 +214,19 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
     typeCheck(manager, acc, inputType, resolveReducer)
   )
 
-  result = addToPromiseChain(result, manager.middleware.store.has('before'), currentAccumulator, acc =>
-    resolveMiddleware(manager, acc, 'before')
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has('before'),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, 'before')
   )
 
   const middlewareEntityBefore = `${reducer.entityType}:before`
-  result = addToPromiseChain(result, manager.middleware.store.has(middlewareEntityBefore), currentAccumulator, acc =>
-    resolveMiddleware(manager, acc, middlewareEntityBefore)
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has(middlewareEntityBefore),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, middlewareEntityBefore)
   )
 
   result = addToPromiseChain(result, before, currentAccumulator, acc =>
@@ -237,27 +243,26 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
     return entity.resolve(acc, resolveReducer.bind(null, manager))
   })
 
-  result = result.then(a => {
-    return a
-  })
-
   result = addToPromiseChain(result, after, currentAccumulator, acc =>
     resolveReducer(manager, acc, after)
   )
 
   const middlewareEntityAfter = `${reducer.entityType}:after`
-  result = addToPromiseChain(result, manager.middleware.store.has(middlewareEntityAfter), currentAccumulator, acc =>
-    resolveMiddleware(manager, acc, middlewareEntityAfter)
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has(middlewareEntityAfter),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, middlewareEntityAfter)
   )
 
-  result = addToPromiseChain(result, manager.middleware.store.has('after'), currentAccumulator, acc =>
-    resolveMiddleware(manager, acc, 'after')
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has('after'),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, 'after')
   )
 
   result = result.catch(handleByPassError)
-.then(a => {
-    return a
-  })
 
   result = addToPromiseChain(result, outputType, currentAccumulator, acc =>
     typeCheck(manager, acc, outputType, resolveReducer)
@@ -275,8 +280,11 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
         resolveReducer
       )
 
-      errorResult = addToPromiseChain(errorResult, outputType, currentAccumulator, acc =>
-        typeCheck(manager, acc, outputType, resolveReducer)
+      errorResult = addToPromiseChain(
+        errorResult,
+        outputType,
+        currentAccumulator,
+        acc => typeCheck(manager, acc, outputType, resolveReducer)
       )
 
       return errorResult

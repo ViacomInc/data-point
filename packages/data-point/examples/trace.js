@@ -18,7 +18,7 @@ const PersonModel = Model('PersonModel', {
 })
 
 const options = {
-  trace: true // <-- set to true to enable tracing, a file will be created
+  trace: false // <-- set to true to enable tracing, a file will be created
 }
 
 const dataPoint = DataPoint.create()

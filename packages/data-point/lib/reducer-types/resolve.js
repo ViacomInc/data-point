@@ -74,9 +74,6 @@ function resolveReducer (manager, accumulator, reducer) {
 
   // NOTE: recursive call
   let result = resolve(manager, resolveReducer, acc, reducer)
-    .then(a => {
-      return a
-    })
 
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
