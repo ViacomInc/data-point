@@ -29,13 +29,10 @@ function create (id, spec) {
 function resolve (accumulator, resolveReducer) {
   // get Entity Spec
   const spec = accumulator.reducer.spec
-  // resolve 'spec.value' reducer
-  // against accumulator
-  return resolveReducer(accumulator, spec.value).then(result => {
-    // execute lodash template against
-    // accumulator value
-    return spec.template(result)
-  })
+
+  // execute lodash template against
+  // accumulator value
+  return spec.template(accumulator.value)
 }
 
 /**
