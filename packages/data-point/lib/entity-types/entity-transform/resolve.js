@@ -1,7 +1,7 @@
 /**
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
- * @return {Promise}
+ * @return {*}
  */
 function resolve (accumulator, resolveReducer) {
   return accumulator.value
