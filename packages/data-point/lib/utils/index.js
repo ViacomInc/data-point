@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const util = require('util')
+const stringify = require('json-stringify-safe')
 
 /**
  * sets key to value of a copy of target. target stays untouched, if key is
@@ -55,7 +56,7 @@ function inspect (acc, data) {
   log.push('\n\x1b[33minspect\x1b[0m:', _.get(acc, 'reducer.spec.id'))
   for (let key in data) {
     const value = data[key]
-    log.push(`\n${key}:`, _.attempt(JSON.stringify, value, null, 2))
+    log.push(`\n${key}:`, stringify(value, null, 2))
   }
 
   console.info.apply(null, log)
@@ -72,9 +73,7 @@ function inspectProperties (obj, props, indent = '') {
   return props.reduce((acc, key) => {
     const val = obj[key]
     if (typeof val !== 'undefined') {
-      return `${acc}${indent}- ${key}: ${util.inspect(obj[key], {
-        breakLength: 60
-      })}\n`
+      return `${acc}${indent}- ${key}: ${stringify(obj[key], null, 2)}\n`
     }
     return acc
   }, '')
