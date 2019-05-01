@@ -87,8 +87,7 @@ describe('inspect', () => {
   test('It should log data', () => {
     console.info = jest.fn()
     utils.inspect(getAcc(), { foo: 'bar' })
-    expect(console.info.mock.calls[0]).toContain('\nfoo:')
-    expect(console.info.mock.calls[0]).toContain('"bar"')
+    expect(console.info.mock.calls[0]).toMatchSnapshot()
   })
 })
 
