@@ -6,13 +6,15 @@ exports[`validateModifiers It should include base modifiers 1`] = `
 Valid properties for this entity are:
  inputType, before, value, after, outputType, error, params, bar
 Please review your entity and make any necessary corrections so it can be parsed:
-'foo:test': { inputType: true,
-  outputType: true,
-  before: true,
-  after: true,
-  error: true,
-  value: true,
-  foo: true }"
+'foo:test': {
+  \\"inputType\\": true,
+  \\"outputType\\": true,
+  \\"before\\": true,
+  \\"after\\": true,
+  \\"error\\": true,
+  \\"value\\": true,
+  \\"foo\\": true
+}"
 `;
 
 exports[`validateProperties It should throw error if keys dont match 1`] = `
@@ -21,7 +23,9 @@ exports[`validateProperties It should throw error if keys dont match 1`] = `
 Valid properties for this entity are:
  bar
 Please review your entity and make any necessary corrections so it can be parsed:
-'foo:test': { foo: true }"
+'foo:test': {
+  \\"foo\\": true
+}"
 `;
 
 exports[`validateProperties It should throw error if keys dont match 2`] = `
@@ -30,5 +34,8 @@ exports[`validateProperties It should throw error if keys dont match 2`] = `
 Valid properties for this entity are:
  bar
 Please review your entity and make any necessary corrections so it can be parsed:
-'foo:test': { bar: true, foo: true }"
+'foo:test': {
+  \\"bar\\": true,
+  \\"foo\\": true
+}"
 `;
