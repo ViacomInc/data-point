@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const util = require('util')
 const stringify = require('json-stringify-safe')
 
 /**
