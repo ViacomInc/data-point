@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const Reducer = require('../reducer-types')
 const AccumulatorFactory = require('../accumulator/factory')
 const Trace = require('../trace')
+const utils = require('../utils')
 
 function getOptions (spec) {
   return _.defaults({}, spec, {
@@ -35,7 +36,9 @@ function reducerResolve (manager, reducerSource, value, options) {
     values: manager.values.getStore()
   })
 
-  const result = resolveFromAccumulator(manager, reducerSource, context)
+  const result = resolveFromAccumulator(manager, reducerSource, context).then(
+    value => utils.set(context, 'value', value)
+  )
 
   return !context.trace ? result : result.then(Trace.traceReducer)
 }

@@ -22,7 +22,7 @@ describe('ReducerOmit#resolve', () => {
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual(value)
+        expect(result).toEqual(value)
       }
     )
   })
@@ -43,7 +43,7 @@ describe('ReducerOmit#resolve', () => {
     ])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual([
+        expect(result).toEqual([
           1,
           {
             b: 2

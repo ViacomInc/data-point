@@ -22,7 +22,7 @@ describe('ReducerMap#resolve', () => {
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual([undefined, undefined])
+        expect(result).toEqual([undefined, undefined])
       }
     )
   })
@@ -40,7 +40,7 @@ describe('ReducerMap#resolve', () => {
     const reducer = Factory.create(Reducer.create, ['$a', value => value + 1])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual([2, 3])
+        expect(result).toEqual([2, 3])
       }
     )
   })

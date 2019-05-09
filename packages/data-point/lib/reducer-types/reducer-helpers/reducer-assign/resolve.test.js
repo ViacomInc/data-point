@@ -31,7 +31,7 @@ describe('ReducerAssign#resolve', () => {
     const reducer = Factory.create(Reducer.create, () => ({}))
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual({})
+        expect(result).toEqual({})
       }
     )
   })
@@ -47,7 +47,7 @@ describe('ReducerAssign#resolve', () => {
     const reducer = Factory.create(Reducer.create, 'reducer:a')
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual({
+        expect(result).toEqual({
           a: 1,
           b: 22,
           c: 33
@@ -75,7 +75,7 @@ describe('ReducerAssign#resolve', () => {
 
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual({
+        expect(result).toEqual({
           a: 1,
           b: {
             b: 2

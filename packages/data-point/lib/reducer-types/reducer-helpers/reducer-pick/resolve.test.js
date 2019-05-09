@@ -25,7 +25,7 @@ describe('ReducerPick#resolve', () => {
     const reducer = Factory.create(Reducer.create, [])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual({})
+        expect(result).toEqual({})
       }
     )
   })
@@ -40,7 +40,7 @@ describe('ReducerPick#resolve', () => {
     const reducer = Factory.create(Reducer.create, ['c', 'q'])
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result.value).toEqual({
+        expect(result).toEqual({
           c: 3
         })
       }

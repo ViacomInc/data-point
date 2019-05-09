@@ -6,8 +6,8 @@ const BaseEntity = require('../../entity-types/base-entity/resolve')
  * @param {Object} manager
  * @param {function} resolveReducer
  * @param {Accumulator} accumulator
- * @param {ReducerEntityId} reducer
- * @returns {Promise<Accumulator>}
+ * @param {ReducerEntity} reducer
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
   return BaseEntity.resolve(

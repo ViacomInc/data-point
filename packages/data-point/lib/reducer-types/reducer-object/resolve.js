@@ -1,29 +1,24 @@
 const Promise = require('bluebird')
 const set = require('lodash/set')
 
-const utils = require('../../utils')
-
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerObject} reducer
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
-  return Promise.map(reducer.reducers, ({ reducer, path }) => {
-    return resolveReducer(manager, accumulator, reducer).then(({ value }) => ({
-      path,
-      value
-    }))
-  }).then(result => {
-    const value = result.reduce(
-      (acc, { path, value }) => set(acc, path, value),
-      reducer.source()
-    )
+  const result = reducer.source()
+  if (reducer.reducers.length === 0) {
+    return Promise.resolve(result)
+  }
 
-    return utils.set(accumulator, 'value', value)
-  })
+  return Promise.map(reducer.reducers, ({ reducer, path }) => {
+    return resolveReducer(manager, accumulator, reducer).then(value => {
+      set(result, path, value)
+    })
+  }).then(() => result)
 }
 
 module.exports.resolve = resolve

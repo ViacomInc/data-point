@@ -56,22 +56,22 @@ describe('Collection entity type checking', () => {
 
 describe('entity.collection.map', () => {
   test('should resolve map Transform', () => {
-    return transform('collection:b.1', testData.a.d).then(acc => {
-      expect(acc.value).toEqual([2, 4])
+    return transform('collection:b.1', testData.a.d).then(result => {
+      expect(result).toEqual([2, 4])
     })
   })
 
   test('should return array with undefined elements if map reducer is empty list', () => {
-    return transform('collection:b.2', testData.a.b.c).then(acc => {
-      expect(acc.value).toEqual([undefined, undefined, undefined])
+    return transform('collection:b.2', testData.a.b.c).then(result => {
+      expect(result).toEqual([undefined, undefined, undefined])
     })
   })
 })
 
 describe('entity.collection.filter', () => {
   test('should resolve filter Transform', () => {
-    return transform('collection:c.1', testData.a.d).then(acc => {
-      expect(acc.value).toEqual([
+    return transform('collection:c.1', testData.a.d).then(result => {
+      expect(result).toEqual([
         {
           d1: 2
         }
@@ -80,72 +80,72 @@ describe('entity.collection.filter', () => {
   })
 
   test('it should resolve filter transform for collection containing filter property', () => {
-    return transform('collection:c.2', testData.a.b.c).then(acc => {
-      expect(acc.value).toEqual([1, 3])
+    return transform('collection:c.2', testData.a.b.c).then(result => {
+      expect(result).toEqual([1, 3])
     })
   })
 
   test('should return empty array if filter reducer is empty list', () => {
-    return transform('collection:c.3', testData.a.b.c).then(acc => {
-      expect(acc.value).toEqual([])
+    return transform('collection:c.3', testData.a.b.c).then(result => {
+      expect(result).toEqual([])
     })
   })
 })
 
 describe('entity.collection.find', () => {
   test('should resolve find Transform', () => {
-    return transform('collection:d.1', testData.a.b.c).then(acc => {
-      expect(acc.value).toEqual(1)
+    return transform('collection:d.1', testData.a.b.c).then(result => {
+      expect(result).toEqual(1)
     })
   })
 
   test('should resolve to undefined if none found', () => {
-    return transform('collection:d.2', testData.a.b.c).then(acc => {
-      expect(acc.value).toBeUndefined()
+    return transform('collection:d.2', testData.a.b.c).then(result => {
+      expect(result).toBeUndefined()
     })
   })
 
   test('should return undefined if find reducer is empty list', () => {
-    return transform('collection:d.3', testData.a.b.c).then(acc => {
-      expect(acc.value).toEqual(undefined)
+    return transform('collection:d.3', testData.a.b.c).then(result => {
+      expect(result).toEqual(undefined)
     })
   })
 })
 
 describe('entity.collection.compose', () => {
   test('should resolve one modifier', () => {
-    return transform('collection:j.1', testData.a.d).then(acc => {
-      expect(acc.value).toEqual([2, 4])
+    return transform('collection:j.1', testData.a.d).then(result => {
+      expect(result).toEqual([2, 4])
     })
   })
 
   test('should resolve multiple modifiers', () => {
-    return transform('collection:j.2', testData.a.d).then(acc => {
-      expect(acc.value).toBe(10)
+    return transform('collection:j.2', testData.a.d).then(result => {
+      expect(result).toBe(10)
     })
   })
 
   test('map should handle error and rethrow with appended information', () => {
     return transform('collection:j.3', testData)
       .catch(err => err)
-      .then(acc => {
-        expect(acc).toBeInstanceOf(Error)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
       })
   })
 
   test('find should handle error and rethrow with appended information', () => {
     return transform('collection:j.4', testData)
       .catch(err => err)
-      .then(acc => {
-        expect(acc).toBeInstanceOf(Error)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
       })
   })
 
   test('filter should handle error and rethrow with appended information', () => {
     return transform('collection:j.5', testData)
       .catch(err => err)
-      .then(acc => {
-        expect(acc).toBeInstanceOf(Error)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
       })
   })
 })

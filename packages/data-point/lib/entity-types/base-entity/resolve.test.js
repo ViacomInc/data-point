@@ -52,10 +52,10 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       accumulator,
       resolveReducer
     )
-      .catch(reason => reason)
-      .then(acc => {
-        expect(acc).toBeInstanceOf(Error)
-        expect(acc).toHaveProperty('message', 'Test')
+      .catch(err => err)
+      .then(result => {
+        expect(result).toBeInstanceOf(Error)
+        expect(result).toHaveProperty('message', 'Test')
       })
   })
 
@@ -74,8 +74,8 @@ describe('ResolveEntity.resolveErrorReducers', () => {
       err,
       accumulator,
       resolveReducer
-    ).then(acc => {
-      expect(acc.value).toEqual('pass')
+    ).then(result => {
+      expect(result).toEqual('pass')
     })
   })
 })
@@ -172,10 +172,10 @@ describe('ResolveEntity.resolveMiddleware', () => {
     const acc = helpers.createAccumulator('foo')
     return ResolveEntity.resolveMiddleware(
       dataPoint,
-      Promise.resolve(acc),
+      acc,
       'request:before'
-    ).then(acc => {
-      expect(acc.value).toEqual('bar')
+    ).then(result => {
+      expect(result).toEqual('bar')
     })
   })
 
@@ -185,25 +185,21 @@ describe('ResolveEntity.resolveMiddleware', () => {
     })
 
     const acc = helpers.createAccumulator('foo')
-    return ResolveEntity.resolveMiddleware(
-      dataPoint,
-      Promise.resolve(acc),
-      'request:before'
-    )
+    return ResolveEntity.resolveMiddleware(dataPoint, acc, 'request:before')
       .catch(reason => reason)
       .then(reason => {
         expect(reason).toBeInstanceOf(Error)
         expect(reason).toHaveProperty('name', 'bypass')
         expect(reason).toHaveProperty('bypass', true)
-        expect(reason).toHaveProperty('bypassValue.value', 'bar')
+        expect(reason).toHaveProperty('bypassValue', 'bar')
       })
   })
 })
 
 describe('ResolveEntity.resolveEntity', () => {
   test('It should resolve entity', () => {
-    return resolveEntity('model:asIs', 'foo').then(acc => {
-      expect(acc).toHaveProperty('value', 'foo')
+    return resolveEntity('model:asIs', 'foo').then(result => {
+      expect(result).toBe('foo')
     })
   })
 
@@ -223,12 +219,12 @@ describe('ResolveEntity.resolveEntity', () => {
     console.timeEnd = jest.fn()
     return resolveEntity('model:traced', 'foo', {
       trace: true
-    }).then(acc => {
+    }).then(result => {
       expect(console.time).toBeCalled()
       expect(console.timeEnd).toBeCalled()
       expect(console.time.mock.calls).toMatchSnapshot()
       expect(console.timeEnd.mock.calls).toMatchSnapshot()
-      expect(acc).toHaveProperty('value', 'foo')
+      expect(result).toEqual('foo')
       console.time = consoleTime
       console.timeEnd = consoleTimeEnd
     })
@@ -238,8 +234,8 @@ describe('ResolveEntity.resolveEntity', () => {
     dataPoint.middleware.use('hash:before', (acc, next) => {
       next(null, { data: 'bar' })
     })
-    return resolveEntity('hash:asIs', 'foo').then(acc => {
-      expect(acc.value).toEqual({ data: 'bar' })
+    return resolveEntity('hash:asIs', 'foo').then(result => {
+      expect(result).toEqual({ data: 'bar' })
     })
   })
 
@@ -263,8 +259,8 @@ describe('ResolveEntity.resolveEntity', () => {
   })
 
   test('inputType - if typeCheck passes then resolve normal', () => {
-    return resolveEntity('model:c.0', 1).then(ac => {
-      expect(ac.value).toEqual(1)
+    return resolveEntity('model:c.0', 1).then(result => {
+      expect(result).toEqual(1)
     })
   })
 })
@@ -343,8 +339,8 @@ describe('ResolveEntity.resolveEntity outputType', () => {
   })
 
   test('passes if error method returns value with correct type', () => {
-    return resolveEntity('model:c.6', 'string').then(acc => {
-      expect(acc.value).toBe('error string')
+    return resolveEntity('model:c.6', 'string').then(result => {
+      expect(result).toBe('error string')
     })
   })
 
@@ -365,8 +361,8 @@ describe('ResolveEntity.resolveEntity outputType', () => {
   })
 
   test('passes if error method catches typeCheck errors and returns value', () => {
-    return resolveEntity('model:c.9', 'string').then(acc => {
-      expect(acc.value).toBe('string from error')
+    return resolveEntity('model:c.9', 'string').then(result => {
+      expect(result).toBe('string from error')
     })
   })
 
@@ -379,14 +375,14 @@ describe('ResolveEntity.resolveEntity outputType', () => {
   })
 
   test('resolves normally if typeCheck passes', () => {
-    return resolveEntity('model:c.1', 'foo').then(acc => {
-      expect(acc.value).toEqual('foo')
+    return resolveEntity('model:c.1', 'foo').then(result => {
+      expect(result).toEqual('foo')
     })
   })
 
   test('does not change acc.value', () => {
     return resolveEntity('model:c.2', 'my string').then(result => {
-      expect(result.value).toEqual('my string')
+      expect(result).toEqual('my string')
     })
   })
 
@@ -415,37 +411,37 @@ describe('ResolveEntity.resolve', () => {
   }
 
   test('It should resolve as single entity', () => {
-    return resolve('model:asIs', 'foo').then(acc => {
-      expect(acc).toHaveProperty('value', 'foo')
+    return resolve('model:asIs', 'foo').then(result => {
+      expect(result).toEqual('foo')
     })
   })
 
   test('It should resolve as collection', () => {
-    return resolve('model:asIs[]', ['foo']).then(acc => {
-      expect(acc).toHaveProperty('value', ['foo'])
+    return resolve('model:asIs[]', ['foo']).then(result => {
+      expect(result).toEqual(['foo'])
     })
   })
   test('It should return undefined if accumulator is not Array', () => {
-    return resolve('model:asIs[]', {}).then(acc => {
-      expect(acc.value).toBeUndefined()
+    return resolve('model:asIs[]', {}).then(result => {
+      expect(result).toBeUndefined()
     })
   })
   test('It should not execute resolver if flag hasEmptyConditional is true and value is empty', () => {
-    return resolve('?model:asIs', undefined).then(acc => {
-      expect(acc.value).toBeUndefined()
+    return resolve('?model:asIs', undefined).then(result => {
+      expect(result).toBeUndefined()
     })
   })
 
   test('It should execute resolver if flag hasEmptyConditional is true and value is not empty', () => {
-    return resolve('?model:asIs', 'foo').then(acc => {
-      expect(acc).toHaveProperty('value', 'foo')
+    return resolve('?model:asIs', 'foo').then(result => {
+      expect(result).toEqual('foo')
     })
   })
 
   test('It should execute resolver only on non empty items of collection if hasEmptyConditional is set', () => {
     return resolve('?model:asIs[]', ['a', undefined, 'b', null, 'c']).then(
-      acc => {
-        expect(acc).toHaveProperty('value', ['a', undefined, 'b', null, 'c'])
+      result => {
+        expect(result).toEqual(['a', undefined, 'b', null, 'c'])
       }
     )
   })

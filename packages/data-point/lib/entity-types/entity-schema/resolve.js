@@ -16,12 +16,18 @@ function validateContext (acc) {
       return Promise.reject(error)
     }
 
-    return acc
+    // no error, just return value
+    return acc.value
   })
 }
 
 module.exports.validateContext = validateContext
 
+/**
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @return {Promise}
+ */
 function resolve (acc, resolveReducer) {
   return validateContext(acc)
 }

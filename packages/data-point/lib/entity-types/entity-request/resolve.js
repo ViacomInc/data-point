@@ -45,8 +45,8 @@ module.exports.getRequestOptions = getRequestOptions
 function resolveOptions (accumulator, resolveReducer) {
   const url = resolveUrl(accumulator)
   const specOptions = accumulator.reducer.spec.options
-  return resolveReducer(accumulator, specOptions).then(acc => {
-    const options = getRequestOptions(url, acc.value)
+  return resolveReducer(accumulator, specOptions).then(value => {
+    const options = getRequestOptions(url, value)
     return utils.assign(accumulator, { options })
   })
 }
@@ -159,7 +159,7 @@ function resolveRequest (acc, resolveReducer) {
 
   const request = rp(options)
   inspect(acc, request)
-  return request.then(res => utils.set(acc, 'value', res.body)).catch(error => {
+  return request.then(res => res.body).catch(error => {
     // remove auth objects from acc and error for printing to console
     const redactedAcc = fp.set('options.auth', '[omitted]', acc)
     const redactedError = fp.set('options.auth', '[omitted]', error)

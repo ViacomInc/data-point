@@ -4,6 +4,6 @@ const Resolve = require('./resolve')
 
 describe('Model.resolve', () => {
   test('Entry#resolve - resolve empty', () => {
-    return expect(Resolve.resolve(1)).toEqual(1)
+    return expect(Resolve.resolve({ value: 1 })).toEqual(1)
   })
 })

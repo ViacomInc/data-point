@@ -40,7 +40,7 @@ describe('schema.resolve', function () {
   test('pass context back if no errors', () => {
     const promise = transform('schema:a.1.0', { foo: 1, bar: '1' })
     return promise.then(result => {
-      expect(result.value).toEqual({ foo: 1, bar: '1' })
+      expect(result).toEqual({ foo: 1, bar: '1' })
     })
   })
 })

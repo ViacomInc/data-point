@@ -29,14 +29,10 @@ function create (id, spec) {
 function resolve (accumulator, resolveReducer) {
   // get Entity Spec
   const spec = accumulator.reducer.spec
+
   // execute lodash template against
   // accumulator value
-  const value = spec.template(accumulator.value)
-  // set new accumulator.value
-  // this method creates a new acc object
-  return Object.assign({}, accumulator, {
-    value
-  })
+  return spec.template(accumulator.value)
 }
 
 /**

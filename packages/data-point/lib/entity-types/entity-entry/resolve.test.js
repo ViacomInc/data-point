@@ -34,12 +34,12 @@ beforeAll(() => {
 describe('Entry.resolve', () => {
   test('Entry#resolve - resolve empty', () => {
     return transform('entry:a0').then(result => {
-      expect(result.value).toEqual({})
+      expect(result).toEqual({})
     })
   })
   test('Entry#resolve - resolve context', () => {
     return transform('entry:a1', testData.foo).then(result => {
-      expect(result.value).toEqual(1)
+      expect(result).toEqual(1)
     })
   })
 })

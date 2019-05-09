@@ -28,7 +28,7 @@ describe('reducer#resolve', () => {
     const value = testData.a.b.c
     const options = {}
     return resolve(source, options, value).then(result => {
-      expect(result.value).toEqual(6)
+      expect(result).toEqual(6)
     })
   })
 
@@ -48,7 +48,7 @@ describe('reducer#resolve', () => {
     const value = { a: undefined }
     const options = {}
     return resolve(source, options, value).then(result => {
-      expect(result.value).toBeUndefined()
+      expect(result).toBeUndefined()
     })
   })
 })
@@ -59,7 +59,7 @@ describe('reducer#resolve with default value', () => {
     const value = { a: false }
     const options = { default: 500 }
     return resolve(source, options, value).then(result => {
-      expect(result.value).toBe(false)
+      expect(result).toBe(false)
     })
   })
   test('do not overwrite true', () => {
@@ -67,7 +67,7 @@ describe('reducer#resolve with default value', () => {
     const value = { a: true }
     const options = { default: 500 }
     return resolve(source, options, value).then(result => {
-      expect(result.value).toBe(true)
+      expect(result).toBe(true)
     })
   })
   test('overwrite undefined', () => {
@@ -75,7 +75,7 @@ describe('reducer#resolve with default value', () => {
     const value = { a: undefined }
     const options = { default: 500 }
     return resolve(source, options, value).then(result => {
-      expect(result.value).toBe(500)
+      expect(result).toBe(500)
     })
   })
   test('overwrite undefined with function as default', () => {
@@ -83,7 +83,7 @@ describe('reducer#resolve with default value', () => {
     const value = { a: undefined }
     const options = { default: () => 500 }
     return resolve(source, options, value).then(result => {
-      expect(result.value).toBe(500)
+      expect(result).toBe(500)
     })
   })
 })

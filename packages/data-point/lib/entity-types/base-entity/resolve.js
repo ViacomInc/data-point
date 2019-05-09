@@ -22,7 +22,7 @@ const debugEntity = memoize(createDebugEntity)
  * @param {Error} error
  * @param {Accumulator} accumulator
  * @param {Function} resolveReducer
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
   const errorReducer = accumulator.reducer.spec.error
@@ -31,16 +31,7 @@ function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
   }
 
   const errorAccumulator = utils.set(accumulator, 'value', error)
-
-  const reducerResolved = resolveReducer(
-    manager,
-    errorAccumulator,
-    errorReducer
-  )
-
-  return reducerResolved.then(result =>
-    utils.set(accumulator, 'value', result.value)
-  )
+  return resolveReducer(manager, errorAccumulator, errorReducer)
 }
 
 module.exports.resolveErrorReducers = resolveErrorReducers
@@ -48,15 +39,18 @@ module.exports.resolveErrorReducers = resolveErrorReducers
 /**
  * @param {Promise} promise
  * @param {*} condition
+ * @param {Accumulator} accumulator
  * @param {Function} callback
  * @returns {Promise}
  */
-function addToPromiseChain (promise, condition, callback) {
+function addToPromiseChain (promise, condition, accumulator, callback) {
   if (!condition) {
     return promise
   }
 
-  return promise.then(callback)
+  return promise.then(result => {
+    return callback(utils.set(accumulator, 'value', result))
+  })
 }
 
 /**
@@ -134,7 +128,7 @@ function assignParamsHelper (accumulator, entity) {
 module.exports.assignParamsHelper = assignParamsHelper
 
 /**
- * Resolves a middeware, this method contains a 'hack'
+ * Resolves a middleware, this method contains a 'hack'
  * which consists in using an error to bypass the
  * chain of promise then that come after it.
  *
@@ -146,27 +140,21 @@ module.exports.assignParamsHelper = assignParamsHelper
  * @param {string} name - name of middleware to execute
  * @returns {Promise}
  */
-function resolveMiddleware (manager, promise, name) {
-  if (!manager.middleware.store.has(name)) {
-    return promise
-  }
-
-  return promise
-    .then(accumulator => {
-      return middleware.resolve(manager, name, accumulator)
-    })
+function resolveMiddleware (manager, accumulator, name) {
+  return middleware
+    .resolve(manager, name, accumulator)
     .then(middlewareResult => {
       if (middlewareResult.___resolve === true) {
-        middlewareResult.debug(middlewareResult.uid, '- will bypass')
+        accumulator.debug(accumulator.uid, '- will bypass')
         // doing this until proven wrong :)
         const err = new Error('bypassing middleware')
         err.name = 'bypass'
         err.bypass = true
-        err.bypassValue = middlewareResult
+        err.bypassValue = middlewareResult.value
         throw err
       }
 
-      return middlewareResult
+      return middlewareResult.value
     })
 }
 
@@ -183,7 +171,7 @@ function typeCheck (manager, accumulator, reducer, resolveReducer) {
   // returns original accumulator if there's no error
   // this helps prevent type check reducers from mutating the value, but
   // it's still possible to modify the value by reference when it's an object
-  return resolveReducer(manager, accumulator, reducer).return(accumulator)
+  return resolveReducer(manager, accumulator, reducer).return(accumulator.value)
 }
 
 module.exports.typeCheck = typeCheck
@@ -193,7 +181,7 @@ module.exports.typeCheck = typeCheck
  * @param {Accumulator} accumulator
  * @param {Function} reducer
  * @param {Object} entity
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
   const currentAccumulator = createCurrentAccumulator(
@@ -220,40 +208,63 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
 
   currentAccumulator.debug(currentAccumulator.uid, '- resolve:start')
 
-  let result = Promise.resolve(currentAccumulator)
+  let result = Promise.resolve(currentAccumulator.value)
 
-  result = addToPromiseChain(result, inputType, acc =>
+  result = addToPromiseChain(result, inputType, currentAccumulator, acc =>
     typeCheck(manager, acc, inputType, resolveReducer)
   )
 
-  result = resolveMiddleware(manager, result, 'before')
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has('before'),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, 'before')
+  )
 
-  result = resolveMiddleware(manager, result, `${reducer.entityType}:before`)
+  const middlewareEntityBefore = `${reducer.entityType}:before`
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has(middlewareEntityBefore),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, middlewareEntityBefore)
+  )
 
-  result = addToPromiseChain(result, before, acc =>
+  result = addToPromiseChain(result, before, currentAccumulator, acc =>
     resolveReducer(manager, acc, before)
   )
 
-  result = addToPromiseChain(result, value, acc =>
+  result = addToPromiseChain(result, value, currentAccumulator, acc =>
     resolveReducer(manager, acc, value)
   )
 
-  result = result.then(acc => {
-    acc.debug(acc.uid, '- resolve')
+  result = result.then(result => {
+    currentAccumulator.debug(currentAccumulator.uid, '- resolve')
+    const acc = utils.set(currentAccumulator, 'value', result)
     return entity.resolve(acc, resolveReducer.bind(null, manager))
   })
 
-  result = addToPromiseChain(result, after, acc =>
+  result = addToPromiseChain(result, after, currentAccumulator, acc =>
     resolveReducer(manager, acc, after)
   )
 
-  result = resolveMiddleware(manager, result, `${reducer.entityType}:after`)
+  const middlewareEntityAfter = `${reducer.entityType}:after`
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has(middlewareEntityAfter),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, middlewareEntityAfter)
+  )
 
-  result = resolveMiddleware(manager, result, 'after')
+  result = addToPromiseChain(
+    result,
+    manager.middleware.store.has('after'),
+    currentAccumulator,
+    acc => resolveMiddleware(manager, acc, 'after')
+  )
 
   result = result.catch(handleByPassError)
 
-  result = addToPromiseChain(result, outputType, acc =>
+  result = addToPromiseChain(result, outputType, currentAccumulator, acc =>
     typeCheck(manager, acc, outputType, resolveReducer)
   )
 
@@ -269,22 +280,23 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
         resolveReducer
       )
 
-      errorResult = addToPromiseChain(errorResult, outputType, acc =>
-        typeCheck(manager, acc, outputType, resolveReducer)
+      errorResult = addToPromiseChain(
+        errorResult,
+        outputType,
+        currentAccumulator,
+        acc => typeCheck(manager, acc, outputType, resolveReducer)
       )
 
       return errorResult
     })
-    .then(resultContext => {
+    .then(value => {
       if (trace === true) {
         console.timeEnd(timeId)
       }
 
-      resultContext.debug(resultContext.uid, `- resolve:end`)
+      currentAccumulator.debug(currentAccumulator.uid, `- resolve:end`)
 
-      // clean up any modifications we have done to the result context and pass
-      // a copy of the original accumulator with only `value` modified
-      return utils.set(accumulator, 'value', resultContext.value)
+      return value
     })
 }
 
@@ -302,7 +314,7 @@ function resolve (manager, resolveReducer, accumulator, reducer, entity) {
   const hasEmptyConditional = reducer.hasEmptyConditional
 
   if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
-    return Promise.resolve(accumulator)
+    return Promise.resolve(accumulator.value)
   }
 
   if (!reducer.asCollection) {
@@ -310,20 +322,16 @@ function resolve (manager, resolveReducer, accumulator, reducer, entity) {
   }
 
   if (!Array.isArray(accumulator.value)) {
-    return Promise.resolve(utils.set(accumulator, 'value', undefined))
+    return Promise.resolve(undefined)
   }
 
   return Promise.map(accumulator.value, itemValue => {
-    const itemCtx = utils.set(accumulator, 'value', itemValue)
-
     if (hasEmptyConditional && utils.isFalsy(itemValue)) {
-      return Promise.resolve(itemCtx)
+      return itemValue
     }
 
+    const itemCtx = utils.set(accumulator, 'value', itemValue)
     return resolveEntity(manager, resolveReducer, itemCtx, reducer, entity)
-  }).then(mappedResults => {
-    const value = mappedResults.map(acc => acc.value)
-    return utils.set(accumulator, 'value', value)
   })
 }
 

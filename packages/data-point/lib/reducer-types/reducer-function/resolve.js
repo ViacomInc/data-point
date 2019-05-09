@@ -1,19 +1,14 @@
 const Promise = require('bluebird')
-const utils = require('../../utils')
 
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
  * @param {Accumulator} accumulator
  * @param {ReducerObject} reducer
- * @returns {Promise<Accumulator>}
+ * @returns {Promise}
  */
 function resolve (manager, resolveReducer, accumulator, reducer) {
-  return Promise.try(() => reducer.body(accumulator.value, accumulator)).then(
-    value => {
-      return utils.set(accumulator, 'value', value)
-    }
-  )
+  return Promise.try(() => reducer.body(accumulator.value, accumulator))
 }
 
 module.exports.resolve = resolve

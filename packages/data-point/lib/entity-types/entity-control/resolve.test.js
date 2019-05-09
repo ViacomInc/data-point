@@ -32,17 +32,17 @@ beforeAll(() => {
 describe('entity-control#resolve', () => {
   test('test match first case', () => {
     return transform('control:a.1.0', testData).then(result => {
-      expect(result.value).toEqual('a')
+      expect(result).toEqual('a')
     })
   })
   test('test match second case', () => {
     return transform('control:a.1.1', testData).then(result => {
-      expect(result.value).toEqual('b')
+      expect(result).toEqual('b')
     })
   })
   test('test match none so use default', () => {
     return transform('control:a.1.2', testData).then(result => {
-      expect(result.value).toEqual('c')
+      expect(result).toEqual('c')
     })
   })
 
