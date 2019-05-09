@@ -5,24 +5,26 @@ exports[`resolve it should omit options.auth when encountering an error 1`] = `
 
 Entity info:
   - Id: request:a9
-  - options: { auth: '[omitted]',
-  method: 'GET',
-  json: true,
-  url: 'http://remote.test/source1' }
+  - options: {
+  \\"auth\\": \\"[omitted]\\",
+  \\"method\\": \\"GET\\",
+  \\"json\\": true,
+  \\"url\\": \\"http://remote.test/source1\\"
+}
   - value: {}
 
   Request:
-  - message: '404 - undefined'
+  - message: \\"404 - undefined\\"
   - statusCode: 404
-  - options: { auth: '[omitted]',
-  method: 'GET',
-  json: true,
-  url: 'http://remote.test/source1',
-  resolveWithFullResponse: true,
-  callback: [Function: RP$callback],
-  transform: undefined,
-  simple: true,
-  transform2xxOnly: false }
+  - options: {
+  \\"auth\\": \\"[omitted]\\",
+  \\"method\\": \\"GET\\",
+  \\"json\\": true,
+  \\"url\\": \\"http://remote.test/source1\\",
+  \\"resolveWithFullResponse\\": true,
+  \\"simple\\": true,
+  \\"transform2xxOnly\\": false
+}
 "
 `;
 
@@ -31,22 +33,24 @@ exports[`resolveRequest log errors when request fails 1`] = `
 
 Entity info:
   - Id: test:test
-  - options: { json: true,
-  url: 'http://remote.test/source1',
-  auth: '[omitted]' }
-  - value: 'foo'
+  - options: {
+  \\"json\\": true,
+  \\"url\\": \\"http://remote.test/source1\\",
+  \\"auth\\": \\"[omitted]\\"
+}
+  - value: \\"foo\\"
 
   Request:
-  - error: 'not found'
-  - message: '404 - \\"not found\\"'
+  - error: \\"not found\\"
+  - message: \\"404 - \\\\\\"not found\\\\\\"\\"
   - statusCode: 404
-  - options: { json: true,
-  url: 'http://remote.test/source1',
-  resolveWithFullResponse: true,
-  callback: [Function: RP$callback],
-  transform: undefined,
-  simple: true,
-  transform2xxOnly: false,
-  auth: '[omitted]' }
+  - options: {
+  \\"json\\": true,
+  \\"url\\": \\"http://remote.test/source1\\",
+  \\"resolveWithFullResponse\\": true,
+  \\"simple\\": true,
+  \\"transform2xxOnly\\": false,
+  \\"auth\\": \\"[omitted]\\"
+}
 "
 `;

@@ -1,5 +1,6 @@
 const Util = require('util')
 const _ = require('lodash')
+const stringify = require('json-stringify-safe')
 
 /**
  * @throws Errors when it finds an invalid key
@@ -18,7 +19,7 @@ function validateProperties (id, spec, validKeys) {
         differentKeys.join(', '),
         validKeys.join(', '),
         id,
-        Util.inspect(spec)
+        stringify(spec, null, 2)
       )
     )
   }
