@@ -30,3 +30,4 @@ node_modules
 dump.rdb
 /benchmark
 data-point-trace-*
+.idea/
