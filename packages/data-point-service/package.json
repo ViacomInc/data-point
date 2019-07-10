@@ -1,6 +1,6 @@
 {
   "name": "data-point-service",
-  "version": "4.2.1-0",
+  "version": "4.2.1-1",
   "description": "DataPoint as a Service",
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -16,7 +16,7 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "data-point": "^3.4.1-0"
+    "data-point": "^3.4.1-1"
   },
   "dependencies": {
     "bluebird": "3.5.1",
