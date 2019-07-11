@@ -343,7 +343,7 @@ describe('inspect', () => {
     }
   }
   function createMockRequest (options) {
-    let { statusCode, requestType, rpOptions } = options
+    const { statusCode, requestType, rpOptions } = options
     const nockInstance = nock('http://remote.test')
     nockInstance[requestType]('/').reply(statusCode, { statusCode })
     return rp[requestType]({
