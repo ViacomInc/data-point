@@ -59,8 +59,6 @@
   },
   "devDependencies": {
     "benchmark": "2.1.4",
-    "nock": "^8.0.0",
-    "semver": "5.4.1",
-    "snazzy": "7.0.0"
+    "nock": "^8.0.0"
   }
 }
