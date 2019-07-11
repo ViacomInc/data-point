@@ -12,7 +12,7 @@ const InspectorUi = require('./inspector-ui')
 function dataPointInspectRoute (dataPoint, req, res, next) {
   const { entityId, params = {}, query = {}, value } = req.body
 
-  const pathname = url.parse(req.url).pathname
+  const pathname = url.parse(req.url).pathname // eslint-disable-line node/no-deprecated-api
 
   const augmentedReq = Object.assign({}, req, {
     query,
