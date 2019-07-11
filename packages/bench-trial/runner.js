@@ -152,7 +152,7 @@ function reportFasterOpsperSec (suites) {
   const first = sorted[0]
   const second = sorted[1]
 
-  const diffMedian = (first.median - second.median) / second.median * 100
+  const diffMedian = ((first.median - second.median) / second.median) * 100
 
   console.log(
     ` Speed: %s was faster by %s (%s vs %s)`,
@@ -249,7 +249,7 @@ function middle (values) {
 }
 
 function bytesToKb (bytes) {
-  return Math.round(bytes / 1024 * 100) / 100
+  return Math.round((bytes / 1024) * 100) / 100
 }
 
 function runGC (val) {
@@ -292,8 +292,8 @@ function reportMemoryEfficincy (suites) {
   const second = sortedSuites[1]
 
   const diffMemory =
-    (second.memoryEfficiency - first.memoryEfficiency) /
-    second.memoryEfficiency *
+    ((second.memoryEfficiency - first.memoryEfficiency) /
+      second.memoryEfficiency) *
     100
 
   console.log(

@@ -3,7 +3,7 @@ const { deprecate } = require('util')
 const ms = require('ms')
 
 const looseCacheParamsDeprecationWarning = deprecate(() => {},
-  'Usage of params.ttl, params.cacheKey and params.staleWhileRevalidate will be deprecated. Please configure through params.cache object instead')
+'Usage of params.ttl, params.cacheKey and params.staleWhileRevalidate will be deprecated. Please configure through params.cache object instead')
 
 /**
  * Logs deprecation warning if loose cache params were used
