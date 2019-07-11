@@ -56,7 +56,7 @@ describe('swipeTick', () => {
   })
 
   test('it should remove keys - on each tick', () => {
-    let now = 0
+    const now = 0
 
     cache.entries['test1'] = { value: 'test1', ttl: 10, created: now }
     cache.entries['test2'] = { value: 'test2', ttl: 20, created: now }

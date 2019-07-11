@@ -32,8 +32,8 @@ function swipeTick (cache) {
 
   const now = Date.now()
   for (let index = 0; index < keys.length; index++) {
-    let key = keys[index]
-    let entry = cache.entries[key]
+    const key = keys[index]
+    const entry = cache.entries[key]
     if (now - entry.created > entry.ttl) {
       delete cache.entries[key]
     }
