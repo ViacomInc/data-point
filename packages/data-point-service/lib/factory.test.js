@@ -8,8 +8,8 @@ jest.mock('data-point-cache', () => {
   }
 })
 
-let os = require('os')
-let Factory = require('./factory')
+const os = require('os')
+const Factory = require('./factory')
 const DataPoint = require('data-point')
 const _ = require('lodash')
 
@@ -264,7 +264,7 @@ describe('create', () => {
 
     console.error = jest.fn()
 
-    Factory = require('./factory')
+    const Factory = require('./factory')
 
     return Factory.create({
       DataPoint,
