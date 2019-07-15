@@ -5,10 +5,10 @@ function setupMiddleware (service) {
     const settings = service.settings
     const dataPoint = service.dataPoint
 
-    let middlewareBefore = settings.before
+    const middlewareBefore = settings.before
       ? settings.before
       : CacheMiddleware.before.bind(null, service)
-    let middlewareAfter = settings.after
+    const middlewareAfter = settings.after
       ? settings.after
       : CacheMiddleware.after.bind(null, service)
 

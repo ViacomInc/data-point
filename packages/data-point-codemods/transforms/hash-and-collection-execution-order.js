@@ -13,9 +13,12 @@ module.exports = (file, api, options) => {
   const root = j(file.source)
 
   function updateEntity (node, keys) {
-    let [props, otherProps] = partition(node.value.properties, prop => {
+    const entityProps = partition(node.value.properties, prop => {
       return isMatchingKey(prop.key, keys)
     })
+
+    let props = entityProps[0]
+    const otherProps = entityProps[1]
 
     if (props.length < 2) {
       return

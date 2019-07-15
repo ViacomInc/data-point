@@ -49,7 +49,7 @@ module.exports.newProps = newProps
  * @returns {Array}
  */
 function getProps (createReducer, source, stack = [], props = newProps()) {
-  for (let key of Object.keys(source)) {
+  for (const key of Object.keys(source)) {
     const path = stack.concat(key)
     const value = source[key]
     if (_.isPlainObject(value)) {
