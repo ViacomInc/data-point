@@ -25,7 +25,8 @@ const MyModel = DataPoint.Model('MyModel', {
   }
 })
 
-dp.resolve(MyModel, true)
+dp
+  .resolve(MyModel, true)
   // console output:
   // Entity model:MyModel is being called
   // hijacking
