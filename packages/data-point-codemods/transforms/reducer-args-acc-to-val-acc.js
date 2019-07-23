@@ -6,7 +6,7 @@ module.exports = (file, api, options) => {
   const root = j(file.source)
 
   function replaceWith (target, newObject) {
-    for (let key in target) {
+    for (const key in target) {
       delete target[key]
     }
     Object.assign(target, newObject)
@@ -19,7 +19,7 @@ module.exports = (file, api, options) => {
       })
       .size()
 
-    let injectAcc = node.value.params.length === 2 || accReferences > 0
+    const injectAcc = node.value.params.length === 2 || accReferences > 0
 
     const newParams = [
       {

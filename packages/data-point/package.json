@@ -1,6 +1,6 @@
 {
   "name": "data-point",
-  "version": "3.4.1-0",
+  "version": "3.4.2",
   "description": "Data Processing and Transformation Utility",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -59,8 +59,6 @@
   },
   "devDependencies": {
     "benchmark": "2.1.4",
-    "nock": "^8.0.0",
-    "semver": "5.4.1",
-    "snazzy": "7.0.0"
+    "nock": "^8.0.0"
   }
 }

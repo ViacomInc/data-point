@@ -43,11 +43,11 @@ function create (createReducer, source) {
   const reducer = new ReducerEntityId()
   const tokens = source.split(':')
 
-  let entityType = tokens[0]
+  const entityType = tokens[0]
   reducer.hasEmptyConditional = entityType.indexOf('?') === 0
   reducer.entityType = entityType.replace(/^\?/, '')
 
-  let name = tokens[1]
+  const name = tokens[1]
   reducer.asCollection = name.slice(-2) === '[]'
   reducer.name = name.replace(/\[]$/, '')
 

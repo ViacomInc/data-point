@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.2](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.1...data-point-service@4.2.2) (2019-07-15)
+
+**Note:** Version bump only for package data-point-service
+
+
+
+
+
+<a name="4.2.1"></a>
+## [4.2.1](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.1-1...data-point-service@4.2.1) (2019-07-10)
+
+
+
+
+**Note:** Version bump only for package data-point-service
+
 <a name="4.2.0"></a>
 # [4.2.0](https://github.com/ViacomInc/data-point/compare/data-point-service@4.1.3-1...data-point-service@4.2.0) (2018-12-19)
 

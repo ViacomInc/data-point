@@ -53,7 +53,7 @@ module.exports.typeOf = typeOf
 function inspect (acc, data) {
   const log = []
   log.push('\n\x1b[33minspect\x1b[0m:', _.get(acc, 'reducer.spec.id'))
-  for (let key in data) {
+  for (const key in data) {
     const value = data[key]
     log.push(`\n${key}:`, stringify(value, null, 2))
   }

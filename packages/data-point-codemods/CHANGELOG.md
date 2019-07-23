@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.3](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-codemods/compare/data-point-codemods@3.1.2...data-point-codemods@3.1.3) (2019-07-15)
+
+**Note:** Version bump only for package data-point-codemods
+
+
+
+
+
+<a name="3.1.2"></a>
+## [3.1.2](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-codemods/compare/data-point-codemods@3.1.2-0...data-point-codemods@3.1.2) (2019-07-10)
+
+
+
+
+**Note:** Version bump only for package data-point-codemods
+
 <a name="3.1.1"></a>
 ## [3.1.1](https://github.com/ViacomInc/data-point/compare/data-point-codemods@3.1.1-0...data-point-codemods@3.1.1) (2018-12-19)
 
