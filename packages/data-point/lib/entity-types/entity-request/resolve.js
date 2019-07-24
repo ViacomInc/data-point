@@ -159,33 +159,35 @@ function resolveRequest (acc, resolveReducer) {
 
   const request = rp(options)
   inspect(acc, request)
-  return request.then(res => res.body).catch(error => {
-    // remove auth objects from acc and error for printing to console
-    const redactedAcc = fp.set('options.auth', '[omitted]', acc)
-    const redactedError = fp.set('options.auth', '[omitted]', error)
+  return request
+    .then(res => res.body)
+    .catch(error => {
+      // remove auth objects from acc and error for printing to console
+      const redactedAcc = fp.set('options.auth', '[omitted]', acc)
+      const redactedError = fp.set('options.auth', '[omitted]', error)
 
-    const message = [
-      'Entity info:',
-      '\n  - Id: ',
-      _.get(redactedAcc, 'reducer.spec.id'),
-      '\n',
-      utils.inspectProperties(
-        redactedAcc,
-        ['options', 'params', 'value'],
-        '  '
-      ),
-      '\n  Request:\n',
-      utils.inspectProperties(
-        redactedError,
-        ['error', 'message', 'statusCode', 'options', 'body'],
-        '  '
-      )
-    ].join('')
+      const message = [
+        'Entity info:',
+        '\n  - Id: ',
+        _.get(redactedAcc, 'reducer.spec.id'),
+        '\n',
+        utils.inspectProperties(
+          redactedAcc,
+          ['options', 'params', 'value'],
+          '  '
+        ),
+        '\n  Request:\n',
+        utils.inspectProperties(
+          redactedError,
+          ['error', 'message', 'statusCode', 'options', 'body'],
+          '  '
+        )
+      ].join('')
 
-    // attaching to error so it can be exposed by a handler outside datapoint
-    error.message = `${error.message}\n\n${message}`
-    throw error
-  })
+      // attaching to error so it can be exposed by a handler outside datapoint
+      error.message = `${error.message}\n\n${message}`
+      throw error
+    })
 }
 
 module.exports.resolveRequest = resolveRequest
