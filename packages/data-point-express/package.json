@@ -19,8 +19,8 @@
     "body-parser": "1.18.2",
     "data-point": "^3.4.2",
     "express": "^4.16.2",
-    "ioredis": "3.1.4",
-    "ioredis-mock": "^3.3.1"
+    "ioredis": "4.12.2",
+    "ioredis-mock": "^4.12.1"
   },
   "dependencies": {
     "data-point-service": "^4.2.2",
