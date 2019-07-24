@@ -1,6 +1,6 @@
 {
   "name": "data-point-service",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "DataPoint as a Service",
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "bluebird": "3.5.1",
-    "data-point-cache": "^3.3.2",
+    "data-point-cache": "^4.0.0",
     "debug": "3.x",
     "lodash": "^4.17.11",
     "ms": "2.x"

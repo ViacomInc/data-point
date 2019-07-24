@@ -1,6 +1,6 @@
 {
   "name": "data-point-express",
-  "version": "4.1.5",
+  "version": "5.0.0",
   "description": "Create DataPoint Express middleware",
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -23,7 +23,7 @@
     "ioredis-mock": "^4.12.1"
   },
   "dependencies": {
-    "data-point-service": "^4.2.2",
+    "data-point-service": "^4.2.3",
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
