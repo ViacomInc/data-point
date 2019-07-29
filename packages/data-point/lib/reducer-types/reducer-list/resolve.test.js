@@ -153,3 +153,42 @@ describe('resolve#reducer.resolve - reducer request', () => {
     })
   })
 })
+
+describe('resolve#reducer.resolve - with falsy input', () => {
+  const testFalsyInput = async (inputValue, expectedValue) => {
+    const accumulator = AccumulatorFactory.create({
+      value: inputValue
+    })
+
+    const functionA = jest.fn(input => `${input}1`)
+    const functionB = jest.fn(input => `${input}2`)
+
+    const reducerList = createReducerList(createReducer, [functionA, functionB])
+
+    const result = await resolveReducerList(
+      manager,
+      resolveReducer,
+      accumulator,
+      reducerList
+    )
+    expect(result).toBe(expectedValue)
+    expect(functionA).toHaveBeenCalledTimes(1)
+    expect(functionB).toHaveBeenCalledTimes(1)
+  }
+
+  test('with undefined as input', () => {
+    return testFalsyInput(undefined, 'null12')
+  })
+
+  test('with null as input', () => {
+    return testFalsyInput(null, 'null12')
+  })
+
+  test('with zero as input', () => {
+    return testFalsyInput(0, '012')
+  })
+
+  test('with an empty string as input', () => {
+    return testFalsyInput('', '12')
+  })
+})
