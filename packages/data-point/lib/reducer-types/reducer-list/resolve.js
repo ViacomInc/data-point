@@ -15,13 +15,15 @@ function resolve (manager, resolveReducer, accumulator, reducerList) {
     return Promise.resolve(undefined)
   }
 
+  const initialValue =
+    accumulator.value === undefined ? null : accumulator.value
   const result = Promise.reduce(
     reducers,
     (value, reducer) => {
       const itemContext = utils.set(accumulator, 'value', value)
       return resolveReducer(manager, itemContext, reducer)
     },
-    accumulator.value
+    initialValue
   )
 
   return result
