@@ -9,8 +9,8 @@
     "precommit": "lint-staged",
     "commit": "git-cz",
     "test": "jest --coverage",
-    "posttest": "npm run run-examples",
-    "lint": "eslint",
+    "posttest": "echo 'skipping examples for now' #npm run run-examples",
+    "lint": "eslint '**/*.js'",
     "contributors:add": "all-contributors add",
     "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
     "next": "yarn run lint && jest --coverage && lerna publish --cd-version=prerelease --npm-tag=next --yes",
@@ -28,7 +28,7 @@
     "cz-conventional-changelog": "2.1.0",
     "docusaurus-init": "^1.12.0",
     "eslint": "^6.1.0",
-    "eslint-config-airbnb": "^18.0.0",
+    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.8.0",
@@ -50,6 +50,13 @@
       "/test/utils/",
       "/test/definitions/",
       "<rootDir>/packages/data-point-cache/lib/cache.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/packages/data-point-express",
+      "<rootDir>/packages/data-point-service"
+    ],
+    "projects": [
+      "<rootDir>/packages/data-point"
     ],
     "coverageThreshold": {
       "global": {
