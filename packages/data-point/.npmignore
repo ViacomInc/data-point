@@ -1,10 +1,4 @@
 .DS_Store
 *.iml
-examples/
-coverage/
-.vscode/
-test/
-benchmark/
-.tern-project
-jsconfig.json
 __snapshots__
+*.test.js

@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`reducer/reducer-entity-id#create throw if factory is not a function 1`] = `"Entity Factory 'entry:abc' should be a function: {}"`;
-
-exports[`reducer/reducer-entity-id#create throw if resolve has wrong arity 1`] = `"Entity Factory 'entry:abc' method should have an arity of 2, instead got: 0"`;

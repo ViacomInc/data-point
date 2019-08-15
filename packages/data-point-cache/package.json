@@ -1,8 +1,9 @@
 {
-  "name": "data-point-cache",
+  "name": "@data-point/cache",
   "version": "4.0.0",
   "description": "DataPoint Cache Layer",
   "main": "lib/index.js",
+  "private": true,
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

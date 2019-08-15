@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Card Entity should check for input type 1`] = `
-[Error: Entity type check failed!
-Expected type: {uid:Number, shortTitle:String}
-Actual type: object
-Input value: { shortTitle: 'Some Title' }]
-`;

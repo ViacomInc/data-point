@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`transform - throw error in invalid id(promise) 1`] = `
-[Error: Invalid reducer type. Could not find a matching reducer type while parsing the value:
- 'INVALID'
-Try using an Array, String, Object, or Function.
-More info: https://github.com/ViacomInc/data-point/tree/master/packages/data-point#reducers
-]
-`;

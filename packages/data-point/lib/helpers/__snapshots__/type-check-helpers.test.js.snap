@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`type-check-helpers#getTypeCheckSourceWithDefault should throw error for invalid specType 1`] = `"hash entities do not support the \\"number\\" outputType!"`;

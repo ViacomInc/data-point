@@ -4,6 +4,7 @@
   "description": "Runs one or multiple benchmark tests",
   "main": "./lib/index.js",
   "license": "Apache-2.0",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/ViacomInc/data-point/tree/master/packages/bench-trial"

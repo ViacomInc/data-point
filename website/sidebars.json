@@ -1,0 +1,44 @@
+{
+  "docs": {
+    "Introduction": [
+      "introduction/introduction",
+      "introduction/basic-examples"
+    ],
+    "API Reference": [
+      "api/data-point",
+      "api/accumulator",
+      "api/reducer-types",
+      {
+        "type": "subcategory",
+        "label": "Primitive Reducers",
+        "ids": [
+          "api/reducers/path-reducer",
+          "api/reducers/function-reducer",
+          "api/reducers/object-reducer",
+          "api/reducers/list-reducer"
+        ]
+      },
+      {
+        "type": "subcategory",
+        "label": "Helper Reducers",
+        "ids": [
+          "api/reducers/assign-reducer",
+          "api/reducers/if-then-else-reducer",
+          "api/reducers/select-reducer",
+          "api/reducers/map-reducer",
+          "api/reducers/parallel-reducer",
+          "api/reducers/fallback-reducer"
+        ]
+      },
+      {
+        "type": "subcategory",
+        "label": "Entity Reducers",
+        "ids": ["api/reducers/entity-reducer", "api/reducers/model"]
+      }
+    ],
+    "Architecture Overview": ["doc3"]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}

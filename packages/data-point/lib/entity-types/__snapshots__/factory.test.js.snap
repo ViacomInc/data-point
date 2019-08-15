@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`creating a model with createEntityFactory entity factory should return an object with the expected shape 1`] = `
-Object {
-  "model:nuts": Object {
-    "value": [Function],
-  },
-}
-`;
