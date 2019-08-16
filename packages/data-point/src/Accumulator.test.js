@@ -3,25 +3,35 @@ const { Accumulator } = require("./Accumulator");
 describe("Accumulator", () => {
   describe("constructor", () => {
     it("should accept empty options object", () => {
-      expect(new Accumulator()).toEqual({});
+      expect(new Accumulator()).toMatchInlineSnapshot(`
+                Accumulator {
+                  "cache": Object {},
+                  "locals": undefined,
+                  "tracer": undefined,
+                  "value": undefined,
+                }
+            `);
     });
     it("should assign options object", () => {
       const resolve = () => true;
-      expect(
-        new Accumulator({
-          value: "value",
-          locals: "locals",
-          cache: "cache",
-          tracer: "tracer",
-          resolve
-        })
-      ).toMatchObject({
+      const acc = new Accumulator({
         value: "value",
         locals: "locals",
         cache: "cache",
         tracer: "tracer",
-        __resolve: resolve
+        resolve
       });
+      expect(acc).toMatchInlineSnapshot(`
+        Accumulator {
+          "cache": "cache",
+          "locals": "locals",
+          "tracer": "tracer",
+          "value": "value",
+        }
+      `);
+
+      // eslint-disable-next-line no-underscore-dangle
+      expect(acc.__resolve).toEqual(resolve);
     });
   });
 

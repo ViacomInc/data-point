@@ -5,7 +5,7 @@ class Accumulator {
   constructor(options = {}) {
     this.value = options.value;
     this.locals = options.locals;
-    this.cache = options.cache;
+    this.cache = options.cache || {};
     this.tracer = options.tracer;
 
     Object.defineProperty(this, "__resolve", {
