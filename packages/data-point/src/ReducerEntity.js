@@ -1,45 +1,32 @@
 const { createReducer } = require("./create-reducer");
 const { Reducer } = require("./Reducer");
 
-/**
- * NOTE: this method mutates target
- * @param {String} name reducer name
- * @param {Object} target entity target
- * @param {Object} spec entity source spec
- */
-function setReducerIfTruthy(name, target, spec) {
-  if (spec[name]) {
-    // eslint-disable-next-line no-param-reassign
-    target[name] = createReducer(spec[name]);
-  }
-}
-
 class ReducerEntity extends Reducer {
   constructor(type, spec) {
     super(type, spec.name, spec);
 
-    this.isEntityInstance = true;
-
     this.uid = spec.uid;
-
-    setReducerIfTruthy("before", this, spec);
-    setReducerIfTruthy("value", this, spec);
-    setReducerIfTruthy("after", this, spec);
-    setReducerIfTruthy("catch", this, spec);
-
-    if (spec.inputType) {
-      // TODO: implement back
-      // const inputType = normalizeTypeCheckSource(spec.inputType);
-      this.inputType = createReducer(spec.inputType);
-    }
-
-    if (spec.outputType) {
-      // TODO: implement back
-      // const outputType = normalizeTypeCheckSource(spec.outputType);
-      this.outputType = createReducer(spec.outputType);
-    }
-
     this.params = spec.params || {};
+
+    this.value = this.createReducer("value", spec);
+    this.inputType = this.createReducer("inputType", spec);
+    this.outputType = this.createReducer("outputType", spec);
+    this.before = this.createReducer("before", spec);
+    this.after = this.createReducer("after", spec);
+    this.catch = this.createReducer("catch", spec);
+  }
+
+  /**
+   * TODO: should we move this method up to a common class for entities and
+   * helper Reducers?
+   * NOTE: this method mutates the class
+   * @param {String} name reducer name
+   * @param {Object} target entity target
+   * @param {Object} spec entity source spec
+   */
+  // eslint-disable-next-line class-methods-use-this
+  createReducer(name, spec) {
+    return spec[name] ? createReducer(spec[name]) : undefined;
   }
 
   async resolveEntityValue(accumulator, resolveReducer) {
@@ -48,12 +35,12 @@ class ReducerEntity extends Reducer {
     acc.uid = this.uid ? this.uid(acc) : undefined;
 
     if (this.inputType) {
-      await resolveReducer(acc, this.inputValue);
+      await resolveReducer(acc, this.inputType);
     }
 
     const cache = accumulator.cache;
 
-    if (cache.get) {
+    if (typeof cache.get === "function") {
       const cacheResult = await cache.get(acc);
       if (cacheResult !== undefined) {
         return cacheResult;
@@ -80,7 +67,7 @@ class ReducerEntity extends Reducer {
       await resolveReducer(acc, this.outputType);
     }
 
-    if (cache.set) {
+    if (typeof cache.set === "function") {
       await cache.set(acc);
     }
 
@@ -88,8 +75,7 @@ class ReducerEntity extends Reducer {
   }
 
   async resolveReducer(accumulator, resolveReducer) {
-    let acc = this.setAccumulatorContext(accumulator);
-
+    let acc = accumulator;
     try {
       acc.value = await this.resolveEntityValue(acc, resolveReducer);
     } catch (error) {
@@ -111,6 +97,5 @@ class ReducerEntity extends Reducer {
 }
 
 module.exports = {
-  setReducerIfTruthy,
   ReducerEntity
 };
