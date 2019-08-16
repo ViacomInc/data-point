@@ -1,18 +1,18 @@
 const { IS_REDUCER } = require("./reducer-symbols");
+const uniqueIdScope = require("./unique-id-scope");
 
-let uid = 0;
-function uniqueId() {
-  uid += 1;
-  return uid;
+const uniqueId = uniqueIdScope();
+
+function normalizeName(name) {
+  const reducerUId = uniqueId();
+  return name ? `${name}:${reducerUId}` : reducerUId;
 }
 
 class Reducer {
   constructor(type, name, spec) {
-    const normalizedName = name ? `${name}:${uniqueId()}` : uniqueId();
-
-    this.id = `${type}:${normalizedName}`;
+    this.id = `${type}:${normalizeName(name)}`;
     this.name = name;
-    this.reducerType = type;
+    this.type = type;
 
     Object.defineProperty(this, "spec", {
       value: spec,
@@ -25,16 +25,12 @@ class Reducer {
     });
   }
 
-  setAccumulatorContext(accumulator) {
-    return accumulator.set("reducer", this);
-  }
-
   async resolveReducer(accumulator, resolveReducer) {
-    const acc = this.setAccumulatorContext(accumulator);
-    return this.resolve(acc, resolveReducer);
+    return this.resolve(accumulator, resolveReducer);
   }
 }
 
 module.exports = {
+  normalizeName,
   Reducer
 };
