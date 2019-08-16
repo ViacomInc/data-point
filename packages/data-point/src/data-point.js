@@ -1,5 +1,5 @@
 const { createReducer } = require("./create-reducer");
-const Accumulator = require("./Accumulator");
+const { Accumulator } = require("./Accumulator");
 const Resolve = require("./resolve-reducer");
 
 async function resolveFromAccumulator(acc, reducers) {
@@ -8,7 +8,7 @@ async function resolveFromAccumulator(acc, reducers) {
 }
 
 async function resolver(input, reducers, options = {}) {
-  const acc = Accumulator.create({
+  const acc = new Accumulator({
     value: input,
     locals: options.locals,
     resolve: resolveFromAccumulator,
