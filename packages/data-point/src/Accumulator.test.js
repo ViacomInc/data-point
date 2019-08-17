@@ -4,13 +4,15 @@ describe("Accumulator", () => {
   describe("constructor", () => {
     it("should accept empty options object", () => {
       expect(new Accumulator()).toMatchInlineSnapshot(`
-                Accumulator {
-                  "cache": Object {},
-                  "locals": undefined,
-                  "tracer": undefined,
-                  "value": undefined,
-                }
-            `);
+        Accumulator {
+          "cache": Object {},
+          "locals": undefined,
+          "pid": undefined,
+          "reducer": undefined,
+          "tracer": undefined,
+          "value": undefined,
+        }
+      `);
     });
     it("should assign options object", () => {
       const resolve = () => true;
@@ -25,6 +27,8 @@ describe("Accumulator", () => {
         Accumulator {
           "cache": "cache",
           "locals": "locals",
+          "pid": undefined,
+          "reducer": undefined,
           "tracer": "tracer",
           "value": "value",
         }
