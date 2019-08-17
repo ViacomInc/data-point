@@ -1,4 +1,7 @@
-let pid = 0;
+const uniqueIdScope = require("./unique-id-scope");
+const traceSpan = require("./trace-span");
+
+const pid = uniqueIdScope();
 
 /**
  * Applies a Reducer to an accumulator
@@ -11,44 +14,21 @@ let pid = 0;
  * @returns {Promise}
  */
 async function resolve(accumulator, reducer) {
-  pid += 1;
-
   const acc = accumulator.create();
   acc.reducer = reducer;
-  acc.pid = pid;
+  acc.pid = pid();
+
+  const span = traceSpan.create(acc);
 
   let result;
-
-  let span;
-  if (acc.tracer && acc.tracer.startSpan) {
-    const name = (acc.reducer && acc.reducer.id) || "init";
-    span = acc.tracer.startSpan(name, {
-      childOf: acc.tracer
-    });
-
-    // passing reference to accumulator to create child-parent relationship
-    acc.tracer = span;
-
-    span.setTag("pid", acc.pid);
-  }
-
   try {
     // NOTE: recursive call by passing resolve method
-    result = await reducer.resolveReducer(acc, resolve, reducer);
+    result = await reducer.resolveReducer(acc, resolve);
   } catch (error) {
-    if (span && span.log) {
-      span.log({
-        event: "error",
-        "error.object": error,
-        message: error.message,
-        stack: error.stack
-      });
-    }
+    traceSpan.logError(span, error);
     throw error;
   } finally {
-    if (span && span.finish) {
-      span.finish();
-    }
+    traceSpan.finish(span);
   }
   return result;
 }
