@@ -6,9 +6,6 @@ const pid = uniqueIdScope();
 /**
  * Applies a Reducer to an accumulator
  *
- * If Accumulator.trace is true it will execute tracing actions
- *
- * @param {Object} manager
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
  * @returns {Promise}

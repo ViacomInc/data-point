@@ -1,10 +1,10 @@
 const { createReducer } = require("./create-reducer");
 const { Accumulator } = require("./Accumulator");
-const Resolve = require("./resolve-reducer");
+const { resolve } = require("./resolve");
 
 async function resolveFromAccumulator(acc, reducers) {
   const parsedReducers = createReducer(reducers);
-  return Resolve.resolve(acc, parsedReducers);
+  return resolve(acc, parsedReducers);
 }
 
 async function resolver(input, reducers, options = {}) {
