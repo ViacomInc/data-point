@@ -46,7 +46,7 @@ function stringToPath(pathSource) {
  * @returns {Object} compiled source
  */
 function parsePath(pathSource) {
-  const compliedSource = {
+  const compiledSource = {
     /**
      * @type {Array<string|number>} parsed object path
      */
@@ -60,18 +60,17 @@ function parsePath(pathSource) {
   let sourceToCompile = pathSource.substr(1);
 
   if (pathSource.startsWith("$..")) {
-    compliedSource.moveUp = true;
+    compiledSource.moveUp = true;
     sourceToCompile = sourceToCompile.substr(2);
   }
 
   if (pathSource === "$.") {
-    compliedSource.path = [];
+    compiledSource.path = [];
   } else {
-    compliedSource.path = stringToPath(sourceToCompile);
+    compiledSource.path = stringToPath(sourceToCompile);
   }
 
-  return compliedSource;
-  // return pathSource === "$." ? [] : stringToPath(pathSource.substr(1));
+  return compiledSource;
 }
 
 /**
