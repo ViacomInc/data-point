@@ -52,9 +52,9 @@ function parsePath(pathSource) {
      */
     path: [],
     /**
-     * @type {Boolean} true if crawling should look one level up
+     * @type {Boolean} true if true then use the entire accumulator as the source
      */
-    moveUp: false
+    useAccumulatorAsSource: false
   };
 
   if (pathSource === "$.") {
@@ -64,7 +64,7 @@ function parsePath(pathSource) {
   let sourceToCompile;
 
   if (pathSource.startsWith("$..")) {
-    compiledSource.moveUp = true;
+    compiledSource.useAccumulatorAsSource = true;
     // removes characters "$.."
     sourceToCompile = pathSource.substr(3);
   } else {
@@ -110,7 +110,9 @@ function crawlPath(value, path) {
  */
 function resolvePath(accumulator, compiledPath) {
   const valueToCrawl =
-    compiledPath.moveUp === true ? accumulator : accumulator.value;
+    compiledPath.useAccumulatorAsSource === true
+      ? accumulator
+      : accumulator.value;
 
   return crawlPath(valueToCrawl, compiledPath.path);
 }

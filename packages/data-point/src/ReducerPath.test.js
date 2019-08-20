@@ -66,26 +66,26 @@ describe("stringToPath", () => {
 describe("parsePath", () => {
   it("should parse $.", () => {
     expect(reducerPath.parsePath("$.")).toMatchObject({
-      moveUp: false,
+      useAccumulatorAsSource: false,
       path: []
     });
   });
 
   it("should parse $..", () => {
     expect(reducerPath.parsePath("$..")).toMatchObject({
-      moveUp: true,
+      useAccumulatorAsSource: true,
       path: []
     });
 
     expect(reducerPath.parsePath("$..locals.a")).toMatchObject({
-      moveUp: true,
+      useAccumulatorAsSource: true,
       path: ["locals", "a"]
     });
   });
 
   it("should parse $a.b", () => {
     expect(reducerPath.parsePath("$a.b")).toMatchObject({
-      moveUp: false,
+      useAccumulatorAsSource: false,
       path: ["a", "b"]
     });
   });
@@ -141,7 +141,7 @@ describe("crawlPath", () => {
 });
 
 describe("resolvePath", () => {
-  it("should use accumulator if moveUp flag is true", () => {
+  it("should use accumulator if useAccumulatorAsSource flag is true", () => {
     const acc = new Accumulator({
       value,
       locals: {
@@ -150,19 +150,19 @@ describe("resolvePath", () => {
     });
 
     const compiledPath = {
-      moveUp: true,
+      useAccumulatorAsSource: true,
       path: ["locals", "myLocal"]
     };
     expect(reducerPath.resolvePath(acc, compiledPath)).toEqual("myLocal");
   });
 
-  it("should use accumulator.value if moveUp flag is false", () => {
+  it("should use accumulator.value if useAccumulatorAsSource flag is false", () => {
     const acc = new Accumulator({
       value
     });
 
     const compiledPath = {
-      moveUp: false,
+      useAccumulatorAsSource: false,
       path: ["a", "b"]
     };
     expect(reducerPath.resolvePath(acc, compiledPath)).toEqual(value.a.b);
@@ -176,7 +176,7 @@ describe("ReducerPath", () => {
     it("should set compiledPath property", () => {
       const result = new ReducerPath(pathSrc);
       expect(result.compiledPath).toMatchObject({
-        moveUp: false,
+        useAccumulatorAsSource: false,
         path: ["a", "b", 1, 5, "c"]
       });
     });
