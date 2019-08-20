@@ -57,18 +57,22 @@ function parsePath(pathSource) {
     moveUp: false
   };
 
-  let sourceToCompile = pathSource.substr(1);
+  if (pathSource === "$.") {
+    return compiledSource;
+  }
+
+  let sourceToCompile;
 
   if (pathSource.startsWith("$..")) {
     compiledSource.moveUp = true;
-    sourceToCompile = sourceToCompile.substr(2);
+    // removes characters "$.."
+    sourceToCompile = pathSource.substr(3);
+  } else {
+    // removes character "$"
+    sourceToCompile = pathSource.substr(1);
   }
 
-  if (pathSource === "$.") {
-    compiledSource.path = [];
-  } else {
-    compiledSource.path = stringToPath(sourceToCompile);
-  }
+  compiledSource.path = stringToPath(sourceToCompile);
 
   return compiledSource;
 }
