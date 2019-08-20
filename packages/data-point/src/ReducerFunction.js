@@ -1,8 +1,8 @@
-const { ReducerNative } = require("./ReducerNative");
+const { Reducer } = require("./Reducer");
 
-class ReducerFunction extends ReducerNative {
+class ReducerFunction extends Reducer {
   constructor(spec) {
-    super("function", spec.name, spec);
+    super("function", spec.name || "anonymous", spec);
 
     this.functionBody = spec;
   }
@@ -12,7 +12,7 @@ class ReducerFunction extends ReducerNative {
   }
 
   async resolve(accumulator) {
-    return this.functionBody(accumulator.value, accumulator);
+    return this.functionBody.call(undefined, accumulator.value, accumulator);
   }
 }
 
