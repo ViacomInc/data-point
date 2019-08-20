@@ -121,8 +121,14 @@ describe("crawlPath", () => {
     expect(reducerPath.crawlPath(value, ["e", 0])).toEqual(value.e[0]);
     // false
     expect(reducerPath.crawlPath(value, ["e", 1])).toEqual(value.e[1]);
+    // false.toString === toString (function)
+    expect(reducerPath.crawlPath(value, ["e", 1, "toString"])).toBeInstanceOf(
+      Function
+    );
     // null
     expect(reducerPath.crawlPath(value, ["e", 2])).toEqual(value.e[2]);
+    // null.toString === null
+    expect(reducerPath.crawlPath(value, ["e", 2, "toString"])).toEqual(null);
     // 0
     expect(reducerPath.crawlPath(value, ["e", 3])).toEqual(value.e[3]);
   });

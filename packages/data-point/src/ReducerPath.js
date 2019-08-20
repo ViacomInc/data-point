@@ -90,11 +90,14 @@ function crawlPath(value, path) {
 
   // using for loop for faster iteration
   for (let i = 0; i < length; i += 1) {
-    // If the item isn't found, return undefined
-    if (current[path[i]] === undefined) return undefined;
+    const currentPathValue = current[path[i]];
+
+    if (currentPathValue === undefined || currentPathValue === null) {
+      return currentPathValue;
+    }
 
     // Otherwise, update the current  value
-    current = current[path[i]];
+    current = currentPathValue;
   }
 
   return current;
