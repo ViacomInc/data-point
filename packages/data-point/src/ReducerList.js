@@ -21,26 +21,20 @@ class ReducerList extends Reducer {
     let value = accumulator.value;
     let acc = accumulator;
 
-    let index = 0;
-    let hasReachedEnd;
-    const reducerListLength = reducerList.length;
+    const reducerMaxIndex = reducerList.length - 1;
 
-    do {
+    for (let index = 0; index <= reducerMaxIndex; index += 1) {
       const reducer = reducerList[index];
 
       // we do purposely want to wait for each reducer to execute
       // eslint-disable-next-line no-await-in-loop
       value = await resolveReducer(acc, reducer);
 
-      index += 1;
-
-      hasReachedEnd = index === reducerListLength;
-
-      if (!hasReachedEnd) {
-        // only create new accumulator if there are more reducers to process
+      // only create new accumulator if there are more reducers to process
+      if (index < reducerMaxIndex) {
         acc = acc.set("value", value);
       }
-    } while (!hasReachedEnd);
+    }
 
     return value;
   }

@@ -11,6 +11,7 @@ const mockResolveReducer = jest.fn((acc, reducer) => {
 
 const reducer1 = val => `${val}-reducer1`;
 const reducer2 = val => `${val}-reducer2`;
+const reducer3 = val => `${val}-reducer3`;
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -68,17 +69,22 @@ describe("ReducerList", () => {
     });
 
     it("should resolve of multiple reducers", async () => {
-      const reducer = new ReducerList([reducer1, reducer2], mockCreateReducer);
+      const reducer = new ReducerList(
+        [reducer1, reducer2, reducer3],
+        mockCreateReducer
+      );
       const acc = new Accumulator({
         value: "value"
       });
 
+      const spySet = jest.spyOn(acc, "set");
+
       expect(await reducer.resolve(acc, mockResolveReducer)).toEqual(
-        "value-reducer1-reducer2"
+        "value-reducer1-reducer2-reducer3"
       );
 
       // should be called with original accumulator
-      expect(mockResolveReducer).toBeCalledTimes(2);
+      expect(mockResolveReducer).toBeCalledTimes(3);
       // get information from second call to mockResolveReducer
       const [arg1] = mockResolveReducer.mock.calls[1];
       // accumulator is a copy, not original
@@ -87,6 +93,9 @@ describe("ReducerList", () => {
       expect(arg1).toMatchObject({
         value: "value-reducer1"
       });
+
+      // should only clone object when necessary
+      expect(spySet).toBeCalledTimes(2);
     });
   });
 });
