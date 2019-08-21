@@ -26,7 +26,7 @@ class Reducer {
   }
 
   static isReducer(value) {
-    return value && value[IS_REDUCER] === true;
+    return !!value && value[IS_REDUCER] === true;
   }
 
   async resolveReducer(accumulator, resolveReducer) {
