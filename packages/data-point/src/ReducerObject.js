@@ -1,30 +1,40 @@
-const isPlainObject = require("lodash/isPlainObject");
 const set = require("lodash/set");
 const cloneDeep = require("lodash/cloneDeep");
 
-const { ReducerNative } = require("./ReducerNative");
+const { Reducer } = require("./Reducer");
+const isReducerConstant = require("./is-reducer-constant");
 
-/**
- * @return {Object}
- */
+function isPlainObject(obj) {
+  return (
+    typeof obj === "object" && Object.getPrototypeOf(obj) === Object.prototype
+  );
+}
+
 function newProps() {
   return {
-    constants: {},
+    constant: {},
     reducers: []
   };
 }
 
 /**
+ * NOTE: This function makes recursive calls to itself
  * @param {Function} createReducer
  * @param {Object} source
  * @param {Array} stack
  * @param {Object} props
- * @returns {Array}
+ * @returns {Object} a props object
  */
 function getProps(createReducer, source, stack = [], props = newProps()) {
   Object.keys(source).forEach(key => {
     const path = stack.concat(key);
     const value = source[key];
+
+    if (isReducerConstant(value)) {
+      set(props.constant, path, value.constantValue);
+      return;
+    }
+
     if (isPlainObject(value)) {
       // NOTE: recursive call
       getProps(createReducer, value, path, props);
@@ -32,35 +42,17 @@ function getProps(createReducer, source, stack = [], props = newProps()) {
     }
 
     const reducer = createReducer(value);
-    // TODO: should we implement ReducerConstant?
-    if (reducer.type === "ReducerConstant") {
-      set(props.constants, path, reducer.value);
-    } else {
-      props.reducers.push({ path, reducer });
-    }
+    props.reducers.push({ path, reducer });
   });
 
   return props;
 }
 
-/**
- * @param {Object} source
- * @return {Function}
- */
-function getSourceFunction(source) {
-  const fn = () => cloneDeep(source);
-  Object.defineProperty(fn, "name", { value: "source" });
-  return fn;
-}
-
-class ReducerObject extends ReducerNative {
+class ReducerObject extends Reducer {
   constructor(spec, createReducer) {
     super("object", undefined, spec);
 
-    const props = getProps(createReducer, spec);
-
-    this.source = getSourceFunction(props.constants);
-    this.reducers = props.reducers;
+    this.reducerProperties = getProps(createReducer, spec);
   }
 
   static isType(spec) {
@@ -68,15 +60,16 @@ class ReducerObject extends ReducerNative {
   }
 
   /**
-   * @param {Object} manager
-   * @param {Function} resolveReducer
    * @param {Accumulator} accumulator
-   * @param {ReducerObject} reducer
+   * @param {Function} resolveReducer
    * @returns {Promise}
    */
   async resolve(accumulator, resolveReducer) {
-    const reducers = this.reducers;
-    const result = this.source();
+    const reducers = this.reducerProperties.reducers;
+
+    // clone constant value so any subsequent change to the object
+    // is not treated as a reference to the original source
+    const result = cloneDeep(this.reducerProperties.constant);
 
     if (reducers.length === 0) {
       return result;
@@ -94,8 +87,7 @@ class ReducerObject extends ReducerNative {
 }
 
 module.exports = {
-  newProps,
+  isPlainObject,
   getProps,
-  getSourceFunction,
   ReducerObject
 };
