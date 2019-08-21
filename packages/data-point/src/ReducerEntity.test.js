@@ -138,7 +138,7 @@ describe("ReducerEntity", () => {
         expect(error.reducer).toEqual(entity);
       });
 
-      it.only("should resolve this.catch", async () => {
+      it("should resolve this.catch", async () => {
         const entity = new ReducerEntity("type", {
           name: "customEntity",
           value: () => "value",
