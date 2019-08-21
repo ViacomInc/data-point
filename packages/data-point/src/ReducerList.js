@@ -1,10 +1,10 @@
-const { ReducerNative } = require("./ReducerNative");
+const { Reducer } = require("./Reducer");
 
-class ReducerList extends ReducerNative {
+class ReducerList extends Reducer {
   constructor(spec, createReducer) {
     super("list", undefined, spec);
 
-    this.reducerList = spec.map(token => createReducer(token));
+    this.reducerList = spec.map(reducerSource => createReducer(reducerSource));
   }
 
   static isType(spec) {
@@ -12,30 +12,28 @@ class ReducerList extends ReducerNative {
   }
 
   async resolve(accumulator, resolveReducer) {
-    const reducers = this.reducerList;
+    const reducerList = this.reducerList;
 
-    if (reducers.length === 0) {
+    if (reducerList.length === 0) {
       return undefined;
     }
 
-    const initialValue =
-      accumulator.value === undefined ? null : accumulator.value;
+    let value = accumulator.value;
+    let acc = accumulator;
 
-    let index = 0;
+    const reducerMaxIndex = reducerList.length - 1;
 
-    let value = initialValue;
-
-    while (index < reducers.length) {
-      const reducer = reducers[index];
-
-      const acc = Object.create(accumulator);
-      acc.value = value;
+    for (let index = 0; index <= reducerMaxIndex; index += 1) {
+      const reducer = reducerList[index];
 
       // we do purposely want to wait for each reducer to execute
       // eslint-disable-next-line no-await-in-loop
       value = await resolveReducer(acc, reducer);
 
-      index += 1;
+      // only create new accumulator if there are more reducers to process
+      if (index < reducerMaxIndex) {
+        acc = acc.set("value", value);
+      }
     }
 
     return value;
