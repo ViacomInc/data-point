@@ -25,7 +25,12 @@ function newProps() {
  * @param {Object} props
  * @returns {Object} a props object
  */
-function getProps(createReducer, source, stack = [], props = newProps()) {
+function getObjectProperties(
+  createReducer,
+  source,
+  stack = [],
+  props = newProps()
+) {
   Object.keys(source).forEach(key => {
     const path = stack.concat(key);
     const value = source[key];
@@ -37,7 +42,7 @@ function getProps(createReducer, source, stack = [], props = newProps()) {
 
     if (isPlainObject(value)) {
       // NOTE: recursive call
-      getProps(createReducer, value, path, props);
+      getObjectProperties(createReducer, value, path, props);
       return;
     }
 
@@ -52,7 +57,7 @@ class ReducerObject extends Reducer {
   constructor(spec, createReducer) {
     super("object", undefined, spec);
 
-    this.reducerProperties = getProps(createReducer, spec);
+    this.objectProperties = getObjectProperties(createReducer, spec);
   }
 
   static isType(spec) {
@@ -65,11 +70,11 @@ class ReducerObject extends Reducer {
    * @returns {Promise}
    */
   async resolve(accumulator, resolveReducer) {
-    const reducers = this.reducerProperties.reducers;
+    const reducers = this.objectProperties.reducers;
 
     // clone constant value so any subsequent change to the object
     // is not treated as a reference to the original source
-    const result = cloneDeep(this.reducerProperties.constant);
+    const result = cloneDeep(this.objectProperties.constant);
 
     if (reducers.length === 0) {
       return result;
@@ -88,6 +93,6 @@ class ReducerObject extends Reducer {
 
 module.exports = {
   isPlainObject,
-  getProps,
+  getObjectProperties,
   ReducerObject
 };

@@ -28,7 +28,7 @@ describe("isPlainObject", () => {
   });
 });
 
-describe("getProps", () => {
+describe("getObjectProperties", () => {
   it("should extract all constant", () => {
     const obj = {
       prop1: constant("prop1"),
@@ -38,7 +38,7 @@ describe("getProps", () => {
       })
     };
 
-    const props = reducerObject.getProps(mockCreateReducer, obj);
+    const props = reducerObject.getObjectProperties(mockCreateReducer, obj);
     expect(props.constant).toEqual({
       prop1: "prop1",
       prop2: "prop2",
@@ -54,7 +54,7 @@ describe("getProps", () => {
       prop2: () => true
     };
 
-    const props = reducerObject.getProps(mockCreateReducer, obj);
+    const props = reducerObject.getObjectProperties(mockCreateReducer, obj);
     expect(props.reducers).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -82,7 +82,7 @@ describe("getProps", () => {
       }
     };
 
-    const props = reducerObject.getProps(mockCreateReducer, obj);
+    const props = reducerObject.getObjectProperties(mockCreateReducer, obj);
     // nested prop should match path:
     expect(props.reducers[0].path).toEqual(["nested", "nestedDeep", "prop1"]);
     // matching entire reducer structure
@@ -113,7 +113,7 @@ describe("getProps", () => {
       }
     };
 
-    const props = reducerObject.getProps(mockCreateReducer, obj);
+    const props = reducerObject.getObjectProperties(mockCreateReducer, obj);
 
     expect(props).toMatchInlineSnapshot(`
       Object {
@@ -157,7 +157,7 @@ describe("ReducerObject", () => {
       expect(reducer.name).toEqual(undefined);
     });
 
-    it("should parse source and set to reducerProperties property", () => {
+    it("should parse source and set to objectProperties property", () => {
       const reducer = new ReducerObject(
         {
           prop1: constant("prop1"),
@@ -165,11 +165,11 @@ describe("ReducerObject", () => {
         },
         mockCreateReducer
       );
-      expect(reducer.reducerProperties.constant).toEqual({
+      expect(reducer.objectProperties.constant).toEqual({
         prop1: "prop1"
       });
 
-      expect(reducer.reducerProperties.reducers).toHaveLength(1);
+      expect(reducer.objectProperties.reducers).toHaveLength(1);
     });
   });
 
