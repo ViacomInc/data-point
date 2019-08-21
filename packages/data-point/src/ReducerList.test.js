@@ -68,7 +68,7 @@ describe("ReducerList", () => {
       expect(mockResolveReducer).toBeCalledWith(acc, reducer.reducerList[0]);
     });
 
-    it("should resolve of multiple reducers", async () => {
+    it("should resolve multiple reducers", async () => {
       const reducer = new ReducerList(
         [reducer1, reducer2, reducer3],
         mockCreateReducer
