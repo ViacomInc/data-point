@@ -1,6 +1,6 @@
-const { ReducerNative } = require("./ReducerNative");
+const { Reducer } = require("./Reducer");
 
-class ReducerList extends ReducerNative {
+class ReducerList extends Reducer {
   constructor(spec, createReducer) {
     super("list", undefined, spec);
 
