@@ -25,6 +25,10 @@ class Reducer {
     });
   }
 
+  static isReducer(value) {
+    return !!value && value[IS_REDUCER] === true;
+  }
+
   async resolveReducer(accumulator, resolveReducer) {
     return this.resolve(accumulator, resolveReducer);
   }

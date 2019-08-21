@@ -46,6 +46,16 @@ describe("Reducer", () => {
     });
   });
 
+  describe("isReducer", () => {
+    it("should check if an object is a reducer or not", async () => {
+      const reducer = createReducer();
+
+      expect(Reducer.isReducer(reducer)).toEqual(true);
+      expect(Reducer.isReducer({})).toEqual(false);
+      expect(Reducer.isReducer(undefined)).toEqual(false);
+    });
+  });
+
   describe("resolveReducer", () => {
     it("should call resolve method", async () => {
       const reducer = createReducer();
