@@ -85,11 +85,13 @@ class ReducerEntity extends Reducer {
 
       if (this.catch) {
         acc = acc.set("value", await resolveReducer(acc, this.catch));
+        if (this.outputType) {
+          await resolveReducer(acc, this.outputType);
+        }
+        return acc.value;
       }
 
-      if (this.outputType) {
-        await resolveReducer(acc, this.outputType);
-      }
+      throw error;
     }
 
     return acc.value;
