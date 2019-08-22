@@ -1,9 +1,7 @@
 jest.mock("lodash/cloneDeep");
 const mockCloneDeep = require("lodash/cloneDeep");
 
-mockCloneDeep.mockImplementation(value => {
-  return jest.requireActual("lodash/cloneDeep")(value);
-});
+mockCloneDeep.mockImplementation(jest.requireActual("lodash/cloneDeep"));
 
 const { ReducerConstant, cloneObject } = require("./constant");
 
