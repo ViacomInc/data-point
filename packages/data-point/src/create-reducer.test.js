@@ -37,6 +37,11 @@ describe("createReducer/getReducer", () => {
     expect(reducer).toHaveProperty("type", "path");
   });
 
+  it("should create list reducer", () => {
+    const reducer = createReducer.createReducer([]);
+    expect(reducer).toHaveProperty("type", "list");
+  });
+
   it("should create object reducer", () => {
     const reducer = createReducer.createReducer({});
     expect(reducer).toHaveProperty("type", "object");
