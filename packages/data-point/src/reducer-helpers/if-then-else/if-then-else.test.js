@@ -9,7 +9,7 @@ describe("ReducerIfThenElse", () => {
     else: input => `${input} is NOT 'a'`
   };
 
-  describe.only("constructor", () => {
+  describe("constructor", () => {
     it("should set type to 'constant'", () => {
       const reducer = new ReducerIfThenElse(spec);
       expect(reducer.type).toEqual("ifThenElse");
@@ -23,13 +23,13 @@ describe("ReducerIfThenElse", () => {
     });
   });
 
-  describe.only("create", () => {
+  describe("create", () => {
     it("should create a new instance of ReducerIfThenElse", () => {
       expect(ReducerIfThenElse.create(spec)).toBeInstanceOf(ReducerIfThenElse);
     });
   });
 
-  describe.only("resolve", () => {
+  describe("resolve", () => {
     it("should resolve to then if if statement is met", async () => {
       const reducer = new ReducerIfThenElse(spec);
 
