@@ -130,9 +130,13 @@ describe("ReducerEntity", () => {
 
         const acc = new Accumulator();
 
-        const error = await entity
-          .resolveReducer(acc, mockResolveReducer)
-          .catch(err => err);
+        let error;
+
+        try {
+          await entity.resolveReducer(acc, mockResolveReducer);
+        } catch (err) {
+          error = err;
+        }
 
         expect(error).toMatchInlineSnapshot(`[Error: entityError]`);
         expect(error.reducer).toEqual(entity);
