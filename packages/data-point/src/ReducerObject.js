@@ -3,12 +3,7 @@ const cloneDeep = require("lodash/cloneDeep");
 
 const { Reducer } = require("./Reducer");
 const isReducerConstant = require("./is-reducer-constant");
-
-function isPlainObject(obj) {
-  return (
-    typeof obj === "object" && Object.getPrototypeOf(obj) === Object.prototype
-  );
-}
+const isPlainObject = require("./is-plain-object");
 
 function newProps() {
   return {

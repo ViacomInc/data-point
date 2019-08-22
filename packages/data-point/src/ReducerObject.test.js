@@ -15,19 +15,6 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe("isPlainObject", () => {
-  it("should return true for plain objects", () => {
-    expect(reducerObject.isPlainObject({})).toEqual(true);
-    expect(reducerObject.isPlainObject("string")).toEqual(false);
-    expect(reducerObject.isPlainObject(123)).toEqual(false);
-    expect(reducerObject.isPlainObject(() => true)).toEqual(false);
-
-    expect(reducerObject.isPlainObject(Object.create({}))).toEqual(false);
-    class Test {}
-    expect(reducerObject.isPlainObject(new Test())).toEqual(false);
-  });
-});
-
 describe("getObjectProperties", () => {
   it("should extract all constant", () => {
     const obj = {
