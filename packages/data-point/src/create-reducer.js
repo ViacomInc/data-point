@@ -26,23 +26,21 @@ function createReducer(source) {
   }
 
   // eslint-disable-next-line no-use-before-define
-  const reducer = getReducer(source);
-
-  return Object.freeze(reducer);
+  return getReducer(source);
 }
 
 function getReducer(spec) {
   switch (true) {
     case ReducerFunction.isType(spec):
-      return new ReducerFunction(spec, createReducer);
+      return new ReducerFunction(spec);
     case ReducerList.isType(spec):
       return new ReducerList(spec, createReducer);
     case ReducerPath.isType(spec):
-      return new ReducerPath(spec, createReducer);
+      return new ReducerPath(spec);
     case ReducerObject.isType(spec):
       return new ReducerObject(spec, createReducer);
     default:
-      throw new Error("Invalid reducer type");
+      throw new Error("Reducer provided was not recognized");
   }
 }
 
