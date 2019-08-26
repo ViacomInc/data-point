@@ -10,12 +10,12 @@ describe("ReducerIfThenElse", () => {
   };
 
   describe("constructor", () => {
-    it("should set type to 'constant'", () => {
+    it("should set type to 'ifThenElse'", () => {
       const reducer = new ReducerIfThenElse(spec);
       expect(reducer.type).toEqual("ifThenElse");
     });
 
-    it("should create a reducer from spec and assign to assignReducer", () => {
+    it("should store reducer entries from spec", () => {
       const reducer = new ReducerIfThenElse(spec);
       expect(reducer.statement).toHaveProperty("if.type", "function");
       expect(reducer.statement).toHaveProperty("then.type", "function");
