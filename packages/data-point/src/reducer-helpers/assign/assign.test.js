@@ -4,7 +4,7 @@ const { resolve } = require("../../resolve");
 
 describe("ReducerAssign", () => {
   describe("constructor", () => {
-    it("should set type to 'constant'", () => {
+    it("should set type to 'assign'", () => {
       const reducer = new ReducerAssign({});
       expect(reducer.type).toEqual("assign");
     });
