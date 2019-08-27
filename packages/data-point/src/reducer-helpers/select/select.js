@@ -1,111 +1,68 @@
 const { Reducer } = require("../../Reducer");
 const { createReducer } = require("../../create-reducer");
+const { validate } = require("./validate");
+
+/**
+ * @typedef {Object} caseBlock
+ * @property {Reducer} case
+ * @property {Reducer} do
+ */
+
+/**
+ * @typedef {Object} selectStatement
+ * @property {caseBlock[]} in
+ * @property {Reducer} default
+ */
 
 /**
  * Parse only case statements
  *
- * @param {hash} spec - key/value where each value will be mapped into a reducer
- * @returns
+ * @param {{case:Reducer, do:Reducer}[]} spec un-parsed case statements
+ * @returns {caseBlock[]}
  */
 function parseCaseStatements(spec) {
-  return spec.reduce((acc, selectBlock) => {
-    if (selectBlock.default !== undefined) {
-      return acc;
-    }
-
-    acc.push({
+  return spec.map(selectBlock => {
+    return {
       case: createReducer(selectBlock.case),
       do: createReducer(selectBlock.do)
-    });
-
-    return acc;
-  }, []);
-}
-
-function validateCaseBlock(id, caseBlock) {
-  if (caseBlock.case === undefined) {
-    throw new Error(
-      `"${id}" is malformed, "case" entry is missing. Select case blocks must have a "case" reducer set.`
-    );
-  }
-
-  if (caseBlock.do === undefined) {
-    throw new Error(
-      `"${id}" is malformed, "do" entry is missing. Select case blocks must have a "do" reducer set.`
-    );
-  }
-}
-
-function validateDefaultBlock(id, defaultBlock) {
-  if (!defaultBlock.default) {
-    throw new Error(
-      `"${id}" is malformed, it is missing a "default" case. Select must have it's "default" statement handled.`
-    );
-  }
-}
-
-function validate(id, select) {
-  if (!select.length) {
-    throw new Error(`"${id}" should not be empty.`);
-  }
-  select.forEach(selectBlock => {
-    if (selectBlock.case) {
-      validateCaseBlock(id, selectBlock);
-    } else {
-      validateDefaultBlock(id, selectBlock);
-    }
+    };
   });
 }
 
 /**
- * @param {string} id reducer id
- * @param {Array} select
- */
-function parseDefaultStatement(select) {
-  const defaultCase = select.find(statement => {
-    return statement.default;
-  });
-
-  return createReducer(defaultCase.default);
-}
-
-/**
- * parse spec
- *
- * @param {any} spec
- * @returns
+ * @param {Object} select un-parsed select source
+ * @param {{case:Reducer, do:Reducer}[]} select.in un-parsed case statements
+ * @param {Reducer} select.default un-parsed case statements
+ * @returns {selectStatement}
  */
 function parseSelect(select) {
   return {
-    cases: parseCaseStatements(select),
-    default: parseDefaultStatement(select)
+    in: parseCaseStatements(select.in),
+    default: createReducer(select.default)
   };
 }
 
 /**
- * @param {Array<Object>} caseStatements
+ * @param {{case:Reducer, do:Reducer}[]} caseStatements
  * @param {Accumulator} acc
  * @param {Function} resolveReducer
  * @return {Promise}
  */
 async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
   let statement;
-  let statementIndex = 0;
   let caseMatched = false;
 
-  while (statementIndex < caseStatements.length) {
-    statement = caseStatements[statementIndex];
+  for (let index = 0; index < caseStatements.length; index += 1) {
+    statement = caseStatements[index];
 
     // we do purposely want to wait for each reducer to execute
     // eslint-disable-next-line no-await-in-loop
     const caseValue = await resolveReducer(acc, statement.case);
 
-    if (caseValue === true) {
+    if (caseValue) {
       caseMatched = true;
       break;
     }
-
-    statementIndex += 1;
   }
 
   if (caseMatched) {
@@ -115,10 +72,30 @@ async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
   return false;
 }
 
+/**
+ * Mirrors a simplified behaviour of the `switch` statement in javascript.
+ * It creates a reducer which accepts the form of:
+ *
+ * ```js
+ * select({
+ *   in: [
+ *     { case: Reducer,  do: Reducer },
+ *     { case: Reducer,  do: Reducer }
+ *     ...
+ *   ],
+ *   default: Reducer
+ * })
+ * ```
+ *
+ * case blocks are executed sequentially, if a `case` returns a truthy value
+ * it's `do` statement will be resolved and returned.
+ *
+ * If no case matches then the `default` reducer will be resolved.
+ */
 class ReducerSelect extends Reducer {
   constructor(spec) {
     super("select", undefined, spec);
-    validate(this.id, spec);
+    validate(spec);
     this.select = parseSelect(spec);
   }
 
@@ -132,7 +109,7 @@ class ReducerSelect extends Reducer {
    * @returns {Promise}
    */
   async resolve(accumulator, resolveReducer) {
-    const { caseStatements, defaultTransform } = this.select.cases;
+    const caseStatements = this.select.in;
 
     const matchedCaseStatement = await getMatchingCaseStatement(
       caseStatements,
@@ -144,10 +121,13 @@ class ReducerSelect extends Reducer {
       return resolveReducer(accumulator, matchedCaseStatement.do);
     }
 
-    return resolveReducer(accumulator, defaultTransform);
+    return resolveReducer(accumulator, this.select.default);
   }
 }
 
 module.exports = {
+  parseCaseStatements,
+  parseSelect,
+  getMatchingCaseStatement,
   ReducerSelect
 };
