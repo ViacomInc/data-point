@@ -88,7 +88,7 @@ async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
  * ```
  *
  * case blocks are executed sequentially, if a `case` returns a truthy value
- * it's `do` statement will be resolved and returned.
+ * its `do` statement will be resolved and returned.
  *
  * If no case matches then the `default` reducer will be resolved.
  */
