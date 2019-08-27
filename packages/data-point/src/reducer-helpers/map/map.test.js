@@ -6,14 +6,14 @@ describe("ReducerMap", () => {
   const spec = value => value * 2;
 
   describe("constructor", () => {
-    it("should set type to 'constant'", () => {
+    it("should set type to 'map'", () => {
       const reducer = new ReducerMap(spec);
       expect(reducer.type).toEqual("map");
     });
 
-    it("should create a reducer from spec and assign to mapReducer", () => {
+    it("should create a reducer from spec and assign to iterateeReducer", () => {
       const reducer = new ReducerMap(spec);
-      expect(reducer.mapReducer).toHaveProperty("type", "function");
+      expect(reducer.iterateeReducer).toHaveProperty("type", "function");
     });
   });
 
