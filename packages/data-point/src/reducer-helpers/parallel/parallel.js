@@ -1,10 +1,18 @@
 const { Reducer } = require("../../Reducer");
 const { createReducer } = require("../../create-reducer");
 
+/**
+ * Runs in parallel a set of provided reducers against the provided input.
+ */
 class ReducerParallel extends Reducer {
   constructor(spec) {
     super("parallel", undefined, spec);
-    this.reducers = spec.map(reducerSpec => createReducer(reducerSpec));
+
+    /**
+     * @type {Reducer[]} list of reducers to run in parallel against a
+     * given input.
+     */
+    this.parallelReducers = spec.map(reducerSpec => createReducer(reducerSpec));
   }
 
   static create(spec) {
@@ -18,7 +26,7 @@ class ReducerParallel extends Reducer {
    */
   async resolve(accumulator, resolveReducer) {
     return Promise.all(
-      this.reducers.map(reducer => {
+      this.parallelReducers.map(reducer => {
         return resolveReducer(accumulator, reducer);
       })
     );
