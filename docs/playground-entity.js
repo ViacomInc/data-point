@@ -43,12 +43,12 @@ async function main() {
 
   const store = new Map();
 
-  datapoint.cache.get = acc => {
-    return store.get(acc.uid);
+  datapoint.cache.get = (uid, acc) => {
+    return store.get(uid);
   };
 
-  datapoint.cache.set = acc => {
-    return store.set(acc.uid, acc.value);
+  datapoint.cache.set = (uid, acc) => {
+    return store.set(uid, acc.value);
   };
 
   const input = [];
