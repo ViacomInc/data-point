@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Examples · DataPoint</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Hello World"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Examples · DataPoint"/><meta property="og:type" content="website"/><meta property="og:url" content="https://viacominc.github.io/data-point/"/><meta property="og:description" content="## Hello World"/><meta property="og:image" content="https://viacominc.github.io/data-point/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://viacominc.github.io/data-point/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/data-point/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://viacominc.github.io/data-point/blog/atom.xml" title="DataPoint Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://viacominc.github.io/data-point/blog/feed.xml" title="DataPoint Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/data-point/js/scrollSpy.js"></script><link rel="stylesheet" href="/data-point/css/main.css"/><script src="/data-point/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/data-point/"><img class="logo" src="/data-point/img/favicon.ico" alt="DataPoint"/><h2 class="headerTitleWithLogo">DataPoint</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/data-point/docs/introduction/introduction" target="_self">Docs</a></li><li class=""><a href="/data-point/docs/api/data-point" target="_self">API</a></li><li class=""><a href="/data-point/help" target="_self">Help</a></li><li class=""><a href="/data-point/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Examples</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="hello-world"></a><a href="#hello-world" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Hello World</h2>
+<p>Trivial example of transforming a given <strong>input</strong> with a <a href="#function-reducer">function reducer</a>.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> { DataPoint } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"data-point"</span>);
+
+<span class="hljs-keyword">const</span> sayHello = <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> {
+  <span class="hljs-keyword">return</span> <span class="hljs-string">`<span class="hljs-subst">${input}</span> World`</span>;
+};
+
+<span class="hljs-keyword">const</span> dataPoint = DataPoint();
+
+dataPoint.resolve(<span class="hljs-string">"Hello"</span>, reducer).then(<span class="hljs-function"><span class="hljs-params">output</span> =&gt;</span> {
+  <span class="hljs-comment">// 'Hello World'</span>
+  <span class="hljs-built_in">console</span>.log(output);
+});
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="fetching-and-agregation"></a><a href="#fetching-and-agregation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Fetching and agregation</h2>
+<p>Based on an initial feed, fetch and aggregate results from multiple remote services.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> DataPoint = <span class="hljs-built_in">require</span>(<span class="hljs-string">"data-point"</span>);
+
+<span class="hljs-comment">// create DataPoint instance</span>
+<span class="hljs-keyword">const</span> dataPoint = DataPoint.create();
+
+<span class="hljs-keyword">const</span> { Request, Model, Schema, map } = DataPoint;
+
+<span class="hljs-comment">// schema to verify data input</span>
+<span class="hljs-keyword">const</span> PlanetSchema = Schema(<span class="hljs-string">"PlanetSchema"</span>, {
+  <span class="hljs-attr">schema</span>: {
+    <span class="hljs-attr">type</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">properties</span>: {
+      <span class="hljs-attr">planetId</span>: {
+        <span class="hljs-attr">$id</span>: <span class="hljs-string">"/properties/planet"</span>,
+        <span class="hljs-attr">type</span>: <span class="hljs-string">"integer"</span>
+      }
+    }
+  }
+});
+
+<span class="hljs-comment">// remote service request</span>
+<span class="hljs-keyword">const</span> PlanetRequest = Request(<span class="hljs-string">"Planet"</span>, {
+  <span class="hljs-comment">// {value.planetId} injects the</span>
+  <span class="hljs-comment">// value from the accumulator</span>
+  <span class="hljs-comment">// creates: https://swapi.co/api/planets/1/</span>
+  url: <span class="hljs-string">"https://swapi.co/api/planets/{value.planetId}"</span>
+});
+
+<span class="hljs-keyword">const</span> ResidentRequest = Request(<span class="hljs-string">"Resident"</span>, {
+  <span class="hljs-comment">// check input is string</span>
+  inputType: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">url</span>: <span class="hljs-string">"{value}"</span>
+});
+
+<span class="hljs-comment">// model entity to resolve a Planet</span>
+<span class="hljs-keyword">const</span> ResidentModel = Model(<span class="hljs-string">"Resident"</span>, {
+  <span class="hljs-attr">inputType</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">value</span>: [
+    <span class="hljs-comment">// hit request:Resident</span>
+    ResidentRequest,
+    <span class="hljs-comment">// extract data</span>
+    {
+      <span class="hljs-attr">name</span>: <span class="hljs-string">"$name"</span>,
+      <span class="hljs-attr">gender</span>: <span class="hljs-string">"$gender"</span>,
+      <span class="hljs-attr">birthYear</span>: <span class="hljs-string">"$birth_year"</span>
+    }
+  ]
+});
+
+<span class="hljs-comment">// model entity to resolve a Planet</span>
+<span class="hljs-keyword">const</span> PlanetModel = Model(<span class="hljs-string">"Planet"</span>, {
+  <span class="hljs-attr">inputType</span>: PlanetSchema,
+  <span class="hljs-attr">value</span>: [
+    <span class="hljs-comment">// hit request:Planet data source</span>
+    PlanetRequest,
+    <span class="hljs-comment">// map result to an object reducer</span>
+    {
+      <span class="hljs-comment">// map name key</span>
+      name: <span class="hljs-string">"$name"</span>,
+      <span class="hljs-attr">population</span>: <span class="hljs-string">"$population"</span>,
+      <span class="hljs-comment">// residents is an array of urls</span>
+      <span class="hljs-comment">// eg. https://swapi.co/api/people/1/</span>
+      <span class="hljs-comment">// where each url gets mapped</span>
+      <span class="hljs-comment">// to a model:Resident</span>
+      residents: [<span class="hljs-string">"$residents"</span>, map(ResidentModel)]
+    }
+  ]
+});
+
+<span class="hljs-keyword">const</span> input = {
+  <span class="hljs-attr">planetId</span>: <span class="hljs-number">1</span>
+};
+
+dataPoint.resolve(PlanetModel, input).then(<span class="hljs-function"><span class="hljs-params">output</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(output);
+  <span class="hljs-comment">/*
+    output -&gt; 
+    { 
+      name: 'Tatooine',
+      population: 200000,
+      residents:
+      [ 
+        { name: 'Luke Skywalker', gender: 'male', birthYear: '19BBY' },
+        { name: 'C-3PO', gender: 'n/a', birthYear: '112BBY' },
+        { name: 'Darth Vader', gender: 'male', birthYear: '41.9BBY' },
+        ...
+      ] 
+    }
+    */</span>
+});
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#hello-world">Hello World</a></li><li><a href="#fetching-and-agregation">Fetching and agregation</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="copyright"><a href="/data-point/">DataPoint</a> - Copyright © 2019 Viacom Inc.</section></footer></div></body></html>

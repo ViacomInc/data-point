@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Model · DataPoint</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="```js"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Model · DataPoint"/><meta property="og:type" content="website"/><meta property="og:url" content="https://viacominc.github.io/data-point/"/><meta property="og:description" content="```js"/><meta property="og:image" content="https://viacominc.github.io/data-point/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://viacominc.github.io/data-point/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/data-point/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://viacominc.github.io/data-point/blog/atom.xml" title="DataPoint Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://viacominc.github.io/data-point/blog/feed.xml" title="DataPoint Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/data-point/js/scrollSpy.js"></script><link rel="stylesheet" href="/data-point/css/main.css"/><script src="/data-point/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/data-point/"><img class="logo" src="/data-point/img/favicon.ico" alt="DataPoint"/><h2 class="headerTitleWithLogo">DataPoint</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/data-point/docs/introduction/introduction" target="_self">Docs</a></li><li class="siteNavGroupActive"><a href="/data-point/docs/api/data-point" target="_self">API</a></li><li class=""><a href="/data-point/help" target="_self">Help</a></li><li class=""><a href="/data-point/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Entity Reducers</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/data-point/docs/introduction/introduction">Introduction to DataPoint</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">API Reference</h3><ul class=""><li class="navListItem"><a class="navItem" href="/data-point/docs/api/data-point">DataPoint</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/accumulator">Accumulator</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducer-types">Reducers Types</a></li><div class="navGroup subNavGroup"><h4 class="navGroupSubcategoryTitle">Primitive Reducers</h4><ul><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/path-reducer">PathReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/function-reducer">FunctionReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/object-reducer">ObjectReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/list-reducer">ListReducer</a></li></ul></div><div class="navGroup subNavGroup"><h4 class="navGroupSubcategoryTitle">Helper Reducers</h4><ul><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/assign-reducer">AssignReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/if-then-else-reducer">IfThenElseReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/select-reducer">SelectReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/map-reducer">MapReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/parallel-reducer">ParallelReducer</a></li><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/fallback-reducer">FallbackReducer</a></li></ul></div><div class="navGroup subNavGroup"><h4 class="navGroupSubcategoryTitle">Entity Reducers</h4><ul><li class="navListItem"><a class="navItem" href="/data-point/docs/api/reducers/entity-reducer">EntityReducer Class</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/data-point/docs/api/reducers/model">Model</a></li></ul></div></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Architecture Overview</h3><ul class=""><li class="navListItem"><a class="navItem" href="/data-point/docs/doc3">This is document number 3</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Model</h1></header><article><div><span><pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> { Model } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"data-point"</span>);
+</code></pre>
+<p>Extends the <a href="entity-reducer">EntityReducer</a> Class.</p>
+<h2><a class="anchor" aria-hidden="true" id="syntax"></a><a href="#syntax" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Syntax</h2>
+<pre><code class="hljs css language-js">Model({
+  <span class="hljs-attr">name</span>: <span class="hljs-built_in">String</span>,
+  <span class="hljs-attr">inputType</span>: <span class="hljs-built_in">String</span> | Reducer,
+  <span class="hljs-attr">before</span>: Reducer,
+  <span class="hljs-attr">value</span>: Reducer,
+  <span class="hljs-attr">after</span>: Reducer,
+  <span class="hljs-attr">outputType</span>: <span class="hljs-built_in">String</span> | Reducer,
+  <span class="hljs-attr">catch</span>: Reducer,
+  <span class="hljs-attr">params</span>: <span class="hljs-built_in">Object</span>
+});
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="properties-exposed"></a><a href="#properties-exposed" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Properties exposed</h2>
+<table>
+<thead>
+<tr><th style="text-align:left">Key</th><th style="text-align:left">Type</th><th style="text-align:left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align:left"><em>name</em></td><td style="text-align:left"><code>String</code></td><td style="text-align:left">constant name identifier for the given entity.</td></tr>
+<tr><td style="text-align:left"><a href="#modelinputtype">inputType</a></td><td style="text-align:left"><code>String</code>, <a href="../reducer-types">Reducer</a></td><td style="text-align:left"><a href="#entity-type-check">type checks</a> the entity's input value, <strong>does not mutate it</strong>.</td></tr>
+<tr><td style="text-align:left"><a href="#modelbefore">before</a></td><td style="text-align:left"><a href="../reducer-types">Reducer</a></td><td style="text-align:left">reducer to be resolved <strong>before</strong> the entity resolution.</td></tr>
+<tr><td style="text-align:left"><a href="#modelvalue">value</a></td><td style="text-align:left"><a href="../reducer-types">Reducer</a></td><td style="text-align:left">The value to which the Entity resolves.</td></tr>
+<tr><td style="text-align:left"><a href="#modelafter">after</a></td><td style="text-align:left"><a href="../reducer-types">Reducer</a></td><td style="text-align:left">reducer to be resolved <strong>after</strong> the entity resolution.</td></tr>
+<tr><td style="text-align:left"><a href="#modeloutputtype">outputType</a></td><td style="text-align:left"><code>String</code>, <a href="../reducer-types">Reducer</a></td><td style="text-align:left"><a href="#entity-type-check">type checks</a> the entity's output value, <strong>does not mutate it</strong>.</td></tr>
+<tr><td style="text-align:left"><a href="#modelcatch">catch</a></td><td style="text-align:left"><a href="../reducer-types">Reducer</a></td><td style="text-align:left">reducer to be resolved in case of an error (including errors thrown from the <code>inputType</code> and <code>outputType</code> reducers).</td></tr>
+<tr><td style="text-align:left"><a href="#modelparams">params</a></td><td style="text-align:left"><code>Object</code></td><td style="text-align:left">user defined Object that will be passed to every transform within the context of the transform's execution.</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="modelinputtype"></a><a href="#modelinputtype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>model.inputType</h2>
+<p>Executes before any other reducer in the life-cycle chain. If it fails to pass it can be handled with <a href="#modelcatch">model.catch</a>. See <a href="#entity-type-check">type checking</a> for more details.</p>
+<h3><a class="anchor" aria-hidden="true" id="example-check-input"></a><a href="#example-check-input" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: Check input</h3>
+<p>Checks if a model receives as input an object.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> Name = Model({
+  <span class="hljs-attr">inputType</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">value</span>: <span class="hljs-string">"$name"</span>
+});
+
+<span class="hljs-keyword">const</span> input = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">"Laia"</span>
+};
+
+<span class="hljs-keyword">const</span> output = <span class="hljs-keyword">await</span> dataPoint.resolve(input, Name);
+
+assert.strictEqual(output, <span class="hljs-string">"Laia"</span>);
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="modeloutputtype"></a><a href="#modeloutputtype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>model.outputType</h2>
+<p>Executes after <a href="#modelafter">model.after</a>. See <a href="#entity-type-check">type checking</a> for more details.</p>
+<h3><a class="anchor" aria-hidden="true" id="example-check-output"></a><a href="#example-check-output" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: Check output</h3>
+<p>Check if a model outputs a string.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> Name = Model({
+  <span class="hljs-attr">value</span>: <span class="hljs-string">"$name"</span>,
+  <span class="hljs-attr">outputType</span>: <span class="hljs-string">"string"</span>
+});
+
+<span class="hljs-keyword">const</span> input = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">"Darek"</span>
+};
+
+<span class="hljs-keyword">const</span> output = <span class="hljs-keyword">await</span> dataPoint.resolve(input, Name);
+
+assert.strictEqual(output, <span class="hljs-string">"Darek"</span>);
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="modelvalue"></a><a href="#modelvalue" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>model.value</h2>
+<p>Use this property to do your main processing for the entity.</p>
+<h3><a class="anchor" aria-hidden="true" id="example-modelvalue"></a><a href="#example-modelvalue" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: model.value</h3>
+<p>Say Hello World.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> MyModel = Model({
+  <span class="hljs-attr">value</span>: <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> <span class="hljs-string">`Hello <span class="hljs-subst">${input}</span>!!`</span>
+});
+
+<span class="hljs-keyword">const</span> output = <span class="hljs-keyword">await</span> dataPoint.resolve(<span class="hljs-string">"World"</span>, MyModel);
+assert.strictEqual(output, <span class="hljs-string">"Hello World!!"</span>);
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="modelbefore"></a><a href="#modelbefore" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>model.before</h2>
+<p>Executes right after executing inputType reducer. You may use it to normalize the value.</p>
+<h3><a class="anchor" aria-hidden="true" id="example-modelbefore"></a><a href="#example-modelbefore" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: model.before</h3>
+<p>Convert array to string and add exclamation marks.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> arrayToString = <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> {
+  <span class="hljs-keyword">return</span> input.join(<span class="hljs-string">" "</span>);
+};
+
+<span class="hljs-keyword">const</span> MyList = Model({
+  <span class="hljs-attr">before</span>: arrayToString,
+  <span class="hljs-attr">value</span>: <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${input}</span>!!`</span>
+});
+
+<span class="hljs-keyword">const</span> output = <span class="hljs-keyword">await</span> dataPoint.resolve([<span class="hljs-string">"Hello"</span>, <span class="hljs-string">"World"</span>], MyList);
+assert.deepStrictEqual(output, <span class="hljs-string">"Hello World!!"</span>);
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="modelafter"></a><a href="#modelafter" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>model.after</h2>
+<p>Executes right after executing inputType reducer. You may use it to normalize the value.</p>
+<h3><a class="anchor" aria-hidden="true" id="example-modelafter"></a><a href="#example-modelafter" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: model.after</h3>
+<p>Convert array to string and add exclamation marks.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> { DataPoint, Model } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"data-point"</span>);
+
+<span class="hljs-keyword">const</span> stringToArray = <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> {
+  <span class="hljs-keyword">return</span> input.split();
+};
+
+<span class="hljs-keyword">const</span> MyList = Model({
+  <span class="hljs-attr">value</span>: <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${input}</span>!!`</span>,
+  <span class="hljs-attr">before</span>: stringToArray
+});
+
+<span class="hljs-keyword">const</span> output = <span class="hljs-keyword">await</span> dataPoint.resolve(<span class="hljs-string">"Hello World!!"</span>, MyList);
+assert.deepStrictEqual(output, [<span class="hljs-string">"Hello"</span>, <span class="hljs-string">"World!!"</span>]);
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="modelcatch"></a><a href="#modelcatch" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>model.catch</h2>
+<p>Any error that happens within the resolution of the Entity can be handled by the <code>catch</code> reducer. To respect the API, error reducers have the same API.</p>
+<p>You may stop the propagation of the error by not re-throwing the error.</p>
+<h3><a class="anchor" aria-hidden="true" id="example-handling-entry-errors"></a><a href="#example-handling-entry-errors" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: Handling Entry Errors</h3>
+<p>Let's resolve to a non-array value and see how it would be handled, this example will use <a href="#entity-type-check">outputType</a> for type checking.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> myModel = Model({
+  <span class="hljs-comment">// points to a NON Array value</span>
+  value: <span class="hljs-string">"$a.b"</span>,
+  <span class="hljs-attr">outputType</span>: <span class="hljs-string">"isArray"</span>,
+  <span class="hljs-attr">catch</span>: <span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+    <span class="hljs-comment">// prints out the error</span>
+    <span class="hljs-comment">// message generated by</span>
+    <span class="hljs-comment">// isArray type check</span>
+    <span class="hljs-built_in">console</span>.log(error.message);
+
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Output value is invalid, resolving to empty array"</span>);
+
+    <span class="hljs-comment">// passing a value will stop</span>
+    <span class="hljs-comment">// the propagation of the error</span>
+    <span class="hljs-keyword">return</span> [];
+  }
+});
+
+<span class="hljs-keyword">const</span> input = {
+  <span class="hljs-attr">a</span>: {
+    <span class="hljs-attr">b</span>: <span class="hljs-string">"foo"</span>
+  }
+};
+
+<span class="hljs-keyword">const</span> output = <span class="hljs-keyword">await</span> dataPoint.resolve(input, myModel);
+
+assert.deepStrictEqual(output, []);
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="example-re-throwing-error"></a><a href="#example-re-throwing-error" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: re-throwing error</h3>
+<p>Re-throw the error to be handled somewhere else.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> MyModel = Model({
+  <span class="hljs-attr">value</span>: <span class="hljs-string">"$a"</span>,
+  <span class="hljs-attr">outputType</span>: <span class="hljs-string">"isArray"</span>,
+  <span class="hljs-attr">catch</span>: <span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"MyModel has errors:"</span>, error);
+    <span class="hljs-keyword">throw</span> error;
+  }
+});
+
+<span class="hljs-keyword">const</span> input = {
+  <span class="hljs-attr">a</span>: {
+    <span class="hljs-attr">b</span>: <span class="hljs-string">"foo"</span>
+  }
+};
+
+dataPoint.resolve(input, MyModel).catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+  assert.strictEqual(error.name, <span class="hljs-string">"TypeError"</span>);
+});
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="modelparams"></a><a href="#modelparams" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>model.params</h2>
+<p>The <code>params</code> object is used to pass custom data to the entity. This Object can be accessed under the <code>reducer</code> property of the <a href="../accumulator">Accumulator</a> Object (<code>acc.reducer.params</code>).</p>
+<h3><a class="anchor" aria-hidden="true" id="example-access-the-param-object"></a><a href="#example-access-the-param-object" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: access the param object</h3>
+<p>Use a FunctionReducer to access the param object.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> multiplyValue = <span class="hljs-function">(<span class="hljs-params">input, acc</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> input * acc.reducer.params.multiplier;
+};
+
+<span class="hljs-keyword">const</span> MyModel = Model({
+  <span class="hljs-attr">value</span>: multiplyValue,
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">multiplier</span>: <span class="hljs-number">100</span>
+  }
+});
+
+<span class="hljs-keyword">const</span> output = <span class="hljs-keyword">await</span> dataPoint.resolve(<span class="hljs-number">200</span>, MyModel);
+assert.strictEqual(output, <span class="hljs-number">20000</span>);
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="entity-type-check"></a><a href="#entity-type-check" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Entity type check</h2>
+<p>You can use <strong>inputType</strong> and <strong>outputType</strong> for type checking an entity's input and output values. Type checking does not mutate the result.</p>
+<h3><a class="anchor" aria-hidden="true" id="built-in-type-checks"></a><a href="#built-in-type-checks" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Built in type checks</h3>
+<p>To use built-in type checks, you may set the value of <strong>inputType</strong> or <strong>outputType</strong> to: <code>'string'</code>, <code>'number'</code>, <code>'boolean'</code>, <code>'function'</code>, <code>'error'</code>, <code>'array'</code>, or <code>'object'</code>.</p>
+<h3><a class="anchor" aria-hidden="true" id="custom-type-checking"></a><a href="#custom-type-checking" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Custom type checking</h3>
+<p>You may also type check by creating a <a href="../reducer-types">Reducer</a> with the <code>createTypeCheckReducer</code> function.</p>
+<h4><a class="anchor" aria-hidden="true" id="factory-syntax"></a><a href="#factory-syntax" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Factory syntax</h4>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> { createTypeCheckReducer } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"data-point"</span>);
+</code></pre>
+<pre><code class="hljs css language-js">createTypeCheckReducer(expectedType, typeCheckFunction);
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="factory-arguments"></a><a href="#factory-arguments" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Factory arguments</h4>
+<table>
+<thead>
+<tr><th style="text-align:left">Argument</th><th style="text-align:left">Type</th><th style="text-align:left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align:left"><em>typeCheckFunction</em></td><td style="text-align:left"><code>Function&lt;Boolean or String&gt;</code></td><td style="text-align:left">Return <code>true</code> when the input is valid; otherwise, an error will be thrown. If the function returns a <code>string</code>, that will be appended to the error message.</td></tr>
+<tr><td style="text-align:left"><em>expectedType</em></td><td style="text-align:left"><code>string</code> <em>(optional)</em></td><td style="text-align:left">The expected type; this will also be used in the error message.</td></tr>
+</tbody>
+</table>
+<h4><a class="anchor" aria-hidden="true" id="example-custom-type-check"></a><a href="#example-custom-type-check" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example: custom type-check</h4>
+<p>Custom type check with a <a href="function-reducer">FunctionReducer</a>.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> isNonEmptyArray = <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> <span class="hljs-built_in">Array</span>.isArray(input) &amp;&amp; input.length &gt; <span class="hljs-number">0</span>;
+
+<span class="hljs-keyword">const</span> MyList = Model({
+  <span class="hljs-attr">inputType</span>: createTypeCheckReducer(<span class="hljs-string">"non-empty-array"</span>, isNonEmptyArray),
+  <span class="hljs-attr">value</span>: <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> input[<span class="hljs-number">0</span>]
+});
+
+<span class="hljs-keyword">await</span> dataPoint.resolve(MyList, [<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>]);
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/data-point/docs/api/reducers/entity-reducer"><span class="arrow-prev">← </span><span class="function-name-prevnext">EntityReducer Class</span></a><a class="docs-next button" href="/data-point/docs/doc3"><span>This is document number 3</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#syntax">Syntax</a></li><li><a href="#properties-exposed">Properties exposed</a></li><li><a href="#modelinputtype">model.inputType</a><ul class="toc-headings"><li><a href="#example-check-input">Example: Check input</a></li></ul></li><li><a href="#modeloutputtype">model.outputType</a><ul class="toc-headings"><li><a href="#example-check-output">Example: Check output</a></li></ul></li><li><a href="#modelvalue">model.value</a><ul class="toc-headings"><li><a href="#example-modelvalue">Example: model.value</a></li></ul></li><li><a href="#modelbefore">model.before</a><ul class="toc-headings"><li><a href="#example-modelbefore">Example: model.before</a></li></ul></li><li><a href="#modelafter">model.after</a><ul class="toc-headings"><li><a href="#example-modelafter">Example: model.after</a></li></ul></li><li><a href="#modelcatch">model.catch</a><ul class="toc-headings"><li><a href="#example-handling-entry-errors">Example: Handling Entry Errors</a></li><li><a href="#example-re-throwing-error">Example: re-throwing error</a></li></ul></li><li><a href="#modelparams">model.params</a><ul class="toc-headings"><li><a href="#example-access-the-param-object">Example: access the param object</a></li></ul></li><li><a href="#entity-type-check">Entity type check</a><ul class="toc-headings"><li><a href="#built-in-type-checks">Built in type checks</a></li><li><a href="#custom-type-checking">Custom type checking</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="copyright"><a href="/data-point/">DataPoint</a> - Copyright © 2019 Viacom Inc.</section></footer></div></body></html>
