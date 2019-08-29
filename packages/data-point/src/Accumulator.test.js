@@ -5,15 +5,16 @@ describe("Accumulator", () => {
     it("should accept empty options object", () => {
       expect(new Accumulator()).toMatchInlineSnapshot(`
         Accumulator {
+          "__reducerStackTrace": Array [],
           "cache": Object {},
           "locals": undefined,
           "pid": undefined,
-          "reducer": undefined,
           "tracer": undefined,
           "value": undefined,
         }
       `);
     });
+
     it("should assign options object", () => {
       const resolve = () => true;
       const acc = new Accumulator({
@@ -23,12 +24,13 @@ describe("Accumulator", () => {
         tracer: "tracer",
         resolve
       });
+
       expect(acc).toMatchInlineSnapshot(`
         Accumulator {
+          "__reducerStackTrace": Array [],
           "cache": "cache",
           "locals": "locals",
           "pid": undefined,
-          "reducer": undefined,
           "tracer": "tracer",
           "value": "value",
         }
@@ -60,6 +62,43 @@ describe("Accumulator", () => {
       expect(Object.getPrototypeOf(acc2)).toEqual(acc1);
     });
   });
+
+  describe("reducer", () => {
+    const reducer = {
+      id: "myReducerId"
+    };
+
+    describe("set reducer", () => {
+      it("should append a new reducer to the stack of reducers", () => {
+        const acc = new Accumulator({
+          value: "a"
+        });
+
+        // eslint-disable-next-line no-underscore-dangle
+        const originalReducerStackTrace = acc.__reducerStackTrace;
+
+        acc.reducer = reducer;
+
+        // should not mutate the original stackTrace
+        expect(originalReducerStackTrace).toEqual([]);
+        // eslint-disable-next-line no-underscore-dangle
+        expect(acc.__reducerStackTrace).toEqual(["myReducerId"]);
+      });
+    });
+
+    describe("get reducer", () => {
+      it("should return stored internal reducer", () => {
+        const acc = new Accumulator({
+          value: "a"
+        });
+
+        acc.reducer = reducer;
+        // eslint-disable-next-line no-underscore-dangle
+        expect(acc.__reducer).toEqual(reducer);
+      });
+    });
+  });
+
   describe("resolve", () => {
     it("should call internal resolve method", () => {
       const mockResolve = jest.fn(() => "resolved");
