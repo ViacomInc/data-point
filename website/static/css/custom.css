@@ -19,3 +19,9 @@
   color: #4c6bb7;
   text-decoration: underline;
 }
+
+.nav-footer .copyright a {
+    color: rgba(255, 255, 255, 0.4);
+    text-align: center;
+    text-decoration: underline;
+}

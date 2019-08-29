@@ -107,7 +107,19 @@
         "question",
         "code"
       ]
+    },
+    {
+      "login": "csarnataro",
+      "name": "Christian Sarnataro",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/11388820",
+      "profile": "https://github.com/csarnataro",
+      "contributions": [
+        "review",
+        "doc",
+        "question"
+      ]
     }
+
   ],
   "repoType": "github"
 }
