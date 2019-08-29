@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "generate-jsdoc": "yarn jsdoc -r --destination static/jsdoc -c jsdoc.json ../packages/data-point/src/ ./README.md",
+    "generate-jsdoc": "yarn jsdoc -r --destination static/jsdoc -c jsdoc.json ../../packages/data-point/src/ ./README.md",
     "publish-gh-pages": "yarn generate-jsdoc; docusaurus-publish",
     "start": "yarn generate-jsdoc; docusaurus-start",
     "build": "yarn generate-jsdoc; docusaurus-build"
