@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "generate-jsdoc": "yarn jsdoc -r --destination static/jsdoc -c jsdoc.json ../packages/data-point/src/ ./README.md",
+    "publish-gh-pages": "yarn generate-jsdoc; docusaurus-publish",
+    "start": "yarn generate-jsdoc; docusaurus-start",
+    "build": "yarn generate-jsdoc; docusaurus-build"
+  },
+  "devDependencies": {
+    "docdash": "^1.1.1",
+    "docusaurus": "^1.12.0",
+    "jsdoc": "^3.6.3",
+    "jsdoc-ignore-code": "^1.0.1"
+  }
+}
