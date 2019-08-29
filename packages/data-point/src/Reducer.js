@@ -1,18 +1,13 @@
 const { IS_REDUCER } = require("./reducer-symbols");
-const uniqueIdScope = require("./unique-id-scope");
-
-const uniqueId = uniqueIdScope();
 
 function normalizeName(name) {
-  const reducerUId = uniqueId();
-  return name ? `${name}:${reducerUId}` : reducerUId;
+  return name ? `${name}:` : "";
 }
 
 class Reducer {
-  constructor(type, name, spec) {
-    this.id = `${type}:${normalizeName(name)}`;
+  constructor(name, spec) {
+    this.id = `${normalizeName(name)}${this.constructor.name}`;
     this.name = name;
-    this.type = type;
 
     Object.defineProperty(this, "spec", {
       value: spec,

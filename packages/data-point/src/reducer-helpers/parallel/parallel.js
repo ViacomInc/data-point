@@ -6,7 +6,7 @@ const { createReducer } = require("../../create-reducer");
  */
 class ReducerParallel extends Reducer {
   constructor(spec) {
-    super("parallel", undefined, spec);
+    super(undefined, spec);
 
     /**
      * @type {Reducer[]} list of reducers to run in parallel against a

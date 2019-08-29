@@ -94,7 +94,7 @@ async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
  */
 class ReducerSelect extends Reducer {
   constructor(spec) {
-    super("select", undefined, spec);
+    super(undefined, spec);
     validate(spec);
     this.select = parseSelect(spec);
   }

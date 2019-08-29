@@ -134,11 +134,6 @@ describe("getObjectProperties", () => {
 describe("ReducerObject", () => {
   const { ReducerObject } = reducerObject;
   describe("constructor", () => {
-    it("should set type to list", () => {
-      const reducer = new ReducerObject({}, mockCreateReducer);
-      expect(reducer.type).toEqual("object");
-    });
-
     it("should have no name defined", () => {
       const reducer = new ReducerObject({}, mockCreateReducer);
       expect(reducer.name).toEqual(undefined);
