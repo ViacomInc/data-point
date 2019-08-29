@@ -24,15 +24,15 @@ const siteConfig = {
   title: "DataPoint", // Title for your website.
   tagline:
     "JavaScript Utility for collecting, processing and transforming data",
-  url: "https://your-docusaurus-test-site.com", // Your website URL
-  baseUrl: "/", // Base URL for your project */
+  url: "https://viacominc.github.io", // Your website URL
+  baseUrl: "/data-point/", // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
   //   baseUrl: '/test-site/',
 
   // Used for publishing and more
-  projectName: "test-site",
-  organizationName: "facebook",
+  projectName: "data-point",
+  organizationName: "ViacomInc",
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
@@ -40,7 +40,7 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: "introduction/introduction", label: "Docs" },
-    { doc: "doc4", label: "API" },
+    { doc: "api/data-point", label: "API" },
     { page: "help", label: "Help" },
     { blog: true, label: "Blog" }
   ],
@@ -74,7 +74,7 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} Your Name or Your Company Name`,
+  copyright: `Copyright © ${new Date().getFullYear()} Viacom Inc.`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
