@@ -22,7 +22,15 @@ async function resolve(accumulator, reducer) {
     // NOTE: recursive call by passing resolve method
     result = await reducer.resolveReducer(acc, resolve);
   } catch (error) {
+    // because the error bubbles up, we only want to set `error.reducerStackTrace`
+    // once, otherwise we end up with only the first item in the stack.
+    if (!error.reducerStackTrace) {
+      error.reducerStackTrace = acc.reducerStackTrace;
+    }
+
     traceSpan.logError(span, error);
+
+    // rethrow the error up
     throw error;
   } finally {
     traceSpan.finish(span);
