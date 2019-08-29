@@ -32,7 +32,7 @@ const siteConfig = {
 
   // Used for publishing and more
   projectName: "data-point",
-  organizationName: "ViacomInc",
+  organizationName: "csarnataro",
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
@@ -40,10 +40,10 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: "introduction/introduction", label: "Docs" },
-    { doc: "api/data-point", label: "API" },
-    { page: "help", label: "Help" },
-    { blog: true, label: "Blog" }
+    { href: "/data-point/jsdoc/index.html", label: "API" },
+    { href: "https://github.com/ViacomInc/data-point", label: "GitHub", target: "_blank" }
   ],
+  separateCss: ['static/jsdoc/styles'],
 
   // If you have users set above, you add it here:
   users,
