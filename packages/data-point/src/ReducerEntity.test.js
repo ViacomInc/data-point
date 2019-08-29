@@ -267,7 +267,7 @@ describe("ReducerEntity", () => {
     describe("cache", () => {
       it("should skip cache if cache.get is not a function", async () => {
         const mockBefore = jest.fn(value => value);
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           before: mockBefore
         });
@@ -288,7 +288,7 @@ describe("ReducerEntity", () => {
 
       it("should call this.uid when assigned", async () => {
         const mockUid = jest.fn(() => "uid");
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           uid: mockUid,
           name: "customEntity"
         });
@@ -305,7 +305,7 @@ describe("ReducerEntity", () => {
         const mockUid = jest.fn(() => "uid");
         const mockBefore = jest.fn(value => value);
 
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           uid: mockUid,
           name: "customEntity",
           before: mockBefore
@@ -328,7 +328,7 @@ describe("ReducerEntity", () => {
 
       it("should ignore cache result if cache.get returns undefined", async () => {
         const mockBefore = jest.fn(value => value);
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           before: mockBefore
         });
