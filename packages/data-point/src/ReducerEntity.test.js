@@ -248,20 +248,6 @@ describe("ReducerEntity", () => {
       expect(result).toEqual("initialValue");
     });
 
-    it("should assign acc.uid", async () => {
-      const entity = new ReducerEntity("type", {
-        uid: () => "uid",
-        name: "customEntity"
-      });
-
-      const acc = new Accumulator({
-        value: "initialValue"
-      });
-
-      await entity.resolveEntityValue(acc, mockResolveReducer);
-      expect(acc.uid).toEqual("uid");
-    });
-
     it("should execute inputType but not mutate result", async () => {
       const inputType = jest.fn(() => "inputType");
       const entity = new ReducerEntity("type", {
@@ -280,8 +266,10 @@ describe("ReducerEntity", () => {
 
     describe("cache", () => {
       it("should skip cache if cache.get is not a function", async () => {
+        const mockBefore = jest.fn(value => value);
         const entity = new ReducerEntity("type", {
-          name: "customEntity"
+          name: "customEntity",
+          before: mockBefore
         });
 
         const cache = {
@@ -294,16 +282,37 @@ describe("ReducerEntity", () => {
         });
 
         const result = await entity.resolveEntityValue(acc, mockResolveReducer);
+        expect(mockBefore).toBeCalled();
         expect(result).toEqual("initialValue");
       });
 
-      it("should use cache result if cache.get returns !== undefined", async () => {
+      it("should call this.uid when assigned", async () => {
+        const mockUid = jest.fn(() => "uid");
         const entity = new ReducerEntity("type", {
+          uid: mockUid,
           name: "customEntity"
         });
 
+        const acc = new Accumulator({
+          value: "initialValue"
+        });
+
+        await entity.resolveEntityValue(acc, mockResolveReducer);
+        expect(mockUid).toBeCalledWith(acc);
+      });
+
+      it("should use cache result if cache.get returns !== undefined", async () => {
+        const mockUid = jest.fn(() => "uid");
+        const mockBefore = jest.fn(value => value);
+
+        const entity = new ReducerEntity("type", {
+          uid: mockUid,
+          name: "customEntity",
+          before: mockBefore
+        });
+
         const cache = {
-          get: () => "cachedResult"
+          get: jest.fn(() => "cachedResult")
         };
 
         const acc = new Accumulator({
@@ -312,12 +321,16 @@ describe("ReducerEntity", () => {
         });
 
         const result = await entity.resolveEntityValue(acc, mockResolveReducer);
+        expect(cache.get).toBeCalledWith("uid", acc);
+        expect(mockBefore).not.toBeCalled();
         expect(result).toEqual("cachedResult");
       });
 
       it("should ignore cache result if cache.get returns undefined", async () => {
+        const mockBefore = jest.fn(value => value);
         const entity = new ReducerEntity("type", {
-          name: "customEntity"
+          name: "customEntity",
+          before: mockBefore
         });
 
         const cache = {
@@ -330,6 +343,7 @@ describe("ReducerEntity", () => {
         });
 
         const result = await entity.resolveEntityValue(acc, mockResolveReducer);
+        expect(mockBefore).toBeCalled();
         expect(result).toEqual("initialValue");
       });
 
