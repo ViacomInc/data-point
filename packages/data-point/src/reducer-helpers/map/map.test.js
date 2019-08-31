@@ -1,19 +1,15 @@
 const { ReducerMap } = require("./map");
 const { Accumulator } = require("../../Accumulator");
 const { resolve } = require("../../resolve");
+const { Reducer } = require("../../Reducer");
 
 describe("ReducerMap", () => {
   const multiplyByTwo = value => value * 2;
 
   describe("constructor", () => {
-    it("should set type to 'map'", () => {
-      const reducer = new ReducerMap(multiplyByTwo);
-      expect(reducer.type).toEqual("map");
-    });
-
     it("should create a reducer from spec and assign to iterateeReducer", () => {
       const reducer = new ReducerMap(multiplyByTwo);
-      expect(reducer.iterateeReducer).toHaveProperty("type", "function");
+      expect(reducer.iterateeReducer).toBeInstanceOf(Reducer);
     });
   });
 

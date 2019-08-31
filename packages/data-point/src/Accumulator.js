@@ -30,9 +30,9 @@ class Accumulator {
     this.tracer = options.tracer;
 
     /**
-     * @type {Reducer} reference to the current reducer
+     * @type {string[]} stores the list of reducers executed per branch.
      */
-    this.reducer = options.reducer;
+    this.__reducerStackTrace = [];
 
     /**
      * @type {Number} current reducer process id, this number changes on the
@@ -57,6 +57,23 @@ class Accumulator {
     const copy = this.create();
     copy[prop] = value;
     return copy;
+  }
+
+  set reducer(reducer) {
+    this.__reducer = reducer;
+
+    // we create a new array to create a new reducer history branch.
+    this.__reducerStackTrace = this.__reducerStackTrace.concat(
+      this.__reducer.id
+    );
+  }
+
+  get reducer() {
+    return this.__reducer;
+  }
+
+  get reducerStackTrace() {
+    return this.__reducerStackTrace.join(" > ");
   }
 
   resolve(reducers) {

@@ -13,7 +13,7 @@ function cloneObject(isObject, value) {
 
 class ReducerConstant extends Reducer {
   constructor(spec) {
-    super("constant", undefined, spec);
+    super(undefined, spec);
     this.isPlainObject = isPlainObject(spec);
     // We clone the source to truly respect the nature of a constant, if the
     // original source is ever changed the data integrity of the constant

@@ -35,6 +35,41 @@ describe("resolve", () => {
     });
   });
 
+  describe("reducerStackTrace", () => {
+    it("should augment error with reducer stacktrace", async () => {
+      const acc = new Accumulator();
+
+      const testError = new Error("resolveReducer failed");
+
+      const reducerRejected = {
+        id: "badReducer",
+        resolveReducer: jest.fn().mockRejectedValue(testError)
+      };
+
+      const result = await resolve(acc, reducerRejected).catch(error => error);
+
+      expect(result).toBeInstanceOf(Error);
+      expect(result.reducerStackTrace).toEqual("badReducer");
+    });
+
+    it("should not augment error with reducer stacktrace if already set", async () => {
+      const acc = new Accumulator();
+
+      const testError = new Error("resolveReducer failed");
+      testError.reducerStackTrace = "initialReducerStackTrace";
+
+      const reducerRejected = {
+        id: "badReducer",
+        resolveReducer: jest.fn().mockRejectedValue(testError)
+      };
+
+      const result = await resolve(acc, reducerRejected).catch(error => error);
+
+      expect(result).toBeInstanceOf(Error);
+      expect(result.reducerStackTrace).toEqual("initialReducerStackTrace");
+    });
+  });
+
   describe("tracing", () => {
     it("should call traceSpan.create with accumulator", async () => {
       const acc = new Accumulator();
@@ -49,25 +84,16 @@ describe("resolve", () => {
     it("should call traceSpan.logError when resolveReducer throws error", async () => {
       const acc = new Accumulator();
 
+      const testError = new Error("resolveReducer failed");
       const reducerRejected = {
-        resolveReducer: jest
-          .fn()
-          .mockRejectedValue(new Error("resolveReducer failed"))
+        resolveReducer: jest.fn().mockRejectedValue(testError)
       };
 
       await resolve(acc, reducerRejected).catch(error => error);
 
       expect(traceSpan.logError).toBeCalled();
 
-      // first argument would is an undefined span
-      expect(traceSpan.logError.mock.calls).toMatchInlineSnapshot(`
-                Array [
-                  Array [
-                    undefined,
-                    [Error: resolveReducer failed],
-                  ],
-                ]
-            `);
+      expect(traceSpan.logError.mock.calls[0]).toEqual([undefined, testError]);
     });
 
     it("should finally call traceSpan.finish()", async () => {

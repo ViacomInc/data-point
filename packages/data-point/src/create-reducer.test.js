@@ -29,21 +29,21 @@ describe("createReducer/getReducer", () => {
 
   it("should create function reducer", () => {
     const reducer = createReducer.createReducer(() => true);
-    expect(reducer).toHaveProperty("type", "function");
+    expect(reducer.constructor.name).toEqual("ReducerFunction");
   });
 
   it("should create path reducer", () => {
     const reducer = createReducer.createReducer("$a[7]");
-    expect(reducer).toHaveProperty("type", "path");
+    expect(reducer.constructor.name).toEqual("ReducerPath");
   });
 
   it("should create list reducer", () => {
     const reducer = createReducer.createReducer([]);
-    expect(reducer).toHaveProperty("type", "list");
+    expect(reducer.constructor.name).toEqual("ReducerList");
   });
 
   it("should create object reducer", () => {
     const reducer = createReducer.createReducer({});
-    expect(reducer).toHaveProperty("type", "object");
+    expect(reducer.constructor.name).toEqual("ReducerObject");
   });
 });

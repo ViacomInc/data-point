@@ -2,8 +2,8 @@ const { createReducer } = require("./create-reducer");
 const { Reducer } = require("./Reducer");
 
 class ReducerEntity extends Reducer {
-  constructor(type, spec) {
-    super(type, spec.name, spec);
+  constructor(spec) {
+    super(spec.name, spec);
 
     this.uid = spec.uid;
     this.params = spec.params || {};
@@ -32,7 +32,7 @@ class ReducerEntity extends Reducer {
   async resolveEntityValue(accumulator, resolveReducer) {
     let acc = accumulator;
 
-    acc.uid = this.uid ? this.uid(acc) : undefined;
+    const generatedUId = this.uid ? this.uid(acc) : undefined;
 
     if (this.inputType) {
       await resolveReducer(acc, this.inputType);
@@ -41,7 +41,7 @@ class ReducerEntity extends Reducer {
     const cache = accumulator.cache;
 
     if (typeof cache.get === "function") {
-      const cacheResult = await cache.get(acc);
+      const cacheResult = await cache.get(generatedUId, acc);
       if (cacheResult !== undefined) {
         return cacheResult;
       }
@@ -68,7 +68,7 @@ class ReducerEntity extends Reducer {
     }
 
     if (typeof cache.set === "function") {
-      await cache.set(acc);
+      await cache.set(generatedUId, acc);
     }
 
     return acc.value;
