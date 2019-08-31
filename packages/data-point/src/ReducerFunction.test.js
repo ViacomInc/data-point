@@ -19,11 +19,6 @@ describe("ReducerFunction", () => {
       const result = new ReducerFunction(() => true);
       expect(result.name).toEqual("anonymous");
     });
-
-    it("should set reducer's type to 'function'", () => {
-      const result = new ReducerFunction(fn);
-      expect(result.type).toEqual("function");
-    });
   });
 
   describe("isType", () => {

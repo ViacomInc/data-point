@@ -21,11 +21,6 @@ describe("ReducerList", () => {
   describe("constructor", () => {
     const overSimplifiedCreateReducer = source => source;
 
-    it("should set type to list", () => {
-      const reducer = new ReducerList([], overSimplifiedCreateReducer);
-      expect(reducer.type).toEqual("list");
-    });
-
     it("should have no name defined", () => {
       const reducer = new ReducerList([], overSimplifiedCreateReducer);
       expect(reducer.name).toEqual(undefined);

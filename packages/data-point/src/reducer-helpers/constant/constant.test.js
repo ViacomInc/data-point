@@ -27,11 +27,6 @@ describe("cloneObject", () => {
 
 describe("ReducerConstant", () => {
   describe("constructor", () => {
-    it("should set type to 'constant'", () => {
-      const reducer = new ReducerConstant("value");
-      expect(reducer.type).toEqual("constant");
-    });
-
     it("should set constantValue to source received", () => {
       const reducer = new ReducerConstant("value");
       expect(reducer.constantValue).toEqual("value");
@@ -62,7 +57,6 @@ describe("ReducerConstant", () => {
   describe("create", () => {
     it("should create new instance", () => {
       const reducer = ReducerConstant.create("value");
-      expect(reducer.type).toEqual("constant");
       expect(reducer.constantValue).toEqual("value");
     });
   });

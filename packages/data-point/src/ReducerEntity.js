@@ -2,8 +2,8 @@ const { createReducer } = require("./create-reducer");
 const { Reducer } = require("./Reducer");
 
 class ReducerEntity extends Reducer {
-  constructor(type, spec) {
-    super(type, spec.name, spec);
+  constructor(spec) {
+    super(spec.name, spec);
 
     this.uid = spec.uid;
     this.params = spec.params || {};

@@ -3,7 +3,7 @@ const { createReducer } = require("../../create-reducer");
 
 class ReducerAssign extends Reducer {
   constructor(spec) {
-    super("assign", undefined, spec);
+    super(undefined, spec);
     this.assignReducer = createReducer(spec);
   }
 

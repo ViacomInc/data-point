@@ -17,7 +17,7 @@ function parseIfElse(spec) {
 
 class ReducerIfThenElse extends Reducer {
   constructor(spec) {
-    super("ifThenElse", undefined, spec);
+    super(undefined, spec);
     this.statement = parseIfElse(spec);
   }
 

@@ -125,7 +125,7 @@ class ReducerPath extends Reducer {
    * @param {string} spec dot notation object path, expects path to start with $
    */
   constructor(spec) {
-    super("path", spec, spec);
+    super(spec, spec);
     this.compiledPath = parsePath(spec);
   }
 

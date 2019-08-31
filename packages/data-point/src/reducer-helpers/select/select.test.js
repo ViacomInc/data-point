@@ -111,11 +111,6 @@ describe("ReducerSelect", () => {
   };
 
   describe("constructor", () => {
-    it("should set type to 'select'", () => {
-      const reducer = new ReducerSelect(selectSpec);
-      expect(reducer).toHaveProperty("type", "select");
-    });
-
     it("should validate input", () => {
       // eslint-disable-next-line no-unused-vars
       const reducer = new ReducerSelect(selectSpec);

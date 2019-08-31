@@ -1,21 +1,13 @@
-jest.mock("./unique-id-scope", () => {
-  return () => () => "uniqueId";
-});
-
 const { Reducer, normalizeName } = require("./Reducer");
 const { IS_REDUCER } = require("./reducer-symbols");
 
 function createReducer() {
-  return new Reducer("type", "name", "spec");
+  return new Reducer("name", "spec");
 }
 
 describe("normalizeName", () => {
-  it("should append if provided", () => {
-    expect(normalizeName("name")).toEqual("name:uniqueId");
-  });
-
-  it("should only return unique id value if name is not provided", () => {
-    expect(normalizeName()).toEqual("uniqueId");
+  it("should add postfix", () => {
+    expect(normalizeName("name")).toEqual("name:");
   });
 });
 
@@ -24,7 +16,6 @@ describe("Reducer", () => {
     it("should set type name and spec", () => {
       const reducer = createReducer();
       expect(reducer).toMatchObject({
-        type: "type",
         name: "name",
         spec: "spec"
       });

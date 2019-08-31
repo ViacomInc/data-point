@@ -185,11 +185,6 @@ describe("ReducerPath", () => {
       const result = new ReducerPath(pathSrc);
       expect(result.name).toEqual(pathSrc);
     });
-
-    it("should set reducer's type to 'function'", () => {
-      const result = new ReducerPath(pathSrc);
-      expect(result.type).toEqual("path");
-    });
   });
 
   describe("isType", () => {

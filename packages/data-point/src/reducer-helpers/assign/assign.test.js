@@ -1,17 +1,13 @@
 const { ReducerAssign } = require("./assign");
 const { Accumulator } = require("../../Accumulator");
 const { resolve } = require("../../resolve");
+const { ReducerObject } = require("../../ReducerObject");
 
 describe("ReducerAssign", () => {
   describe("constructor", () => {
-    it("should set type to 'assign'", () => {
-      const reducer = new ReducerAssign({});
-      expect(reducer.type).toEqual("assign");
-    });
-
     it("should create a reducer from spec and assign to assignReducer", () => {
       const reducer = new ReducerAssign({});
-      expect(reducer.assignReducer).toHaveProperty("type", "object");
+      expect(reducer.assignReducer).toBeInstanceOf(ReducerObject);
     });
   });
 

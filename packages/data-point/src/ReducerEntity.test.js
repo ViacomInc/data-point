@@ -56,7 +56,7 @@ describe("ReducerEntity", () => {
       params: true
     };
     function createEntity() {
-      return new ReducerEntity("type", {
+      return new ReducerEntity({
         uid,
         name: "customEntity",
         value: () => "value",
@@ -78,7 +78,7 @@ describe("ReducerEntity", () => {
     });
 
     it("should set default params to empty object", () => {
-      const entity = new ReducerEntity("type", {});
+      const entity = new ReducerEntity({});
       expect(entity).toHaveProperty("params", {});
     });
 
@@ -99,7 +99,7 @@ describe("ReducerEntity", () => {
 
   describe("resolveReducer", () => {
     it("should resolve entityValue", async () => {
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         value: "value"
       });
@@ -119,7 +119,7 @@ describe("ReducerEntity", () => {
 
     describe("handle resolveEntityValue throwing an error", () => {
       it("should throw augmented error if this.catch is not set", async () => {
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           value: () => "value"
         });
@@ -143,7 +143,7 @@ describe("ReducerEntity", () => {
       });
 
       it("should resolve this.catch", async () => {
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           value: () => "value",
           catch: () => "catch"
@@ -163,7 +163,7 @@ describe("ReducerEntity", () => {
       });
 
       it("should check output type of this.catch resolved value for data integrity", async () => {
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           value: () => "value",
           catch: () => "catch",
@@ -184,7 +184,7 @@ describe("ReducerEntity", () => {
       });
 
       it("should not handle error if catch fails", async () => {
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           value: () => "value",
           catch: () => {
@@ -208,7 +208,7 @@ describe("ReducerEntity", () => {
       });
 
       it("should not handle error if outputType fails", async () => {
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           value: () => "value",
           catch: () => "catch",
@@ -236,7 +236,7 @@ describe("ReducerEntity", () => {
 
   describe("resolveEntityValue", () => {
     it("should return value if no reducers are set", async () => {
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity"
       });
 
@@ -250,7 +250,7 @@ describe("ReducerEntity", () => {
 
     it("should execute inputType but not mutate result", async () => {
       const inputType = jest.fn(() => "inputType");
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         inputType
       });
@@ -267,7 +267,7 @@ describe("ReducerEntity", () => {
     describe("cache", () => {
       it("should skip cache if cache.get is not a function", async () => {
         const mockBefore = jest.fn(value => value);
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           before: mockBefore
         });
@@ -288,7 +288,7 @@ describe("ReducerEntity", () => {
 
       it("should call this.uid when assigned", async () => {
         const mockUid = jest.fn(() => "uid");
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           uid: mockUid,
           name: "customEntity"
         });
@@ -305,7 +305,7 @@ describe("ReducerEntity", () => {
         const mockUid = jest.fn(() => "uid");
         const mockBefore = jest.fn(value => value);
 
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           uid: mockUid,
           name: "customEntity",
           before: mockBefore
@@ -328,7 +328,7 @@ describe("ReducerEntity", () => {
 
       it("should ignore cache result if cache.get returns undefined", async () => {
         const mockBefore = jest.fn(value => value);
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity",
           before: mockBefore
         });
@@ -348,7 +348,7 @@ describe("ReducerEntity", () => {
       });
 
       it("should call cache.set if cache.set is set, and cache.get() misses", async () => {
-        const entity = new ReducerEntity("type", {
+        const entity = new ReducerEntity({
           name: "customEntity"
         });
 
@@ -369,7 +369,7 @@ describe("ReducerEntity", () => {
     });
 
     it("should resolve and return value of this.before reducer", async () => {
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         before: value => `${value}:before`
       });
@@ -383,7 +383,7 @@ describe("ReducerEntity", () => {
     });
 
     it("should resolve and return value of this.value reducer", async () => {
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         value: value => `${value}:value`
       });
@@ -397,7 +397,7 @@ describe("ReducerEntity", () => {
     });
 
     it("should resolve and return value of this.after reducer", async () => {
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         after: value => `${value}:after`
       });
@@ -412,7 +412,7 @@ describe("ReducerEntity", () => {
 
     it("should execute outputType but not mutate result", async () => {
       const outputType = jest.fn(() => "outputType");
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         outputType
       });
@@ -428,7 +428,7 @@ describe("ReducerEntity", () => {
 
     it("should execute this.resolve (if set) and return value", async () => {
       const outputType = jest.fn(() => "outputType");
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         outputType
       });
@@ -450,7 +450,7 @@ describe("ReducerEntity", () => {
         tracker.push(reducer(acc.value, acc));
       });
 
-      const entity = new ReducerEntity("type", {
+      const entity = new ReducerEntity({
         name: "customEntity",
         inputType: () => "inputType",
         before: () => "before",
