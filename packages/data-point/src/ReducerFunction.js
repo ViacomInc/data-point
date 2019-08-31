@@ -2,7 +2,7 @@ const { Reducer } = require("./Reducer");
 
 class ReducerFunction extends Reducer {
   constructor(spec) {
-    super("function", spec.name || "anonymous", spec);
+    super(spec.name || "anonymous", spec);
 
     this.functionBody = spec;
   }

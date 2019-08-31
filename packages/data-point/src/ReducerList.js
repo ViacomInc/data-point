@@ -2,7 +2,7 @@ const { Reducer } = require("./Reducer");
 
 class ReducerList extends Reducer {
   constructor(spec, createReducer) {
-    super("list", undefined, spec);
+    super(undefined, spec);
 
     this.reducerList = spec.map(reducerSource => createReducer(reducerSource));
   }

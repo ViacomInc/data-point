@@ -1,4 +1,5 @@
 const { ReducerIfThenElse } = require("./if-then-else");
+const { Reducer } = require("../../Reducer");
 const { Accumulator } = require("../../Accumulator");
 const { resolve } = require("../../resolve");
 
@@ -10,16 +11,11 @@ describe("ReducerIfThenElse", () => {
   };
 
   describe("constructor", () => {
-    it("should set type to 'ifThenElse'", () => {
-      const reducer = new ReducerIfThenElse(spec);
-      expect(reducer.type).toEqual("ifThenElse");
-    });
-
     it("should store reducer entries from spec", () => {
       const reducer = new ReducerIfThenElse(spec);
-      expect(reducer.statement).toHaveProperty("if.type", "function");
-      expect(reducer.statement).toHaveProperty("then.type", "function");
-      expect(reducer.statement).toHaveProperty("else.type", "function");
+      expect(reducer.statement.if).toBeInstanceOf(Reducer);
+      expect(reducer.statement.then).toBeInstanceOf(Reducer);
+      expect(reducer.statement.else).toBeInstanceOf(Reducer);
     });
   });
 

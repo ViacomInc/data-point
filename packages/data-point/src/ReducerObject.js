@@ -2,7 +2,7 @@ const set = require("lodash/set");
 const cloneDeep = require("lodash/cloneDeep");
 
 const { Reducer } = require("./Reducer");
-const isReducerConstant = require("./is-reducer-constant");
+const { ReducerConstant } = require("./reducer-helpers/constant/constant");
 const isPlainObject = require("./is-plain-object");
 
 function newProps() {
@@ -30,7 +30,7 @@ function getObjectProperties(
     const path = stack.concat(key);
     const value = source[key];
 
-    if (isReducerConstant(value)) {
+    if (value instanceof ReducerConstant) {
       set(props.constant, path, value.constantValue);
       return;
     }
@@ -50,7 +50,7 @@ function getObjectProperties(
 
 class ReducerObject extends Reducer {
   constructor(spec, createReducer) {
-    super("object", undefined, spec);
+    super(undefined, spec);
 
     this.objectProperties = getObjectProperties(createReducer, spec);
   }

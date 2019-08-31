@@ -7,7 +7,7 @@ const { createReducer } = require("../../create-reducer");
  */
 class ReducerMap extends Reducer {
   constructor(spec) {
-    super("map", undefined, spec);
+    super(undefined, spec);
 
     /**
      * @type {Reducer} Iteratee used to run thru each value in the
