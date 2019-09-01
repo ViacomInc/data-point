@@ -13,7 +13,8 @@ function newProps() {
 }
 
 /**
- * NOTE: This function makes recursive calls to itself
+ * This function makes recursive calls to itself
+ * @private
  * @param {Function} createReducer
  * @param {Object} source
  * @param {Array} stack
@@ -48,6 +49,11 @@ function getObjectProperties(
   return props;
 }
 
+/**
+ * **IMPORTANT:** This class is meant to be only called internally by DataPoint.
+ * @protected
+ * @extends {Reducer}
+ */
 class ReducerObject extends Reducer {
   constructor(spec, createReducer) {
     super(undefined, spec);
@@ -55,13 +61,17 @@ class ReducerObject extends Reducer {
     this.objectProperties = getObjectProperties(createReducer, spec);
   }
 
+  /**
+   * @static
+   * @param {*} spec
+   */
   static isType(spec) {
     return isPlainObject(spec);
   }
 
   /**
    * @param {Accumulator} accumulator
-   * @param {Function} resolveReducer
+   * @param {resolve} resolveReducer
    * @returns {Promise}
    */
   async resolve(accumulator, resolveReducer) {

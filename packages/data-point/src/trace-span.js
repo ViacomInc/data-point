@@ -1,5 +1,6 @@
 /**
  * NOTE: mutates accumulator
+ * @private
  * @param {*} accumulator
  */
 function create(accumulator) {
