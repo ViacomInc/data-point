@@ -95,19 +95,19 @@ describe("validateLocals", () => {
     expect(() => {
       dataPoint.validateLocals(null);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"'options.locals' must be undefined or an object"`
+      `"'options.locals' must be undefined or a plain object"`
     );
 
     expect(() => {
       dataPoint.validateLocals("string");
     }).toThrowErrorMatchingInlineSnapshot(
-      `"'options.locals' must be undefined or an object"`
+      `"'options.locals' must be undefined or a plain object"`
     );
 
     expect(() => {
       dataPoint.validateLocals([]);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"'options.locals' must be undefined or an object"`
+      `"'options.locals' must be undefined or a plain object"`
     );
   });
 });

@@ -43,7 +43,7 @@ async function resolveFromInput(input, reducer, options = {}) {
 
 /**
  * @param {Object} locals
- * @throws Error if the value is not a simple object. To kow which values are
+ * @throws Error if the value is not a simple object. To know which values are
  * considered as simple objects please read the unit test for `isPlainObject`.
  */
 function validateLocals(locals) {
@@ -51,7 +51,7 @@ function validateLocals(locals) {
     return;
   }
 
-  throw new Error("'options.locals' must be undefined or an object");
+  throw new Error("'options.locals' must be undefined or a plain object");
 }
 
 /**
