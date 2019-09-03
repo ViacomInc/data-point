@@ -22,7 +22,7 @@ const siteConfig = {
 
   // Used for publishing and more
   projectName: "data-point",
-  organizationName: "ViacomInc",
+  organizationName: "csarnataro",
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
@@ -46,7 +46,7 @@ const siteConfig = {
 
   /* Colors for website */
   colors: {
-    primaryColor: "#006ad2",
+    primaryColor: "#6d426d",
     secondaryColor: "#190918"
   },
 
