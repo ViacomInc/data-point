@@ -6,6 +6,7 @@ const { ReducerPath } = require("./ReducerPath");
 const { ReducerObject } = require("./ReducerObject");
 
 /**
+ * @private
  * @param {*} item
  * @returns {boolean}
  */

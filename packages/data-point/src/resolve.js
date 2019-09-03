@@ -5,7 +5,7 @@ const pid = uniqueIdScope();
 
 /**
  * Applies a Reducer to an accumulator
- *
+ * @alias resolve
  * @param {Accumulator} accumulator
  * @param {Reducer} reducer
  * @returns {Promise}
