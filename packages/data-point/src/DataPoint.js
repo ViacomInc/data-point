@@ -55,26 +55,26 @@ function validateLocals(locals) {
 }
 
 /**
- * @param {OpenTrace.Span} tracer when provided it should
+ * @param {OpenTrace.Span} span when provided it should
  * comply with the **opentracing** Span API.
  * @throws Error if the object does not expose the methods `startSpan`,
  * `setTag`, `log`.
  */
-function validateTracer(tracer) {
-  if (tracer) {
-    if (typeof tracer.startSpan !== "function") {
+function validateTracingSpan(span) {
+  if (span) {
+    if (typeof span.startSpan !== "function") {
       throw new Error(
         "tracer.startSpan must be a function, tracer expects opentracing API (see https://opentracing.io)"
       );
     }
 
-    if (typeof tracer.setTag !== "function") {
+    if (typeof span.setTag !== "function") {
       throw new Error(
         "tracer.setTag must be a function, tracer expects opentracing API (see https://opentracing.io)"
       );
     }
 
-    if (typeof tracer.log !== "function") {
+    if (typeof span.log !== "function") {
       throw new Error(
         "tracer.log must be a function, tracer expects opentracing API (see https://opentracing.io)"
       );
@@ -107,7 +107,7 @@ class DataPoint {
    */
   async resolve(input, reducer, options = {}) {
     validateLocals(options.locals);
-    validateTracer(options.tracer);
+    validateTracingSpan(options.tracer);
 
     return resolveFromInput(input, reducer, {
       ...options,
@@ -121,5 +121,5 @@ module.exports = {
   resolveFromInput,
   DataPoint,
   validateLocals,
-  validateTracer
+  validateTracingSpan
 };

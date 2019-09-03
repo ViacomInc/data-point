@@ -6,7 +6,8 @@ const sayHello = value => `Hello ${value}`;
 const getAccumulator = (input, acc) => acc;
 
 const shallowTracer = {
-  startSpan: () => Object.create(shallowTracer),
+  // resolve will call this method, which expects a Span object in return
+  startSpan: () => shallowTracer,
   setTag: () => true,
   log: () => true
 };
@@ -112,26 +113,26 @@ describe("validateLocals", () => {
   });
 });
 
-describe("validateTracer", () => {
+describe("validateTracingSpan", () => {
   it("should only allow undefined or well defined tracer span API", () => {
     expect(() => {
-      dataPoint.validateTracer();
+      dataPoint.validateTracingSpan();
     }).not.toThrow();
 
     expect(() => {
-      dataPoint.validateTracer(shallowTracer);
+      dataPoint.validateTracingSpan(shallowTracer);
     }).not.toThrow();
   });
 
   it("should throw error on any un-valid value", () => {
     expect(() => {
-      dataPoint.validateTracer({});
+      dataPoint.validateTracingSpan({});
     }).toThrowErrorMatchingInlineSnapshot(
       `"tracer.startSpan must be a function, tracer expects opentracing API (see https://opentracing.io)"`
     );
 
     expect(() => {
-      dataPoint.validateTracer({
+      dataPoint.validateTracingSpan({
         startSpan: () => true
       });
     }).toThrowErrorMatchingInlineSnapshot(
@@ -139,7 +140,7 @@ describe("validateTracer", () => {
     );
 
     expect(() => {
-      dataPoint.validateTracer({
+      dataPoint.validateTracingSpan({
         startSpan: () => true,
         setTag: () => true
       });
