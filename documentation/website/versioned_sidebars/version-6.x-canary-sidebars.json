@@ -1,0 +1,50 @@
+{
+  "version-6.x-canary-docs": {
+    "Introduction": [
+      "version-6.x-canary-getting-started",
+      "version-6.x-canary-introduction/basic-examples"
+    ],
+    "API Reference": [
+      "version-6.x-canary-api/data-point",
+      "version-6.x-canary-api/accumulator",
+      "version-6.x-canary-api/reducer-types",
+      {
+        "type": "subcategory",
+        "label": "Primitive Reducers",
+        "ids": [
+          "version-6.x-canary-api/reducers/path-reducer",
+          "version-6.x-canary-api/reducers/function-reducer",
+          "version-6.x-canary-api/reducers/object-reducer",
+          "version-6.x-canary-api/reducers/list-reducer"
+        ]
+      },
+      {
+        "type": "subcategory",
+        "label": "Helper Reducers",
+        "ids": [
+          "version-6.x-canary-api/reducers/assign-reducer",
+          "version-6.x-canary-api/reducers/if-then-else-reducer",
+          "version-6.x-canary-api/reducers/select-reducer",
+          "version-6.x-canary-api/reducers/map-reducer",
+          "version-6.x-canary-api/reducers/parallel-reducer",
+          "version-6.x-canary-api/reducers/fallback-reducer"
+        ]
+      },
+      {
+        "type": "subcategory",
+        "label": "Entity Reducers",
+        "ids": [
+          "version-6.x-canary-api/reducers/entity-reducer",
+          "version-6.x-canary-api/reducers/model"
+        ]
+      }
+    ],
+    "Architecture Overview": [
+      "version-6.x-canary-doc3"
+    ],
+    "Contributing": [
+      "version-6.x-canary-code-of-conduct",
+      "version-6.x-canary-introduction/basic-examples"
+    ]
+  }
+}

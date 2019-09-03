@@ -31,9 +31,13 @@ const siteConfig = {
   headerLinks: [
     { doc: "getting-started", label: "Docs" },
     { href: "/data-point/jsdoc", label: "API" },
-    { href: "https://github.com/ViacomInc/data-point", label: "GitHub", target: "_blank" }
+    {
+      href: "https://github.com/ViacomInc/data-point",
+      label: "GitHub",
+      target: "_blank"
+    }
   ],
-  separateCss: ['static/jsdoc/styles'],
+  separateCss: ["static/jsdoc/styles"],
 
   /* path to images for header/footer */
   headerIcon: "img/favicon.ico",
@@ -42,7 +46,7 @@ const siteConfig = {
 
   /* Colors for website */
   colors: {
-    primaryColor: "#250e23",
+    primaryColor: "#006ad2",
     secondaryColor: "#190918"
   },
 

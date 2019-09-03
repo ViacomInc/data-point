@@ -72,6 +72,74 @@
       "getting-started": {
         "title": "Getting Started",
         "sidebar_label": "Getting Started"
+      },
+      "version-6.x-canary/api/version-6.x-canary-accumulator": {
+        "title": "Accumulator",
+        "sidebar_label": "Accumulator"
+      },
+      "version-6.x-canary/api/version-6.x-canary-basic-examples": {
+        "title": "Examples",
+        "sidebar_label": "Examples"
+      },
+      "version-6.x-canary/api/version-6.x-canary-data-point": {
+        "title": "DataPoint",
+        "sidebar_label": "DataPoint"
+      },
+      "version-6.x-canary/api/version-6.x-canary-reducer-types": {
+        "title": "Reducers Types",
+        "sidebar_label": "Reducers Types"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-assign-reducer": {
+        "title": "AssignReducer",
+        "sidebar_label": "AssignReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-entity-reducer": {
+        "title": "EntityReducer Class",
+        "sidebar_label": "EntityReducer Class"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-fallback-reducer": {
+        "title": "FallbackReducer",
+        "sidebar_label": "FallbackReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-function-reducer": {
+        "title": "FunctionReducer",
+        "sidebar_label": "FunctionReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-if-then-else-reducer": {
+        "title": "IfThenElseReducer",
+        "sidebar_label": "IfThenElseReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-list-reducer": {
+        "title": "ListReducer",
+        "sidebar_label": "ListReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-map-reducer": {
+        "title": "MapReducer",
+        "sidebar_label": "MapReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-model": {
+        "title": "Model",
+        "sidebar_label": "Model"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-object-reducer": {
+        "title": "ObjectReducer",
+        "sidebar_label": "ObjectReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-parallel-reducer": {
+        "title": "ParallelReducer",
+        "sidebar_label": "ParallelReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-path-reducer": {
+        "title": "PathReducer",
+        "sidebar_label": "PathReducer"
+      },
+      "version-6.x-canary/api/reducers/version-6.x-canary-select-reducer": {
+        "title": "SelectReducer",
+        "sidebar_label": "SelectReducer"
+      },
+      "version-6.x-canary/version-6.x-canary-getting-started": {
+        "title": "Getting Started",
+        "sidebar_label": "Getting Started"
       }
     },
     "links": {

@@ -1,9 +1,13 @@
 {
   "scripts": {
     "generate-jsdoc": "yarn jsdoc -r --destination static/jsdoc -c jsdoc.json ../../packages/data-point/src/ ./README.md",
-    "publish-gh-pages": "yarn generate-jsdoc; docusaurus-publish",
-    "start": "yarn generate-jsdoc; docusaurus-start",
-    "build": "yarn generate-jsdoc; docusaurus-build"
+    "publish-gh-pages": "docusaurus-publish",
+    "start": "docusaurus-start",
+    "build": "docusaurus-build",
+    "version": "docusaurus-version",
+    "examples": "docusaurus-examples",
+    "rename-version": "docusaurus-rename-version",
+    "write-translations": "docusaurus-write-translations"
   },
   "devDependencies": {
     "docdash": "^1.1.1",
