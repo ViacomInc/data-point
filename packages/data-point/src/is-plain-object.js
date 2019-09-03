@@ -6,6 +6,7 @@
  *
  * If there are more cases that need to be considered please create an issue.
  *
+ * @private
  * @param {any} obj
  * @returns {Boolean} true if object created via `{}`
  */

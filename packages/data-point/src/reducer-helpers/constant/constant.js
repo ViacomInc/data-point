@@ -4,6 +4,7 @@ const { Reducer } = require("../../Reducer");
 const isPlainObject = require("../../is-plain-object");
 
 /**
+ * @private
  * @param {Boolean} isObject true if parameter `value` is assumed to be an object
  * @param {any} value
  */

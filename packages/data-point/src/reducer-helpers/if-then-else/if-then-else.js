@@ -4,8 +4,9 @@ const { createReducer } = require("../../create-reducer");
 /**
  * parse spec
  *
+ * @private
  * @param {any} spec
- * @returns
+ * @returns {{id: Reducer, then:Reducer, else: Reducer}}
  */
 function parseIfElse(spec) {
   return {
