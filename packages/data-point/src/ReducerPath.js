@@ -6,11 +6,13 @@ const { Reducer } = require("./Reducer");
 // chris@gomakethings.com
 
 /**
+ * @private
  * @type {RegExp} matches simple accessor separators `[`, `]` and `.`
  */
 const splitToArrayRegEx = /[[,.,\]]/g;
 
 /**
+ * @private
  * @param {string} pathProperty
  * @returns {number|string} parsed value
  */
@@ -20,6 +22,7 @@ function parsePathProperty(pathProperty) {
 }
 
 /**
+ * @private
  * @param {string} pathSource
  * @returns {Array<string|number>}
  */
@@ -42,6 +45,7 @@ function stringToPath(pathSource) {
 }
 
 /**
+ * @private
  * @param {string} pathSource
  * @returns {Object} compiled source
  */
@@ -78,6 +82,7 @@ function parsePath(pathSource) {
 }
 
 /**
+ * @private
  * @param {any} value value to crawl
  * @param {Array<string|number>} path object path to crawl
  * @returns {any} resolved path
@@ -104,6 +109,7 @@ function crawlPath(value, path) {
 }
 
 /**
+ * @private
  * @param {Accumulator} accumulator
  * @param {Object} compiledPath
  * @returns {any} resolved value
@@ -119,6 +125,7 @@ function resolvePath(accumulator, compiledPath) {
 
 /**
  * Reducer that crawls a data path (using dot notation) from the accumulator
+ * @extends {Reducer}
  */
 class ReducerPath extends Reducer {
   /**

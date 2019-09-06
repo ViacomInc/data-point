@@ -1,3 +1,3 @@
-const { DataPoint } = require("./data-point");
+const { DataPoint } = require("./DataPoint");
 
 module.exports = DataPoint.create;

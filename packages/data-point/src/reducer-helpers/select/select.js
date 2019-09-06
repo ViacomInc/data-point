@@ -3,21 +3,46 @@ const { createReducer } = require("../../create-reducer");
 const { validate } = require("./validate");
 
 /**
+ * Spec to create a `ReducerSelect` should follow form:
+ * ```js
+ * {
+ *   in: [
+ *     { case: Reducer,  do: Reducer },
+ *     { case: Reducer,  do: Reducer }
+ *     ...
+ *   ],
+ *   default: Reducer
+ * }
+ * ```
+ * @typedef SelectSpec
+ * @property {CaseStatement[]} in
+ * @property {Reducer} default
+ */
+
+/**
+ * @private
  * @typedef {Object} caseBlock
  * @property {Reducer} case
  * @property {Reducer} do
  */
 
 /**
+ * @private
  * @typedef {Object} selectStatement
  * @property {caseBlock[]} in
  * @property {Reducer} default
  */
 
 /**
+ * @typedef {Object} CaseStatement
+ * @property {Reducer} case
+ * @property {Reducer} do
+ */
+
+/**
  * Parse only case statements
- *
- * @param {{case:Reducer, do:Reducer}[]} spec un-parsed case statements
+ * @private
+ * @param {CaseStatement[]} spec un-parsed case statements
  * @returns {caseBlock[]}
  */
 function parseCaseStatements(spec) {
@@ -30,8 +55,9 @@ function parseCaseStatements(spec) {
 }
 
 /**
+ * @private
  * @param {Object} select un-parsed select source
- * @param {{case:Reducer, do:Reducer}[]} select.in un-parsed case statements
+ * @param {CaseStatement[]} select.in un-parsed case statements
  * @param {Reducer} select.default un-parsed case statements
  * @returns {selectStatement}
  */
@@ -43,7 +69,8 @@ function parseSelect(select) {
 }
 
 /**
- * @param {{case:Reducer, do:Reducer}[]} caseStatements
+ * @private
+ * @param {CaseStatement[]} caseStatements
  * @param {Accumulator} acc
  * @param {Function} resolveReducer
  * @return {Promise}
@@ -87,18 +114,35 @@ async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
  * })
  * ```
  *
- * case blocks are executed sequentially, if a `case` returns a truthy value
+ * Case blocks are executed sequentially, if a `case` returns a truthy value
  * its `do` statement will be resolved and returned.
  *
  * If no case matches then the `default` reducer will be resolved.
  */
 class ReducerSelect extends Reducer {
+  /**
+   * @param {SelectSpec} spec Spec to create a `ReducerSelect` should follow form:
+   * ```js
+   * {
+   *   in: [
+   *     { case: Reducer,  do: Reducer },
+   *     { case: Reducer,  do: Reducer }
+   *     ...
+   *   ],
+   *   default: Reducer
+   * }
+   * ```
+   */
   constructor(spec) {
     super(undefined, spec);
     validate(spec);
     this.select = parseSelect(spec);
   }
 
+  /**
+   *
+   * @param {spec} spec
+   */
   static create(spec) {
     return new ReducerSelect(spec);
   }
