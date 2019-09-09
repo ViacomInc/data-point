@@ -1,0 +1,11 @@
+{
+  "name": "@data-point/opentracing-example",
+  "main": "playground-opentracing.js",
+  "private": true,
+  "version": "1.0.0",
+  "devDependencies": {
+    "@data-point/core": "^6.0.0",
+    "@data-point/tracers": "^1.0.0",
+    "jaeger-client": "^3.15.0"
+  }
+}
