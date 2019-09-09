@@ -1,6 +1,6 @@
 {
   "name": "@data-point/opentracing-example",
-  "main": "playground-opentracing.js",
+  "main": "opentracing-example.js",
   "private": true,
   "version": "1.0.0",
   "devDependencies": {
