@@ -23,7 +23,7 @@ class Span {
   }
 
   start(name, options) {
-    const span = new Span(name, options);
+    const span = new Span(name, options, this.tracer);
     this.tracer.handlers.start(span);
     return span;
   }

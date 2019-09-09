@@ -65,6 +65,7 @@ describe("Span", () => {
       });
       expect(newSpan).toBeInstanceOf(Span);
       expect(newSpan).toHaveProperty("name", "newSpan");
+      expect(newSpan).toHaveProperty("tracer", tracer);
       expect(handlers.start).toHaveBeenCalledWith(newSpan);
     });
   });
