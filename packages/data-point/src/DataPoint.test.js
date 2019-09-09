@@ -6,10 +6,9 @@ const sayHello = value => `Hello ${value}`;
 const getAccumulator = (input, acc) => acc;
 
 const shallowTracer = {
-  // resolve will call this method, which expects a Span object in return
-  startSpan: () => shallowTracer,
-  setTag: () => true,
-  log: () => true
+  start: () => shallowTracer,
+  error: () => true,
+  finish: () => true
 };
 
 describe("resolveFromAccumulator", () => {
@@ -34,8 +33,7 @@ describe("resolveFromInput", () => {
       cache: {
         get: () => true,
         set: () => true
-      },
-      tracer: "tracer"
+      }
     };
     it("should pass locals object", async () => {
       const result = await dataPoint.resolveFromInput(
@@ -113,40 +111,35 @@ describe("validateLocals", () => {
   });
 });
 
-describe("validateTracingSpan", () => {
+describe("validateTracer", () => {
   it("should only allow undefined or well defined tracer span API", () => {
     expect(() => {
-      dataPoint.validateTracingSpan();
+      dataPoint.validateTracer();
     }).not.toThrow();
 
     expect(() => {
-      dataPoint.validateTracingSpan(shallowTracer);
+      dataPoint.validateTracer(shallowTracer);
     }).not.toThrow();
   });
 
   it("should throw error on any un-valid value", () => {
     expect(() => {
-      dataPoint.validateTracingSpan({});
-    }).toThrowErrorMatchingInlineSnapshot(
-      `"tracer.startSpan must be a function, tracer expects opentracing API (see https://opentracing.io)"`
-    );
+      dataPoint.validateTracer({});
+    }).toThrowErrorMatchingInlineSnapshot(`"tracer.start must be a function"`);
 
     expect(() => {
-      dataPoint.validateTracingSpan({
-        startSpan: () => true
+      dataPoint.validateTracer({
+        start: () => true,
+        error: "invalid"
       });
-    }).toThrowErrorMatchingInlineSnapshot(
-      `"tracer.setTag must be a function, tracer expects opentracing API (see https://opentracing.io)"`
-    );
+    }).toThrowErrorMatchingInlineSnapshot(`"tracer.error must be a function"`);
 
     expect(() => {
-      dataPoint.validateTracingSpan({
-        startSpan: () => true,
-        setTag: () => true
+      dataPoint.validateTracer({
+        start: () => true,
+        finish: "invalid"
       });
-    }).toThrowErrorMatchingInlineSnapshot(
-      `"tracer.log must be a function, tracer expects opentracing API (see https://opentracing.io)"`
-    );
+    }).toThrowErrorMatchingInlineSnapshot(`"tracer.finish must be a function"`);
   });
 });
 

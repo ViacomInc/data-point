@@ -139,7 +139,6 @@ describe("ReducerEntity", () => {
         }
 
         expect(error).toMatchInlineSnapshot(`[Error: entityError]`);
-        expect(error.reducer).toEqual(entity);
       });
 
       it("should resolve this.catch", async () => {
