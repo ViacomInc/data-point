@@ -4,6 +4,8 @@ const { resolve } = require("./resolve");
 const { Cache } = require("./Cache");
 const isPlainObject = require("./is-plain-object");
 
+const Tracer = require("./tracing/Tracer");
+
 /**
  * Applies a reducer from an accumulator object.
  *
@@ -13,7 +15,7 @@ const isPlainObject = require("./is-plain-object");
  */
 async function resolveFromAccumulator(acc, reducer) {
   const parsedReducers = createReducer(reducer);
-  return resolve(acc, parsedReducers);
+  return resolve(acc, parsedReducers, true);
 }
 
 /**
@@ -25,8 +27,8 @@ async function resolveFromAccumulator(acc, reducer) {
  * @param {Cache|undefined} options.cache cache manager, see Cache for options.
  * @param {Object|undefined} options.locals persistent object that is
  * accessible via the Accumulator object on every reducer.
- * @param {OpenTrace.Span|undefined} options.tracer when provided it should
- * comply with the **opentracing** Span API.
+ * @param {Tracer} options.tracer when provided it should
+ * comply with the DataPoint Tracing API.
  * @returns {Promise<any>} resolved value
  */
 async function resolveFromInput(input, reducer, options = {}) {
@@ -55,29 +57,22 @@ function validateLocals(locals) {
 }
 
 /**
- * @param {OpenTrace.Span} span when provided it should
- * comply with the **opentracing** Span API.
- * @throws Error if the object does not expose the methods `startSpan`,
- * `setTag`, `log`.
+ * @param {Tracer} options.tracer when provided it should
+ * comply with the DataPoint Tracing API.
+ * @throws Error if the object does not expose the methods `start`.
  */
-function validateTracingSpan(span) {
-  if (span) {
-    if (typeof span.startSpan !== "function") {
-      throw new Error(
-        "tracer.startSpan must be a function, tracer expects opentracing API (see https://opentracing.io)"
-      );
+function validateTracer(tracer) {
+  if (tracer) {
+    if (typeof tracer.start !== "function") {
+      throw new Error("tracer.start must be a function");
     }
 
-    if (typeof span.setTag !== "function") {
-      throw new Error(
-        "tracer.setTag must be a function, tracer expects opentracing API (see https://opentracing.io)"
-      );
+    if (tracer.error && typeof tracer.error !== "function") {
+      throw new Error("tracer.error must be a function");
     }
 
-    if (typeof span.log !== "function") {
-      throw new Error(
-        "tracer.log must be a function, tracer expects opentracing API (see https://opentracing.io)"
-      );
+    if (tracer.finish && typeof tracer.finish !== "function") {
+      throw new Error("tracer.finish must be a function");
     }
   }
 }
@@ -100,18 +95,24 @@ class DataPoint {
    * @param {Object} options
    * @param {Object|undefined} options.locals persistent object that is
    * accessible via the Accumulator object on every reducer.
-   * @param {OpenTrace.Span|undefined} options.tracer when provided it should
-   * comply with the **opentracing** Span API.
+   * @param {Tracer} options.tracer when provided it should
+   * comply with the DataPoint Tracing API.
    * @returns {Promise<any>} result from running the input thru the
    * provided reducer.
    */
   async resolve(input, reducer, options = {}) {
     validateLocals(options.locals);
-    validateTracingSpan(options.tracer);
+    validateTracer(options.tracer);
+
+    let tracer;
+    if (options.tracer) {
+      tracer = new Tracer(options.tracer);
+    }
 
     return resolveFromInput(input, reducer, {
       ...options,
-      cache: this.cache
+      cache: this.cache,
+      tracer
     });
   }
 }
@@ -121,5 +122,5 @@ module.exports = {
   resolveFromInput,
   DataPoint,
   validateLocals,
-  validateTracingSpan
+  validateTracer
 };

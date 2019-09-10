@@ -4,11 +4,11 @@ jest.mock("./unique-id-scope", () => {
   return () => mockPid;
 });
 
-jest.mock("./trace-span");
+jest.mock("./tracing/trace-span");
 
 const { resolve } = require("./resolve");
 const { Accumulator } = require("./Accumulator");
-const traceSpan = require("./trace-span");
+const traceSpan = require("./tracing/trace-span");
 
 const reducer = {
   resolveReducer: jest.fn(() => "resolved")
@@ -70,18 +70,53 @@ describe("resolve", () => {
     });
   });
 
+  describe("error.reducer", () => {
+    it("should augment error with reducer", async () => {
+      const acc = new Accumulator();
+
+      const testError = new Error("resolveReducer failed");
+
+      const reducerRejected = {
+        id: "badReducer",
+        resolveReducer: jest.fn().mockRejectedValue(testError)
+      };
+
+      const result = await resolve(acc, reducerRejected).catch(error => error);
+
+      expect(result).toBeInstanceOf(Error);
+      expect(result.reducer).toEqual(reducerRejected);
+    });
+
+    it("should not augment error with reducer if already set", async () => {
+      const acc = new Accumulator();
+
+      const testError = new Error("resolveReducer failed");
+      testError.reducer = "initialReducer";
+
+      const reducerRejected = {
+        id: "badReducer",
+        resolveReducer: jest.fn().mockRejectedValue(testError)
+      };
+
+      const result = await resolve(acc, reducerRejected).catch(error => error);
+
+      expect(result).toBeInstanceOf(Error);
+      expect(result.reducer).toEqual("initialReducer");
+    });
+  });
+
   describe("tracing", () => {
-    it("should call traceSpan.create with accumulator", async () => {
+    it("should call traceSpan.start with accumulator", async () => {
       const acc = new Accumulator();
       await resolve(acc, reducer);
-      const [accParam] = traceSpan.create.mock.calls[0];
+      const [accParam] = traceSpan.start.mock.calls[0];
       expect(accParam).toMatchObject({
         pid: "pid",
         reducer
       });
     });
 
-    it("should call traceSpan.logError when resolveReducer throws error", async () => {
+    it("should call traceSpan.error when resolveReducer throws error", async () => {
       const acc = new Accumulator();
 
       const testError = new Error("resolveReducer failed");
@@ -91,9 +126,9 @@ describe("resolve", () => {
 
       await resolve(acc, reducerRejected).catch(error => error);
 
-      expect(traceSpan.logError).toBeCalled();
+      expect(traceSpan.error).toBeCalled();
 
-      expect(traceSpan.logError.mock.calls[0]).toEqual([undefined, testError]);
+      expect(traceSpan.error.mock.calls[0]).toEqual([undefined, testError]);
     });
 
     it("should finally call traceSpan.finish()", async () => {

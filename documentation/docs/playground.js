@@ -4,7 +4,6 @@ const DataPoint = require("@data-point/core");
 const DPModel = require("@data-point/core/model");
 const DPIfThenElse = require("@data-point/core/ifThenElse");
 const DPMap = require("@data-point/core/map");
-const DPTracer = require("@data-point/tracer");
 
 const fs = require("fs");
 
@@ -70,34 +69,9 @@ async function main() {
     }
   ];
 
-  const tracer = new DPTracer();
-
-  const span = tracer.startSpan("data-point-request");
-
   console.time("dp1");
-  result = await datapoint.resolve(input, DPMap(myModel), {
-    // tracer: span
-  });
+  result = await datapoint.resolve(input, DPMap(myModel));
   console.timeEnd("dp1");
-
-  span.finish();
-
-  console.time("dp2");
-  result = await datapoint.resolve(input, DPMap(myModel), {
-    // tracer: span
-  });
-  console.timeEnd("dp2");
-
-  // span2.finish();
-
-  // fs.writeFileSync(
-  //   "/Users/pacheca/Downloads/tracing.json",
-  //   JSON.stringify(tracer.report("chrome-tracing"))
-  // );
-
-  console.log(tracer.report("chrome-tracing"));
-  console.log(store);
-  console.log(result);
 }
 
 main();
