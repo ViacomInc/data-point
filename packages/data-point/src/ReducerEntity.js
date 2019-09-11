@@ -75,22 +75,31 @@ class ReducerEntity extends Reducer {
   }
 
   async resolveReducer(accumulator, resolveReducer) {
-    let acc = accumulator;
+    let value;
+
     try {
-      acc.value = await this.resolveEntityValue(acc, resolveReducer);
+      value = await this.resolveEntityValue(accumulator, resolveReducer);
     } catch (error) {
       if (!this.catch) {
         throw error;
       }
 
-      acc = acc.set("value", await resolveReducer(acc, this.catch));
+      const catchValue = await resolveReducer(
+        accumulator.set("value", error),
+        this.catch
+      );
+
       if (this.outputType) {
-        await resolveReducer(acc, this.outputType);
+        await resolveReducer(
+          accumulator.set("value", catchValue),
+          this.outputType
+        );
       }
-      return acc.value;
+
+      return catchValue;
     }
 
-    return acc.value;
+    return value;
   }
 }
 
