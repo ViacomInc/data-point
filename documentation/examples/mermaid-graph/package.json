@@ -1,0 +1,10 @@
+{
+  "name": "@data-point/mermaid-example",
+  "main": "mermaid-example.js",
+  "private": true,
+  "version": "1.0.0",
+  "devDependencies": {
+    "@data-point/core": "^6.0.0",
+    "@data-point/tracers": "^1.0.0"
+  }
+}
