@@ -13,6 +13,5 @@ script:
   # Run test script
   - "yarn run lint"
   - "yarn test -- --maxWorkers=4"
-  - "scripts/is-it-pretty.sh"
 after_script:
   - codecov
