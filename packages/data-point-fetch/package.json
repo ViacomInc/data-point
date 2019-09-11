@@ -1,0 +1,17 @@
+{
+  "name": "@data-point/fetch",
+  "description": "DataPoint Reducer to interface with node-fetch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": {
+    "name": "Acatl Pacheco",
+    "email": "acatl.pacheco@viacom.com"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "@data-point/core": "^6.0.0"
+  },
+  "devDependencies": {
+    "nock": "^11.3.3"
+  }
+}
