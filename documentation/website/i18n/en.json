@@ -33,6 +33,10 @@
         "title": "FallbackReducer",
         "sidebar_label": "FallbackReducer"
       },
+      "api/reducers/data-point-fetch": {
+        "title": "@data-point/fetch",
+        "sidebar_label": "@data-point/fetch"
+      },
       "api/reducers/function-reducer": {
         "title": "FunctionReducer",
         "sidebar_label": "FunctionReducer"
@@ -68,6 +72,10 @@
       "api/reducers/select-reducer": {
         "title": "SelectReducer",
         "sidebar_label": "SelectReducer"
+      },
+      "api/tracing": {
+        "title": "Tracing",
+        "sidebar_label": "Tracing"
       },
       "getting-started": {
         "title": "Getting Started",
