@@ -142,21 +142,25 @@ describe("ReducerEntity", () => {
       });
 
       it("should resolve this.catch", async () => {
+        const catchError = jest.fn(() => "catch");
+        const error = new Error("entityError");
+
         const entity = new ReducerEntity({
           name: "customEntity",
           value: () => "value",
-          catch: () => "catch"
+          catch: catchError
         });
 
         const mockResolveEntityValue = jest
           .spyOn(entity, "resolveEntityValue")
-          .mockRejectedValue(new Error("entityError"));
+          .mockRejectedValue(error);
 
         const acc = new Accumulator();
 
         const result = await entity.resolveReducer(acc, mockResolveReducer);
 
         expect(mockResolveEntityValue).toBeCalledWith(acc, mockResolveReducer);
+        expect(catchError).toHaveBeenCalledWith(error, { value: error });
         expect(mockResolveReducer).toHaveBeenCalledTimes(1);
         expect(result).toEqual("catch");
       });
