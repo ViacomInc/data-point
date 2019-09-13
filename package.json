@@ -1,7 +1,8 @@
 {
-  "private": true,
   "name": "data-point-monorepo",
   "description": "DataPoint's documentation website",
+  "version": "1.0.0",
+  "private": true,
   "license": "Apache-2.0",
   "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
   "contributors": [
@@ -16,7 +17,6 @@
   "bugs": {
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
-  "version": "1.0.0",
   "workspaces": [
     "packages/*"
   ],
