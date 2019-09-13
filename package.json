@@ -4,6 +4,11 @@
   "version": "1.0.0",
   "private": true,
   "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
+  "contributors": [
+    "Christian Sarnataro <christian.sarnataro@vimn.com>",
+    "Matthew Armstrong <MatthewR.Armstrong@viacom.com>"
+  ],
   "homepage": "https://github.com/ViacomInc/data-point",
   "repository": {
     "type": "git",
@@ -12,42 +17,26 @@
   "bugs": {
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
-  "engines": {
-    "node": ">=10",
-    "yarn": "^1.15.2"
-  },
-  "keywords": [
-    "data-point"
-  ],
-  "author": {
-    "name": "Acatl Pacheco",
-    "email": "acatl.pacheco@viacom.com"
-  },
-  "contributors": [
-    {
-      "name": "Matthew Armstrong",
-      "email": "MatthewR.Armstrong@viacom.com"
-    },
-    {
-      "name": "Christian Sarnataro",
-      "email": "christian.sarnataro@vimn.com"
-    }
-  ],
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "scripts/preinstall-script.js",
     "precommit": "lint-staged",
     "commit": "git-cz",
+    "contributors:add": "all-contributors add",
+    "preinstall": "scripts/preinstall-script.js",
+    "lint": "npmPkgJsonLint . && eslint '**/*.js'",
+    "next": "yarn run lint && jest --coverage && lerna publish --cd-version=prerelease --npm-tag=next --yes",
+    "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
+    "run-examples": "scripts/run-examples.js",
     "test": "jest --coverage",
     "posttest": "echo 'skipping examples for now' #npm run run-examples",
-    "lint": "npmPkgJsonLint . && eslint '**/*.js'",
-    "contributors:add": "all-contributors add",
-    "publish": "yarn run lint && jest --coverage && lerna publish --conventional-commits",
-    "next": "yarn run lint && jest --coverage && lerna publish --cd-version=prerelease --npm-tag=next --yes",
-    "watch": "jest --watchAll --coverage",
-    "run-examples": "scripts/run-examples.js"
+    "watch": "jest --watchAll --coverage"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
@@ -65,14 +54,17 @@
     "lint-staged": "^9.2.0",
     "npm-package-json-lint": "^3.7.0",
     "prettier": "1.18.2",
+    "prettier-package-json": "^2.1.0",
     "snazzy": "^8.0.0",
     "standard-version": "^6.0.1",
     "supertest": "^4.0.2"
   },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+  "keywords": [
+    "data-point"
+  ],
+  "engines": {
+    "node": ">=10",
+    "yarn": "^1.15.2"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
@@ -99,7 +91,9 @@
   },
   "lint-staged": {
     "package.json": [
-      "npmPkgJsonLint"
+      "npmPkgJsonLint",
+      "prettier-package-json --write",
+      "git add"
     ],
     "*.js": [
       "prettier --write",

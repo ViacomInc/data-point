@@ -1,10 +1,9 @@
 {
+  "private": true,
   "name": "@data-point/tracers",
   "description": "DataPoint tracer transporters",
-  "main": "index.js",
-  "private": true,
-  "version": "1.0.0",
   "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
   "homepage": "https://github.com/ViacomInc/data-point",
   "repository": {
     "type": "git",
@@ -13,19 +12,17 @@
   "bugs": {
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [
+    "data-point",
+    "mermaid",
+    "opentracing",
+    "trace",
+    "tracer"
+  ],
   "engines": {
     "node": ">=10",
     "npm": ">=2"
-  },
-  "keywords": [
-    "data-point",
-    "trace",
-    "tracer",
-    "opentracing",
-    "mermaid"
-  ],
-  "author": {
-    "name": "Acatl Pacheco",
-    "email": "acatl.pacheco@viacom.com"
   }
 }
