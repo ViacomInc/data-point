@@ -14,7 +14,7 @@
   },
   "engines": {
     "node": ">=10",
-    "yarn": "^1.17.3"
+    "yarn": "^1.15.2"
   },
   "keywords": [
     "data-point"
@@ -102,7 +102,6 @@
       "npmPkgJsonLint"
     ],
     "*.js": [
-      "npmPkgJsonLint .",
       "prettier --write",
       "eslint --quiet --fix",
       "git add",
