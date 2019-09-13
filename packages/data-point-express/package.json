@@ -1,28 +1,19 @@
 {
-  "name": "@data-point/express",
-  "version": "5.0.1",
-  "description": "Create DataPoint Express middleware",
-  "main": "lib/index.js",
   "private": true,
+  "name": "@data-point/express",
+  "description": "Create DataPoint Express middleware",
   "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
+  "homepage": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache",
   "repository": {
     "type": "git",
     "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express"
   },
-  "engines": {
-    "node": ">=8"
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
   },
-  "author": {
-    "name": "Acatl Pacheco",
-    "email": "acatl.pacheco@viacom.com"
-  },
-  "devDependencies": {
-    "body-parser": "1.18.2",
-    "data-point": "^3.4.3",
-    "express": "^4.16.2",
-    "ioredis": "4.12.2",
-    "ioredis-mock": "^4.12.1"
-  },
+  "version": "5.0.1",
+  "main": "lib/index.js",
   "dependencies": {
     "@data-point/service": "^4.2.4",
     "lodash": "^4.17.11"
@@ -31,16 +22,26 @@
     "@data-point/core": "^3.4.0",
     "express": "4.x"
   },
+  "devDependencies": {
+    "body-parser": "1.18.2",
+    "data-point": "^3.4.3",
+    "express": "^4.16.2",
+    "ioredis": "4.12.2",
+    "ioredis-mock": "^4.12.1"
+  },
   "keywords": [
-    "express",
-    "middleware",
     "cache",
-    "redis",
+    "express",
     "ioredis",
-    "route",
-    "transform",
+    "middleware",
+    "model",
+    "redis",
     "reduce",
     "request",
-    "model"
-  ]
+    "route",
+    "transform"
+  ],
+  "engines": {
+    "node": ">=8"
+  }
 }

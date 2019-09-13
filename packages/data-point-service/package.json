@@ -1,27 +1,22 @@
 {
-  "name": "@data-point/service",
-  "version": "4.2.4",
-  "description": "DataPoint as a Service",
-  "main": "lib/index.js",
-  "license": "Apache-2.0",
   "private": true,
+  "name": "@data-point/service",
+  "description": "DataPoint as a Service",
+  "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
+  "homepage": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service"
+    "url": "https://github.com/ViacomInc/data-point.git"
   },
-  "engines": {
-    "node": ">=8"
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
   },
-  "author": {
-    "name": "Acatl Pacheco",
-    "email": "acatl.pacheco@viacom.com"
-  },
-  "devDependencies": {
-    "data-point": "^3.4.3"
-  },
+  "version": "4.2.4",
+  "main": "lib/index.js",
   "dependencies": {
-    "bluebird": "3.5.1",
     "@data-point/cache": "^4.0.0",
+    "bluebird": "3.5.1",
     "debug": "3.x",
     "lodash": "^4.17.11",
     "ms": "2.x"
@@ -29,13 +24,19 @@
   "peerDependencies": {
     "data-point@core": "^3.4.0"
   },
+  "devDependencies": {
+    "data-point": "^3.4.3"
+  },
   "keywords": [
-    "service",
     "cache",
+    "model",
     "redis",
-    "transform",
     "reduce",
     "request",
-    "model"
-  ]
+    "service",
+    "transform"
+  ],
+  "engines": {
+    "node": ">=8"
+  }
 }

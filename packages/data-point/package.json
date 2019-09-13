@@ -1,10 +1,15 @@
 {
-  "name": "@data-point/core",
-  "version": "6.0.0",
-  "description": "Data Processing and Transformation Utility",
-  "main": "index.js",
   "private": true,
+  "name": "@data-point/core",
+  "description": "Data Processing and Transformation Utility",
   "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
+  "contributors": [
+    "Christian Sarnataro <christian.sarnataro@vimn.com>",
+    "Fred Ghosn <fred.ghosn@viacomcontractor.com>",
+    "Matthew Armstrong <MatthewR.Armstrong@viacom.com>",
+    "Yinig Chen <Yining.Chen@viacom.com>"
+  ],
   "homepage": "https://github.com/ViacomInc/data-point",
   "repository": {
     "type": "git",
@@ -13,36 +18,8 @@
   "bugs": {
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
-  "engines": {
-    "node": ">=10",
-    "npm": ">=2"
-  },
-  "author": {
-    "name": "Acatl Pacheco",
-    "email": "acatl.pacheco@viacom.com"
-  },
-  "contributors": [
-    {
-      "name": "Matthew Armstrong",
-      "email": "MatthewR.Armstrong@viacom.com"
-    },
-    {
-      "name": "Fred Ghosn",
-      "email": "fred.ghosn@viacomcontractor.com"
-    },
-    {
-      "name": "Yinig Chen",
-      "email": "Yining.Chen@viacom.com"
-    }
-  ],
-  "keywords": [
-    "reduce",
-    "transform",
-    "process",
-    "functional",
-    "compose",
-    "aggregate"
-  ],
+  "version": "6.0.0",
+  "main": "index.js",
   "dependencies": {
     "debug": "3.x",
     "lodash": "^4.17.11"
@@ -50,5 +27,17 @@
   "devDependencies": {
     "benchmark": "2.1.4",
     "nock": "^8.0.0"
+  },
+  "keywords": [
+    "aggregate",
+    "compose",
+    "functional",
+    "process",
+    "reduce",
+    "transform"
+  ],
+  "engines": {
+    "node": ">=10",
+    "npm": ">=2"
   }
 }

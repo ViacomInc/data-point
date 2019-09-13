@@ -1,14 +1,39 @@
 {
+  "private": true,
+  "name": "data-point-documentation-website",
+  "description": "DataPoint's documentation website",
+  "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
+  "contributors": [
+    "Christian Sarnataro <christian.sarnataro@vimn.com>",
+    "Matthew Armstrong <MatthewR.Armstrong@viacom.com>"
+  ],
+  "homepage": "https://github.com/ViacomInc/data-point",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
+  },
+  "version": "1.0.0",
   "scripts": {
+    "build": "yarn generate-jsdoc; docusaurus-build",
     "generate-jsdoc": "yarn jsdoc -r --destination static/jsdoc -c jsdoc.json ../../packages/data-point/src/ ./README.md",
     "publish-gh-pages": "yarn generate-jsdoc; docusaurus-publish",
-    "start": "yarn generate-jsdoc; docusaurus-start",
-    "build": "yarn generate-jsdoc; docusaurus-build"
+    "start": "yarn generate-jsdoc; docusaurus-start"
   },
   "devDependencies": {
     "docdash": "^1.1.1",
     "docusaurus": "^1.12.0",
     "jsdoc": "^3.6.3",
     "jsdoc-ignore-code": "^1.0.1"
+  },
+  "keywords": [
+    "data-point"
+  ],
+  "engines": {
+    "node": ">=10",
+    "npm": ">=2"
   }
 }

@@ -1,10 +1,30 @@
 {
-  "name": "@data-point/mermaid-example",
-  "main": "mermaid-example.js",
   "private": true,
+  "name": "@data-point/mermaid-example",
+  "description": "Example to trace data-point with mermaid",
+  "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
+  "homepage": "https://github.com/ViacomInc/data-point",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
+  },
   "version": "1.0.0",
+  "main": "mermaid-example.js",
   "devDependencies": {
     "@data-point/core": "^6.0.0",
     "@data-point/tracers": "^1.0.0"
+  },
+  "keywords": [
+    "data-point",
+    "mermaid",
+    "tracing"
+  ],
+  "engines": {
+    "node": ">=10",
+    "npm": ">=2"
   }
 }
