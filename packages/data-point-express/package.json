@@ -9,6 +9,10 @@
     "type": "git",
     "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express"
   },
+  "homepage": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache",
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
+  },
   "engines": {
     "node": ">=8"
   },

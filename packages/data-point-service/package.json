@@ -7,7 +7,11 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service"
+    "url": "https://github.com/ViacomInc/data-point.git"
+  },
+  "homepage": "https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service",
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
   },
   "engines": {
     "node": ">=8"
