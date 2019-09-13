@@ -1,13 +1,9 @@
 {
-  "name": "bench-trial",
-  "version": "3.2.2",
-  "description": "Runs one or multiple benchmark tests",
-  "main": "./lib/index.js",
-  "license": "Apache-2.0",
   "private": true,
-  "engines": {
-    "node": ">=8"
-  },
+  "name": "bench-trial",
+  "description": "Runs one or multiple benchmark tests",
+  "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
   "homepage": "https://github.com/ViacomInc/data-point/tree/master/packages/bench-trial",
   "repository": {
     "type": "git",
@@ -16,20 +12,21 @@
   "bugs": {
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
-  "keywords": [
-    "data-point"
-  ],
+  "version": "3.2.2",
+  "main": "./lib/index.js",
   "bin": {
     "bench-trial": "runner.js"
-  },
-  "author": {
-    "name": "Acatl Pacheco",
-    "email": "acatl.pacheco@viacom.com"
   },
   "dependencies": {
     "benchmark": "^2.1.4",
     "bluebird": "^3.5.1",
     "chalk": "^2.3.0",
     "commander": "^2.13.0"
+  },
+  "keywords": [
+    "data-point"
+  ],
+  "engines": {
+    "node": ">=8"
   }
 }
