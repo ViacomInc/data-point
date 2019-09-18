@@ -50,7 +50,8 @@ function getObjectProperties(
 }
 
 /**
- * **IMPORTANT:** This class is meant to be only called internally by DataPoint.
+ * @class
+ * @classdesc **IMPORTANT:** This class is meant to be only called internally by DataPoint.
  * @protected
  * @extends {Reducer}
  */

@@ -2,6 +2,8 @@ const { Reducer } = require("../../Reducer");
 const { createReducer } = require("../../create-reducer");
 
 /**
+ * @class
+ * @classdesc
  * Creates an array of values by running each element in collection thru
  * iterateeReducer.
  *
