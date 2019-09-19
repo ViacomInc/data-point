@@ -100,6 +100,8 @@ async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
 }
 
 /**
+ * @class
+ * @classdesc
  * Mirrors a simplified behaviour of the `switch` statement in javascript.
  * It creates a reducer which accepts the form of:
  *

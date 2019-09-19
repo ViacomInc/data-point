@@ -1,5 +1,9 @@
 const { Reducer } = require("./Reducer");
 
+/**
+ * @class
+ * @extends Reducer
+ */
 class ReducerList extends Reducer {
   constructor(spec, createReducer) {
     super(undefined, spec);

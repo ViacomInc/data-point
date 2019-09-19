@@ -1,6 +1,10 @@
 const { createReducer } = require("./create-reducer");
 const { Reducer } = require("./Reducer");
 
+/**
+ * @class
+ * @extends Reducer
+ */
 class ReducerEntity extends Reducer {
   constructor(spec) {
     super(spec.name, spec);

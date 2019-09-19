@@ -5,10 +5,11 @@ function normalizeName(name) {
 }
 
 /**
- * @alias Reducer
+ * @class
+ * @classdesc This class is never instantiated directly, it is used to create
+ * reducers DataPoint can use to process a given input.
+ *
  * @protected
- * This class is never instantiated directly, it is used to create reducers
- *  DataPoint can use to process a given input.
  */
 class Reducer {
   /**
@@ -19,7 +20,6 @@ class Reducer {
     /**
      * @type {string} Normalized reducer's id
      * @name Reducer#id
-     * @property
      * @readonly
      */
     Object.defineProperty(this, "id", {
