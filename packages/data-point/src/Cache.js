@@ -2,6 +2,9 @@ function isValidCacheMethod(callback) {
   return typeof callback === "function" || callback === undefined;
 }
 
+/**
+ * @class
+ */
 class Cache {
   constructor() {
     /**

@@ -4,6 +4,8 @@ title: Getting Started
 sidebar_label: Getting Started
 ---
 
+> ⚠️ WARNING: the version of DataPoint documented here is version 6.x-canary, it's an unstable version and as such it must not be considered production-ready
+
 **DataPoint is a JavaScript Utility for collecting, processing and transforming data.**
 
 DataPoint helps you reason with and streamline your data processing layer. With it you can collect, process, and transform data from multiple sources, and deliver the output in a tailored format to your end consumer.

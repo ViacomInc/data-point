@@ -12,6 +12,10 @@ function cloneObject(isObject, value) {
   return isObject ? cloneDeep(value) : value;
 }
 
+/**
+ * @class
+ * @extends Reducer
+ */
 class ReducerConstant extends Reducer {
   constructor(spec) {
     super(undefined, spec);

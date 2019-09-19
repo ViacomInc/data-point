@@ -13,7 +13,6 @@
   "opts": {
     "template": "./node_modules/docdash",
     "encoding": "utf8",
-    "destination": "docs/",
     "recurse": true,
     "verbose": true
   },
@@ -25,6 +24,16 @@
     "static": true,
     "sort": true,
     "disqus": "",
+    "sectionOrder": [
+      "Tutorials",
+      "Classes",
+      "Modules",
+      "Externals",
+      "Events",
+      "Namespaces",
+      "Mixins",
+      "Interfaces"
+    ],
     "openGraph": {
       "title": "Docdash",
       "type": "website",

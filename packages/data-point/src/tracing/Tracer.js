@@ -1,5 +1,8 @@
 const { Span } = require("./Span");
 
+/**
+ * @class
+ */
 class Tracer {
   constructor(handlers) {
     this.handlers = handlers;
