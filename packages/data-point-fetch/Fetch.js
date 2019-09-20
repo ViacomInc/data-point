@@ -64,7 +64,7 @@ async function makeFetch(url, options) {
  *  `Fetch.response` to have full control over the result of the
  *  [Response](https://github.com/bitinn/node-fetch#class-response) object.
  *
- * @alias Fetch
+ * @class Fetch
  */
 class Fetch extends ReducerEntity {
   /**
