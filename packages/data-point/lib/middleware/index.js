@@ -1,3 +1,3 @@
 module.exports = {
-  resolve: require('./resolve').resolve
-}
+  resolve: require("./resolve").resolve
+};

@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-'use strict'
+"use strict";
 
-const upgrader = require('lib-upgrader')
-const pkg = require('./package.json')
-const releases = require('./releases.json')
+const upgrader = require("lib-upgrader");
+const pkg = require("./package.json");
+const releases = require("./releases.json");
 
 const settings = {
-  libraryName: 'data-point',
+  libraryName: "data-point",
   releases: releases,
   pkg: pkg,
   dirname: __dirname
-}
+};
 
 upgrader(settings)
   .then(upgrader.checkForUpdates)
@@ -18,7 +18,7 @@ upgrader(settings)
   .then(upgrader.prompt)
   .then(upgrader.applyCodemods)
   .then(upgrader.printTip)
-  .catch(function (err) {
-    console.error(err.message)
-    process.exit(1)
-  })
+  .catch(function(err) {
+    console.error(err.message);
+    process.exit(1);
+  });

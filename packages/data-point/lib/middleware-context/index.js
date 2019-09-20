@@ -1,3 +1,3 @@
 module.exports = {
-  create: require('./factory').create
-}
+  create: require("./factory").create
+};

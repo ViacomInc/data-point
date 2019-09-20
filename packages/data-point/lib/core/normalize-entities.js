@@ -1,101 +1,99 @@
-const _ = require('lodash')
+const _ = require("lodash");
 
-function getParentSpec (spec, specs) {
-  const parentId = spec.parentId
-  if (typeof parentId === 'undefined') {
-    return false
+function getParentSpec(spec, specs) {
+  const parentId = spec.parentId;
+  if (typeof parentId === "undefined") {
+    return false;
   }
-  const parentSpec = specs[parentId]
+  const parentSpec = specs[parentId];
   if (!parentSpec) {
     throw new Error(
       `Could not extend ${spec.id}, parent ${parentId} does not exist.`
-    )
+    );
   }
-  return parentSpec
+  return parentSpec;
 }
 
-module.exports.getParentSpec = getParentSpec
+module.exports.getParentSpec = getParentSpec;
 
-function getAncestors (spec, specs) {
-  const ancestors = []
-  let parent = getParentSpec(spec, specs)
+function getAncestors(spec, specs) {
+  const ancestors = [];
+  let parent = getParentSpec(spec, specs);
   while (parent) {
     if (parent.id === spec.id || ancestors.indexOf(parent.id) >= 0) {
       throw new Error(
-        `Could not extend ${
-          spec.id
-        }, parent chain creates a circle reference with ${parent.id}`
-      )
+        `Could not extend ${spec.id}, parent chain creates a circle reference with ${parent.id}`
+      );
     }
-    ancestors.push(parent.id)
-    parent = getParentSpec(parent, specs)
+    ancestors.push(parent.id);
+    parent = getParentSpec(parent, specs);
   }
-  return ancestors
+  return ancestors;
 }
 
-module.exports.getAncestors = getAncestors
+module.exports.getAncestors = getAncestors;
 
-function extendSpec (spec, ancestors, sources) {
+function extendSpec(spec, ancestors, sources) {
   if (ancestors.length === 0) {
-    return spec
+    return spec;
   }
   const ancestorSpecs = ancestors.map(parentId => {
-    return sources[parentId].spec
-  })
-  ancestorSpecs.reverse()
-  return _.assign.apply(null, [{}].concat(ancestorSpecs, spec))
+    return sources[parentId].spec;
+  });
+  ancestorSpecs.reverse();
+  return _.assign.apply(null, [{}].concat(ancestorSpecs, spec));
 }
 
-module.exports.extendSpec = extendSpec
+module.exports.extendSpec = extendSpec;
 
-function normalizeSpec (specItemId, source) {
-  const tokens = specItemId.split(' -> ')
-  const id = tokens[0]
-  const parentId = tokens[1]
+function normalizeSpec(specItemId, source) {
+  const tokens = specItemId.split(" -> ");
+  const id = tokens[0];
+  const parentId = tokens[1];
   return {
     id: id,
     parentId: parentId,
     spec: source[specItemId],
     ancestors: []
-  }
+  };
 }
 
-module.exports.normalizeSpec = normalizeSpec
+module.exports.normalizeSpec = normalizeSpec;
 
-function normalizeEntitySpecs (source) {
-  const specIds = Object.keys(source)
+function normalizeEntitySpecs(source) {
+  const specIds = Object.keys(source);
   return specIds.reduce((normSpecs, specItemId) => {
-    const normalizedSpec = normalizeSpec(specItemId, source)
-    normSpecs[normalizedSpec.id] = normalizedSpec
-    return normSpecs
-  }, {})
+    const normalizedSpec = normalizeSpec(specItemId, source);
+    normSpecs[normalizedSpec.id] = normalizedSpec;
+    return normSpecs;
+  }, {});
 }
 
-module.exports.normalizeEntitySpecs = normalizeEntitySpecs
+module.exports.normalizeEntitySpecs = normalizeEntitySpecs;
 
-function extendSpecItem (specItem, normalizedSpecs) {
-  const ancestors = getAncestors(specItem, normalizedSpecs)
-  const spec = extendSpec(specItem.spec, ancestors, normalizedSpecs)
+function extendSpecItem(specItem, normalizedSpecs) {
+  const ancestors = getAncestors(specItem, normalizedSpecs);
+  const spec = extendSpec(specItem.spec, ancestors, normalizedSpecs);
   return _.assign({}, specItem, {
     ancestors,
     spec
-  })
+  });
 }
 
-module.exports.extendSpecItem = extendSpecItem
+module.exports.extendSpecItem = extendSpecItem;
 
-function extendSpecs (normalizedSpecs) {
+function extendSpecs(normalizedSpecs) {
   return _.mapValues(normalizedSpecs, specItem => {
-    return extendSpecItem(specItem, normalizedSpecs)
-  })
+    return extendSpecItem(specItem, normalizedSpecs);
+  });
 }
 
-module.exports.extendSpecs = extendSpecs
+module.exports.extendSpecs = extendSpecs;
 
-function normalize (source) {
-  const normalizedSpecs = normalizeEntitySpecs(source)
-  const finalSpecs = extendSpecs(normalizedSpecs)
-  return finalSpecs
+function normalize(source) {
+  const normalizedSpecs = normalizeEntitySpecs(source);
+  const finalSpecs = extendSpecs(normalizedSpecs);
+  return finalSpecs;
 }
 
-module.exports.normalize = normalize
+module.exports.normalize = normalize;

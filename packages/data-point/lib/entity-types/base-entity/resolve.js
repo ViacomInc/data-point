@@ -1,21 +1,21 @@
-const debug = require('debug')
-const Promise = require('bluebird')
-const middleware = require('../../middleware')
-const utils = require('../../utils')
-const memoize = require('lodash/memoize')
-const merge = require('lodash/merge')
+const debug = require("debug");
+const Promise = require("bluebird");
+const middleware = require("../../middleware");
+const utils = require("../../utils");
+const memoize = require("lodash/memoize");
+const merge = require("lodash/merge");
 
 /**
  * create a new debug scope
  * @param {String} entityType debug scope
  */
-function createDebugEntity (entityType) {
-  return debug(`data-point:entity:${entityType}`)
+function createDebugEntity(entityType) {
+  return debug(`data-point:entity:${entityType}`);
 }
 
 // debug scope gets memoized so it is not as expensive, it will only create one
 // per entity type
-const debugEntity = memoize(createDebugEntity)
+const debugEntity = memoize(createDebugEntity);
 
 /**
  * @param {Object} manager
@@ -24,17 +24,17 @@ const debugEntity = memoize(createDebugEntity)
  * @param {Function} resolveReducer
  * @returns {Promise}
  */
-function resolveErrorReducers (manager, error, accumulator, resolveReducer) {
-  const errorReducer = accumulator.reducer.spec.error
+function resolveErrorReducers(manager, error, accumulator, resolveReducer) {
+  const errorReducer = accumulator.reducer.spec.error;
   if (!errorReducer) {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 
-  const errorAccumulator = utils.set(accumulator, 'value', error)
-  return resolveReducer(manager, errorAccumulator, errorReducer)
+  const errorAccumulator = utils.set(accumulator, "value", error);
+  return resolveReducer(manager, errorAccumulator, errorReducer);
 }
 
-module.exports.resolveErrorReducers = resolveErrorReducers
+module.exports.resolveErrorReducers = resolveErrorReducers;
 
 /**
  * @param {Promise} promise
@@ -43,14 +43,14 @@ module.exports.resolveErrorReducers = resolveErrorReducers
  * @param {Function} callback
  * @returns {Promise}
  */
-function addToPromiseChain (promise, condition, accumulator, callback) {
+function addToPromiseChain(promise, condition, accumulator, callback) {
   if (!condition) {
-    return promise
+    return promise;
   }
 
   return promise.then(result => {
-    return callback(utils.set(accumulator, 'value', result))
-  })
+    return callback(utils.set(accumulator, "value", result));
+  });
 }
 
 /**
@@ -58,30 +58,30 @@ function addToPromiseChain (promise, condition, accumulator, callback) {
  * @returns {*} bypass value
  * @throws rethrows error if bypass was not found
  */
-function handleByPassError (error) {
+function handleByPassError(error) {
   // checking if this is an error to bypass the `then` chain
   if (error.bypass === true) {
-    return error.bypassValue
+    return error.bypassValue;
   }
 
-  throw error
+  throw error;
 }
 
 /**
  * @param {Reducer} reducer
  * @param {Object} entity
  */
-function getCurrentReducer (reducer, entity) {
+function getCurrentReducer(reducer, entity) {
   if (!reducer.spec) {
     return utils.assign(reducer, {
       spec: entity
-    })
+    });
   }
 
-  return reducer
+  return reducer;
 }
 
-module.exports.getCurrentReducer = getCurrentReducer
+module.exports.getCurrentReducer = getCurrentReducer;
 
 /**
  * @param {Accumulator} accumulator
@@ -89,10 +89,10 @@ module.exports.getCurrentReducer = getCurrentReducer
  * @param {Object} entity
  * @returns {Accumulator}
  */
-function createCurrentAccumulator (accumulator, reducer, entity) {
-  const currentReducer = getCurrentReducer(reducer, entity)
-  const entityId = reducer.id
-  const uid = `${entityId}:${utils.getUID()}`
+function createCurrentAccumulator(accumulator, reducer, entity) {
+  const currentReducer = getCurrentReducer(reducer, entity);
+  const entityId = reducer.id;
+  const uid = `${entityId}:${utils.getUID()}`;
 
   // create accumulator to resolve
   const currentAccumulator = utils.assign(accumulator, {
@@ -102,30 +102,30 @@ function createCurrentAccumulator (accumulator, reducer, entity) {
     initialValue: accumulator.value,
     params: assignParamsHelper(accumulator, entity),
     debug: debugEntity(reducer.entityType)
-  })
+  });
 
-  return currentAccumulator
+  return currentAccumulator;
 }
 
-module.exports.createCurrentAccumulator = createCurrentAccumulator
+module.exports.createCurrentAccumulator = createCurrentAccumulator;
 
 /**
  * Incase there is an override present, assigns parameters to the correct entity.
  * @param {*} accumulator
  * @param {*} entity
  */
-function assignParamsHelper (accumulator, entity) {
+function assignParamsHelper(accumulator, entity) {
   if (accumulator.entityOverrides[entity.entityType]) {
     return merge(
       {},
       entity.params,
       accumulator.entityOverrides[entity.entityType].params
-    )
+    );
   }
-  return entity.params
+  return entity.params;
 }
 
-module.exports.assignParamsHelper = assignParamsHelper
+module.exports.assignParamsHelper = assignParamsHelper;
 
 /**
  * Resolves a middleware, this method contains a 'hack'
@@ -140,25 +140,25 @@ module.exports.assignParamsHelper = assignParamsHelper
  * @param {string} name - name of middleware to execute
  * @returns {Promise}
  */
-function resolveMiddleware (manager, accumulator, name) {
+function resolveMiddleware(manager, accumulator, name) {
   return middleware
     .resolve(manager, name, accumulator)
     .then(middlewareResult => {
       if (middlewareResult.___resolve === true) {
-        accumulator.debug(accumulator.uid, '- will bypass')
+        accumulator.debug(accumulator.uid, "- will bypass");
         // doing this until proven wrong :)
-        const err = new Error('bypassing middleware')
-        err.name = 'bypass'
-        err.bypass = true
-        err.bypassValue = middlewareResult.value
-        throw err
+        const err = new Error("bypassing middleware");
+        err.name = "bypass";
+        err.bypass = true;
+        err.bypassValue = middlewareResult.value;
+        throw err;
       }
 
-      return middlewareResult.value
-    })
+      return middlewareResult.value;
+    });
 }
 
-module.exports.resolveMiddleware = resolveMiddleware
+module.exports.resolveMiddleware = resolveMiddleware;
 
 /**
  * @param {Object} manager
@@ -167,14 +167,16 @@ module.exports.resolveMiddleware = resolveMiddleware
  * @param {Function} resolveReducer
  * @returns {Promise}
  */
-function typeCheck (manager, accumulator, reducer, resolveReducer) {
+function typeCheck(manager, accumulator, reducer, resolveReducer) {
   // returns original accumulator if there's no error
   // this helps prevent type check reducers from mutating the value, but
   // it's still possible to modify the value by reference when it's an object
-  return resolveReducer(manager, accumulator, reducer).return(accumulator.value)
+  return resolveReducer(manager, accumulator, reducer).return(
+    accumulator.value
+  );
 }
 
-module.exports.typeCheck = typeCheck
+module.exports.typeCheck = typeCheck;
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
@@ -183,12 +185,12 @@ module.exports.typeCheck = typeCheck
  * @param {Object} entity
  * @returns {Promise}
  */
-function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
+function resolveEntity(manager, resolveReducer, accumulator, reducer, entity) {
   const currentAccumulator = createCurrentAccumulator(
     accumulator,
     reducer,
     entity
-  )
+  );
 
   const {
     inputType,
@@ -196,111 +198,111 @@ function resolveEntity (manager, resolveReducer, accumulator, reducer, entity) {
     before,
     after,
     outputType
-  } = currentAccumulator.reducer.spec
+  } = currentAccumulator.reducer.spec;
 
-  const trace = currentAccumulator.context.params.trace === true
+  const trace = currentAccumulator.context.params.trace === true;
 
-  let timeId
+  let timeId;
   if (trace === true) {
-    timeId = `⧖ ${currentAccumulator.uid}`
-    console.time(timeId)
+    timeId = `⧖ ${currentAccumulator.uid}`;
+    console.time(timeId);
   }
 
-  currentAccumulator.debug(currentAccumulator.uid, '- resolve:start')
+  currentAccumulator.debug(currentAccumulator.uid, "- resolve:start");
 
-  let result = Promise.resolve(currentAccumulator.value)
+  let result = Promise.resolve(currentAccumulator.value);
 
   result = addToPromiseChain(result, inputType, currentAccumulator, acc =>
     typeCheck(manager, acc, inputType, resolveReducer)
-  )
+  );
 
   result = addToPromiseChain(
     result,
-    manager.middleware.store.has('before'),
+    manager.middleware.store.has("before"),
     currentAccumulator,
-    acc => resolveMiddleware(manager, acc, 'before')
-  )
+    acc => resolveMiddleware(manager, acc, "before")
+  );
 
-  const middlewareEntityBefore = `${reducer.entityType}:before`
+  const middlewareEntityBefore = `${reducer.entityType}:before`;
   result = addToPromiseChain(
     result,
     manager.middleware.store.has(middlewareEntityBefore),
     currentAccumulator,
     acc => resolveMiddleware(manager, acc, middlewareEntityBefore)
-  )
+  );
 
   result = addToPromiseChain(result, before, currentAccumulator, acc =>
     resolveReducer(manager, acc, before)
-  )
+  );
 
   result = addToPromiseChain(result, value, currentAccumulator, acc =>
     resolveReducer(manager, acc, value)
-  )
+  );
 
   result = result.then(result => {
-    currentAccumulator.debug(currentAccumulator.uid, '- resolve')
-    const acc = utils.set(currentAccumulator, 'value', result)
-    return entity.resolve(acc, resolveReducer.bind(null, manager))
-  })
+    currentAccumulator.debug(currentAccumulator.uid, "- resolve");
+    const acc = utils.set(currentAccumulator, "value", result);
+    return entity.resolve(acc, resolveReducer.bind(null, manager));
+  });
 
   result = addToPromiseChain(result, after, currentAccumulator, acc =>
     resolveReducer(manager, acc, after)
-  )
+  );
 
-  const middlewareEntityAfter = `${reducer.entityType}:after`
+  const middlewareEntityAfter = `${reducer.entityType}:after`;
   result = addToPromiseChain(
     result,
     manager.middleware.store.has(middlewareEntityAfter),
     currentAccumulator,
     acc => resolveMiddleware(manager, acc, middlewareEntityAfter)
-  )
+  );
 
   result = addToPromiseChain(
     result,
-    manager.middleware.store.has('after'),
+    manager.middleware.store.has("after"),
     currentAccumulator,
-    acc => resolveMiddleware(manager, acc, 'after')
-  )
+    acc => resolveMiddleware(manager, acc, "after")
+  );
 
-  result = result.catch(handleByPassError)
+  result = result.catch(handleByPassError);
 
   result = addToPromiseChain(result, outputType, currentAccumulator, acc =>
     typeCheck(manager, acc, outputType, resolveReducer)
-  )
+  );
 
   return result
     .catch(error => {
       // attach entity information to help debug
-      error.entityId = currentAccumulator.reducer.spec.id
+      error.entityId = currentAccumulator.reducer.spec.id;
 
       let errorResult = resolveErrorReducers(
         manager,
         error,
         currentAccumulator,
         resolveReducer
-      )
+      );
 
       errorResult = addToPromiseChain(
         errorResult,
         outputType,
         currentAccumulator,
         acc => typeCheck(manager, acc, outputType, resolveReducer)
-      )
+      );
 
-      return errorResult
+      return errorResult;
     })
     .then(value => {
       if (trace === true) {
-        console.timeEnd(timeId)
+        console.timeEnd(timeId);
       }
 
-      currentAccumulator.debug(currentAccumulator.uid, `- resolve:end`)
+      currentAccumulator.debug(currentAccumulator.uid, `- resolve:end`);
 
-      return value
-    })
+      return value;
+    });
 }
 
-module.exports.resolveEntity = resolveEntity
+module.exports.resolveEntity = resolveEntity;
 
 /**
  * @param {Object} manager
@@ -310,29 +312,29 @@ module.exports.resolveEntity = resolveEntity
  * @param {Object} entity
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer, entity) {
-  const hasEmptyConditional = reducer.hasEmptyConditional
+function resolve(manager, resolveReducer, accumulator, reducer, entity) {
+  const hasEmptyConditional = reducer.hasEmptyConditional;
 
   if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
-    return Promise.resolve(accumulator.value)
+    return Promise.resolve(accumulator.value);
   }
 
   if (!reducer.asCollection) {
-    return resolveEntity(manager, resolveReducer, accumulator, reducer, entity)
+    return resolveEntity(manager, resolveReducer, accumulator, reducer, entity);
   }
 
   if (!Array.isArray(accumulator.value)) {
-    return Promise.resolve(undefined)
+    return Promise.resolve(undefined);
   }
 
   return Promise.map(accumulator.value, itemValue => {
     if (hasEmptyConditional && utils.isFalsy(itemValue)) {
-      return itemValue
+      return itemValue;
     }
 
-    const itemCtx = utils.set(accumulator, 'value', itemValue)
-    return resolveEntity(manager, resolveReducer, itemCtx, reducer, entity)
-  })
+    const itemCtx = utils.set(accumulator, "value", itemValue);
+    return resolveEntity(manager, resolveReducer, itemCtx, reducer, entity);
+  });
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

@@ -1,52 +1,52 @@
 /* eslint-env jest */
 
-const DataPointFactory = require('./data-point-factory')
-const DataPoint = require('data-point')
+const DataPointFactory = require("./data-point-factory");
+const DataPoint = require("data-point");
 
-describe('verify', () => {
-  test('It should pass options if valid', () => {
+describe("verify", () => {
+  test("It should pass options if valid", () => {
     const result = DataPointFactory.verify({
       DataPoint,
       entities: {
-        'reducer:foo': '$'
+        "reducer:foo": "$"
       }
-    })
-    expect(result).toEqual(result)
-  })
+    });
+    expect(result).toEqual(result);
+  });
 
-  test('It should throw error if DataPoint not provided', () => {
+  test("It should throw error if DataPoint not provided", () => {
     expect(() => {
       DataPointFactory.verify({
         entities: {
-          'reducer:foo': '$'
+          "reducer:foo": "$"
         }
-      })
-    }).toThrowError(/provided/)
-  })
-})
+      });
+    }).toThrowError(/provided/);
+  });
+});
 
-describe('createDataPoint', () => {
-  test('It should create a new DataPoint Instance', () => {
+describe("createDataPoint", () => {
+  test("It should create a new DataPoint Instance", () => {
     const dp = DataPointFactory.createDataPoint({
       DataPoint,
       entities: {
-        'reducer:foo': '$'
+        "reducer:foo": "$"
       }
-    })
+    });
 
-    expect(dp).toHaveProperty('transform')
-  })
-})
+    expect(dp).toHaveProperty("transform");
+  });
+});
 
-describe('create', () => {
-  test('It should create a new DataPoint Instance', () => {
+describe("create", () => {
+  test("It should create a new DataPoint Instance", () => {
     return DataPointFactory.create({
       DataPoint,
       entities: {
-        'reducer:foo': '$'
+        "reducer:foo": "$"
       }
     }).then(dp => {
-      expect(dp).toHaveProperty('transform')
-    })
-  })
-})
+      expect(dp).toHaveProperty("transform");
+    });
+  });
+});

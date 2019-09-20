@@ -1,38 +1,38 @@
-const createEntity = require('../entity-types/spec').create
-const storeManager = require('./store-manager')
+const createEntity = require("../entity-types/spec").create;
+const storeManager = require("./store-manager");
 
 /**
  * @param  {string} id
  * @return {Object} Error Object properties
  */
-function errorInfoCbGet (id) {
+function errorInfoCbGet(id) {
   return {
     message: `Entity Module id '${id}' is not defined`,
-    name: 'InvalidId'
-  }
+    name: "InvalidId"
+  };
 }
 
 /**
  * @param  {string} id
  * @return {Object} Error Object properties
  */
-function errorInfoCbAdd (id) {
+function errorInfoCbAdd(id) {
   return {
     message: `Entity Module with id '${id}' already exists`,
-    name: 'InvalidId'
-  }
+    name: "InvalidId"
+  };
 }
 
 /**
  * create instance
  * @return {Object}
  */
-function create () {
+function create() {
   return storeManager.create({
     errorInfoCbGet,
     errorInfoCbAdd,
     create: createEntity
-  })
+  });
 }
 
-module.exports.create = create
+module.exports.create = create;

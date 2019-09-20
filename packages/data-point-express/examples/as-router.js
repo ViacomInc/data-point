@@ -1,27 +1,27 @@
-const Express = require('express')
-const Service = require('../lib')
-const entities = require('./entities')
+const Express = require("express");
+const Service = require("../lib");
+const entities = require("./entities");
 
-const app = new Express()
+const app = new Express();
 
 // API Routes
 const routes = {
   helloWorld: {
     priority: 100,
-    path: '/hello-world',
-    middleware: 'reducer:HelloWorld'
+    path: "/hello-world",
+    middleware: "reducer:HelloWorld"
   },
   greet: {
     priority: 200,
-    path: '/greet/:name',
-    middleware: 'reducer:greet'
+    path: "/greet/:name",
+    middleware: "reducer:greet"
   },
   getPerson: {
     priority: 300,
-    path: '/person/:personId',
-    middleware: 'entry:getPerson'
+    path: "/person/:personId",
+    middleware: "entry:getPerson"
   }
-}
+};
 
 Service.create({ entities })
   .then(service => {
@@ -30,26 +30,26 @@ Service.create({ entities })
     // creates an inspect route
     // only use this in NON Production
     // environments.
-    app.use('/api/inspect', service.inspector())
+    app.use("/api/inspect", service.inspector());
 
     // create api routes
-    app.use('/api', service.router(routes))
+    app.use("/api", service.router(routes));
 
     app.listen(3000, err => {
       if (err) {
-        throw err
+        throw err;
       }
 
-      console.info('Server ready!')
+      console.info("Server ready!");
 
       console.info(
-        'Inspector available at',
-        'http://localhost:3000/api/inspect'
-      )
-    })
+        "Inspector available at",
+        "http://localhost:3000/api/inspect"
+      );
+    });
   })
   .catch(error => {
-    console.info('Failed to Create Service')
-    console.error(error)
-    process.exit(1)
-  })
+    console.info("Failed to Create Service");
+    console.error(error);
+    process.exit(1);
+  });

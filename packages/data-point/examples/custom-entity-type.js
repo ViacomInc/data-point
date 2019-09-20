@@ -1,9 +1,9 @@
-const _ = require('lodash')
+const _ = require("lodash");
 
-const DataPoint = require('../')
+const DataPoint = require("../");
 
 // Entity Class
-function RenderTemplate () {}
+function RenderTemplate() {}
 
 /**
  * Entity Factory
@@ -11,13 +11,13 @@ function RenderTemplate () {}
  * @param {*} spec - Entity Specification
  * @return {RenderTemplate} RenderTemplate Instance
  */
-function create (id, spec) {
+function create(id, spec) {
   // create an entity instance
-  const entity = new RenderTemplate()
-  entity.spec = spec
+  const entity = new RenderTemplate();
+  entity.spec = spec;
   // set/create template from spec.template value
-  entity.template = _.template(_.defaultTo(spec.template, ''))
-  return entity
+  entity.template = _.template(_.defaultTo(spec.template, ""));
+  return entity;
 }
 
 /**
@@ -26,19 +26,19 @@ function create (id, spec) {
  * @param {Function} resolveReducer
  * @return {Promise}
  */
-function resolve (accumulator, resolveReducer) {
+function resolve(accumulator, resolveReducer) {
   // get Entity Spec
-  const spec = accumulator.reducer.spec
+  const spec = accumulator.reducer.spec;
 
   // execute lodash template against
   // accumulator value
-  return spec.template(accumulator.value)
+  return spec.template(accumulator.value);
 }
 
 /**
  * RenderEntity API
  */
-const RenderEntity = DataPoint.createEntity('render', create, resolve)
+const RenderEntity = DataPoint.createEntity("render", create, resolve);
 
 // Create DataPoint instance
 const dataPoint = DataPoint.create({
@@ -50,19 +50,19 @@ const dataPoint = DataPoint.create({
 
   entities: {
     // uses new custom entity type
-    'render:HelloWorld': {
-      value: '$user',
-      template: '<h1>Hello <%= name %>!!</h1>'
+    "render:HelloWorld": {
+      value: "$user",
+      template: "<h1>Hello <%= name %>!!</h1>"
     }
   }
-})
+});
 
 const data = {
   user: {
-    name: 'World'
+    name: "World"
   }
-}
+};
 
-dataPoint.resolve('render:HelloWorld', data).then(output => {
-  console.log(output) // '<h1>Hello World!!</h1>'
-})
+dataPoint.resolve("render:HelloWorld", data).then(output => {
+  console.log(output); // '<h1>Hello World!!</h1>'
+});

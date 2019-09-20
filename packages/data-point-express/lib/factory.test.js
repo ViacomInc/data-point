@@ -1,82 +1,82 @@
 /* eslint-env jest */
 
-jest.mock('../../data-point-cache/lib/io-redis', () => {
-  return require('ioredis-mock')
-})
+jest.mock("../../data-point-cache/lib/io-redis", () => {
+  return require("ioredis-mock");
+});
 
-const Factory = require('./factory')
-const Express = require('express')
-const request = require('supertest')
+const Factory = require("./factory");
+const Express = require("express");
+const request = require("supertest");
 
-describe('create - all middleware', () => {
-  let service
-  const consoleWarn = console.warn
+describe("create - all middleware", () => {
+  let service;
+  const consoleWarn = console.warn;
   beforeAll(() => {
-    console.warn = () => {}
+    console.warn = () => {};
     const options = {
       entities: {
-        'reducer:hello': (value, acc) => ({
+        "reducer:hello": (value, acc) => ({
           message: `Hello ${acc.locals.params.name}`
         })
       }
-    }
+    };
     return Factory.create(options).then(dpService => {
-      service = dpService
-    })
-  })
+      service = dpService;
+    });
+  });
 
   afterAll(() => {
-    console.warn = consoleWarn
-  })
+    console.warn = consoleWarn;
+  });
 
-  test('create inspect service', done => {
-    const app = new Express()
-    app.use('/inspect', service.inspector())
+  test("create inspect service", done => {
+    const app = new Express();
+    app.use("/inspect", service.inspector());
     request(app)
-      .get('/inspect')
-      .expect('Content-Type', /html/)
+      .get("/inspect")
+      .expect("Content-Type", /html/)
       .expect(response => {
-        expect(response.text).toContain('inspect')
+        expect(response.text).toContain("inspect");
       })
       .expect(200)
-      .end(done)
-  })
+      .end(done);
+  });
 
-  test('create middleware', done => {
-    const app = new Express()
-    app.get('/hello/:name', service.mapTo('reducer:hello'))
+  test("create middleware", done => {
+    const app = new Express();
+    app.get("/hello/:name", service.mapTo("reducer:hello"));
     request(app)
-      .get('/hello/darek')
-      .expect('Content-Type', /json/)
+      .get("/hello/darek")
+      .expect("Content-Type", /json/)
       .expect(response => {
         expect(response.body).toEqual({
-          message: 'Hello darek'
-        })
+          message: "Hello darek"
+        });
       })
       .expect(200)
-      .end(done)
-  })
+      .end(done);
+  });
 
-  test('it should create router', done => {
-    const app = new Express()
+  test("it should create router", done => {
+    const app = new Express();
     app.use(
-      '/api/',
+      "/api/",
       service.router({
         helloWorld: {
-          path: '/hello/:name',
-          middleware: 'reducer:hello'
+          path: "/hello/:name",
+          middleware: "reducer:hello"
         }
       })
-    )
+    );
     request(app)
-      .get('/api/hello/darek')
-      .expect('Content-Type', /json/)
+      .get("/api/hello/darek")
+      .expect("Content-Type", /json/)
       .expect(response => {
         expect(response.body).toEqual({
-          message: 'Hello darek'
-        })
+          message: "Hello darek"
+        });
       })
       .expect(200)
-      .end(done)
-  })
-})
+      .end(done);
+  });
+});

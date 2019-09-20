@@ -1,4 +1,4 @@
-const Promise = require('bluebird')
+const Promise = require("bluebird");
 
 /**
  * @param {Object} manager
@@ -7,10 +7,10 @@ const Promise = require('bluebird')
  * @param {ReducerParallel} reducerParallel
  * @returns {Promise}
  */
-function resolve (manager, resolveReducer, accumulator, reducerParallel) {
+function resolve(manager, resolveReducer, accumulator, reducerParallel) {
   return Promise.map(reducerParallel.reducers, reducer => {
-    return resolveReducer(manager, accumulator, reducer)
-  })
+    return resolveReducer(manager, accumulator, reducer);
+  });
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

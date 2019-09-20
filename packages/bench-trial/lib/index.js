@@ -1,48 +1,48 @@
-const assert = require('assert')
+const assert = require("assert");
 
-function testSync (method, expected) {
-  return () => assert.deepStrictEqual(method(), expected)
+function testSync(method, expected) {
+  return () => assert.deepStrictEqual(method(), expected);
 }
 
-function testAsync (method, expected) {
+function testAsync(method, expected) {
   return done => {
     return method((err, value) => {
       if (err) {
-        return done(err)
+        return done(err);
       }
       try {
-        assert.deepStrictEqual(value, expected)
-        done(null, value)
+        assert.deepStrictEqual(value, expected);
+        done(null, value);
       } catch (e) {
-        done(e)
+        done(e);
       }
-    })
-  }
+    });
+  };
 }
 
-function test (method, expected) {
+function test(method, expected) {
   return {
     test: method,
     expected
-  }
+  };
 }
 
-test.sync = testSync
-test.async = testAsync
+test.sync = testSync;
+test.async = testAsync;
 
-function benchmarkSync (method) {
-  return method
+function benchmarkSync(method) {
+  return method;
 }
 
-function benchmarkAsync (method) {
+function benchmarkAsync(method) {
   return deferred => {
     return method((err, value) => {
       if (err) {
-        throw err
+        throw err;
       }
-      deferred.resolve()
-    })
-  }
+      deferred.resolve();
+    });
+  };
 }
 
 module.exports = {
@@ -51,4 +51,4 @@ module.exports = {
     sync: benchmarkSync,
     async: benchmarkAsync
   }
-}
+};

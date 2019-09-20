@@ -1,9 +1,9 @@
-const _ = require('lodash')
-const Promise = require('bluebird')
-const resolveReducer = require('../reducer-types').resolve
-const AccumulatorFactory = require('../accumulator/factory')
+const _ = require("lodash");
+const Promise = require("bluebird");
+const resolveReducer = require("../reducer-types").resolve;
+const AccumulatorFactory = require("../accumulator/factory");
 
-const { stubFactories } = require('../reducer-types/reducer-helpers')
+const { stubFactories } = require("../reducer-types/reducer-helpers");
 
 module.exports.helpers = {
   assign: stubFactories.assign,
@@ -15,50 +15,50 @@ module.exports.helpers = {
   parallel: stubFactories.parallel,
   pick: stubFactories.pick,
   withDefault: stubFactories.withDefault
+};
+
+module.exports.entityFactories = require("../entity-types").factories;
+
+module.exports.isReducer = require("../reducer-types").isReducer;
+
+module.exports.createReducer = require("../reducer-types").create;
+
+module.exports.createEntity = require("../entity-types/base-entity").create;
+
+module.exports.resolveEntity = require("../entity-types/base-entity/resolve").resolve;
+
+module.exports.validateEntityModifiers = require("../entity-types/validate-modifiers").validateModifiers;
+
+function reducify(method) {
+  return function() {
+    const partialArguments = Array.prototype.slice.call(arguments);
+    return function(value) {
+      const methodArguments = [value].concat(partialArguments);
+      return method.apply(null, methodArguments);
+    };
+  };
 }
 
-module.exports.entityFactories = require('../entity-types').factories
+module.exports.reducify = reducify;
 
-module.exports.isReducer = require('../reducer-types').isReducer
-
-module.exports.createReducer = require('../reducer-types').create
-
-module.exports.createEntity = require('../entity-types/base-entity').create
-
-module.exports.resolveEntity = require('../entity-types/base-entity/resolve').resolve
-
-module.exports.validateEntityModifiers = require('../entity-types/validate-modifiers').validateModifiers
-
-function reducify (method) {
-  return function () {
-    const partialArguments = Array.prototype.slice.call(arguments)
-    return function (value) {
-      const methodArguments = [value].concat(partialArguments)
-      return method.apply(null, methodArguments)
-    }
-  }
-}
-
-module.exports.reducify = reducify
-
-function reducifyAll (source, methodList) {
-  let target = source
+function reducifyAll(source, methodList) {
+  let target = source;
   if (!_.isEmpty(methodList)) {
-    target = _.pick(source, methodList)
+    target = _.pick(source, methodList);
   }
-  return _.mapValues(target, reducify)
+  return _.mapValues(target, reducify);
 }
 
-module.exports.reducifyAll = reducifyAll
+module.exports.reducifyAll = reducifyAll;
 
-function mockReducer (reducer, acc) {
-  const pcb = Promise.promisify(reducer)
-  return pcb(acc.value, acc).then(val => ({ value: val }))
+function mockReducer(reducer, acc) {
+  const pcb = Promise.promisify(reducer);
+  return pcb(acc.value, acc).then(val => ({ value: val }));
 }
 
-module.exports.mockReducer = mockReducer
+module.exports.mockReducer = mockReducer;
 
-function createAccumulator (value, options) {
+function createAccumulator(value, options) {
   return AccumulatorFactory.create(
     Object.assign(
       {
@@ -66,13 +66,13 @@ function createAccumulator (value, options) {
       },
       options
     )
-  )
+  );
 }
 
-module.exports.createAccumulator = createAccumulator
+module.exports.createAccumulator = createAccumulator;
 
-function createReducerResolver (dataPoint) {
-  return resolveReducer.bind(null, dataPoint)
+function createReducerResolver(dataPoint) {
+  return resolveReducer.bind(null, dataPoint);
 }
 
-module.exports.createReducerResolver = createReducerResolver
+module.exports.createReducerResolver = createReducerResolver;

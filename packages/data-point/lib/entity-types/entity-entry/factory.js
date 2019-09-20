@@ -1,6 +1,6 @@
-const { resolve } = require('./resolve')
-const BaseEntity = require('../base-entity')
-const { validateModifiers } = require('../validate-modifiers')
+const { resolve } = require("./resolve");
+const BaseEntity = require("../base-entity");
+const { validateModifiers } = require("../validate-modifiers");
 
 /**
  * Creates new Entity Object
@@ -8,11 +8,11 @@ const { validateModifiers } = require('../validate-modifiers')
  * @param {string} id - Entity id
  * @return {Object} Entity Object
  */
-function create (id, spec) {
-  validateModifiers(id, spec, [])
-  const entity = {}
-  entity.spec = spec
-  return entity
+function create(id, spec) {
+  validateModifiers(id, spec, []);
+  const entity = {};
+  entity.spec = spec;
+  return entity;
 }
 
-module.exports.create = BaseEntity.create('entry', create, resolve)
+module.exports.create = BaseEntity.create("entry", create, resolve);

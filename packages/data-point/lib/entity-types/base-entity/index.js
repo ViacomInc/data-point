@@ -5,5 +5,5 @@ the resolve function directly from base-entity/resolve.js
 */
 
 module.exports = {
-  create: require('./factory').create
-}
+  create: require("./factory").create
+};

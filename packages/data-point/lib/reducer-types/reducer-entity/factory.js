@@ -1,6 +1,6 @@
-const REDUCER_ENTITY = 'ReducerEntity'
+const REDUCER_ENTITY = "ReducerEntity";
 
-module.exports.type = REDUCER_ENTITY
+module.exports.type = REDUCER_ENTITY;
 
 /**
  * Defines a entity reducer
@@ -9,46 +9,46 @@ module.exports.type = REDUCER_ENTITY
  * @property {string} name - name of the reducer
  * @property {string} entityType - type of entity
  */
-function ReducerEntity () {
-  this.type = REDUCER_ENTITY
-  this.name = ''
-  this.entityType = null
-  this.asCollection = false
-  this.hasEmptyConditional = false
+function ReducerEntity() {
+  this.type = REDUCER_ENTITY;
+  this.name = "";
+  this.entityType = null;
+  this.asCollection = false;
+  this.hasEmptyConditional = false;
 }
 
-module.exports.ReducerEntity = ReducerEntity
+module.exports.ReducerEntity = ReducerEntity;
 
 /**
  * @param {*} source
  * @returns {boolean}
  */
-function isType (source) {
-  return source && source.isEntityInstance === true
+function isType(source) {
+  return source && source.isEntityInstance === true;
 }
 
-module.exports.isType = isType
+module.exports.isType = isType;
 
 /**
  * @param {Function} createReducer
  * @param {string} entity
  * @return {reducer}
  */
-function create (createReducer, entity) {
-  const reducer = new ReducerEntity()
+function create(createReducer, entity) {
+  const reducer = new ReducerEntity();
 
-  reducer.hasEmptyConditional = false
+  reducer.hasEmptyConditional = false;
 
-  reducer.asCollection = false
+  reducer.asCollection = false;
 
-  reducer.id = entity.id
-  reducer.name = entity.name
-  reducer.entityType = entity.entityType
-  reducer.entity = entity
+  reducer.id = entity.id;
+  reducer.name = entity.name;
+  reducer.entityType = entity.entityType;
+  reducer.entity = entity;
   // for backwards compatibity with accumulator API
-  reducer.spec = entity
+  reducer.spec = entity;
 
-  return reducer
+  return reducer;
 }
 
-module.exports.create = create
+module.exports.create = create;

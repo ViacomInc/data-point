@@ -1,77 +1,77 @@
 /* eslint-env jest */
 
-const _ = require('lodash')
+const _ = require("lodash");
 
-const core = require('./core')
+const core = require("./core");
 
-const reducers = require('../../test/utils/reducers')
-const entities = require('../../test/definitions/entities')
+const reducers = require("../../test/utils/reducers");
+const entities = require("../../test/definitions/entities");
 
-let instance
+let instance;
 
 beforeAll(() => {
   instance = core.create({
     values: {
-      v1: 'v1'
+      v1: "v1"
     },
     reducers: {
       test: reducers
     },
     entities
-  })
-})
+  });
+});
 
-test('api', () => {
-  expect(Object.keys(instance)).toMatchSnapshot()
-})
+test("api", () => {
+  expect(Object.keys(instance)).toMatchSnapshot();
+});
 
-test('setup', () => {
-  expect(instance.middleware.use).toBeTruthy()
-  expect(_.isFunction(instance.use)).toBeTruthy()
-  expect(instance.values.add).toBeTruthy()
-  expect(instance.entities.add).toBeTruthy()
+test("setup", () => {
+  expect(instance.middleware.use).toBeTruthy();
+  expect(_.isFunction(instance.use)).toBeTruthy();
+  expect(instance.values.add).toBeTruthy();
+  expect(instance.entities.add).toBeTruthy();
 
-  expect(instance.values.store.v1).toEqual('v1')
-  expect(instance.entities.store.has('request:a0.1')).toBeTruthy()
-  expect(instance.entities.store.has('entry:a0')).toBeTruthy()
-})
+  expect(instance.values.store.v1).toEqual("v1");
+  expect(instance.entities.store.has("request:a0.1")).toBeTruthy();
+  expect(instance.entities.store.has("entry:a0")).toBeTruthy();
+});
 
-test('entry#transform - fail if id not found', done => {
-  instance.transform('entry:INVALID', {}, {}, (err, result) => {
+test("entry#transform - fail if id not found", done => {
+  instance.transform("entry:INVALID", {}, {}, (err, result) => {
     /* eslint handle-callback-err: 0 */
-    expect(_.isError(err)).toBeTruthy()
-    expect(err.name).toBe('InvalidId')
-    done()
-  })
-})
+    expect(_.isError(err)).toBeTruthy();
+    expect(err.name).toBe("InvalidId");
+    done();
+  });
+});
 
-describe('addEntityType', () => {
-  function entityFactory (id, spec) {
+describe("addEntityType", () => {
+  function entityFactory(id, spec) {
     return {
       id,
-      resolve (accumulator, resolveReducer) {}
-    }
+      resolve(accumulator, resolveReducer) {}
+    };
   }
 
-  test('It should add single new entity type', () => {
-    const dataPoint = core.create()
+  test("It should add single new entity type", () => {
+    const dataPoint = core.create();
 
-    dataPoint.addEntityType('foo', entityFactory)
+    dataPoint.addEntityType("foo", entityFactory);
 
-    const entityType = dataPoint.entityTypes.store.get('foo')
-    expect(entityType).toEqual(entityFactory)
-  })
+    const entityType = dataPoint.entityTypes.store.get("foo");
+    expect(entityType).toEqual(entityFactory);
+  });
 
-  test('It should add multiple entity types', () => {
-    const dataPoint = core.create()
+  test("It should add multiple entity types", () => {
+    const dataPoint = core.create();
 
     dataPoint.addEntityTypes({
       foo: entityFactory,
       bar: entityFactory
-    })
+    });
 
-    const store = dataPoint.entityTypes.store
-    expect(store.get('foo')).toEqual(entityFactory)
-    expect(store.get('bar')).toEqual(entityFactory)
-  })
-})
+    const store = dataPoint.entityTypes.store;
+    expect(store.get("foo")).toEqual(entityFactory);
+    expect(store.get("bar")).toEqual(entityFactory);
+  });
+});

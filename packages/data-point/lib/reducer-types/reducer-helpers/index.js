@@ -1,14 +1,14 @@
-const createStub = require('./reducer-stub').create
+const createStub = require("./reducer-stub").create;
 
-const reducerAssign = require('./reducer-assign')
-const reducerConstant = require('./reducer-constant')
-const reducerDefault = require('./reducer-default')
-const reducerFilter = require('./reducer-filter')
-const reducerFind = require('./reducer-find')
-const reducerMap = require('./reducer-map')
-const reducerOmit = require('./reducer-omit')
-const reducerParallel = require('./reducer-parallel')
-const reducerPick = require('./reducer-pick')
+const reducerAssign = require("./reducer-assign");
+const reducerConstant = require("./reducer-constant");
+const reducerDefault = require("./reducer-default");
+const reducerFilter = require("./reducer-filter");
+const reducerFind = require("./reducer-find");
+const reducerMap = require("./reducer-map");
+const reducerOmit = require("./reducer-omit");
+const reducerParallel = require("./reducer-parallel");
+const reducerPick = require("./reducer-pick");
 
 /*
 "Reducer helpers" are functions that create reducers.
@@ -29,7 +29,7 @@ The helpers exposed on DataPoint are the ReducerStub
 function bound to a string identifier using bindStubFunction
 */
 
-module.exports.isType = require('./reducer-stub').isType
+module.exports.isType = require("./reducer-stub").isType;
 
 const reducers = {
   [reducerAssign.type]: reducerAssign,
@@ -41,12 +41,12 @@ const reducers = {
   [reducerOmit.type]: reducerOmit,
   [reducerParallel.type]: reducerParallel,
   [reducerPick.type]: reducerPick
-}
+};
 
-module.exports.reducers = reducers
+module.exports.reducers = reducers;
 
-function bindStubFunction (reducerType) {
-  return createStub.bind(null, reducerType)
+function bindStubFunction(reducerType) {
+  return createStub.bind(null, reducerType);
 }
 
 const stubFactories = {
@@ -59,18 +59,18 @@ const stubFactories = {
   [reducerOmit.name]: bindStubFunction(reducerOmit.type),
   [reducerParallel.name]: bindStubFunction(reducerParallel.type),
   [reducerPick.name]: bindStubFunction(reducerPick.type)
-}
+};
 
-module.exports.stubFactories = stubFactories
+module.exports.stubFactories = stubFactories;
 
 /**
  * @param {Function} createReducer
  * @param {ReducerStub} stub
  * @returns {reducer}
  */
-function createFromStub (createReducer, stub) {
-  const args = [createReducer].concat(stub.args)
-  return reducers[stub.type].create.apply(null, args)
+function createFromStub(createReducer, stub) {
+  const args = [createReducer].concat(stub.args);
+  return reducers[stub.type].create.apply(null, args);
 }
 
-module.exports.create = createFromStub
+module.exports.create = createFromStub;

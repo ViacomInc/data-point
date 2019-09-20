@@ -3,9 +3,9 @@
  * @param {Function} resolveReducer
  * @return {Promise}
  */
-function resolve (accumulator, resolveReducer) {
-  const entity = accumulator.reducer.spec
-  return resolveReducer(accumulator, entity.compose)
+function resolve(accumulator, resolveReducer) {
+  const entity = accumulator.reducer.spec;
+  return resolveReducer(accumulator, entity.compose);
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

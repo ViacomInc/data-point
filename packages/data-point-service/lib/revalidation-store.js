@@ -1,5 +1,5 @@
-const debug = require('debug')('data-point-service:cache')
-const throttle = require('lodash/throttle')
+const debug = require("debug")("data-point-service:cache");
+const throttle = require("lodash/throttle");
 
 /**
  * Maximum number of entries to store
@@ -7,39 +7,39 @@ const throttle = require('lodash/throttle')
  * is any strong feeling on making this part smarter such as creating a FIFO
  * sort of logic PRs are welcomed
  */
-const MAX_STORE_SIZE = 10000
+const MAX_STORE_SIZE = 10000;
 
 /**
  * Time to wait for cleanup to trigger in case it's called more than once within
  * the range placed.
  */
-const THROTTLE_WAIT = 1000 // milliseconds
+const THROTTLE_WAIT = 1000; // milliseconds
 
 /**
  * It marks and deletes all the keys that have their ttl expired
  * @param {Map} store Map Object that stores all the cached keys
  * @returns {Number} ammount of entries deleted
  */
-function clear (store) {
-  const forDeletion = []
-  const now = Date.now()
+function clear(store) {
+  const forDeletion = [];
+  const now = Date.now();
 
   for (const [key, entry] of store) {
     // mark for deletion entries that have timed out
     if (now - entry.created > entry.ttl) {
-      forDeletion.push(key)
+      forDeletion.push(key);
     }
   }
 
-  const forDeletionLength = forDeletion.length
+  const forDeletionLength = forDeletion.length;
   // if nothing to clean then exit
   if (forDeletionLength === 0) {
-    return 0
+    return 0;
   }
 
-  debug(`local revalidation flags that timed out: ${forDeletion}`)
-  forDeletion.forEach(key => store.delete(key))
-  return forDeletionLength
+  debug(`local revalidation flags that timed out: ${forDeletion}`);
+  forDeletion.forEach(key => store.delete(key));
+  return forDeletionLength;
 }
 
 /**
@@ -49,11 +49,11 @@ function clear (store) {
  * @param {Number} ttl time the key will be alive, expressed in milliseconds
  * @returns {Boolean} true if added, false if otherwise
  */
-function add (store, maxStoreSize, key, ttl) {
+function add(store, maxStoreSize, key, ttl) {
   // do not add more than 10000 keys
-  if (store.size > maxStoreSize) return false
-  store.set(key, { created: Date.now(), ttl })
-  return true
+  if (store.size > maxStoreSize) return false;
+  store.set(key, { created: Date.now(), ttl });
+  return true;
 }
 
 /**
@@ -61,9 +61,9 @@ function add (store, maxStoreSize, key, ttl) {
  * @param {String} key key value
  * @returns {Boolean} true, yes always true
  */
-function remove (store, key) {
-  store.delete(key)
-  return true
+function remove(store, key) {
+  store.delete(key);
+  return true;
 }
 
 /**
@@ -72,10 +72,10 @@ function remove (store, key) {
  * @param {String} key key value
  * @returns {Boolean} true if key exists, false otherwise
  */
-function exists (store, key) {
-  const entry = store.get(key)
+function exists(store, key) {
+  const entry = store.get(key);
   // checks entry exists and it has not timed-out
-  return !!entry && Date.now() - entry.created < entry.ttl
+  return !!entry && Date.now() - entry.created < entry.ttl;
 }
 
 /**
@@ -91,8 +91,8 @@ function exists (store, key) {
  * Creates an in-memory Revalidation Controller
  * @returns {RevalidationStore}  Object
  */
-function create () {
-  const store = new Map()
+function create() {
+  const store = new Map();
 
   return {
     store,
@@ -100,7 +100,7 @@ function create () {
     remove: remove.bind(null, store),
     exists: exists.bind(null, store),
     clear: throttle(clear.bind(null, store), THROTTLE_WAIT)
-  }
+  };
 }
 
 module.exports = {
@@ -111,4 +111,4 @@ module.exports = {
   remove,
   exists,
   create
-}
+};

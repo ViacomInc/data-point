@@ -1,8 +1,8 @@
-const _ = require('lodash')
-const { resolve } = require('./resolve')
-const createReducer = require('../../reducer-types').create
-const BaseEntity = require('../base-entity')
-const { validateModifiers } = require('../validate-modifiers')
+const _ = require("lodash");
+const { resolve } = require("./resolve");
+const createReducer = require("../../reducer-types").create;
+const BaseEntity = require("../base-entity");
+const { validateModifiers } = require("../validate-modifiers");
 
 /**
  * map each key from spec into a reducer
@@ -10,10 +10,10 @@ const { validateModifiers } = require('../validate-modifiers')
  * @param {hash} spec - key/value where each value will be mapped into a reducer
  * @returns
  */
-function parseCaseStatement (spec) {
-  return _.mapValues(spec, createReducer)
+function parseCaseStatement(spec) {
+  return _.mapValues(spec, createReducer);
 }
-module.exports.parseCaseStatement = parseCaseStatement
+module.exports.parseCaseStatement = parseCaseStatement;
 
 /**
  * Parse only case statements
@@ -21,24 +21,24 @@ module.exports.parseCaseStatement = parseCaseStatement
  * @param {hash} spec - key/value where each value will be mapped into a reducer
  * @returns
  */
-function parseCaseStatements (spec) {
+function parseCaseStatements(spec) {
   return _(spec)
     .remove(statement => !_.isUndefined(statement.case))
     .map(parseCaseStatement)
-    .value()
+    .value();
 }
-module.exports.parseCaseStatements = parseCaseStatements
+module.exports.parseCaseStatements = parseCaseStatements;
 
-function parseDefaultStatement (id, select) {
+function parseDefaultStatement(id, select) {
   const defaultCase = select.find(statement => {
-    return statement.default
-  })
+    return statement.default;
+  });
   if (!defaultCase) {
     throw new Error(
       `It seems ${id} is missing its default case, Control entities must have their default case handled.`
-    )
+    );
   }
-  return defaultCase.default
+  return defaultCase.default;
 }
 /**
  * parse spec
@@ -46,15 +46,15 @@ function parseDefaultStatement (id, select) {
  * @param {any} spec
  * @returns
  */
-function parseSwitch (spec) {
-  const select = spec.select
-  const defaultStatement = parseDefaultStatement(spec.id, select)
+function parseSwitch(spec) {
+  const select = spec.select;
+  const defaultStatement = parseDefaultStatement(spec.id, select);
   return {
     cases: parseCaseStatements(select),
     default: createReducer(defaultStatement)
-  }
+  };
 }
-module.exports.parseSwitch = parseSwitch
+module.exports.parseSwitch = parseSwitch;
 
 /**
  * Creates new Entity Object
@@ -62,12 +62,12 @@ module.exports.parseSwitch = parseSwitch
  * @param {string} id - Entity id
  * @return {Object} Entity Object
  */
-function create (id, spec) {
-  validateModifiers(id, spec, ['select'])
-  const entity = {}
-  entity.spec = spec
-  entity.select = parseSwitch(spec)
-  return entity
+function create(id, spec) {
+  validateModifiers(id, spec, ["select"]);
+  const entity = {};
+  entity.spec = spec;
+  entity.select = parseSwitch(spec);
+  return entity;
 }
 
-module.exports.create = BaseEntity.create('control', create, resolve)
+module.exports.create = BaseEntity.create("control", create, resolve);

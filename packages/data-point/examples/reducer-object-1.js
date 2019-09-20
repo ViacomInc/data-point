@@ -1,9 +1,9 @@
-const dataPoint = require('../').create()
+const dataPoint = require("../").create();
 
 const reducer = {
-  y: '$x.y',
-  zPlusOne: ['$x.y.z', input => input + 1]
-}
+  y: "$x.y",
+  zPlusOne: ["$x.y.z", input => input + 1]
+};
 
 const data = {
   x: {
@@ -11,8 +11,8 @@ const data = {
       z: 2
     }
   }
-}
+};
 
 dataPoint.resolve(reducer, data).then(output => {
-  console.log(output)
-})
+  console.log(output);
+});

@@ -3,8 +3,8 @@
  * @param {Function} resolveReducer
  * @return {*}
  */
-function resolve (accumulator, resolveReducer) {
-  return accumulator.value
+function resolve(accumulator, resolveReducer) {
+  return accumulator.value;
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;
