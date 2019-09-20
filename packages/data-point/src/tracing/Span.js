@@ -7,7 +7,7 @@ function getHighResolutionTime() {
 }
 
 /**
- * @alias Span
+ * @class
  */
 class Span {
   constructor(name, options, tracer) {

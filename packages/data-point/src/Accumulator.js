@@ -1,5 +1,5 @@
 /**
- * @alias Accumulator
+ * @class
  */
 class Accumulator {
   constructor(options = {}) {

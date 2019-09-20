@@ -124,7 +124,8 @@ function resolvePath(accumulator, compiledPath) {
 }
 
 /**
- * Reducer that crawls a data path (using dot notation) from the accumulator
+ * @class
+ * @classdesc Reducer that crawls a data path (using dot notation) from the accumulator
  * @extends {Reducer}
  */
 class ReducerPath extends Reducer {
