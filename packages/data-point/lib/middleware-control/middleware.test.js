@@ -36,7 +36,7 @@ test("middleware#run - execute 1 middleware", () => {
 
 test("middleware#run - catch unhandled error", () => {
   const stack = [
-    (acc, next) => {
+    () => {
       throw new Error("unhandled");
     }
   ];
@@ -105,6 +105,7 @@ test("middleware#run - exit chain when ___done set to true", () => {
     },
     (acc, next) => {
       acc.b = "b";
+      // eslint-disable-next-line no-underscore-dangle
       acc.___done = true;
       next(null);
     },

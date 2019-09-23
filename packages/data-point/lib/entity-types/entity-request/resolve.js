@@ -37,23 +37,6 @@ function getRequestOptions(url, specOptions) {
 module.exports.getRequestOptions = getRequestOptions;
 
 /**
- * Resolve options object
- * @param {Accumulator} accumulator
- * @param {Function} resolveReducer
- * @return {Promise<Accumulator>}
- */
-function resolveOptions(accumulator, resolveReducer) {
-  const url = resolveUrl(accumulator);
-  const specOptions = accumulator.reducer.spec.options;
-  return resolveReducer(accumulator, specOptions).then(value => {
-    const options = getRequestOptions(url, value);
-    return utils.assign(accumulator, { options });
-  });
-}
-
-module.exports.resolveOptions = resolveOptions;
-
-/**
  * @param {string} url
  * @param {Accumulator} acc
  * @return {string}
@@ -93,6 +76,23 @@ function resolveUrl(acc) {
 module.exports.resolveUrl = resolveUrl;
 
 /**
+ * Resolve options object
+ * @param {Accumulator} accumulator
+ * @param {Function} resolveReducer
+ * @return {Promise<Accumulator>}
+ */
+function resolveOptions(accumulator, resolveReducer) {
+  const url = resolveUrl(accumulator);
+  const specOptions = accumulator.reducer.spec.options;
+  return resolveReducer(accumulator, specOptions).then(value => {
+    const options = getRequestOptions(url, value);
+    return utils.assign(accumulator, { options });
+  });
+}
+
+module.exports.resolveOptions = resolveOptions;
+
+/**
  * @param {Accumulator} acc
  */
 function inspect(acc, request) {
@@ -107,7 +107,8 @@ function inspect(acc, request) {
 
   if (typeof paramInspect === "function") {
     // some of this logic borrows from https://github.com/request/request-debug
-    const debugId = ++debugIdCounter;
+    debugIdCounter += 1;
+    const debugId = debugIdCounter;
     const data = {
       debugId,
       type: "request",
@@ -152,7 +153,7 @@ module.exports.inspect = inspect;
  * @param {Function} resolveReducer
  * @return {Promise<Accumulator>}
  */
-function resolveRequest(acc, resolveReducer) {
+function resolveRequest(acc) {
   const options = Object.assign({}, acc.options, {
     resolveWithFullResponse: true
   });
@@ -185,6 +186,7 @@ function resolveRequest(acc, resolveReducer) {
       ].join("");
 
       // attaching to error so it can be exposed by a handler outside datapoint
+      // eslint-disable-next-line no-param-reassign
       error.message = `${error.message}\n\n${message}`;
       throw error;
     });

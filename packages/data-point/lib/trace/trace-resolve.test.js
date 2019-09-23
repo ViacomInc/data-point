@@ -33,7 +33,7 @@ describe("createTracedAccumulator", () => {
     mockhrTime.mockRestore();
   });
   it("should create new accumulator with traceNode appended", () => {
-    mockhrTime = jest.spyOn(process, "hrtime").mockImplementation(t => {
+    mockhrTime = jest.spyOn(process, "hrtime").mockImplementation(() => {
       return mockedTime;
     });
     const accumulator = {};

@@ -16,7 +16,7 @@ module.exports.invalidReducer = () => {
 };
 
 // invalid in arity, must be 2
-module.exports.invalidReducerArity = () => value => {
+module.exports.invalidReducerArity = () => () => {
   // return method should have acc and callback as arguments
 };
 
@@ -36,9 +36,11 @@ module.exports.addCollectionValues = () => value => {
   return value.reduce(_.add);
 };
 
-module.exports.timesArg1 = module.exports.multiplyBy = factor => value => {
+module.exports.timesArg1 = factor => value => {
   return value * factor;
 };
+
+module.exports.multiplyBy = module.exports.timesArg1;
 
 module.exports.addString = string => value => {
   return value + string;
@@ -79,7 +81,7 @@ module.exports.sourceErrorDoNothing = () => value => {
   return value;
 };
 
-module.exports.sourceErrorGraceful = () => value => {
+module.exports.sourceErrorGraceful = () => () => {
   return {
     noData: true
   };

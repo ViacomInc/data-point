@@ -1,6 +1,8 @@
+/* eslint-disable no-console */
 const assert = require("assert");
 const mocks = require("./async-example.mocks");
 const DataPoint = require("../");
+
 const dataPoint = DataPoint.create();
 
 dataPoint.addEntities({

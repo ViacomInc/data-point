@@ -1,4 +1,6 @@
+const express = require("express");
 const _ = require("lodash");
+
 const RouteMap = require("./route-map");
 const RouteMiddleware = require("./route-middleware");
 
@@ -32,7 +34,6 @@ function setupRouter(router, routes, dataPoint) {
 }
 
 function create(dataPoint, routes) {
-  const express = require("express");
   const router = express.Router();
   return setupRouter(router, routes, dataPoint);
 }

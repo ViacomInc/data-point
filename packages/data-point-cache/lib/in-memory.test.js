@@ -4,23 +4,27 @@ const InMemory = require("./in-memory");
 
 describe("set", () => {
   let cache;
-  beforeEach(() => (cache = { entries: {} }));
+  beforeEach(() => {
+    cache = { entries: {} };
+  });
   test("It should set an entry", () => {
     InMemory.set(cache, "test", "test", "10m");
-    expect(cache.entries["test"]).toHaveProperty("value", "test");
-    expect(cache.entries["test"]).toHaveProperty("ttl", "10m");
+    expect(cache.entries.test).toHaveProperty("value", "test");
+    expect(cache.entries.test).toHaveProperty("ttl", "10m");
   });
 });
 
 describe("get", () => {
   let cache;
-  beforeEach(() => (cache = { entries: {} }));
+  beforeEach(() => {
+    cache = { entries: {} };
+  });
   test("It should return undefined if no entry", () => {
     const result = InMemory.get(cache, "test");
     expect(result).toBeUndefined();
   });
   test("It should get an entry", () => {
-    cache.entries["test"] = { value: "test" };
+    cache.entries.test = { value: "test" };
     const result = InMemory.get(cache, "test");
     expect(result).toEqual("test");
   });
@@ -28,24 +32,29 @@ describe("get", () => {
 
 describe("del", () => {
   let cache;
-  beforeEach(() => (cache = { entries: {} }));
+  beforeEach(() => {
+    cache = { entries: {} };
+  });
   test("It should remove entry", () => {
-    cache.entries["test"] = { value: "test" };
+    cache.entries.test = { value: "test" };
     InMemory.del(cache, "test");
-    expect(cache.entries["test"]).toBeUndefined();
+    expect(cache.entries.test).toBeUndefined();
   });
 });
 
+/* eslint-disable no-console */
 describe("swipeTick", () => {
   let cache;
   const warn = console.warn;
-  beforeEach(() => (cache = { entries: {} }));
+  beforeEach(() => {
+    cache = { entries: {} };
+  });
   afterAll(() => {
     console.warn = warn;
   });
   test("it should remove all keys if length is more than permited", () => {
     const entry = { value: "test1", ttl: 1000, created: Date.now() };
-    for (var index = 0; index < 10001; index++) {
+    for (let index = 0; index < 10001; index += 1) {
       cache.entries[`${index}key`] = entry;
     }
     console.warn = jest.fn();
@@ -58,8 +67,8 @@ describe("swipeTick", () => {
   test("it should remove keys - on each tick", () => {
     const now = 0;
 
-    cache.entries["test1"] = { value: "test1", ttl: 10, created: now };
-    cache.entries["test2"] = { value: "test2", ttl: 20, created: now };
+    cache.entries.test1 = { value: "test1", ttl: 10, created: now };
+    cache.entries.test2 = { value: "test2", ttl: 20, created: now };
 
     const originalDateNow = Date.now;
 
@@ -84,10 +93,13 @@ describe("swipeTick", () => {
     Date.now = originalDateNow;
   });
 });
+/* eslint-enable no-console */
 
 describe("bootstrap", () => {
   let cache;
-  beforeEach(() => (cache = { entries: {} }));
+  beforeEach(() => {
+    cache = { entries: {} };
+  });
   test("It should bootstrap", () => {
     const newCache = InMemory.bootstrap(cache);
     clearInterval(newCache.swipeTimerId);

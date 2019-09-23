@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const dataPoint = require("../").create();
 
 const throwError = (input, acc, next) => {

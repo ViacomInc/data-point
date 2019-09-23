@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
-const DataPointFactory = require("./data-point-factory");
 const DataPoint = require("data-point");
+const DataPointFactory = require("./data-point-factory");
 
 describe("verify", () => {
   test("It should pass options if valid", () => {

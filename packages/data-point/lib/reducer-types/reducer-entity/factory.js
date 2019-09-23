@@ -45,7 +45,7 @@ function create(createReducer, entity) {
   reducer.name = entity.name;
   reducer.entityType = entity.entityType;
   reducer.entity = entity;
-  // for backwards compatibity with accumulator API
+  // for backwards compatibility with accumulator API
   reducer.spec = entity;
 
   return reducer;

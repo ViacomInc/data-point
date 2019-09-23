@@ -10,6 +10,7 @@ module.exports.getDurationNs = getDurationNs;
  */
 function augmentTraceNodeDuration(traceNode) {
   return acc => {
+    // eslint-disable-next-line no-param-reassign
     traceNode.durationNs = module.exports.getDurationNs(traceNode.hrtime);
     return acc;
   };

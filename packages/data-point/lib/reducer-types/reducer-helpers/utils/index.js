@@ -22,7 +22,8 @@ module.exports.isFalsy = isFalsy;
  * @param {*} output
  * @return {boolean}
  */
-function reducerPredicateIsTruthy(reducer, output) {
+function reducerPredicateIsTruthy(reducerPredicate, output) {
+  let reducer = reducerPredicate;
   // this, combined with the second conditional, is needed
   // when the last reducer in a list is a ReducerObject
   if (reducer.type === "ReducerList") {

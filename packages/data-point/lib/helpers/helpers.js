@@ -30,11 +30,11 @@ module.exports.resolveEntity = require("../entity-types/base-entity/resolve").re
 module.exports.validateEntityModifiers = require("../entity-types/validate-modifiers").validateModifiers;
 
 function reducify(method) {
-  return function() {
-    const partialArguments = Array.prototype.slice.call(arguments);
-    return function(value) {
+  return (...args) => {
+    const partialArguments = Array.prototype.slice.call(args);
+    return value => {
       const methodArguments = [value].concat(partialArguments);
-      return method.apply(null, methodArguments);
+      return method(...methodArguments);
     };
   };
 }

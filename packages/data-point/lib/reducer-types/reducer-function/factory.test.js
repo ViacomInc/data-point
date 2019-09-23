@@ -10,6 +10,7 @@ test("reducer/reducer-function#isType", () => {
 });
 
 describe("reducer/reducer-function#validateFunction", () => {
+  /* eslint-disable no-unused-vars */
   expect(factory.validateFunction(() => true)).toBe(true);
   expect(factory.validateFunction(value => true)).toBe(true);
   expect(factory.validateFunction((value, acc) => true)).toBe(true);
@@ -18,6 +19,7 @@ describe("reducer/reducer-function#validateFunction", () => {
     // 4 arguments is not a reducer
     factory.validateFunction((a, b, c, d) => true)
   ).toThrowErrorMatchingSnapshot();
+  /* eslint-enable no-unused-vars */
 });
 
 describe("reducer/reducer-function#create", () => {

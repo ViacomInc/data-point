@@ -26,6 +26,7 @@ function create(id, spec) {
  * @param {Function} resolveReducer
  * @return {Promise}
  */
+// eslint-disable-next-line no-unused-vars
 function resolve(accumulator, resolveReducer) {
   // get Entity Spec
   const spec = accumulator.reducer.spec;
@@ -64,5 +65,6 @@ const data = {
 };
 
 dataPoint.resolve("render:HelloWorld", data).then(output => {
+  // eslint-disable-next-line no-console
   console.log(output); // '<h1>Hello World!!</h1>'
 });

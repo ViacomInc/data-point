@@ -13,9 +13,10 @@ jest.mock("lodash/throttle", () => {
   return mockThrottle;
 });
 
+const RevalidationStore = require("./revalidation-store");
+
 describe("add", () => {
   it("should add key if store size is less than MAX_STORE_SIZE", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     RevalidationStore.add(store, 10, "test", 1000);
     const result = store.get("test");
@@ -23,7 +24,6 @@ describe("add", () => {
     expect(result.ttl).toEqual(1000);
   });
   it("should not add key if store size is more than MAX_STORE_SIZE", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     store.set("foo", "bar");
     store.set("baz", "bar");
@@ -35,7 +35,6 @@ describe("add", () => {
 
 describe("remove", () => {
   it("should remove a key from the map", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     store.set("foo", "bar");
     RevalidationStore.remove(store, "foo");
@@ -45,20 +44,17 @@ describe("remove", () => {
 
 describe("exists", () => {
   it("should check if key exists and has not expired", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     store.set("foo", { created: Date.now() + 100000, ttl: 100 });
     expect(RevalidationStore.exists(store, "foo")).toEqual(true);
   });
 
   it("should check if key does not exists", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     expect(RevalidationStore.exists(store, "foo")).toEqual(false);
   });
 
   it("should check if key has expired", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     store.set("foo", [Date.now() - 100000, 100]);
     expect(RevalidationStore.exists(store, "foo")).toEqual(false);
@@ -80,7 +76,6 @@ describe("clear", () => {
   });
 
   it("should not removed keys that have not expired", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     store.set("t1", [NOW, 2]); // has not expired
     RevalidationStore.clear(store);
@@ -88,7 +83,6 @@ describe("clear", () => {
   });
 
   it("should remove expired keys", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     store.set("t2", { created: NOW - 10, ttl: 2 }); // expired
     RevalidationStore.clear(store);
@@ -98,7 +92,6 @@ describe("clear", () => {
   });
 
   it("should remove only expired keys", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = new Map();
     store.set("t1", { created: NOW, ttl: 2 }); // has not expired
     store.set("t2", { created: NOW - 10, ttl: 2 }); // expired
@@ -123,14 +116,12 @@ describe("create", () => {
   });
 
   it("should create a new store that matches snapshot api", () => {
-    const RevalidationStore = require("./revalidation-store");
     const store = RevalidationStore.create();
     expect(store).toMatchSnapshot();
   });
 
   describe("implementation", () => {
     it("should add new entry", () => {
-      const RevalidationStore = require("./revalidation-store");
       const store = RevalidationStore.create();
 
       store.add("t1", 100);
@@ -138,7 +129,6 @@ describe("create", () => {
     });
 
     it("should remove entry", () => {
-      const RevalidationStore = require("./revalidation-store");
       const store = RevalidationStore.create();
 
       store.remove("t1");
@@ -146,7 +136,6 @@ describe("create", () => {
     });
 
     it("should check if entry exists", () => {
-      const RevalidationStore = require("./revalidation-store");
       const store = RevalidationStore.create();
 
       store.add("t2", 100);
@@ -159,7 +148,6 @@ describe("create", () => {
     });
 
     it("should clear entries", () => {
-      const RevalidationStore = require("./revalidation-store");
       const store = RevalidationStore.create();
 
       store.add("t1", 100);

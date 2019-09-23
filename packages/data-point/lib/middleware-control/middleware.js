@@ -18,6 +18,8 @@ function run(accumulator, stackSpec, done) {
   const stack = stackSpec.slice(0);
 
   const onceDone = once(done);
+
+  /* eslint-disable no-underscore-dangle */
   function next(err, value) {
     if (err) {
       return onceDone(err, accumulator);
@@ -47,6 +49,7 @@ function run(accumulator, stackSpec, done) {
 
     return true;
   }
+  /* eslint-enable no-underscore-dangle */
 
   return next();
 }

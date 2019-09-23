@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const mocks = require("./async-example.mocks");
 const DataPoint = require("../");
 

@@ -1,7 +1,5 @@
 /* eslint-env jest */
 
-"use strict";
-
 const { defineTest } = require("jscodeshift/dist/testUtils");
 
 // single quote

@@ -8,7 +8,9 @@ jest.mock("debug", () => {
 
 const mockLocalAdd = jest.fn();
 const mockLocalRemove = jest.fn();
+
 require("./revalidation-store");
+
 jest.mock("./revalidation-store", () => {
   return {
     create: () => ({
@@ -116,7 +118,7 @@ describe("addEntry", () => {
       "entryKey",
       "value",
       cache
-    ).then(result => {
+    ).then(() => {
       expect(mockSetSWRStaleEntry).toBeCalledWith(
         "service",
         "entryKey",
@@ -140,7 +142,7 @@ describe("getEntry", () => {
       .mockImplementation(() => Promise.resolve(true));
 
     return StaleWhileRevalidate.getEntry("service", "entryKey", "value").then(
-      result => {
+      () => {
         expect(getSWRStaleEntry).toBeCalledWith("service", "entryKey");
       }
     );

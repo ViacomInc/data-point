@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-env jest */
 
 jest.mock("data-point-cache", () => {
@@ -9,9 +10,10 @@ jest.mock("data-point-cache", () => {
 });
 
 const os = require("os");
-const Factory = require("./factory");
 const DataPoint = require("data-point");
 const _ = require("lodash");
+
+const Factory = require("./factory");
 
 describe("getDefaultSettings", () => {
   it("should return default settings", () => {
@@ -40,6 +42,7 @@ describe("prefixDeprecationError", () => {
 describe("getCachePrefix", () => {
   const hostname = os.hostname;
   const warn = console.warn;
+
   afterEach(() => {
     os.hostname = hostname;
     console.warn = warn;
@@ -86,7 +89,6 @@ describe("getCachePrefix", () => {
 
 describe("createServiceObject", () => {
   test("It should create a default ServiceObject", () => {
-    const os = require("os");
     const Service = Factory.createServiceObject();
     expect(Service).toEqual({
       cache: null,
@@ -105,7 +107,6 @@ describe("createServiceObject", () => {
   });
 
   test("It should merge given options into default settings", () => {
-    const os = require("os");
     const Service = Factory.createServiceObject({
       cache: {
         isRequired: true
@@ -264,9 +265,10 @@ describe("create", () => {
 
     console.error = jest.fn();
 
-    const Factory = require("./factory");
+    // eslint-disable-next-line global-require
+    const FactoryTest = require("./factory");
 
-    return Factory.create({
+    return FactoryTest.create({
       DataPoint,
       cache: {
         isRequired: true

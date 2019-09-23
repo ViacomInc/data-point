@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const DataPoint = require("data-point");
+
 const mocks = require("./async-example.mocks");
 
 // mock request calls
@@ -23,7 +25,7 @@ const options = {
 
 const dataPoint = DataPoint.create();
 
-dataPoint.transform([PersonRequest, PersonModel], 1, options).then(output => {
+dataPoint.transform([PersonRequest, PersonModel], 1, options).then(() => {
   /*
     a file with the name data-point-trace-<timestamp>.json will
     be created.

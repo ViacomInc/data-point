@@ -1,5 +1,7 @@
 const url = require("url");
 const Express = require("express");
+const bodyParser = require("body-parser");
+
 const Middleware = require("./middleware");
 const InspectorUi = require("./inspector-ui");
 
@@ -9,10 +11,10 @@ const InspectorUi = require("./inspector-ui");
  * @param {Expres.respose} res
  * @param {function} next
  */
-function dataPointInspectRoute(dataPoint, req, res, next) {
+function dataPointInspectRoute(dataPoint, req, res) {
   const { entityId, params = {}, query = {}, value } = req.body;
 
-  const pathname = url.parse(req.url).pathname; // eslint-disable-line node/no-deprecated-api
+  const pathname = url.parse(req.url).pathname;
 
   const augmentedReq = Object.assign({}, req, {
     query,
@@ -29,7 +31,7 @@ function dataPointInspectRoute(dataPoint, req, res, next) {
 
 function create(dataPoint) {
   const router = Express.Router();
-  const bodyParser = require("body-parser");
+
   router.use(bodyParser.json());
   router.get("/", (req, res) => {
     InspectorUi.getInspector().then(html => {
@@ -46,6 +48,7 @@ function create(dataPoint) {
     res.json(entityKeys);
   });
 
+  // eslint-disable-next-line no-console
   console.warn("Inspector is running, make sure it is disabled in production.");
 
   return router;

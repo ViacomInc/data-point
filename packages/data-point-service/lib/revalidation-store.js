@@ -18,18 +18,18 @@ const THROTTLE_WAIT = 1000; // milliseconds
 /**
  * It marks and deletes all the keys that have their ttl expired
  * @param {Map} store Map Object that stores all the cached keys
- * @returns {Number} ammount of entries deleted
+ * @returns {Number} amount of entries deleted
  */
 function clear(store) {
   const forDeletion = [];
   const now = Date.now();
 
-  for (const [key, entry] of store) {
+  store.forEach((entry, key) => {
     // mark for deletion entries that have timed out
     if (now - entry.created > entry.ttl) {
       forDeletion.push(key);
     }
-  }
+  });
 
   const forDeletionLength = forDeletion.length;
   // if nothing to clean then exit
@@ -80,7 +80,7 @@ function exists(store, key) {
 
 /**
  * @typedef {Object} RevalidationStore
- * @property {Map} store internal store instnace
+ * @property {Map} store internal store instance
  * @property {function} add (key:String, ttl:Number) add entry
  * @property {function} remove (key:String) remove entry
  * @property {function} exists (key:String) check if entry exists

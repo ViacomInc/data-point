@@ -4,7 +4,7 @@ const Factory = require("./factory");
 
 test("Factory#create", () => {
   const obj = Factory.create("name", {
-    value: ["$foo", (acc, done) => {}]
+    value: ["$foo", () => {}]
   });
 
   expect(obj).toHaveProperty("value");

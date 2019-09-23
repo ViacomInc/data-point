@@ -12,9 +12,9 @@ module.exports = {
         username: "$username$"
       }),
       assign({
-        password: value => "$password$",
+        password: () => "$password$",
         qs: {
-          varKey1: value => "someValue",
+          varKey1: () => "someValue",
           varKey2: () => 1,
           varKey3: () => true
         }

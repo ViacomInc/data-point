@@ -1,12 +1,15 @@
+/* eslint-disable no-console */
 /* eslint-env jest */
 
-jest.mock("../../data-point-cache/lib/io-redis", () => {
-  return require("ioredis-mock");
-});
-
-const Factory = require("./factory");
 const Express = require("express");
 const request = require("supertest");
+
+const Factory = require("./factory");
+
+jest.mock("../../data-point-cache/lib/io-redis", () => {
+  // eslint-disable-next-line global-require
+  return require("ioredis-mock");
+});
 
 describe("create - all middleware", () => {
   let service;

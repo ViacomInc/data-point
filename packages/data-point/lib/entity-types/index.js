@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const mapValues = require("lodash/mapValues");
 
 const { createEntityFactory } = require("./factory");

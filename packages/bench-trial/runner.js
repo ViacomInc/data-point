@@ -1,5 +1,7 @@
 #!/usr/bin/env node --expose-gc
 
+/* eslint-disable no-console */
+
 const path = require("path");
 const program = require("commander");
 const Benchmark = require("benchmark");
@@ -23,26 +25,63 @@ program.parse(process.argv);
 
 const filePath = program.args[0];
 
+// eslint-disable-next-line import/no-dynamic-require
 const testSuite = require(path.resolve(filePath));
 
-const suites = Array.isArray(testSuite) ? testSuite : [testSuite];
+const testSuites = Array.isArray(testSuite) ? testSuite : [testSuite];
 
 const iterations = program.iterations || 10;
 
-function start(suites) {
+function sum(values) {
+  return values.reduce((acc, val) => acc + val);
+}
+
+function middle(values) {
+  const len = values.length;
+  const half = Math.floor(len / 2);
+
+  if (len % 2) {
+    return (values[half - 1] + values[half]) / 2.0;
+  }
+
+  return values[half];
+}
+
+function fnumber(x) {
+  return Math.floor(x)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function bytesToKb(bytes) {
+  return Math.round((bytes / 1024) * 100) / 100;
+}
+
+function reportFasterOpsperSec(suites) {
+  const sorted = suites.sort((a, b) => b.median - a.median);
+  const first = sorted[0];
+  const second = sorted[1];
+
+  const diffMedian = ((first.median - second.median) / second.median) * 100;
+
   console.log(
-    "Running %s suite(s) with %s iterations each\n",
-    chalk.yellow(suites.length),
-    chalk.yellow(iterations)
+    ` Speed: %s was faster by %s (%s vs %s)`,
+    chalk.yellow(first.name),
+    chalk.white.bold(`${diffMedian.toFixed(2)}%`),
+    chalk.yellow(`${fnumber(first.median)}Hz`),
+    chalk.yellow(`${fnumber(second.median)}Hz`)
   );
-  return runTests(suites)
-    .then(runBenchmarks)
-    .then(reportFinal)
-    .catch(err => {
-      console.error(chalk.red("\nFailed to run benchmark\n"));
-      console.log(err.stack);
-      process.exit(1);
-    });
+}
+
+function listBySpeed(suites) {
+  console.log(chalk.white.bold("\n Fastest (median ops/sec):"));
+  const sorted = suites.sort((a, b) => b.median - a.median);
+  sorted.forEach((suite, index) => {
+    const name =
+      index === 0 ? chalk.yellow(suite.name) : chalk.bold(suite.name);
+
+    console.log("  %s: %s", name, chalk.yellow(`${fnumber(suite.median)}Hz`));
+  });
 }
 
 function runTest(suite) {
@@ -71,7 +110,7 @@ function runTest(suite) {
 
 function runTests(suites) {
   if (program.skipTests) {
-    console.warn("%s Tests are skiped\n", chalk.yellow("WARNING:"));
+    console.warn("%s Tests are skipped\n", chalk.yellow("WARNING:"));
     return Promise.resolve(suites);
   }
 
@@ -94,74 +133,11 @@ function runTests(suites) {
   }).return(suites);
 }
 
-function runBenchmarks(suites) {
-  return Promise.reduce(
-    suites,
-    (acc, suite) => {
-      return runGC(suite)
-        .then(suite => {
-          suite.memoryBefore = process.memoryUsage().heapUsed;
-          return runBenchmark(suite);
-        })
-        .then(suite => {
-          suite.memoryAfter = process.memoryUsage().heapUsed;
-          suite.memoryEfficiency = suite.memoryAfter - suite.memoryBefore;
-          return suite;
-        })
-        .then(suite => {
-          acc.push(suite);
-          return acc;
-        });
-    },
-    []
-  );
-}
-
-function reportFinal(suites) {
-  console.log(chalk.white.bold("\nReport:"));
-
-  if (suites.length === 2) {
-    reportFasterOpsperSec(suites);
-  }
-
-  if (suites.length > 2) {
-    listBySpeed(suites);
-  }
-
-  const hzSet = suites.map(suite => suite.median);
-  console.log(
-    "\n Total number of operations per second: %s",
-    chalk.yellow(fnumber(sum(hzSet)) + "Hz")
-  );
-
-  return suites;
-}
-
-function listBySpeed(suites) {
-  console.log(chalk.white.bold("\n Fastest (median ops/sec):"));
-  const sorted = suites.sort((a, b) => b.median - a.median);
-  sorted.forEach((suite, index) => {
-    const name =
-      index === 0 ? chalk.yellow(suite.name) : chalk.bold(suite.name);
-
-    console.log("  %s: %s", name, chalk.yellow(fnumber(suite.median) + "Hz"));
+function runGC(val) {
+  return Promise.resolve(val).then(r => {
+    global.gc();
+    return r;
   });
-}
-
-function reportFasterOpsperSec(suites) {
-  const sorted = suites.sort((a, b) => b.median - a.median);
-  const first = sorted[0];
-  const second = sorted[1];
-
-  const diffMedian = ((first.median - second.median) / second.median) * 100;
-
-  console.log(
-    ` Speed: %s was faster by %s (%s vs %s)`,
-    chalk.yellow(first.name),
-    chalk.white.bold(diffMedian.toFixed(2) + "%"),
-    chalk.yellow(fnumber(first.median) + "Hz"),
-    chalk.yellow(fnumber(second.median) + "Hz")
-  );
 }
 
 function runBenchmark(suiteBenchmark) {
@@ -182,7 +158,7 @@ function runBenchmark(suiteBenchmark) {
         ? lib.benchmark.async(suiteBenchmark.benchmark)
         : suiteBenchmark.benchmark;
 
-    for (let index = 0; index < iterations; index++) {
+    for (let index = 0; index < iterations; index += 1) {
       suite.add(`${index + 1} ${suiteBenchmark.name}`, {
         defer: isAsync,
         fn: benchmarkMethod
@@ -191,11 +167,11 @@ function runBenchmark(suiteBenchmark) {
 
     // add listeners
     suite
-      .on("cycle", function(event) {
+      .on("cycle", event => {
         console.log("", String(event.target));
       })
       .on("error", reject)
-      .on("complete", function() {
+      .on("complete", () => {
         const benchmarks = Array.from(this);
         const hzSet = benchmarks
           .map(benchmark => benchmark.hz)
@@ -228,36 +204,67 @@ function runBenchmark(suiteBenchmark) {
   });
 }
 
-function fnumber(x) {
-  return Math.floor(x)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function runBenchmarks(suites) {
+  return Promise.reduce(
+    suites,
+    (acc, suite) => {
+      return runGC(suite)
+        .then(currentSuite => {
+          // eslint-disable-next-line no-param-reassign
+          currentSuite.memoryBefore = process.memoryUsage().heapUsed;
+          return runBenchmark(currentSuite);
+        })
+        .then(currentSuite => {
+          // eslint-disable-next-line no-param-reassign
+          currentSuite.memoryAfter = process.memoryUsage().heapUsed;
+          // eslint-disable-next-line no-param-reassign
+          currentSuite.memoryEfficiency =
+            currentSuite.memoryAfter - currentSuite.memoryBefore;
+          return currentSuite;
+        })
+        .then(currentSuite => {
+          acc.push(currentSuite);
+          return acc;
+        });
+    },
+    []
+  );
 }
 
-function sum(values) {
-  return values.reduce((acc, val) => acc + val);
-}
+function reportFinal(suites) {
+  console.log(chalk.white.bold("\nReport:"));
 
-function middle(values) {
-  const len = values.length;
-  const half = Math.floor(len / 2);
-
-  if (len % 2) {
-    return (values[half - 1] + values[half]) / 2.0;
-  } else {
-    return values[half];
+  if (suites.length === 2) {
+    reportFasterOpsperSec(suites);
   }
+
+  if (suites.length > 2) {
+    listBySpeed(suites);
+  }
+
+  const hzSet = suites.map(suite => suite.median);
+  console.log(
+    "\n Total number of operations per second: %s",
+    chalk.yellow(`${fnumber(sum(hzSet))}Hz`)
+  );
+
+  return suites;
 }
 
-function bytesToKb(bytes) {
-  return Math.round((bytes / 1024) * 100) / 100;
-}
-
-function runGC(val) {
-  return Promise.resolve(val).then(r => {
-    global.gc();
-    return r;
-  });
+function start(suites) {
+  console.log(
+    "Running %s suite(s) with %s iterations each\n",
+    chalk.yellow(suites.length),
+    chalk.yellow(iterations)
+  );
+  return runTests(suites)
+    .then(runBenchmarks)
+    .then(reportFinal)
+    .catch(err => {
+      console.error(chalk.red("\nFailed to run benchmark\n"));
+      console.log(err.stack);
+      process.exit(1);
+    });
 }
 
 function listByMemoryEfficiency(suites) {
@@ -270,7 +277,7 @@ function listByMemoryEfficiency(suites) {
     console.log(
       " %s: %s",
       name,
-      chalk.yellow(fnumber(bytesToKb(suite.memoryEfficiency)) + "Kb")
+      chalk.yellow(`${fnumber(bytesToKb(suite.memoryEfficiency))}Kb`)
     );
   });
 }
@@ -279,9 +286,9 @@ function reportSuiteMemory(suite) {
   const { memoryBefore, memoryAfter } = suite;
   console.log(
     "  Memory: not freed %s (before %s after %s)",
-    chalk.red.bold(fnumber(bytesToKb(memoryAfter - memoryBefore)) + "Kb"),
-    chalk.white.bold(fnumber(bytesToKb(memoryBefore)) + "Kb"),
-    chalk.white.bold(fnumber(bytesToKb(memoryAfter)) + "Kb")
+    chalk.red.bold(`${fnumber(bytesToKb(memoryAfter - memoryBefore))}Kb`),
+    chalk.white.bold(`${fnumber(bytesToKb(memoryBefore))}Kb`),
+    chalk.white.bold(`${fnumber(bytesToKb(memoryAfter))}Kb`)
   );
   return suite;
 }
@@ -301,20 +308,20 @@ function reportMemoryEfficincy(suites) {
   console.log(
     ` Memory: %s was more memory efficient by %s (%s vs %s)`,
     chalk.yellow(first.name),
-    chalk.white.bold(diffMemory.toFixed(2) + "%"),
-    chalk.yellow(fnumber(bytesToKb(first.memoryEfficiency)) + "Kb"),
-    chalk.yellow(fnumber(bytesToKb(second.memoryEfficiency)) + "Kb")
+    chalk.white.bold(`${diffMemory.toFixed(2)}%`),
+    chalk.yellow(`${fnumber(bytesToKb(first.memoryEfficiency))}Kb`),
+    chalk.yellow(`${fnumber(bytesToKb(second.memoryEfficiency))}Kb`)
   );
 }
 
 function unhandledError(err) {
-  console.log("Failed Tests: " + err.stack);
+  console.log(`Failed Tests: ${err.stack}`);
 }
 
 process.on("unhandledRejection", unhandledError);
 process.on("uncaughtException", unhandledError);
 
-start(suites);
+start(testSuites);
 
 module.exports = {
   start,

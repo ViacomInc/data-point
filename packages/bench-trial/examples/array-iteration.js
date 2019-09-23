@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { test } = require("bench-trial");
 
 const array = Array(100).fill("foo");
@@ -5,8 +6,8 @@ const expected = array.join("").length;
 
 function forLoop() {
   let result = "";
-  for (let index = 0; index < array.length; index++) {
-    result = result + array[index];
+  for (let index = 0; index < array.length; index += 1) {
+    result += array[index];
   }
 
   const length = result.length;
@@ -18,8 +19,8 @@ function whileLoop() {
   let result = "";
   let index = 0;
   while (index !== array.length) {
-    result = result + array[index];
-    index++;
+    result += array[index];
+    index += 1;
   }
 
   const length = result.length;

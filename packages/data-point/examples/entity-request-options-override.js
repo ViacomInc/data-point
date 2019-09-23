@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const dataPoint = require("../").create();
 const mockRequest = require("./entity-request-basic.mock");
 

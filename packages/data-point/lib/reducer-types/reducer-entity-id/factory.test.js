@@ -24,7 +24,7 @@ test("reducer/reducer-entity-id#isType", () => {
   expect(factory.isType("abc:abc[]d")).toBe(false);
 });
 
-describe("create", function() {
+describe("create", () => {
   test("default create", () => {
     const reducer = factory.create(createReducer, "foo:abc");
     expect(reducer.hasEmptyConditional).toBe(false);

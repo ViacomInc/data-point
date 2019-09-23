@@ -10,10 +10,12 @@ describe("validateResolve", () => {
   });
   it("should throw error if function does not match arity", () => {
     expect(() => {
+      // eslint-disable-next-line no-unused-vars
       Factory.validateResolve(a => {});
     }).toThrowErrorMatchingSnapshot();
   });
   it("should return true if validation has no errors", () => {
+    // eslint-disable-next-line no-unused-vars
     const resolver = (a, b) => {};
     expect(Factory.validateResolve(resolver)).toEqual(true);
   });
@@ -27,10 +29,12 @@ describe("validateFactory", () => {
   });
   it("should throw error if function does not match arity", () => {
     expect(() => {
+      // eslint-disable-next-line no-unused-vars
       Factory.validateFactory(a => {});
     }).toThrowErrorMatchingSnapshot();
   });
   it("should return true if validation has no errors", () => {
+    // eslint-disable-next-line no-unused-vars
     const resolver = (a, b) => {};
     expect(Factory.validateFactory(resolver)).toEqual(true);
   });
@@ -38,6 +42,7 @@ describe("validateFactory", () => {
 
 describe("Factory.createEntityType", () => {
   test("It should create entity defaults", () => {
+    // eslint-disable-next-line no-unused-vars
     const resolve = (a, b) => true;
     const entitySource = {
       resolve,
@@ -66,13 +71,15 @@ describe("createEntityInstance", () => {
     };
     return Factory.createEntityInstance(entity);
   }
-  it("should create an instance with overriden constructor name", () => {
+  it("should create an instance with overridden constructor name", () => {
     expect(createEntityInstance().constructor.name).toEqual("foo:myFoo");
   });
 });
 
 describe("create", () => {
+  // eslint-disable-next-line no-unused-vars
   const resolve = (acc, resolveReducer) => true;
+  // eslint-disable-next-line no-unused-vars
   const create = (name, spec) => {
     return {};
   };

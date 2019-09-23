@@ -1,9 +1,12 @@
+/* eslint-disable no-console */
 /* eslint-env jest */
 
-jest.mock("./io-redis");
-
+const EventEmitter = require("events");
 const ms = require("ms");
+
 const RedisClient = require("./redis-client");
+
+jest.mock("./io-redis");
 
 describe("factory", () => {
   test("It should create a new redis instance", () => {
@@ -214,7 +217,6 @@ describe("redisDecorator", () => {
     console.info = consoleInfo;
   });
   test("It should execute resolve when ready", done => {
-    const EventEmitter = require("events");
     const redis = new EventEmitter();
     const resolve = result => {
       expect(redis === result).toBeTruthy();
@@ -225,10 +227,9 @@ describe("redisDecorator", () => {
   });
 
   test("It should execute reject when error and not connected yet", done => {
-    const EventEmitter = require("events");
     const redis = new EventEmitter();
     redis.disconnect = jest.fn();
-    const reject = result => {
+    const reject = () => {
       expect(redis.disconnect).toBeCalled();
       done();
     };
@@ -237,23 +238,25 @@ describe("redisDecorator", () => {
   });
 
   test("It should log error when already connected", () => {
-    const EventEmitter = require("events");
     const redis = new EventEmitter();
+    // eslint-disable-next-line no-console
     console.error = jest.fn();
     RedisClient.redisDecorator(redis, () => {});
     redis.emit("connect");
     redis.emit("error", new Error("test"));
+    // eslint-disable-next-line no-console
     expect(console.error).toBeCalled();
   });
 
   test("It should log when reconnected", () => {
-    const EventEmitter = require("events");
     const redis = new EventEmitter();
+    // eslint-disable-next-line no-console
     console.info = jest.fn();
 
     RedisClient.redisDecorator(redis);
     redis.emit("reconnecting");
     redis.emit("connect");
+    // eslint-disable-next-line no-console
     expect(console.info).toBeCalled();
   });
 });

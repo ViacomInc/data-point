@@ -29,7 +29,7 @@ module.exports.resolveFromAccumulator = resolveFromAccumulator;
 function reducerResolve(manager, reducerSource, value, options) {
   const contextOptions = getOptions(options);
   const context = AccumulatorFactory.create({
-    value: value,
+    value,
     locals: contextOptions.locals,
     entityOverrides: contextOptions.entityOverrides,
     trace: contextOptions.trace,
@@ -37,7 +37,7 @@ function reducerResolve(manager, reducerSource, value, options) {
   });
 
   const result = resolveFromAccumulator(manager, reducerSource, context).then(
-    value => utils.set(context, "value", value)
+    resolvedValue => utils.set(context, "value", resolvedValue)
   );
 
   return !context.trace ? result : result.then(Trace.traceReducer);

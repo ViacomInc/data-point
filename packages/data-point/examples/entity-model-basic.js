@@ -11,12 +11,12 @@ const input = {
   }
 };
 
-const getMax = input => {
-  return Math.max.apply(null, input);
+const getMax = value => {
+  return Math.max.apply(null, value);
 };
 
-const multiplyBy = number => input => {
-  return input * number;
+const multiplyBy = number => value => {
+  return value * number;
 };
 
 const myModel = Model("myModel", {

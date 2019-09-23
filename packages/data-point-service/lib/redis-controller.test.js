@@ -29,14 +29,14 @@ describe("getEntry", () => {
   });
 });
 
-describe("deletetEntry", () => {
+describe("deleteEntry", () => {
   it("should call cache.del from service to delete a key", () => {
     const service = {
       cache: {
         del: jest.fn(() => Promise.resolve())
       }
     };
-    return RedisController.deleteEntry(service, "test").then(result => {
+    return RedisController.deleteEntry(service, "test").then(() => {
       expect(service.cache.del).toBeCalledWith("test");
     });
   });
@@ -46,7 +46,7 @@ describe("getSWRStaleEntry", () => {
   it("should return true if key exists with valid wrapper ", () => {
     const service = {
       cache: {
-        get: jest.fn(key => Promise.resolve("SWR-STALE"))
+        get: jest.fn(() => Promise.resolve("SWR-STALE"))
       }
     };
     return RedisController.getSWRStaleEntry(service, "test").then(result => {
@@ -60,7 +60,7 @@ describe("getSWRControlEntry", () => {
   it("should return true if key exists with valid wrapper ", () => {
     const service = {
       cache: {
-        get: jest.fn(key => Promise.resolve("SWR-CONTROL"))
+        get: jest.fn(() => Promise.resolve("SWR-CONTROL"))
       }
     };
     return RedisController.getSWRControlEntry(service, "test").then(result => {
@@ -72,7 +72,7 @@ describe("getSWRControlEntry", () => {
   it("should return true if key exists with valid wrapper ", () => {
     const service = {
       cache: {
-        get: jest.fn(key => Promise.resolve(undefined))
+        get: jest.fn(() => Promise.resolve(undefined))
       }
     };
     return RedisController.getSWRControlEntry(service, "test").then(result => {

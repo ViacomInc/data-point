@@ -1,8 +1,9 @@
 /* eslint-env jest */
 
-const TraceGraph = require("./trace-graph");
-const set = require("lodash/set");
 const { format } = require("util");
+const set = require("lodash/set");
+
+const TraceGraph = require("./trace-graph");
 
 function createNode(index) {
   const time = index * 1e9;
@@ -177,7 +178,7 @@ describe("writeTraceGraph", () => {
   });
   it("should write graph to disk", () => {
     const traceGraph = createTraceGraph();
-    return TraceGraph.writeTraceGraph(traceGraph).then(result => {
+    return TraceGraph.writeTraceGraph(traceGraph).then(() => {
       expect(mockWriteFileP.mock.calls[0]).toMatchSnapshot();
     });
   });

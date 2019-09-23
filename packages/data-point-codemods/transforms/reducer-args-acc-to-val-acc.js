@@ -1,14 +1,16 @@
 const util = require("util");
 const _ = require("lodash");
 
-module.exports = (file, api, options) => {
+module.exports = (file, api) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
   function replaceWith(target, newObject) {
-    for (const key in target) {
+    Object.keys(target).forEach(key => {
+      // eslint-disable-next-line no-param-reassign
       delete target[key];
-    }
+    });
+
     Object.assign(target, newObject);
   }
 
@@ -28,6 +30,7 @@ module.exports = (file, api, options) => {
       }
     ];
 
+    // eslint-disable-next-line no-param-reassign
     node.value.params = injectAcc
       ? newParams.concat(node.value.params)
       : newParams;
@@ -46,8 +49,9 @@ module.exports = (file, api, options) => {
           }
         }
       })
-      .forEach(node => {
-        node.value.object = {
+      .forEach(nodeItem => {
+        // eslint-disable-next-line no-param-reassign
+        nodeItem.value.object = {
           type: "Identifier",
           name: "input"
         };
@@ -63,8 +67,8 @@ module.exports = (file, api, options) => {
           name: "value"
         }
       })
-      .forEach(node => {
-        replaceWith(node.value, {
+      .forEach(noteIdem => {
+        replaceWith(noteIdem.value, {
           type: "Identifier",
           name: "input"
         });
@@ -121,8 +125,8 @@ module.exports = (file, api, options) => {
 
     const secondParam = _.get(node, "params[1]", {});
     const secondParamIsCallback = j(node.body)
-      .find(j.CallExpression, node => {
-        return node.callee.name === secondParam.name;
+      .find(j.CallExpression, nodeItem => {
+        return nodeItem.callee.name === secondParam.name;
       })
       .size();
 

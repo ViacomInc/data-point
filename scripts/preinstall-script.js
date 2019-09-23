@@ -4,6 +4,7 @@ const setup =
   "\nhttps://github.com/ViacomInc/data-point/blob/master/CONTRIBUTING.md#setup\n";
 
 if (process.env.npm_execpath.indexOf("yarn") === -1) {
+  // eslint-disable-next-line no-console
   console.error(
     "\x1b[41m",
     "Error: You must use yarn to install dependencies.\n\n",

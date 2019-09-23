@@ -1,8 +1,8 @@
-const RedisClient = require("./redis-client");
-const InMemory = require("./in-memory");
+const ms = require("ms");
 const Promise = require("bluebird");
 
-const ms = require("ms");
+const RedisClient = require("./redis-client");
+const InMemory = require("./in-memory");
 
 const DefaultSettings = {
   localTTL: ms("2s")
@@ -20,7 +20,7 @@ function set(cache, key, value, ttl = "20m") {
   const ttlms = normalizeMilliseconds(ttl);
   return cache.redis
     .set(key, value, ttlms)
-    .then(res => cache.local.set(key, value, cache.settings.localTTL));
+    .then(() => cache.local.set(key, value, cache.settings.localTTL));
 }
 
 /**
@@ -30,16 +30,16 @@ function set(cache, key, value, ttl = "20m") {
  */
 function getFromStore(cache, key) {
   return Promise.resolve(cache.local.get(key)).then(entry => {
-    // if we still have it sotred locally return the value, skip everything else
+    // if we still have it stored locally return the value, skip everything else
     if (typeof entry !== "undefined") {
       return entry;
     }
     // if no longer in local memory, then get from redis
     return cache.redis.get(key).then(value => {
       // could be a race condition where by the time we get here the value
-      // already was revemoved, so then skip local cache and move on
+      // already was removed, so then skip local cache and move on
       if (typeof value === "undefined") {
-        return;
+        return undefined;
       }
 
       // update local cache (short ttl) for any consecutive calls
@@ -61,7 +61,7 @@ function get(cache, key) {
 
 /**
  * @param {Object} cache cache object instance
- * @param {Srtring} key cache key
+ * @param {String} key cache key
  */
 function del(cache, key) {
   return cache.redis.del(key);
@@ -72,9 +72,11 @@ function del(cache, key) {
  * @param {Object} cache object to be decorated
  */
 function bootstrapAPI(cache) {
+  /* eslint-disable no-param-reassign */
   cache.set = set.bind(null, cache);
   cache.get = get.bind(null, cache);
   cache.del = del.bind(null, cache);
+  /* eslint-enable no-param-reassign */
   return cache;
 }
 
@@ -91,11 +93,13 @@ function create(options) {
   return Promise.resolve(Cache)
     .then(cache => {
       return RedisClient.create(cache.settings).then(redis => {
+        // eslint-disable-next-line no-param-reassign
         cache.redis = redis;
         return cache;
       });
     })
     .then(cache => {
+      // eslint-disable-next-line no-param-reassign
       cache.local = InMemory.create();
       return cache;
     })

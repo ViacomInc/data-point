@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 function set(cache, key, value, ttl) {
   cache.entries[key] = {
     value,
@@ -24,6 +25,7 @@ function swipeTick(cache) {
   const keys = Object.keys(cache.entries);
   if (keys.length > 10000) {
     cache.entries = {};
+    // eslint-disable-next-line no-console
     console.warn(
       "Cache inMemory reached max (10000) number of entries, all keys now being deleted."
     );
@@ -31,7 +33,7 @@ function swipeTick(cache) {
   }
 
   const now = Date.now();
-  for (let index = 0; index < keys.length; index++) {
+  for (let index = 0; index < keys.length; index += 1) {
     const key = keys[index];
     const entry = cache.entries[key];
     if (now - entry.created > entry.ttl) {
@@ -42,6 +44,7 @@ function swipeTick(cache) {
 
 function swipe(cache, interval = 1000) {
   clearInterval(cache.swipeTimerId);
+
   cache.swipeTimerId = setInterval(swipeTick, interval, cache);
   return cache.swipeTimerId;
 }
@@ -55,7 +58,7 @@ function bootstrap(cache) {
   return cache;
 }
 
-function create(options) {
+function create() {
   const Cache = {
     entries: {},
     set: null,

@@ -11,7 +11,7 @@ module.exports = {
   },
   "collection:CustomOutputType": {
     value: input => input,
-    outputType: input => {
+    outputType: () => {
       throw new Error("custom type check failed");
     }
   },

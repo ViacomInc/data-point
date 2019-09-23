@@ -1,17 +1,20 @@
 /* eslint-env jest */
 
+const core = require("../../core");
+const factory = require("../entity-transform/factory");
+const transformIndex = require("./index");
+
 describe("API", () => {
   it("should match API", () => {
-    expect(require("./index")).toMatchSnapshot();
+    // eslint-disable-next-line global-require
+    expect(transformIndex).toMatchSnapshot();
   });
 });
 
 describe("integration", () => {
   it("should create and resolve an entity-transform", () => {
-    const dataPoint = require("../../core").create();
-    const fooReducer = require("../entity-transform/factory").create(
-      "$greeting"
-    );
+    const dataPoint = core.create();
+    const fooReducer = factory.create("$greeting");
     const input = {
       greeting: "HelloWorld"
     };

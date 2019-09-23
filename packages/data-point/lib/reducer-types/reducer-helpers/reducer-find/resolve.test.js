@@ -37,7 +37,7 @@ describe("ReducerFind#resolve", () => {
       }
     ];
     const accumulator = AccumulatorFactory.create({ value });
-    const reducer = Factory.create(Reducer.create, ["$a", value => value > 1]);
+    const reducer = Factory.create(Reducer.create, ["$a", a => a > 1]);
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
         expect(result).toEqual({

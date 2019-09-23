@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* eslint-disable prettier */
 
-const e1 = {};
+const e1 = {}
 
 // prettier-ignore
 e1 = {
@@ -18,7 +18,7 @@ e1 = {
   }
 }
 
-const e2 = {};
+const e2 = {}
 
 // prettier-ignore
 e2['hash:example'] = {
@@ -66,30 +66,30 @@ const e3 = {
   }
 }
 
-const e4 = {};
+const e4 = {}
 
 // should not be changed
-e4["collection:example"] = {
-  mapKeys: "$a"
-};
+e4['collection:example'] = {
+  mapKeys: '$a'
+}
 
 // should not be changed
 const e5 = {
   entities: {
-    "hash:example": {
-      mapKeys: "$a"
+    'hash:example': {
+      mapKeys: '$a'
     }
   }
-};
+}
 
 // should not be changed
 const e6 = {
-  "collection:example": {
+  'collection:example': {
     before: () => [],
-    inputType: "array",
-    find: "$find"
+    inputType: 'array',
+    find: '$find'
   }
-};
+}
 
 // should not be changed
 // prettier-ignore

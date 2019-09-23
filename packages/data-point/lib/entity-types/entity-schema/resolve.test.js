@@ -28,7 +28,7 @@ beforeAll(() => {
   resolveReducerBound = helpers.createReducerResolver(dataPoint);
 });
 
-describe("schema.resolve", function() {
+describe("schema.resolve", () => {
   test("handle failure errors", () => {
     const promise = transform("schema:a.1.0", { foo: 1 });
     return promise.catch(err => {

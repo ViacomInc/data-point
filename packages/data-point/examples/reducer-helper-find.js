@@ -2,6 +2,7 @@
 const assert = require("assert");
 
 const DataPoint = require("../");
+
 const dataPoint = DataPoint.create();
 
 const value = [

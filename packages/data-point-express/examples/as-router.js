@@ -40,8 +40,10 @@ Service.create({ entities })
         throw err;
       }
 
+      // eslint-disable-next-line no-console
       console.info("Server ready!");
 
+      // eslint-disable-next-line no-console
       console.info(
         "Inspector available at",
         "http://localhost:3000/api/inspect"
@@ -49,7 +51,9 @@ Service.create({ entities })
     });
   })
   .catch(error => {
+    // eslint-disable-next-line no-console
     console.info("Failed to Create Service");
+    // eslint-disable-next-line no-console
     console.error(error);
     process.exit(1);
   });

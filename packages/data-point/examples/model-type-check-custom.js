@@ -1,5 +1,8 @@
+/* eslint-disable no-console */
 const assert = require("assert");
+
 const DataPoint = require("../");
+
 const dataPoint = DataPoint.create();
 
 dataPoint.addEntities({

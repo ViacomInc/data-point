@@ -17,7 +17,7 @@ Please review your entity and make any necessary corrections so it can be parsed
 }"
 `;
 
-exports[`validateProperties It should throw error if keys dont match 1`] = `
+exports[`validateProperties It should throw error if keys do not match 1`] = `
 "Entity \\"foo:test\\" did not recognize the following properties:
  foo
 Valid properties for this entity are:
@@ -28,7 +28,7 @@ Please review your entity and make any necessary corrections so it can be parsed
 }"
 `;
 
-exports[`validateProperties It should throw error if keys dont match 2`] = `
+exports[`validateProperties It should throw error if keys do not match 2`] = `
 "Entity \\"foo:test\\" did not recognize the following properties:
  foo
 Valid properties for this entity are:

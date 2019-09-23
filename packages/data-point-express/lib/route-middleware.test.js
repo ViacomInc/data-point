@@ -1,9 +1,10 @@
 /* eslint-env jest */
 
-const RouteMiddleware = require("./route-middleware");
 const Express = require("express");
 const request = require("supertest");
 const DataPoint = require("data-point");
+
+const RouteMiddleware = require("./route-middleware");
 
 describe("create - entity middleware", () => {
   let dataPoint;

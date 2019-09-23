@@ -1,5 +1,6 @@
 /* eslint-env jest */
 
+const _ = require("lodash");
 const Promise = require("bluebird");
 
 const mockDebug = jest.fn();
@@ -17,14 +18,13 @@ const RedisController = require("./redis-controller");
 
 const CacheMiddleware = require("./cache-middleware");
 
-const _ = require("lodash");
-
 const createNext = (done, tests) =>
   jest.fn(() => {
     try {
       tests();
     } catch (error) {
-      return done(error);
+      done(error);
+      return;
     }
     done();
   });
@@ -52,7 +52,7 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-describe("genrateKey", () => {
+describe("generateKey", () => {
   it("should generate default id", () => {
     const ctx = createContext();
     const result = CacheMiddleware.generateKey(null, ctx);
@@ -143,7 +143,7 @@ describe("catchRevalidateError", () => {
 });
 
 describe("shouldTriggerRevalidate", () => {
-  it("should return false if staleEntry is not truthly", () => {
+  it("should return false if staleEntry is not truthy", () => {
     expect(CacheMiddleware.shouldTriggerRevalidate(undefined)).toEqual(false);
   });
   it("should return false if revalidationState.hasExternalEntryExpired is not true", () => {
@@ -266,7 +266,7 @@ describe("revalidateEntry", () => {
       // original context should not be mutated
       expect(ctx).not.toHaveProperty("locals.revalidatingCache");
 
-      // inpsect arguments passed to dataPoint.resolveFromAccumulator
+      // inspect arguments passed to dataPoint.resolveFromAccumulator
       const resolveFromAccumulatorArgs =
         mocks.resolveFromAccumulator.mock.calls[0];
 

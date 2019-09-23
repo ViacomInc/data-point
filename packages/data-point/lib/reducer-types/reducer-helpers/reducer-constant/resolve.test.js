@@ -1,6 +1,7 @@
 /* eslint-env jest */
 
 const DataPoint = require("../../../index");
+
 const constant = DataPoint.constant;
 
 const dataPoint = DataPoint.create();
@@ -22,7 +23,7 @@ describe("ReducerConstant#resolve", () => {
   });
 
   test("constant with a function", () => {
-    const source = acc => {
+    const source = () => {
       throw new Error();
     };
     const input = 1;

@@ -1,8 +1,9 @@
-const { resolve } = require("./resolve");
-const createReducer = require("../../reducer-types").create;
 const deepFreeze = require("deep-freeze");
 const constant = require("lodash/constant");
 const defaultTo = require("lodash/defaultTo");
+
+const { resolve } = require("./resolve");
+const createReducer = require("../../reducer-types").create;
 const reducerHelpers = require("../../reducer-types/reducer-helpers");
 const parseCompose = require("../parse-compose");
 const BaseEntity = require("../base-entity");
@@ -33,6 +34,7 @@ const modifiers = {
 function createCompose(composeSpec) {
   const specList = composeSpec.map(modifier => {
     let spec;
+    // eslint-disable-next-line default-case
     switch (modifier.type) {
       case "omitKeys":
         spec = modifiers.omit(modifier.spec);
@@ -43,10 +45,11 @@ function createCompose(composeSpec) {
       case "mapKeys":
         spec = modifier.spec;
         break;
-      case "addValues":
+      case "addValues": {
         const values = deepFreeze(defaultTo(modifier.spec, {}));
         spec = modifiers.assign(constant(values));
         break;
+      }
       case "addKeys":
         spec = modifiers.assign(modifier.spec);
         break;

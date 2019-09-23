@@ -12,10 +12,10 @@ describe("ReducerDefault#factory", () => {
     expect(reducer.type).toBe("ReducerPath");
   });
   test("create with ReducerPath and function as default", () => {
-    const _default = () => "DEFAULT_VALUE";
-    const reducer = Factory.create(createReducer, "$a", _default);
+    const defaultResolver = () => "DEFAULT_VALUE";
+    const reducer = Factory.create(createReducer, "$a", defaultResolver);
     expect(reducer[IS_REDUCER]).toBe(true);
-    expect(reducer[DEFAULT_VALUE]).toEqual({ value: _default });
+    expect(reducer[DEFAULT_VALUE]).toEqual({ value: defaultResolver });
     expect(reducer.type).toBe("ReducerPath");
   });
 });

@@ -1,6 +1,7 @@
-const dataPoint = require("../").create();
+/* eslint-disable no-console */
 const assert = require("assert");
 const mockRequests = require("./reducer-conditional-operator.mock");
+const dataPoint = require("../").create();
 
 const people = [
   {

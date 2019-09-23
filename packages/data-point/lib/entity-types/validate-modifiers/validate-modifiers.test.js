@@ -6,7 +6,7 @@ const {
 } = require("./validate-modifiers");
 
 describe("validateProperties", () => {
-  test("It should throw error if keys dont match", () => {
+  test("It should throw error if keys do not match", () => {
     expect(() => {
       const spec = {
         foo: true

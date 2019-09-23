@@ -1,10 +1,11 @@
 /* eslint-env jest */
 
 const fp = require("lodash/fp");
-const Middleware = require("./middleware");
 const Express = require("express");
 const request = require("supertest");
 const DataPoint = require("data-point");
+
+const Middleware = require("./middleware");
 
 function createReq() {
   const app = {

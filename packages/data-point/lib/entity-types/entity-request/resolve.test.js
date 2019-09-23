@@ -18,6 +18,9 @@ let utils = require("../../utils");
 let dataPoint;
 let resolveReducerBound;
 
+let locals;
+let values;
+
 function transform(entityId, value, options) {
   const reducer = dataPoint.entities.get(entityId);
   const accumulator = helpers.createAccumulator(value, {
@@ -29,10 +32,7 @@ function transform(entityId, value, options) {
   return Resolve.resolve(acc, resolveReducerBound);
 }
 
-let locals;
-let values;
-
-function helperMockContext(accumulatorData, reducerSource, requestName) {
+function helperMockContext(accumulatorData, reducerSource) {
   const accumulator = AccumulatorFactory.create({
     value: accumulatorData,
     locals,
@@ -321,8 +321,10 @@ describe("inspect", () => {
     // debugIdCounter is a local variable in
     // resolve.js, so this resets it to zero
     jest.resetModules();
+    /* eslint-disable global-require */
     Resolve = require("./resolve");
     utils = require("../../utils");
+    /* eslint-enable global-require */
     utilsInspectSpy = jest.spyOn(utils, "inspect").mockReturnValue(undefined);
   });
   afterEach(() => {

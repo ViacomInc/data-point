@@ -1,5 +1,7 @@
-const dataPoint = require("../").create();
+/* eslint-disable no-console */
 const assert = require("assert");
+
+const dataPoint = require("../").create();
 
 const input = {
   a: {
@@ -7,8 +9,8 @@ const input = {
   }
 };
 
-const toUpperCase = input => {
-  return input.toUpperCase();
+const toUpperCase = value => {
+  return value.toUpperCase();
 };
 
 dataPoint.resolve(["$a.b", toUpperCase], input).then(output => {

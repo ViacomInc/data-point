@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const ms = require("ms");
 const Promise = require("bluebird");
 const IORedis = require("./io-redis");
@@ -12,7 +13,8 @@ function redisDecorator(redis, resolve, reject) {
   redis.on("error", error => {
     if (!wasConnected) {
       redis.disconnect();
-      return reject(error);
+      reject(error);
+      return;
     }
     console.error("ioredis - error", error.toString());
   });
@@ -42,33 +44,6 @@ function factory(options) {
     const redis = new IORedis(opts);
     redisDecorator(redis, resolve, reject);
   });
-}
-
-function create(options = {}) {
-  const Cache = {
-    redis: null,
-    set: null,
-    get: null,
-    del: null,
-    exists: null,
-    options
-  };
-  return Promise.resolve(Cache)
-    .then(cache => {
-      return factory(cache.options.redis).then(redis => {
-        cache.redis = redis;
-        return cache;
-      });
-    })
-    .then(bootstrap);
-}
-
-function bootstrap(cache) {
-  cache.set = set.bind(null, cache);
-  cache.get = get.bind(null, cache);
-  cache.del = del.bind(null, cache);
-  cache.exists = exists.bind(null, cache);
-  return cache;
 }
 
 function encode(value) {
@@ -123,6 +98,36 @@ function del(cache, key) {
     .pipeline()
     .del(key)
     .exec();
+}
+
+function bootstrap(cache) {
+  /* eslint-disable no-param-reassign */
+  cache.set = set.bind(null, cache);
+  cache.get = get.bind(null, cache);
+  cache.del = del.bind(null, cache);
+  cache.exists = exists.bind(null, cache);
+  /* eslint-enable no-param-reassign */
+  return cache;
+}
+
+function create(options = {}) {
+  const Cache = {
+    redis: null,
+    set: null,
+    get: null,
+    del: null,
+    exists: null,
+    options
+  };
+  return Promise.resolve(Cache)
+    .then(cache => {
+      return factory(cache.options.redis).then(redis => {
+        // eslint-disable-next-line no-param-reassign
+        cache.redis = redis;
+        return cache;
+      });
+    })
+    .then(bootstrap);
 }
 
 module.exports = {

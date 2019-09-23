@@ -121,7 +121,7 @@ describe("transform - should attach input value to accumulator", () => {
 
 test("transform - single reducer", () => {
   const reducer = value => {
-    return value + " World";
+    return `${value} World`;
   };
   return Transform.transform(dataPoint, reducer, "Hello").then(res => {
     expect(res.value).toEqual("Hello World");
@@ -129,8 +129,8 @@ test("transform - single reducer", () => {
 });
 
 test("transform - reducer chain", () => {
-  const reducers = [value => value + " World", value => value + "!!"];
-  return Transform.transform(dataPoint, reducers, "Hello").then(res => {
+  const testReducers = [value => `${value} World`, value => `${value}!!`];
+  return Transform.transform(dataPoint, testReducers, "Hello").then(res => {
     expect(res.value).toEqual("Hello World!!");
   });
 });
@@ -155,7 +155,7 @@ test("transform - reducer mixed", () => {
 describe("options argument", () => {
   test("passing locals", () => {
     const reducer = (value, acc) => {
-      return acc.locals.greeting + " World";
+      return `${acc.locals.greeting} World`;
     };
 
     const options = {
@@ -195,8 +195,8 @@ describe("resolve", () => {
     };
     return Promise.resolve(value)
       .then(Transform.resolve(dataPoint, "$foo"))
-      .then(value => {
-        expect(value).toEqual("bar");
+      .then(resolvedValue => {
+        expect(resolvedValue).toEqual("bar");
       });
   });
 });

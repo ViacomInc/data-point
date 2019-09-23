@@ -58,14 +58,14 @@ function createReducer(source, options = {}) {
     return source;
   }
 
-  source = normalizeInput(source);
-  const reducerType = reducerTypes.find(r => r.isType(source));
+  const normalizedSource = normalizeInput(source);
+  const reducerType = reducerTypes.find(r => r.isType(normalizedSource));
 
   if (_.isUndefined(reducerType)) {
     const message = [
       "Invalid reducer type.",
       " Could not find a matching reducer type while parsing the value:\n ",
-      _.attempt(util.inspect, source),
+      _.attempt(util.inspect, normalizedSource),
       "\nTry using an Array, String, Object, or Function.\n",
       "More info: https://github.com/ViacomInc/data-point/tree/master/packages/data-point#reducers\n"
     ].join("");
@@ -74,7 +74,7 @@ function createReducer(source, options = {}) {
   }
 
   // NOTE: recursive call
-  const reducer = reducerType.create(createReducer, source);
+  const reducer = reducerType.create(createReducer, normalizedSource);
   reducer[IS_REDUCER] = true;
   if (_.has(options, "default")) {
     reducer[DEFAULT_VALUE] = { value: options.default };

@@ -22,7 +22,7 @@ describe("getDurationNs", () => {
     mockhrTime.mockRestore();
   });
   it("should return difference between two times", () => {
-    mockhrTime = jest.spyOn(process, "hrtime").mockImplementation(t => {
+    mockhrTime = jest.spyOn(process, "hrtime").mockImplementation(() => {
       return mockedTime;
     });
     expect(TimeHelpers.getDurationNs()).toEqual(2000000000);

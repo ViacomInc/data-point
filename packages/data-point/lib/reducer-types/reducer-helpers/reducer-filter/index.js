@@ -5,5 +5,5 @@ module.exports = {
   create: factory.create,
   type: factory.type,
   name: factory.name,
-  resolve: resolve
+  resolve
 };

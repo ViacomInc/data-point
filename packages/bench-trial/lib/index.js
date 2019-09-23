@@ -8,7 +8,8 @@ function testAsync(method, expected) {
   return done => {
     return method((err, value) => {
       if (err) {
-        return done(err);
+        done(err);
+        return;
       }
       try {
         assert.deepStrictEqual(value, expected);
@@ -36,7 +37,7 @@ function benchmarkSync(method) {
 
 function benchmarkAsync(method) {
   return deferred => {
-    return method((err, value) => {
+    return method(err => {
       if (err) {
         throw err;
       }

@@ -1,6 +1,7 @@
-const dataPoint = require("../").create();
 const assert = require("assert");
 const _ = require("lodash");
+
+const dataPoint = require("../").create();
 
 dataPoint.addEntities({
   "hash:mapKeys": {
@@ -27,5 +28,6 @@ const input = {
 
 dataPoint.resolve("hash:mapKeys", input).then(output => {
   assert.deepStrictEqual(output, expectedResult);
+  // eslint-disable-next-line no-console
   console.log(output);
 });

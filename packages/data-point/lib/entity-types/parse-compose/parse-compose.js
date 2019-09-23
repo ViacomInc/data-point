@@ -6,6 +6,62 @@ const composeLink =
   "https://github.com/ViacomInc/data-point/tree/master/packages/data-point#entity-compose-reducer";
 
 /**
+ * @param {string} type
+ * @param {Object} spec
+ * @returns {Object}
+ */
+function createComposeReducer(type, spec) {
+  return { type, spec };
+}
+
+module.exports.createComposeReducer = createComposeReducer;
+
+/**
+ * @param {string} entityId
+ * @param {Array<string>} validKeys
+ * @param {Object} modifierSpec
+ * @throws if the spec is not valid
+ * @returns {Object}
+ */
+function parseModifierSpec(entityId, validKeys, modifierSpec) {
+  const keys = Object.keys(modifierSpec);
+  if (keys.length !== 1) {
+    throw new Error(
+      `Compose Modifiers may only contain one key, but found ${keys.length}${
+        keys.length ? ` (${keys.join(", ")})` : ""
+      }`
+    );
+  }
+
+  const type = keys[0];
+  if (!validKeys.includes(type)) {
+    throw new Error(
+      `Modifier '${type}' in "${entityId}" does not match any of the valid modifiers: ${validKeys.join(
+        ", "
+      )}`
+    );
+  }
+
+  return createComposeReducer(type, modifierSpec[type]);
+}
+
+module.exports.parseModifierSpec = parseModifierSpec;
+
+/**
+ * @param {string} entityId
+ * @param {Array<string>} modifierKeys
+ * @param {Array<Object>} composeSpec
+ * @returns {Array<Object>}
+ */
+function parseComposeSpec(entityId, modifierKeys, composeSpec) {
+  return composeSpec.map(modifierSpec => {
+    return parseModifierSpec(entityId, modifierKeys, modifierSpec);
+  });
+}
+
+module.exports.parseComposeSpec = parseComposeSpec;
+
+/**
  * @param {string} entityId
  * @param {Array<string>} validKeys
  * @param {Object} spec
@@ -62,59 +118,3 @@ function parse(entityId, validKeys, spec) {
 }
 
 module.exports.parse = parse;
-
-/**
- * @param {string} entityId
- * @param {Array<string>} modifierKeys
- * @param {Array<Object>} composeSpec
- * @returns {Array<Object>}
- */
-function parseComposeSpec(entityId, modifierKeys, composeSpec) {
-  return composeSpec.map(modifierSpec => {
-    return parseModifierSpec(entityId, modifierKeys, modifierSpec);
-  });
-}
-
-module.exports.parseComposeSpec = parseComposeSpec;
-
-/**
- * @param {string} entityId
- * @param {Array<string>} validKeys
- * @param {Object} modifierSpec
- * @throws if the spec is not valid
- * @returns {Object}
- */
-function parseModifierSpec(entityId, validKeys, modifierSpec) {
-  const keys = Object.keys(modifierSpec);
-  if (keys.length !== 1) {
-    throw new Error(
-      `Compose Modifiers may only contain one key, but found ${keys.length}${
-        keys.length ? ` (${keys.join(", ")})` : ""
-      }`
-    );
-  }
-
-  const type = keys[0];
-  if (!validKeys.includes(type)) {
-    throw new Error(
-      `Modifier '${type}' in "${entityId}" does not match any of the valid modifiers: ${validKeys.join(
-        ", "
-      )}`
-    );
-  }
-
-  return createComposeReducer(type, modifierSpec[type]);
-}
-
-module.exports.parseModifierSpec = parseModifierSpec;
-
-/**
- * @param {string} type
- * @param {Object} spec
- * @returns {Object}
- */
-function createComposeReducer(type, spec) {
-  return { type, spec };
-}
-
-module.exports.createComposeReducer = createComposeReducer;

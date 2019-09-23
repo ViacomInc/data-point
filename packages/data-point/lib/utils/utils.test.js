@@ -65,6 +65,7 @@ describe("typeOf", () => {
   });
 });
 
+/* eslint-disable no-console */
 describe("inspect", () => {
   let consoleInfo;
   function getAcc() {
@@ -90,6 +91,7 @@ describe("inspect", () => {
     expect(console.info.mock.calls[0]).toMatchSnapshot();
   });
 });
+/* eslint-enable no-console */
 
 describe("inspectProperties", () => {
   test("It should inspect each property", () => {

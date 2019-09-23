@@ -1,5 +1,7 @@
-const dataPoint = require("../").create();
+/* eslint-disable no-console */
 const assert = require("assert");
+
+const dataPoint = require("../").create();
 
 const logError = error => {
   console.log(error.toString());

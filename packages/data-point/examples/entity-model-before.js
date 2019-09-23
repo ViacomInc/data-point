@@ -1,5 +1,5 @@
-const dataPoint = require("../").create();
 const assert = require("assert");
+const dataPoint = require("../").create();
 
 const toArray = input => {
   return Array.isArray(input) ? input : [input];

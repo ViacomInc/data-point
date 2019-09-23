@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 /* eslint-env jest */
 
-const InspectorMiddleware = require("./inspector-middleware");
 const Express = require("express");
 const DataPoint = require("data-point");
 const request = require("supertest");
+
+const InspectorMiddleware = require("./inspector-middleware");
 
 describe("create - inspect middleware", () => {
   const consoleWarn = console.warn;
@@ -18,7 +20,7 @@ describe("create - inspect middleware", () => {
         "reducer:test-query": (value, acc) => ({
           message: `Hello ${acc.locals.query.name}`
         }),
-        "reducer:test-value": (value, acc) => ({
+        "reducer:test-value": value => ({
           message: `Hello ${value}`
         })
       }

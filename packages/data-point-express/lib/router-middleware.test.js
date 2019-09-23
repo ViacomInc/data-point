@@ -1,9 +1,10 @@
 /* eslint-env jest */
 
-const RouterMiddleware = require("./router-middleware");
 const Express = require("express");
 const request = require("supertest");
 const DataPoint = require("data-point");
+
+const RouterMiddleware = require("./router-middleware");
 
 describe("createRoutes", () => {
   test("It should create routes from options", () => {

@@ -120,8 +120,7 @@ describe("cache.getFromStore", () => {
 
 describe("create", () => {
   it("should create a cache client", () => {
-    const cache = require("./cache");
-    return cache.create().then(result => {
+    return Cache.create().then(result => {
       expect(result.set).toBeInstanceOf(Function);
       expect(result.get).toBeInstanceOf(Function);
       expect(result.del).toBeInstanceOf(Function);
@@ -164,6 +163,7 @@ describe("create", () => {
   describe("cache.del", () => {
     it("should delete key", () => {
       return Cache.create().then(result => {
+        // eslint-disable-next-line no-param-reassign
         result.redis.del = jest.fn();
         result.del("foo");
         expect(result.redis.del).toBeCalledWith("foo");

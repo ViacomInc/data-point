@@ -1,5 +1,6 @@
 /* eslint-env jest */
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 const DataPoint = require("data-point");
 
 const checkCardInputSchema = DataPoint.createTypeCheckReducer(input => {

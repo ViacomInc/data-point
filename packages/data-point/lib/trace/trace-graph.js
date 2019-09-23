@@ -52,6 +52,7 @@ module.exports.createTraceNodeLabel = createTraceNodeLabel;
  * @param {Number} nestingLevel
  * @param {Accumulator} accumulator
  */
+/* eslint-disable no-param-reassign */
 function createTree(currentNode, traceGraph, nestingLevel, accumulator) {
   currentNode.durationMs = nanoToMillisecond(currentNode.durationNs);
   currentNode.timelineStartNs =
@@ -79,6 +80,7 @@ function createTree(currentNode, traceGraph, nestingLevel, accumulator) {
     createTree(node, traceGraph, nestingLevel, accumulator);
   });
 }
+/* eslint-enable no-param-reassign */
 
 module.exports.createTree = createTree;
 
@@ -86,6 +88,7 @@ module.exports.createTree = createTree;
  * @param {Tracenode} node
  */
 function logGraph(node) {
+  // eslint-disable-next-line no-console
   console.log(
     "%s%s %s S: %sms T: %sms",
     "  ".repeat(node.nestingLevel),

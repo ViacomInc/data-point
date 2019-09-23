@@ -1,5 +1,5 @@
-const dataPoint = require("../").create();
 const assert = require("assert");
+const dataPoint = require("../").create();
 
 dataPoint.addEntities({
   "hash:omitKeys": {
@@ -19,5 +19,6 @@ const input = {
 
 dataPoint.resolve("hash:omitKeys", input).then(output => {
   assert.deepStrictEqual(output, expectedResult);
+  // eslint-disable-next-line no-console
   console.log(output);
 });

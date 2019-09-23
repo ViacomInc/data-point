@@ -28,7 +28,7 @@ module.exports.use = use;
  * @param {Object} spec
  * @return {Object}
  */
-function create(spec) {
+function create() {
   const manager = {
     store: new Map()
   };

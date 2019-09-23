@@ -25,10 +25,10 @@ function buildTransformOptions(req, options = {}) {
 
 function getErrorOwnKeys(err) {
   const cleanObject = _.omit(err, ["name", "message"]);
-  return _.mapValues(cleanObject, (value, key) => {
-    const err = _.attempt(JSON.stringify, value);
-    if (err instanceof Error) {
-      return err.toString();
+  return _.mapValues(cleanObject, value => {
+    const stringifyError = _.attempt(JSON.stringify, value);
+    if (stringifyError instanceof Error) {
+      return stringifyError.toString();
     }
     return value;
   });

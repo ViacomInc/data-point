@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const DataPoint = require("../");
 
 const dataPoint = DataPoint.create();
@@ -6,7 +7,7 @@ const dataPoint = DataPoint.create();
 // 'World' to the value of the
 // accumulator
 const reducer = input => {
-  return input + " World";
+  return `${input} World`;
 };
 
 // applies reducer to input

@@ -3,6 +3,7 @@
 const _ = require("lodash");
 const EntityType = require("./entity-types");
 
+// eslint-disable-next-line no-unused-vars
 const FooEntityType = (id, spec) => {};
 
 let entityTypes;

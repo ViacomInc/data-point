@@ -42,7 +42,8 @@ function server(dataPoint) {
       });
   });
 
-  app.listen(3000, function() {
+  app.listen(3000, () => {
+    // eslint-disable-next-line no-console
     console.log("listening on port 3000!");
   });
 }

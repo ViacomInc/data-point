@@ -14,7 +14,7 @@ const utils = require("../../utils");
 
 let dataPoint;
 
-const resolveEntity = (entityId, input, options, resolver) => {
+const resolveEntity = (entityId, input, options) => {
   const racc = helpers.createAccumulator(input, options);
   const reducer = createReducerEntityId(createReducer, entityId);
   const entity = dataPoint.entities.get(entityId);
@@ -37,7 +37,7 @@ afterEach(() => {
 
 describe("ResolveEntity.resolveErrorReducers", () => {
   test("It should reject if no reducer is provided", () => {
-    const err = new Error("Test");
+    const error = new Error("Test");
     const accumulator = helpers.createAccumulator(
       {},
       {
@@ -48,7 +48,7 @@ describe("ResolveEntity.resolveErrorReducers", () => {
     );
     return ResolveEntity.resolveErrorReducers(
       dataPoint,
-      err,
+      error,
       accumulator,
       resolveReducer
     )
@@ -213,6 +213,7 @@ describe("ResolveEntity.resolveEntity", () => {
   });
 
   test("It should log trace calls when set to true", () => {
+    /* eslint-disable no-console */
     const consoleTime = console.time;
     const consoleTimeEnd = console.timeEnd;
     console.time = jest.fn();
@@ -228,6 +229,7 @@ describe("ResolveEntity.resolveEntity", () => {
       console.time = consoleTime;
       console.timeEnd = consoleTimeEnd;
     });
+    /* eslint-enable no-console */
   });
 
   test("It should resolve through bypass", () => {
@@ -240,7 +242,7 @@ describe("ResolveEntity.resolveEntity", () => {
   });
 
   test("it should catch errors from middleware", () => {
-    dataPoint.middleware.use("hash:before", (acc, next) => {
+    dataPoint.middleware.use("hash:before", () => {
       throw new Error("test");
     });
     return resolveEntity("hash:asIs", "foo")
@@ -505,7 +507,7 @@ describe("entity lifecycle methods", () => {
 
     addMiddleware(stack);
 
-    dataPoint.middleware.use("model:before", (acc, next) => {
+    dataPoint.middleware.use("model:before", () => {
       stack.push("model:before [middleware with error]");
       throw new Error();
     });

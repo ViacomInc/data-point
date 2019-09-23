@@ -14,7 +14,7 @@ test("isType", () => {
   ).toBe(true);
 });
 
-describe("create", function() {
+describe("create", () => {
   test("default create", () => {
     const reducer = factory.create(createReducer, EntityReducer("foo", "$"));
     expect(reducer).toMatchSnapshot();

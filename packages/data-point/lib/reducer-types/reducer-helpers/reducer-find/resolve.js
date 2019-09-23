@@ -29,6 +29,8 @@ function resolve(manager, resolveReducer, accumulator, reducerFind) {
           hasResult = true;
           return itemValue;
         }
+
+        return undefined;
       });
     },
     null

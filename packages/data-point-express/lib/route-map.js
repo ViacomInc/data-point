@@ -119,7 +119,7 @@ function addRoute(app, rootPath, route, dataPointMiddleware) {
     );
   }
 
-  // we are here accesing the express methods:
+  // we are here accessing the express methods:
   // get, put, delete, post
   const appRouteMethod = app[method];
 

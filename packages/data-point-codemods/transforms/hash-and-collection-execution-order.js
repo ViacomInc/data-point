@@ -8,7 +8,7 @@ function isMatchingKey(key, keys) {
   return keys.includes(id);
 }
 
-module.exports = (file, api, options) => {
+module.exports = (file, api) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
@@ -48,9 +48,11 @@ module.exports = (file, api, options) => {
     });
 
     if (index === -1) {
+      // eslint-disable-next-line no-param-reassign
       node.value.properties = [composeProp].concat(otherProps);
     } else {
       otherProps.splice(index + 1, 0, composeProp);
+      // eslint-disable-next-line no-param-reassign
       node.value.properties = otherProps;
     }
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const defaultTo = require("lodash/defaultTo");
 const {
   normalizeTypeCheckSource
@@ -53,8 +54,22 @@ function validateFactory(factory) {
  */
 function setReducerIfTruthy(name, target, spec) {
   if (spec[name]) {
+    // eslint-disable-next-line no-param-reassign
     target[name] = createReducer(spec[name]);
   }
+}
+
+/**
+ * @param {Object} entity
+ * @returns {Object} entity named instance
+ */
+function createEntityInstance(entity) {
+  function EntityFactory() {}
+  Object.defineProperty(EntityFactory, "name", {
+    value: entity.id
+  });
+
+  return Object.assign(new EntityFactory(), entity);
 }
 
 /**
@@ -90,19 +105,6 @@ function createEntityType(type, name, entity) {
   entity.params = defaultTo(spec.params, {});
 
   return createEntityInstance(entity);
-}
-
-/**
- * @param {Object} entity
- * @returns {Object} entity named instance
- */
-function createEntityInstance(entity) {
-  function EntityFactory() {}
-  Object.defineProperty(EntityFactory, "name", {
-    value: entity.id
-  });
-
-  return Object.assign(new EntityFactory(), entity);
 }
 
 /**

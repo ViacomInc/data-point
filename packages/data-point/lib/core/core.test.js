@@ -37,7 +37,7 @@ test("setup", () => {
 });
 
 test("entry#transform - fail if id not found", done => {
-  instance.transform("entry:INVALID", {}, {}, (err, result) => {
+  instance.transform("entry:INVALID", {}, {}, err => {
     /* eslint handle-callback-err: 0 */
     expect(_.isError(err)).toBeTruthy();
     expect(err.name).toBe("InvalidId");
@@ -46,9 +46,11 @@ test("entry#transform - fail if id not found", done => {
 });
 
 describe("addEntityType", () => {
+  // eslint-disable-next-line no-unused-vars
   function entityFactory(id, spec) {
     return {
       id,
+      // eslint-disable-next-line no-unused-vars
       resolve(accumulator, resolveReducer) {}
     };
   }

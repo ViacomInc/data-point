@@ -1,7 +1,8 @@
 /* eslint-env jest */
 
-const RouteMap = require("./route-map");
 const _ = require("lodash");
+
+const RouteMap = require("./route-map");
 
 const routes = {
   a: {
@@ -47,7 +48,7 @@ const routes = {
   g: {
     priority: 250,
     path: "/throw",
-    middleware: (route, next) => {
+    middleware: () => {
       throw new Error("error");
     }
   },
@@ -270,7 +271,7 @@ describe("createRoutes", () => {
   test("It should create multiple routes", () => {
     const mid = () => 1;
 
-    const routes = {
+    const testRoutes = {
       a: {
         path: "/a",
         method: "get",
@@ -286,7 +287,7 @@ describe("createRoutes", () => {
     app.get = jest.fn();
     app.put = jest.fn();
     const dataPointMiddleware = () => "dp";
-    RouteMap.createRoutes(app, "/api", routes, dataPointMiddleware);
+    RouteMap.createRoutes(app, "/api", testRoutes, dataPointMiddleware);
     expect(app.get).toBeCalledWith("/api/a", mid, "dp");
     expect(app.put).toBeCalledWith("/api/b", mid);
   });

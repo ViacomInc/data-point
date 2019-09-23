@@ -5,6 +5,7 @@ const defaultTo = require("lodash/defaultTo");
  * @param {Function} resolveReducer
  * @return {Promise}
  */
+// eslint-disable-next-line no-unused-vars
 function resolve(accumulator, resolveReducer) {
   return defaultTo(accumulator.value, {});
 }

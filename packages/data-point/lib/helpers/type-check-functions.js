@@ -5,6 +5,22 @@ const isPlainObject = require("lodash/isPlainObject");
 const utils = require("../utils");
 
 /**
+ * @param {*} value
+ * @param {String} expectedType
+ * @return {String}
+ */
+function getErrorMessage(value, expectedType) {
+  return `Entity type check failed!\n${
+    expectedType ? `Expected type: ${expectedType}\n` : ""
+  }Actual type: ${utils.typeOf(value)}\nInput value: ${truncate(
+    Util.inspect(value, { breakLength: Infinity }),
+    {
+      length: 30
+    }
+  )}`;
+}
+
+/**
  * @param {Function} typeCheckFunction
  * @param {String} expectedType
  * @return {Function}
@@ -26,22 +42,6 @@ function createTypeCheckReducer(typeCheckFunction, expectedType) {
 }
 
 module.exports.createTypeCheckReducer = createTypeCheckReducer;
-
-/**
- * @param {*} value
- * @param {String} expectedType
- * @return {String}
- */
-function getErrorMessage(value, expectedType) {
-  return `Entity type check failed!\n${
-    expectedType ? `Expected type: ${expectedType}\n` : ""
-  }Actual type: ${utils.typeOf(value)}\nInput value: ${truncate(
-    Util.inspect(value, { breakLength: Infinity }),
-    {
-      length: 30
-    }
-  )}`;
-}
 
 module.exports = {
   createTypeCheckReducer,

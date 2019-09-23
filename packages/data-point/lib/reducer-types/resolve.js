@@ -76,6 +76,7 @@ function resolveReducer(manager, accumulator, reducer) {
   let result = resolve(manager, resolveReducer, acc, reducer);
 
   if (hasDefault(reducer)) {
+    // eslint-disable-next-line no-underscore-dangle
     const _default = reducer[DEFAULT_VALUE].value;
     const resolveDefault = reducers.ReducerDefault.resolve;
     result = result.then(value => resolveDefault(value, _default));

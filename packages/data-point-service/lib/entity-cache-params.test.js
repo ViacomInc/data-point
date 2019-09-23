@@ -1,6 +1,7 @@
 /* eslint-env jest */
 
 const util = require("util");
+
 util.deprecate = jest.fn(fn => fn);
 
 const EntityCacheParams = require("./entity-cache-params");
@@ -93,7 +94,7 @@ describe("shouldUseStaleWhileRevalidate", () => {
 });
 
 describe("getCacheParams", () => {
-  it("should have backwards compatability with params loose properties", () => {
+  it("should have backwards compatibility with params loose properties", () => {
     const params = {
       ttl: "20s",
       cacheKey: () => true,

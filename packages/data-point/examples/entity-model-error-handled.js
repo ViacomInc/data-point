@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const assert = require("assert");
 const dataPoint = require("../").create();
 

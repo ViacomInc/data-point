@@ -1,11 +1,10 @@
 const os = require("os");
 const _ = require("lodash");
 const Promise = require("bluebird");
+const Cache = require("data-point-cache");
 
 const DataPointFactory = require("./data-point-factory");
 const { setupMiddleware } = require("./setup-middleware");
-
-const Cache = require("data-point-cache");
 
 /**
  * @returns {Object} Default module's options
@@ -63,23 +62,28 @@ function createServiceObject(options) {
 }
 
 function handleCacheError(err, Service) {
+  // eslint-disable-next-line no-console
   console.error("Could not connect to REDIS", Service.settings.cache);
 
   if (Service.isCacheRequired) {
     throw err;
   } else {
+    // eslint-disable-next-line no-console
     console.warn(
       "REDIS is flagged as not required, this is NOT recommended for production environments."
     );
   }
 
+  // eslint-disable-next-line no-param-reassign
   Service.isCacheAvailable = false;
   return Service;
 }
 
 function successCreateCache(cache, service) {
+  /* eslint-disable no-param-reassign */
   service.isCacheAvailable = true;
   service.cache = cache;
+  /* eslint-enable no-param-reassign */
   return service;
 }
 
@@ -90,20 +94,16 @@ function createCache(service) {
 }
 
 function successDataPoint(dataPoint, service) {
+  // eslint-disable-next-line no-param-reassign
   service.dataPoint = dataPoint;
   return service;
 }
 
-function createDataPoint(service) {
-  return DataPointFactory.create(service.settings)
-    .then(dataPoint => successDataPoint(dataPoint, service))
-    .then(dataPoint => bootstrapDataPoint(setupMiddleware, service));
-}
-
 function bootstrapDataPoint(bootstrap, service) {
   if (!service.isCacheAvailable) {
+    // eslint-disable-next-line no-console
     console.warn(
-      "REDIS is not available, there will be no cacheing mechanism for",
+      "REDIS is not available, there will be no cache mechanism for",
       "DataPoint - we wish you the best of luck in your adventure."
     );
     return service;
@@ -112,12 +112,19 @@ function bootstrapDataPoint(bootstrap, service) {
   return bootstrap(service);
 }
 
+function createDataPoint(service) {
+  return DataPointFactory.create(service.settings)
+    .then(dataPoint => successDataPoint(dataPoint, service))
+    .then(() => bootstrapDataPoint(setupMiddleware, service));
+}
+
 function create(options) {
   const Service = createServiceObject(options);
   return Promise.resolve(true)
     .then(() => createCache(Service))
     .then(() => createDataPoint(Service))
     .catch(err => {
+      // eslint-disable-next-line no-console
       console.error("DataPoint could not initialize");
       throw err;
     });

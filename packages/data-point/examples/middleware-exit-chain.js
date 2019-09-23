@@ -1,5 +1,8 @@
+/* eslint-disable no-console */
 const assert = require("assert");
+// eslint-disable-next-line import/no-extraneous-dependencies
 const DataPoint = require("data-point");
+
 const dp = DataPoint.create();
 
 dp.use("before", (acc, next) => {

@@ -18,7 +18,7 @@ module.exports.Accumulator = Accumulator;
 
 /**
  * creates new Accumulator based on spec
- * @param  {Object} spec - acumulator spec
+ * @param  {Object} spec - accumulator spec
  * @return {Source}
  */
 function create(spec) {

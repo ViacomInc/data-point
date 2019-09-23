@@ -8,5 +8,5 @@ module.exports = {
   create: factory.create,
   type: factory.type,
   isType: factory.isType,
-  resolve: resolve
+  resolve
 };

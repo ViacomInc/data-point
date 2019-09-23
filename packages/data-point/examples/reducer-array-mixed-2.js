@@ -1,5 +1,7 @@
-const dataPoint = require("../").create();
+/* eslint-disable no-console */
 const assert = require("assert");
+
+const dataPoint = require("../").create();
 
 const input = {
   a: {
@@ -9,12 +11,12 @@ const input = {
   }
 };
 
-const multiplyBy = factor => input => {
-  return input * factor;
+const multiplyBy = factor => value => {
+  return value * factor;
 };
 
-const getMax = () => input => {
-  const result = Math.max.apply(null, input);
+const getMax = () => value => {
+  const result = Math.max.apply(null, value);
   return result;
 };
 

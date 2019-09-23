@@ -28,6 +28,7 @@ module.exports.validateContext = validateContext;
  * @param {Function} resolveReducer
  * @return {Promise}
  */
+// eslint-disable-next-line no-unused-vars
 function resolve(acc, resolveReducer) {
   return validateContext(acc);
 }

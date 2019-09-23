@@ -18,4 +18,4 @@ const entities = {
   }
 }
 
-dataPoint.transform("foo | $. | baz | $.");
+dataPoint.transform('foo | $. | baz | $.')

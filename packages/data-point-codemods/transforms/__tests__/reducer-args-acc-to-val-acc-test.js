@@ -1,8 +1,9 @@
 /* eslint-env jest */
 
-"use strict";
+const jscodeshift = require("jscodeshift");
 
 const defineTest = require("jscodeshift/dist/testUtils").defineTest;
+const transform = require("../../transforms/reducer-args-acc-to-val-acc");
 
 defineTest(
   __dirname,
@@ -12,8 +13,6 @@ defineTest(
 );
 
 it("throws variable value is already in scope", () => {
-  const jscodeshift = require("jscodeshift");
-  const transform = require("../../transforms/reducer-args-acc-to-val-acc");
   const source = `
     const f = input = acc => {
       return input + acc.value

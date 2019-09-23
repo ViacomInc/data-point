@@ -1,10 +1,10 @@
 /* eslint-env jest */
 
-const normalizeEntities = require("./normalize-entities");
 const _ = require("lodash");
+const normalizeEntities = require("./normalize-entities");
 
 let entities;
-let validEnties;
+let validEntities;
 
 beforeAll(() => {
   entities = {
@@ -56,7 +56,7 @@ beforeAll(() => {
     }
   };
 
-  validEnties = _.omit(entities, [
+  validEntities = _.omit(entities, [
     "hash:extendD -> hash:extendX",
     "hash:extendE -> hash:extendE",
     "hash:extendF -> hash:extendF1",
@@ -171,7 +171,7 @@ describe("extendSpec", () => {
 
 describe("extendSpecItem", () => {
   test("extend spec", () => {
-    const specs = normalizeEntities.normalizeEntitySpecs(validEnties);
+    const specs = normalizeEntities.normalizeEntitySpecs(validEntities);
     const result = normalizeEntities.extendSpecItem(
       specs["hash:extendC"],
       specs
@@ -189,7 +189,7 @@ describe("extendSpecItem", () => {
 
 describe("extendSpecs", () => {
   test("extends all entity specs", () => {
-    const specs = normalizeEntities.normalizeEntitySpecs(validEnties);
+    const specs = normalizeEntities.normalizeEntitySpecs(validEntities);
     const result = normalizeEntities.extendSpecs(specs);
     expect(result["hash:extendC"].spec).toEqual({
       before: "$before",
@@ -204,7 +204,7 @@ describe("extendSpecs", () => {
 
 describe("normalize", () => {
   test("normalizes entity specs", () => {
-    const result = normalizeEntities.normalize(validEnties);
+    const result = normalizeEntities.normalize(validEntities);
     expect(result["hash:extendC"].spec).toEqual({
       before: "$before",
       after: "$a",

@@ -51,8 +51,8 @@ function normalizeSpec(specItemId, source) {
   const id = tokens[0];
   const parentId = tokens[1];
   return {
-    id: id,
-    parentId: parentId,
+    id,
+    parentId,
     spec: source[specItemId],
     ancestors: []
   };
@@ -64,6 +64,7 @@ function normalizeEntitySpecs(source) {
   const specIds = Object.keys(source);
   return specIds.reduce((normSpecs, specItemId) => {
     const normalizedSpec = normalizeSpec(specItemId, source);
+    // eslint-disable-next-line no-param-reassign
     normSpecs[normalizedSpec.id] = normalizedSpec;
     return normSpecs;
   }, {});

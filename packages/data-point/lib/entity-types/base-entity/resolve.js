@@ -1,9 +1,10 @@
 const debug = require("debug");
-const Promise = require("bluebird");
-const middleware = require("../../middleware");
-const utils = require("../../utils");
 const memoize = require("lodash/memoize");
 const merge = require("lodash/merge");
+const Promise = require("bluebird");
+
+const middleware = require("../../middleware");
+const utils = require("../../utils");
 
 /**
  * create a new debug scope
@@ -13,7 +14,7 @@ function createDebugEntity(entityType) {
   return debug(`data-point:entity:${entityType}`);
 }
 
-// debug scope gets memoized so it is not as expensive, it will only create one
+// debug scope gets memoize so it is not as expensive, it will only create one
 // per entity type
 const debugEntity = memoize(createDebugEntity);
 
@@ -84,32 +85,6 @@ function getCurrentReducer(reducer, entity) {
 module.exports.getCurrentReducer = getCurrentReducer;
 
 /**
- * @param {Accumulator} accumulator
- * @param {Reducer} reducer
- * @param {Object} entity
- * @returns {Accumulator}
- */
-function createCurrentAccumulator(accumulator, reducer, entity) {
-  const currentReducer = getCurrentReducer(reducer, entity);
-  const entityId = reducer.id;
-  const uid = `${entityId}:${utils.getUID()}`;
-
-  // create accumulator to resolve
-  const currentAccumulator = utils.assign(accumulator, {
-    uid: uid,
-    context: entity,
-    reducer: currentReducer,
-    initialValue: accumulator.value,
-    params: assignParamsHelper(accumulator, entity),
-    debug: debugEntity(reducer.entityType)
-  });
-
-  return currentAccumulator;
-}
-
-module.exports.createCurrentAccumulator = createCurrentAccumulator;
-
-/**
  * Incase there is an override present, assigns parameters to the correct entity.
  * @param {*} accumulator
  * @param {*} entity
@@ -128,6 +103,32 @@ function assignParamsHelper(accumulator, entity) {
 module.exports.assignParamsHelper = assignParamsHelper;
 
 /**
+ * @param {Accumulator} accumulator
+ * @param {Reducer} reducer
+ * @param {Object} entity
+ * @returns {Accumulator}
+ */
+function createCurrentAccumulator(accumulator, reducer, entity) {
+  const currentReducer = getCurrentReducer(reducer, entity);
+  const entityId = reducer.id;
+  const uid = `${entityId}:${utils.getUID()}`;
+
+  // create accumulator to resolve
+  const currentAccumulator = utils.assign(accumulator, {
+    uid,
+    context: entity,
+    reducer: currentReducer,
+    initialValue: accumulator.value,
+    params: assignParamsHelper(accumulator, entity),
+    debug: debugEntity(reducer.entityType)
+  });
+
+  return currentAccumulator;
+}
+
+module.exports.createCurrentAccumulator = createCurrentAccumulator;
+
+/**
  * Resolves a middleware, this method contains a 'hack'
  * which consists in using an error to bypass the
  * chain of promise then that come after it.
@@ -144,6 +145,7 @@ function resolveMiddleware(manager, accumulator, name) {
   return middleware
     .resolve(manager, name, accumulator)
     .then(middlewareResult => {
+      // eslint-disable-next-line no-underscore-dangle
       if (middlewareResult.___resolve === true) {
         accumulator.debug(accumulator.uid, "- will bypass");
         // doing this until proven wrong :)
@@ -205,6 +207,7 @@ function resolveEntity(manager, resolveReducer, accumulator, reducer, entity) {
   let timeId;
   if (trace === true) {
     timeId = `⧖ ${currentAccumulator.uid}`;
+    // eslint-disable-next-line no-console
     console.time(timeId);
   }
 
@@ -239,9 +242,9 @@ function resolveEntity(manager, resolveReducer, accumulator, reducer, entity) {
     resolveReducer(manager, acc, value)
   );
 
-  result = result.then(result => {
+  result = result.then(resultValue => {
     currentAccumulator.debug(currentAccumulator.uid, "- resolve");
-    const acc = utils.set(currentAccumulator, "value", result);
+    const acc = utils.set(currentAccumulator, "value", resultValue);
     return entity.resolve(acc, resolveReducer.bind(null, manager));
   });
 
@@ -273,6 +276,7 @@ function resolveEntity(manager, resolveReducer, accumulator, reducer, entity) {
   return result
     .catch(error => {
       // attach entity information to help debug
+      // eslint-disable-next-line no-param-reassign
       error.entityId = currentAccumulator.reducer.spec.id;
 
       let errorResult = resolveErrorReducers(
@@ -291,14 +295,15 @@ function resolveEntity(manager, resolveReducer, accumulator, reducer, entity) {
 
       return errorResult;
     })
-    .then(value => {
+    .then(finalValue => {
       if (trace === true) {
+        // eslint-disable-next-line no-console
         console.timeEnd(timeId);
       }
 
       currentAccumulator.debug(currentAccumulator.uid, `- resolve:end`);
 
-      return value;
+      return finalValue;
     });
 }
 

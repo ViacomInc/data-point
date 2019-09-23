@@ -4,11 +4,11 @@ module.exports = (file, api) => {
 
   const root = j(file.source);
 
-  function detectQuoteStyle(j, root) {
+  function detectQuoteStyle(item, quoteRoot) {
     let detectedQuoting = "single";
 
-    root
-      .find(j.Literal, {
+    quoteRoot
+      .find(item.Literal, {
         value: v => typeof v === "string",
         raw: v => typeof v === "string"
       })
@@ -30,6 +30,7 @@ module.exports = (file, api) => {
   function transformLiteral(node) {
     const originalValue = node.value.value;
     if (rootPathWithDotRegex.test(originalValue)) {
+      // eslint-disable-next-line no-param-reassign
       node.value.value = node.value.value.replace(rootPathWithDotRegex, "$$$1");
     }
   }
@@ -38,6 +39,7 @@ module.exports = (file, api) => {
   function transformTemplateElement(node) {
     const originalValue = node.value.value.raw;
     if (rootPathWithDotRegex.test(originalValue)) {
+      // eslint-disable-next-line no-param-reassign
       node.value.value.raw = node.value.value.raw.replace(
         rootPathWithDotRegex,
         "$$$1"

@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { test } = require("bench-trial");
 
 const expected = true;

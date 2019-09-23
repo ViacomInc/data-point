@@ -49,13 +49,13 @@ module.exports.newProps = newProps;
  * @returns {Array}
  */
 function getProps(createReducer, source, stack = [], props = newProps()) {
-  for (const key of Object.keys(source)) {
+  Object.keys(source).forEach(key => {
     const path = stack.concat(key);
     const value = source[key];
     if (_.isPlainObject(value)) {
       // NOTE: recursive call
       getProps(createReducer, value, path, props);
-      continue;
+      return;
     }
 
     const reducer = createReducer(value);
@@ -64,7 +64,7 @@ function getProps(createReducer, source, stack = [], props = newProps()) {
     } else {
       props.reducers.push({ path, reducer });
     }
-  }
+  });
 
   return props;
 }

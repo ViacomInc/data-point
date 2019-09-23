@@ -1,11 +1,13 @@
 /* eslint-env jest */
 
+const DataPoint = require("data-point");
+
 const SetupMiddleware = require("./setup-middleware");
 
 describe("setupMiddleware", () => {
   test("It should setup middleware", () => {
     const service = {
-      dataPoint: require("data-point").create(),
+      dataPoint: DataPoint.create(),
       settings: {}
     };
     return SetupMiddleware.setupMiddleware(service)
@@ -27,7 +29,7 @@ describe("setupMiddleware", () => {
 
   test("It should use custom before/after if provided", () => {
     const service = {
-      dataPoint: require("data-point").create(),
+      dataPoint: DataPoint.create(),
       settings: {
         before: "before",
         after: "after"

@@ -39,7 +39,7 @@ function getStaleWhileRevalidateTtl(staleWhileRevalidate, ttl) {
 
 /**
  * @param {String|Number|Boolean}  value
- * @returns {Bolean}
+ * @returns {Boolean}
  */
 function shouldUseStaleWhileRevalidate(value) {
   return (
@@ -71,7 +71,7 @@ function getCacheParams(params) {
       staleWhileRevalidate
     );
 
-    // only calculate stale's ttl if we need to
+    // only calculate stale ttl if we need to
     if (useStaleWhileRevalidate) {
       staleWhileRevalidateTtl = getStaleWhileRevalidateTtl(
         staleWhileRevalidate,

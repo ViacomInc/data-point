@@ -1,9 +1,10 @@
-const revalidationStoreFactory = require("./revalidation-store").create;
-
-const RedisController = require("./redis-controller");
 const debug = require("debug")(
   "data-point-service:cache:stale-while-revalidate"
 );
+
+const revalidationStoreFactory = require("./revalidation-store").create;
+
+const RedisController = require("./redis-controller");
 
 /**
  * Flag for redis control entry flag, when set it means the stored result should
@@ -14,7 +15,7 @@ const SWR_CONTROL_STALE = "SWR-CONTROL-STALE";
 /**
  * Flag for redis control entry flag, when set it means the stored result should
  * be considered in revalidation state. Revalidation state is stored to prevent
- * duplication of concurrent revalidations by multiple node instances.
+ * duplication of concurrent revalidation by multiple node instances.
  */
 const SWR_CONTROL_REVALIDATING = "SWR-CONTROL-REVALIDATING";
 

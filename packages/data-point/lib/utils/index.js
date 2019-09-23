@@ -24,7 +24,7 @@ module.exports.assign = assign;
 
 let uid = 0;
 function getUID() {
-  uid++;
+  uid += 1;
   return uid;
 }
 
@@ -50,14 +50,15 @@ module.exports.typeOf = typeOf;
  * @param {Accumulator} acc
  * @param {Object} data
  */
-function inspect(acc, data) {
+function inspect(acc, data = {}) {
   const log = [];
   log.push("\n\x1b[33minspect\x1b[0m:", _.get(acc, "reducer.spec.id"));
-  for (const key in data) {
+  Object.keys(data).forEach(key => {
     const value = data[key];
     log.push(`\n${key}:`, stringify(value, null, 2));
-  }
+  });
 
+  // eslint-disable-next-line no-console
   console.info.apply(null, log);
 }
 

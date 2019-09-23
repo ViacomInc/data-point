@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const assert = require("assert");
 const mock = require("./entity-request-options.mock");
 

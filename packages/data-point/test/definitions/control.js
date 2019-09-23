@@ -4,11 +4,11 @@ const isEqualTo = (pathFrom, compareTo) => value => {
   return _.get(value, pathFrom) === compareTo;
 };
 
-const returnValue = newValue => value => {
+const returnValue = newValue => () => {
   return newValue;
 };
 
-const throwError = () => value => {
+const throwError = () => () => {
   throw new Error("test");
 };
 

@@ -14,8 +14,8 @@ function resolve(manager, resolveReducer, accumulator, reducer) {
     return Promise.resolve(result);
   }
 
-  return Promise.map(reducer.reducers, ({ reducer, path }) => {
-    return resolveReducer(manager, accumulator, reducer).then(value => {
+  return Promise.map(reducer.reducers, ({ reducer: itemReducer, path }) => {
+    return resolveReducer(manager, accumulator, itemReducer).then(value => {
       set(result, path, value);
     });
   }).then(() => result);

@@ -37,7 +37,7 @@ module.exports = {
 
   "model:c.2": {
     // test that its immutable
-    outputType: value => {
+    outputType: () => {
       return "cant happen";
     }
   },
@@ -54,12 +54,12 @@ module.exports = {
   },
 
   "model:c.4": {
-    after: input => 1,
+    after: () => 1,
     outputType: "string"
   },
 
   "model:c.5": {
-    before: input => 1,
+    before: () => 1,
     outputType: "string"
   },
 
