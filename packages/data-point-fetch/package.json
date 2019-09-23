@@ -1,0 +1,31 @@
+{
+  "name": "@data-point/fetch",
+  "description": "DataPoint Reducer that interfaces with node-fetch",
+  "license": "Apache-2.0",
+  "author": "Acatl Pacheco <acatl.pacheco@viacom.com>",
+  "homepage": "https://github.com/ViacomInc/data-point",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ViacomInc/data-point.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ViacomInc/data-point/issues"
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@data-point/core": "^6.0.0",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "nock": "^11.3.3"
+  },
+  "keywords": [
+    "data-point",
+    "fetch"
+  ],
+  "engines": {
+    "node": ">=10",
+    "npm": ">=2"
+  }
+}

@@ -1,1 +1,1 @@
-module.exports = require("./src/ReducerEntity");
+module.exports = require("./src/ReducerEntity").ReducerEntity;

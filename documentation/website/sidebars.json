@@ -1,9 +1,6 @@
 {
   "docs": {
-    "Introduction": [
-      "getting-started",
-      "introduction/basic-examples"
-    ],
+    "Introduction": ["getting-started", "introduction/basic-examples"],
     "API Reference": [
       "api/data-point",
       "api/accumulator",
@@ -33,13 +30,14 @@
       {
         "type": "subcategory",
         "label": "Entity Reducers",
-        "ids": ["api/reducers/entity-reducer", "api/reducers/model"]
+        "ids": [
+          "api/reducers/entity-reducer",
+          "api/reducers/model",
+          "api/reducers/data-point-fetch"
+        ]
       }
     ],
     "Architecture Overview": ["doc3"],
-    "Contributing": [
-      "code-of-conduct",
-      "introduction/basic-examples"
-    ]
+    "Contributing": ["code-of-conduct", "introduction/basic-examples"]
   }
 }
