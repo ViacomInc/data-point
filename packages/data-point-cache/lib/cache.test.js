@@ -20,7 +20,7 @@ describe("cache.normalizeMilliseconds", () => {
 });
 
 describe("cache.set", () => {
-  it("should set in redis store", () => {
+  it("should set in redis store", async () => {
     const redisSet = jest.fn(() => Promise.resolve(true));
     const localSet = jest.fn(() => Promise.resolve(true));
 
@@ -29,13 +29,12 @@ describe("cache.set", () => {
     _.set(cache, "local.set", localSet);
     _.set(cache, "settings.localTTL", 1000);
 
-    return Cache.set(cache, "key", "value", "10ms").then(() => {
-      expect(redisSet).toBeCalledWith("key", "value", 10);
-      expect(localSet).toBeCalledWith("key", "value", 1000);
-    });
+    await Cache.set(cache, "key", "value", "10ms");
+    expect(redisSet).toBeCalledWith("key", "value", 10);
+    expect(localSet).toBeCalledWith("key", "value", 1000);
   });
 
-  it("should set in redis store with default ttl settings.localTTL when not provided", () => {
+  it("should set in redis store with default ttl settings.localTTL when not provided", async () => {
     const redisSet = jest.fn(() => Promise.resolve(true));
     const localSet = jest.fn(() => Promise.resolve(true));
 
@@ -44,10 +43,9 @@ describe("cache.set", () => {
     _.set(cache, "local.set", localSet);
     _.set(cache, "settings.localTTL", 1000);
 
-    return Cache.set(cache, "key", "value").then(() => {
-      expect(redisSet).toBeCalledWith("key", "value", 1200000);
-      expect(localSet).toBeCalledWith("key", "value", 1000);
-    });
+    await Cache.set(cache, "key", "value");
+    expect(redisSet).toBeCalledWith("key", "value", 1200000);
+    expect(localSet).toBeCalledWith("key", "value", 1000);
   });
 });
 
@@ -64,7 +62,7 @@ describe("del", () => {
 });
 
 describe("cache.getFromStore", () => {
-  it("should return local value if found", () => {
+  it("should return local value if found", async () => {
     const localGet = jest.fn(() => "localValue");
     const redisGet = jest.fn();
 
@@ -72,14 +70,13 @@ describe("cache.getFromStore", () => {
     _.set(cache, "local.get", localGet);
     _.set(cache, "redis.get", redisGet);
 
-    return Cache.getFromStore(cache, "key").then(result => {
-      expect(result).toEqual("localValue");
-      expect(localGet).toBeCalledWith("key");
-      expect(redisGet).not.toBeCalled();
-    });
+    const result = await Cache.getFromStore(cache, "key");
+    expect(result).toEqual("localValue");
+    expect(localGet).toBeCalledWith("key");
+    expect(redisGet).not.toBeCalled();
   });
 
-  it("should fetch from redis if local not found, only store locally if value found", () => {
+  it("should fetch from redis if local not found, only store locally if value found", async () => {
     const localGet = jest.fn(() => undefined);
     const localSet = jest.fn(() => undefined);
     const redisGet = jest.fn(() => Promise.resolve("remoteValue"));
@@ -90,15 +87,14 @@ describe("cache.getFromStore", () => {
     _.set(cache, "redis.get", redisGet);
     _.set(cache, "settings.localTTL", 1000);
 
-    return Cache.getFromStore(cache, "key").then(result => {
-      expect(result).toEqual("remoteValue");
-      expect(localGet).toBeCalledWith("key");
-      expect(redisGet).toBeCalledWith("key");
-      expect(localSet).toBeCalledWith("key", "remoteValue", 1000);
-    });
+    const result = await Cache.getFromStore(cache, "key");
+    expect(result).toEqual("remoteValue");
+    expect(localGet).toBeCalledWith("key");
+    expect(redisGet).toBeCalledWith("key");
+    expect(localSet).toBeCalledWith("key", "remoteValue", 1000);
   });
 
-  it("should fetch from redis if local not found, skip local store if not found", () => {
+  it("should fetch from redis if local not found, skip local store if not found", async () => {
     const localGet = jest.fn(() => undefined);
     const localSet = jest.fn(() => undefined);
     const redisGet = jest.fn(() => Promise.resolve(undefined));
@@ -109,26 +105,24 @@ describe("cache.getFromStore", () => {
     _.set(cache, "redis.get", redisGet);
     _.set(cache, "settings.localTTL", 1000);
 
-    return Cache.getFromStore(cache, "key").then(result => {
-      expect(result).toEqual(undefined);
-      expect(localGet).toBeCalledWith("key");
-      expect(redisGet).toBeCalledWith("key");
-      expect(localSet).not.toBeCalled();
-    });
+    const result = await Cache.getFromStore(cache, "key");
+    expect(result).toEqual(undefined);
+    expect(localGet).toBeCalledWith("key");
+    expect(redisGet).toBeCalledWith("key");
+    expect(localSet).not.toBeCalled();
   });
 });
 
 describe("create", () => {
-  it("should create a cache client", () => {
-    return Cache.create().then(result => {
-      expect(result.set).toBeInstanceOf(Function);
-      expect(result.get).toBeInstanceOf(Function);
-      expect(result.del).toBeInstanceOf(Function);
-    });
+  it("should create a cache client", async () => {
+    const result = await Cache.create();
+    expect(result.set).toBeInstanceOf(Function);
+    expect(result.get).toBeInstanceOf(Function);
+    expect(result.del).toBeInstanceOf(Function);
   });
 
   describe("cache.get", () => {
-    it("should get key from store if key exists in redis store", () => {
+    it("should get key from store if key exists in redis store", async () => {
       const getFromStore = jest
         .spyOn(Cache, "getFromStore")
         .mockReturnValue(true);
@@ -138,12 +132,11 @@ describe("create", () => {
       const cache = {};
       _.set(cache, "redis.exists", () => Promise.resolve(true));
       _.set(cache, "local.del", del);
-      return Cache.get(cache, "key").then(() => {
-        expect(getFromStore).toBeCalledWith(cache, "key");
-        expect(del).not.toBeCalled();
-      });
+      await Cache.get(cache, "key");
+      expect(getFromStore).toBeCalledWith(cache, "key");
+      expect(del).not.toBeCalled();
     });
-    it("should attempt deleting key from local if key does not exists in redis anymore", () => {
+    it("should attempt deleting key from local if key does not exists in redis anymore", async () => {
       const getFromStore = jest
         .spyOn(Cache, "getFromStore")
         .mockReturnValue(true);
@@ -153,21 +146,19 @@ describe("create", () => {
       const cache = {};
       _.set(cache, "redis.exists", () => Promise.resolve(false));
       _.set(cache, "local.del", del);
-      return Cache.get(cache, "key").then(() => {
-        expect(getFromStore).not.toBeCalled();
-        expect(del).toBeCalledWith("key");
-      });
+      await Cache.get(cache, "key");
+      expect(getFromStore).not.toBeCalled();
+      expect(del).toBeCalledWith("key");
     });
   });
 
   describe("cache.del", () => {
-    it("should delete key", () => {
-      return Cache.create().then(result => {
-        // eslint-disable-next-line no-param-reassign
-        result.redis.del = jest.fn();
-        result.del("foo");
-        expect(result.redis.del).toBeCalledWith("foo");
-      });
+    it("should delete key", async () => {
+      const result = await Cache.create();
+      // eslint-disable-next-line no-param-reassign
+      result.redis.del = jest.fn();
+      result.del("foo");
+      expect(result.redis.del).toBeCalledWith("foo");
     });
   });
 });
