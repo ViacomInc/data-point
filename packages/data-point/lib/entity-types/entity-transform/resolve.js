@@ -3,8 +3,9 @@
  * @param {Function} resolveReducer
  * @return {*}
  */
-function resolve (accumulator, resolveReducer) {
-  return accumulator.value
+// eslint-disable-next-line no-unused-vars
+function resolve(accumulator, resolveReducer) {
+  return accumulator.value;
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

@@ -1,33 +1,33 @@
-const assert = require('assert')
+const assert = require("assert");
 
-const expected = 2
+const expected = 2;
 
-function addsNumbersSync () {
-  return 1 + 1
+function addsNumbersSync() {
+  return 1 + 1;
 }
 
-function addsNumbersAsync (done) {
+function addsNumbersAsync(done) {
   Promise.resolve().then(() => {
-    done(null, 1 + 1)
-  })
+    done(null, 1 + 1);
+  });
 }
 
 module.exports = [
   {
     async: false,
-    name: 'addsNumbersSync',
+    name: "addsNumbersSync",
     test: () => assert.deepStrictEqual(addsNumbersSync(), expected),
     benchmark: addsNumbersSync
   },
   {
     async: true,
-    name: 'addsNumbersAsync',
+    name: "addsNumbersAsync",
     test: done => {
       addsNumbersAsync((e, val) => {
-        assert.deepStrictEqual(val, expected)
-        done(null)
-      })
+        assert.deepStrictEqual(val, expected);
+        done(null);
+      });
     },
     benchmark: addsNumbersAsync
   }
-]
+];

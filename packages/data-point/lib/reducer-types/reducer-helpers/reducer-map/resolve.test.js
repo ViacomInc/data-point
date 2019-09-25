@@ -1,33 +1,33 @@
 /* eslint-env jest */
 
-const Factory = require('./factory')
-const Resolve = require('./resolve')
+const Factory = require("./factory");
+const Resolve = require("./resolve");
 
-const Reducer = require('../../index')
+const Reducer = require("../../index");
 
-const DataPoint = require('../../../index')
+const DataPoint = require("../../../index");
 
-const AccumulatorFactory = require('../../../accumulator/factory')
+const AccumulatorFactory = require("../../../accumulator/factory");
 
-let manager
+let manager;
 
 beforeAll(() => {
-  manager = DataPoint.create()
-})
+  manager = DataPoint.create();
+});
 
-describe('ReducerMap#resolve', () => {
-  test('It should return array with undefined elements when reducer is empty list', () => {
-    const value = [true, true]
-    const accumulator = AccumulatorFactory.create({ value })
-    const reducer = Factory.create(Reducer.create, [])
+describe("ReducerMap#resolve", () => {
+  test("It should return array with undefined elements when reducer is empty list", () => {
+    const value = [true, true];
+    const accumulator = AccumulatorFactory.create({ value });
+    const reducer = Factory.create(Reducer.create, []);
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result).toEqual([undefined, undefined])
+        expect(result).toEqual([undefined, undefined]);
       }
-    )
-  })
+    );
+  });
 
-  test('It should map an array of objects', () => {
+  test("It should map an array of objects", () => {
     const value = [
       {
         a: 1
@@ -35,13 +35,13 @@ describe('ReducerMap#resolve', () => {
       {
         a: 2
       }
-    ]
-    const accumulator = AccumulatorFactory.create({ value })
-    const reducer = Factory.create(Reducer.create, ['$a', value => value + 1])
+    ];
+    const accumulator = AccumulatorFactory.create({ value });
+    const reducer = Factory.create(Reducer.create, ["$a", a => a + 1]);
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result).toEqual([2, 3])
+        expect(result).toEqual([2, 3]);
       }
-    )
-  })
-})
+    );
+  });
+});

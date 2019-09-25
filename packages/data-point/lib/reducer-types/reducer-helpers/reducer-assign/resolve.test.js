@@ -1,62 +1,62 @@
 /* eslint-env jest */
 
-const Factory = require('./factory')
-const Resolve = require('./resolve')
+const Factory = require("./factory");
+const Resolve = require("./resolve");
 
-const Reducer = require('../../index')
+const Reducer = require("../../index");
 
-const DataPoint = require('../../../index')
+const DataPoint = require("../../../index");
 
-const AccumulatorFactory = require('../../../accumulator/factory')
+const AccumulatorFactory = require("../../../accumulator/factory");
 
-let manager
+let manager;
 
 beforeAll(() => {
   manager = DataPoint.create({
     entities: {
-      'reducer:a': () => ({
+      "reducer:a": () => ({
         b: 22,
         c: 33
       })
     }
-  })
-})
+  });
+});
 
-describe('ReducerAssign#resolve', () => {
-  test('It should work for empty objects', () => {
+describe("ReducerAssign#resolve", () => {
+  test("It should work for empty objects", () => {
     const accumulator = AccumulatorFactory.create({
       value: {}
-    })
+    });
 
-    const reducer = Factory.create(Reducer.create, () => ({}))
+    const reducer = Factory.create(Reducer.create, () => ({}));
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
-        expect(result).toEqual({})
+        expect(result).toEqual({});
       }
-    )
-  })
+    );
+  });
 
-  test('It should work for valid input', () => {
+  test("It should work for valid input", () => {
     const accumulator = AccumulatorFactory.create({
       value: {
         a: 1,
         b: 2
       }
-    })
+    });
 
-    const reducer = Factory.create(Reducer.create, 'reducer:a')
+    const reducer = Factory.create(Reducer.create, "reducer:a");
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
         expect(result).toEqual({
           a: 1,
           b: 22,
           c: 33
-        })
+        });
       }
-    )
-  })
+    );
+  });
 
-  test('It should not merge nested objects', () => {
+  test("It should not merge nested objects", () => {
     const accumulator = AccumulatorFactory.create({
       value: {
         a: 1,
@@ -64,14 +64,14 @@ describe('ReducerAssign#resolve', () => {
           a: 1
         }
       }
-    })
+    });
 
     const reducer = Factory.create(Reducer.create, () => ({
       a: 1,
       b: {
         b: 2
       }
-    }))
+    }));
 
     return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
       result => {
@@ -80,8 +80,8 @@ describe('ReducerAssign#resolve', () => {
           b: {
             b: 2
           }
-        })
+        });
       }
-    )
-  })
-})
+    );
+  });
+});

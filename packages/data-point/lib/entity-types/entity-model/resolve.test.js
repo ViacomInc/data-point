@@ -1,9 +1,9 @@
 /* eslint-env jest */
 
-const Resolve = require('./resolve')
+const Resolve = require("./resolve");
 
-describe('Model.resolve', () => {
-  test('Entry#resolve - resolve empty', () => {
-    return expect(Resolve.resolve({ value: 1 })).toEqual(1)
-  })
-})
+describe("Model.resolve", () => {
+  test("Entry#resolve - resolve empty", () => {
+    return expect(Resolve.resolve({ value: 1 })).toEqual(1);
+  });
+});

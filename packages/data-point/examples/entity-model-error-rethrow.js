@@ -1,33 +1,35 @@
-const dataPoint = require('../').create()
-const assert = require('assert')
+/* eslint-disable no-console */
+const assert = require("assert");
+
+const dataPoint = require("../").create();
 
 const logError = error => {
-  console.log(error.toString())
-  throw error
-}
+  console.log(error.toString());
+  throw error;
+};
 
 dataPoint.addEntities({
-  'model:getArray': {
-    value: '$a',
-    outputType: 'array',
+  "model:getArray": {
+    value: "$a",
+    outputType: "array",
     error: logError
   }
-})
+});
 
 const input = {
   a: {
-    b: 'foo'
+    b: "foo"
   }
-}
+};
 
 dataPoint
-  .resolve('model:getArray', input)
+  .resolve("model:getArray", input)
   .then(() => {
     // should not execute
-    assert.ok(false)
+    assert.ok(false);
   })
   .catch(error => {
-    console.log(error.toString())
+    console.log(error.toString());
     // should execute
-    assert.ok(true)
-  })
+    assert.ok(true);
+  });

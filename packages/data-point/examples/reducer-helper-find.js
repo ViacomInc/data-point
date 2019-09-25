@@ -1,8 +1,9 @@
 /* eslint-env jest */
-const assert = require('assert')
+const assert = require("assert");
 
-const DataPoint = require('../')
-const dataPoint = DataPoint.create()
+const DataPoint = require("../");
+
+const dataPoint = DataPoint.create();
 
 const value = [
   {
@@ -11,14 +12,14 @@ const value = [
   {
     b: 2
   }
-]
+];
 
 // the $b reducer is truthy for the
 // second element in the array
-const reducer = DataPoint.find('$b')
+const reducer = DataPoint.find("$b");
 
 dataPoint.resolve(reducer, value).then(output => {
   assert.deepStrictEqual(output, {
     b: 2
-  })
-})
+  });
+});

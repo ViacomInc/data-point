@@ -1,1 +1,1 @@
-module.exports = require('./parse-compose')
+module.exports = require("./parse-compose");

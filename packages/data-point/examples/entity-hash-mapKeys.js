@@ -1,31 +1,33 @@
-const dataPoint = require('../').create()
-const assert = require('assert')
-const _ = require('lodash')
+const assert = require("assert");
+const _ = require("lodash");
+
+const dataPoint = require("../").create();
 
 dataPoint.addEntities({
-  'hash:mapKeys': {
+  "hash:mapKeys": {
     mapKeys: {
-      name: '$name',
+      name: "$name",
       url: [
-        '$name',
+        "$name",
         input => {
-          return `https://github.com/ViacomInc/${_.kebabCase(input)}`
+          return `https://github.com/ViacomInc/${_.kebabCase(input)}`;
         }
       ]
     }
   }
-})
+});
 
 const expectedResult = {
-  name: 'DataPoint',
-  url: 'https://github.com/ViacomInc/data-point'
-}
+  name: "DataPoint",
+  url: "https://github.com/ViacomInc/data-point"
+};
 
 const input = {
-  name: 'DataPoint'
-}
+  name: "DataPoint"
+};
 
-dataPoint.resolve('hash:mapKeys', input).then(output => {
-  assert.deepStrictEqual(output, expectedResult)
-  console.log(output)
-})
+dataPoint.resolve("hash:mapKeys", input).then(output => {
+  assert.deepStrictEqual(output, expectedResult);
+  // eslint-disable-next-line no-console
+  console.log(output);
+});

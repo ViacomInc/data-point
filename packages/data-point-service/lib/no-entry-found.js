@@ -1,1 +1,1 @@
-module.exports = Symbol('NO_ENTRY_FOUND')
+module.exports = Symbol("NO_ENTRY_FOUND");

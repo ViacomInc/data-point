@@ -1,9 +1,11 @@
-const dataPoint = require('../').create()
-const assert = require('assert')
+/* eslint-disable no-console */
+const assert = require("assert");
+
+const dataPoint = require("../").create();
 
 const input = {
   a: {
-    b: 'Hello World'
+    b: "Hello World"
   },
   c: [
     {
@@ -22,14 +24,14 @@ const input = {
       }
     }
   ]
-}
+};
 
-dataPoint.resolve('$a.b', input).then(output => {
-  assert.strictEqual(output, 'Hello World')
-  console.log(output)
-})
+dataPoint.resolve("$a.b", input).then(output => {
+  assert.strictEqual(output, "Hello World");
+  console.log(output);
+});
 
-dataPoint.resolve('$d.e[]', input.c).then(output => {
-  assert.deepStrictEqual(output, [1, 2, 3])
-  console.log(output)
-})
+dataPoint.resolve("$d.e[]", input.c).then(output => {
+  assert.deepStrictEqual(output, [1, 2, 3]);
+  console.log(output);
+});

@@ -1,1 +1,1 @@
-module.exports = require('./factory').create
+module.exports = require("./factory").create;

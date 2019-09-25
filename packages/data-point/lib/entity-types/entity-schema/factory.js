@@ -1,9 +1,9 @@
-const Ajv = require('ajv')
-const _ = require('lodash')
-const deepFreeze = require('deep-freeze')
-const { resolve } = require('./resolve')
-const BaseEntity = require('../base-entity')
-const { validateModifiers } = require('../validate-modifiers')
+const Ajv = require("ajv");
+const _ = require("lodash");
+const deepFreeze = require("deep-freeze");
+const { resolve } = require("./resolve");
+const BaseEntity = require("../base-entity");
+const { validateModifiers } = require("../validate-modifiers");
 
 /**
  * @param {Object} schema
@@ -11,22 +11,22 @@ const { validateModifiers } = require('../validate-modifiers')
  * @throws if schema is not a valid ajv schema
  * @return {boolean}
  */
-function validateSchema (schema, options) {
-  const ajv = new Ajv(options)
-  ajv.validateSchema(schema)
+function validateSchema(schema, options) {
+  const ajv = new Ajv(options);
+  ajv.validateSchema(schema);
   if (ajv.errors) {
     const msg = `Schema validation failed with the following errors:\n${JSON.stringify(
       ajv.errors,
       null,
       2
-    )}`
-    throw new Error(msg)
+    )}`;
+    throw new Error(msg);
   }
 
-  return true
+  return true;
 }
 
-module.exports.validateSchema = validateSchema
+module.exports.validateSchema = validateSchema;
 
 /**
  * Creates new Entity Object
@@ -35,16 +35,16 @@ module.exports.validateSchema = validateSchema
  * @throws if spec.schema is not a valid ajv schema
  * @return {Object} Entity Object
  */
-function create (id, spec) {
-  validateModifiers(id, spec, ['schema', 'options'])
+function create(id, spec) {
+  validateModifiers(id, spec, ["schema", "options"]);
 
-  const entity = {}
-  entity.spec = spec
-  entity.schema = deepFreeze(_.defaultTo(spec.schema, {}))
-  entity.options = deepFreeze(_.defaultTo(spec.options, {}))
+  const entity = {};
+  entity.spec = spec;
+  entity.schema = deepFreeze(_.defaultTo(spec.schema, {}));
+  entity.options = deepFreeze(_.defaultTo(spec.options, {}));
 
-  validateSchema(entity.schema, entity.options)
-  return entity
+  validateSchema(entity.schema, entity.options);
+  return entity;
 }
 
-module.exports.create = BaseEntity.create('schema', create, resolve)
+module.exports.create = BaseEntity.create("schema", create, resolve);

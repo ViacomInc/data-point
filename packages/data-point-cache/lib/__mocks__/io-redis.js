@@ -1,1 +1,1 @@
-module.exports = require('ioredis-mock')
+module.exports = require("ioredis-mock");

@@ -1,6 +1,6 @@
-function getEntityKeyRegexFn (entityId) {
-  const r = new RegExp(`^${entityId}:.+`)
-  return key => r.test(key)
+function getEntityKeyRegexFn(entityId) {
+  const r = new RegExp(`^${entityId}:.+`);
+  return key => r.test(key);
 }
 
 /*
@@ -17,15 +17,15 @@ const data = {
   }
 }
 */
-function getEntityObjectFromProperties (entityId, j, root) {
+function getEntityObjectFromProperties(entityId, j, root) {
   return root
     .find(j.Property, {
       key: {
-        type: 'Literal',
+        type: "Literal",
         value: getEntityKeyRegexFn(entityId)
       }
     })
-    .map(node => node.get('value'))
+    .map(node => node.get("value"));
 }
 
 /*
@@ -36,24 +36,24 @@ data['hash:thing'] = {
   value: {}
 }
 */
-function getEntityObjectFromAssignments (entityId, j, root) {
+function getEntityObjectFromAssignments(entityId, j, root) {
   return root
     .find(j.AssignmentExpression, {
       left: {
-        type: 'MemberExpression',
+        type: "MemberExpression",
         property: {
           value: getEntityKeyRegexFn(entityId)
         }
       }
     })
-    .map(path => path.get('right'))
+    .map(path => path.get("right"));
 }
 
-function getEntityObjects (entityId, j, root) {
+function getEntityObjects(entityId, j, root) {
   return [
     getEntityObjectFromProperties(entityId, j, root),
     getEntityObjectFromAssignments(entityId, j, root)
-  ]
+  ];
 }
 
-module.exports.getEntityObjects = getEntityObjects
+module.exports.getEntityObjects = getEntityObjects;

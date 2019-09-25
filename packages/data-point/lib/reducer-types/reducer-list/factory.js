@@ -1,8 +1,8 @@
-const _ = require('lodash')
+const _ = require("lodash");
 
-const REDUCER_LIST = 'ReducerList'
+const REDUCER_LIST = "ReducerList";
 
-module.exports.type = REDUCER_LIST
+module.exports.type = REDUCER_LIST;
 
 /**
  * @class
@@ -10,81 +10,81 @@ module.exports.type = REDUCER_LIST
  * @property {Array<reducer>} reducers
  * @property {boolean} isEmpty
  */
-function ReducerList () {
-  this.type = 'ReducerList'
-  this.reducers = []
+function ReducerList() {
+  this.type = "ReducerList";
+  this.reducers = [];
 }
 
-module.exports.Constructor = ReducerList
+module.exports.Constructor = ReducerList;
 
 /**
  * @param {*} source
  * @returns {boolean}
  */
-function isType (source) {
-  return Array.isArray(source)
+function isType(source) {
+  return Array.isArray(source);
 }
 
-module.exports.isType = isType
+module.exports.isType = isType;
 
 /**
  * @param {string} source
  * @returns {Array}
  */
-function parseFromString (source) {
-  const reducerSource = _.defaultTo(source, '').trim()
-  const tokens = reducerSource.split(/\s+\|\s+/)
-  return tokens
+function parseFromString(source) {
+  const reducerSource = _.defaultTo(source, "").trim();
+  const tokens = reducerSource.split(/\s+\|\s+/);
+  return tokens;
 }
 
-module.exports.parseFromString = parseFromString
+module.exports.parseFromString = parseFromString;
 
 /**
  * @param {*} source
  * @returns {*}
  */
-function parseTokenExpression (source) {
-  return _.isString(source) ? parseFromString(source) : source
+function parseTokenExpression(source) {
+  return _.isString(source) ? parseFromString(source) : source;
 }
 
-module.exports.parseTokenExpression = parseTokenExpression
+module.exports.parseTokenExpression = parseTokenExpression;
 
 /**
  * @param {Array} source
  * @returns {Array}
  */
-function parseFromArray (source) {
+function parseFromArray(source) {
   return _.chain(source)
     .map(parseTokenExpression)
     .flatten()
-    .value()
+    .value();
 }
 
-module.exports.parseFromArray = parseFromArray
+module.exports.parseFromArray = parseFromArray;
 
 /**
  * @param {*} source
  * @returns {Array}
  */
-function parse (source) {
-  return parseFromArray(_.castArray(source))
+function parse(source) {
+  return parseFromArray(_.castArray(source));
 }
 
-module.exports.parse = parse
+module.exports.parse = parse;
 
 /**
  * @param {Function} createReducer
  * @param {Array} source
  * @return {reducer}
  */
-function create (createReducer, source) {
-  const tokens = parse(source)
-  const reducers = tokens.map(token => createReducer(token))
+function create(createReducer, source) {
+  const tokens = parse(source);
+  const reducers = tokens.map(token => createReducer(token));
 
-  const reducer = new ReducerList()
-  reducer.reducers = reducers
+  const reducer = new ReducerList();
+  reducer.reducers = reducers;
 
-  return reducer
+  return reducer;
 }
 
-module.exports.create = create
+module.exports.create = create;

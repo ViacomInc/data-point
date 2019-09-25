@@ -1,5 +1,5 @@
-const Promise = require('bluebird')
-const omit = require('lodash/omit')
+const Promise = require("bluebird");
+const omit = require("lodash/omit");
 
 /**
  * @param {Object} manager
@@ -8,8 +8,8 @@ const omit = require('lodash/omit')
  * @param {ReducerOmit} reducerOmit
  * @returns {Promise}
  */
-function resolve (manager, resolveReducer, accumulator, reducerOmit) {
-  return Promise.resolve(omit(accumulator.value, reducerOmit.keys))
+function resolve(manager, resolveReducer, accumulator, reducerOmit) {
+  return Promise.resolve(omit(accumulator.value, reducerOmit.keys));
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

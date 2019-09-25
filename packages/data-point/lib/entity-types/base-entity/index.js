@@ -5,5 +5,6 @@ the resolve function directly from base-entity/resolve.js
 */
 
 module.exports = {
-  create: require('./factory').create
-}
+  // eslint-disable-next-line global-require
+  create: require("./factory").create
+};

@@ -47,7 +47,7 @@ Array [
 exports[`revalidateSuccess should remove local flag and add debug log 1`] = `
 Array [
   Array [
-    "Succesful revalidation entityId: %s with cache key: %s",
+    "Successful revalidation entityId: %s with cache key: %s",
     "entityId",
     "entryKey",
   ],

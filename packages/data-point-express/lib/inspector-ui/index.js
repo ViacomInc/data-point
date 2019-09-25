@@ -1,1 +1,1 @@
-module.exports = require('./inspector-ui')
+module.exports = require("./inspector-ui");

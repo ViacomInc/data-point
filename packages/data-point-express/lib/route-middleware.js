@@ -1,23 +1,23 @@
-const url = require('url')
+const url = require("url");
 
-const Middleware = require('./middleware')
+const Middleware = require("./middleware");
 
-function dataPointEntityRoute (dataPoint, entityId, req, res, next) {
-  const pathname = url.parse(req.url).pathname // eslint-disable-line node/no-deprecated-api
+function dataPointEntityRoute(dataPoint, entityId, req, res) {
+  const pathname = url.parse(req.url).pathname;
   const transformOptions = Middleware.buildTransformOptions(req, {
-    routeRequestType: 'api',
+    routeRequestType: "api",
     pathname
-  })
-  Middleware.resolveReducer(dataPoint, entityId, transformOptions, res)
+  });
+  Middleware.resolveReducer(dataPoint, entityId, transformOptions, res);
 }
 
-function create (dataPoint, entityId) {
-  return function datapoint (req, res, next) {
-    return dataPointEntityRoute(dataPoint, entityId, req, res, next)
-  }
+function create(dataPoint, entityId) {
+  return function datapoint(req, res, next) {
+    return dataPointEntityRoute(dataPoint, entityId, req, res, next);
+  };
 }
 
 module.exports = {
   dataPointEntityRoute,
   create
-}
+};
