@@ -1,6 +1,6 @@
 {
   "name": "data-point-express",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Create DataPoint Express middleware",
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -17,21 +17,21 @@
   },
   "devDependencies": {
     "body-parser": "1.18.2",
-    "data-point": "^3.4.3",
+    "data-point": "^3.4.4",
     "express": "^4.16.2",
     "ioredis": "4.12.2",
     "ioredis-mock": "^4.12.1"
   },
   "dependencies": {
-    "data-point-service": "^4.2.4",
-    "body-parser": "1.18.2",
     "bluebird": "3.5.0",
+    "body-parser": "1.18.2",
+    "data-point-service": "^4.2.5",
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
     "data-point": "^3.4.0",
-    "supertest": "^4.0.2",
-    "express": "4.x"
+    "express": "4.x",
+    "supertest": "^4.0.2"
   },
   "keywords": [
     "express",

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.3](https://github.com/ViacomInc/data-point/tree/master/packages/bench-trial/compare/bench-trial@3.2.2...bench-trial@3.2.3) (2019-09-26)
+
+**Note:** Version bump only for package bench-trial
+
+
+
+
+
 ## [3.2.2](https://github.com/ViacomInc/data-point/tree/master/packages/bench-trial/compare/bench-trial@3.2.1...bench-trial@3.2.2) (2019-07-15)
 
 **Note:** Version bump only for package bench-trial
