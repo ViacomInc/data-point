@@ -45,9 +45,9 @@ function updateSWREntry(service, entryKey, cache) {
   /**
    * @param {Accumulator} acc
    */
-  return acc => {
+  return value => {
     debug("Updating cache key: %s with new stale value", entryKey);
-    return service.staleWhileRevalidate.addEntry(entryKey, acc.value, cache);
+    return service.staleWhileRevalidate.addEntry(entryKey, value, cache);
   };
 }
 
