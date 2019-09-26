@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.5](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.4...data-point-service@4.2.5) (2019-09-26)
+
+
+### Bug Fixes
+
+* **data-point-service:** pass value to addEntry when revalidating ([#438](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/issues/438)) ([f2ffc89](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/commit/f2ffc89)), closes [#437](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/issues/437)
+
+
+
+
+
 ## [4.2.4](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.3...data-point-service@4.2.4) (2019-07-30)
 
 **Note:** Version bump only for package data-point-service

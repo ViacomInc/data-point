@@ -89,8 +89,8 @@ describe("updateSWREntry", () => {
   it("should add stale entry", () => {
     const mockAddEntry = jest.fn();
     const service = _.set({}, "staleWhileRevalidate.addEntry", mockAddEntry);
-    const acc = _.set({}, "value", "value");
-    CacheMiddleware.updateSWREntry(service, "entryKey", "cache")(acc);
+    const value = "value";
+    CacheMiddleware.updateSWREntry(service, "entryKey", "cache")(value);
     expect(mockAddEntry).toBeCalledWith("entryKey", "value", "cache");
     expect(mockDebug.mock.calls).toMatchSnapshot();
   });
