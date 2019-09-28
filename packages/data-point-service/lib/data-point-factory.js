@@ -12,10 +12,9 @@ function createDataPoint(options) {
   return dataPoint;
 }
 
-function create(options) {
-  return Promise.resolve(options)
-    .then(verify)
-    .then(createDataPoint);
+async function create(options) {
+  verify(options);
+  return createDataPoint(options);
 }
 
 module.exports = {

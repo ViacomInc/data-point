@@ -1,4 +1,3 @@
-const Promise = require("bluebird");
 const set = require("lodash/fp/set");
 const debug = require("debug")("data-point-service:cache");
 const StaleWhileRevalidate = require("./stale-while-revalidate");
@@ -125,7 +124,7 @@ function resolveFromAccumulator(service, entryKey, reducer, accumulator) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {Promise}
  */
-function revalidateEntry(service, entryKey, cache, ctx) {
+async function revalidateEntry(service, entryKey, cache, ctx) {
   const entityId = ctx.context.id;
 
   const revalidatingCache = {
@@ -142,13 +141,21 @@ function revalidateEntry(service, entryKey, cache, ctx) {
 
   debug("Revalidating entityId: %s with cache key: %s", entityId, entryKey);
 
-  return addRevalidationFlags(service, entryKey, cache.revalidateTimeout)
-    .then(
-      resolveFromAccumulator(service, entryKey, ctx.context, revalidateContext)
-    )
-    .then(module.exports.updateSWREntry(service, entryKey, cache))
-    .then(module.exports.revalidateSuccess(service, entityId, entryKey))
-    .catch(module.exports.catchRevalidateError(service, entityId, entryKey));
+  try {
+    await addRevalidationFlags(service, entryKey, cache.revalidateTimeout);
+
+    const acc = await resolveFromAccumulator(
+      service,
+      entryKey,
+      ctx.context,
+      revalidateContext
+    )();
+
+    await module.exports.updateSWREntry(service, entryKey, cache)(acc);
+    await module.exports.revalidateSuccess(service, entityId, entryKey);
+  } catch (error) {
+    module.exports.catchRevalidateError(service, entityId, entryKey)(error);
+  }
 }
 
 /**
@@ -184,7 +191,7 @@ function resolveStaleWhileRevalidate(service) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {Promise<Object|undefined>} cached stale value
  */
-function resolveStaleWhileRevalidateEntry(service, entryKey, cache, ctx) {
+async function resolveStaleWhileRevalidateEntry(service, entryKey, cache, ctx) {
   // IMPORTANT: we only want to bypass an entity that is being revalidated and
   // that matches the same cache entry key, otherwise all child entities will
   // be needlessly resolved
@@ -206,18 +213,18 @@ function resolveStaleWhileRevalidateEntry(service, entryKey, cache, ctx) {
     staleWhileRevalidate.getEntry(entryKey)
   ];
 
-  return Promise.all(tasks).then(results => {
-    const revalidationState = results[0];
-    const staleEntry = results[1];
+  const results = await Promise.all(tasks);
 
-    if (module.exports.shouldTriggerRevalidate(staleEntry, revalidationState)) {
-      // IMPORTANT: revalidateEntry operates on a new thread
-      module.exports.revalidateEntry(service, entryKey, cache, ctx);
-    } // Otherwise means its a cold start and must be resolved outside
+  const revalidationState = results[0];
+  const staleEntry = results[1];
 
-    // return stale entry regardless
-    return staleEntry;
-  });
+  if (module.exports.shouldTriggerRevalidate(staleEntry, revalidationState)) {
+    // IMPORTANT: revalidateEntry operates on a new thread
+    module.exports.revalidateEntry(service, entryKey, cache, ctx);
+  } // Otherwise means its a cold start and must be resolved outside
+
+  // return stale entry regardless
+  return staleEntry;
 }
 
 /**
@@ -239,35 +246,36 @@ function setStaleWhileRevalidateEntry(service, entryKey, value, cache) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @param {Function} next Middleware callback
  */
-function before(service, ctx, next) {
+async function before(service, ctx, next) {
   const cache = EntityCacheParams.getCacheParams(ctx.context.params);
 
   if (!cache.ttl || ctx.locals.resetCache === true) {
     next();
-    return false;
+    return;
   }
 
   const entryKey = module.exports.generateKey(cache.cacheKey, ctx);
 
-  Promise.resolve(cache.useStaleWhileRevalidate)
-    .then(useStaleWhileRevalidate => {
-      return useStaleWhileRevalidate
-        ? module.exports.resolveStaleWhileRevalidateEntry(
-            service,
-            entryKey,
-            cache,
-            ctx
-          )
-        : RedisController.getEntry(service, entryKey);
-    })
-    .then(value => {
-      if (value !== undefined) {
-        next(null, value);
-      }
-    })
-    .asCallback(next);
+  try {
+    const value = cache.useStaleWhileRevalidate
+      ? await module.exports.resolveStaleWhileRevalidateEntry(
+          service,
+          entryKey,
+          cache,
+          ctx
+        )
+      : await RedisController.getEntry(service, entryKey);
 
-  return true;
+    if (value !== undefined) {
+      next(null, value);
+    } else {
+      // data-point middleware checks number of arguments to know if it
+      // should resolve or not.
+      next(null);
+    }
+  } catch (error) {
+    next(error);
+  }
 }
 
 /**
@@ -275,7 +283,7 @@ function before(service, ctx, next) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @param {Function} next Middleware callback
  */
-function after(service, ctx, next) {
+async function after(service, ctx, next) {
   const cache = EntityCacheParams.getCacheParams(ctx.context.params);
 
   // do nothing if:
@@ -284,37 +292,31 @@ function after(service, ctx, next) {
   if (!cache.ttl || ctx.locals.revalidatingCache) {
     // do nothing
     next();
-    return false;
   }
 
-  // from here below ttl is assumed to be true
-  const entryKey = module.exports.generateKey(cache.cacheKey, ctx);
+  try {
+    // from here below ttl is assumed to be true
+    const entryKey = module.exports.generateKey(cache.cacheKey, ctx);
 
-  let resolution;
+    if (cache.useStaleWhileRevalidate) {
+      // adds (or updates) the stale cache entry with the latest value
+      await module.exports.setStaleWhileRevalidateEntry(
+        service,
+        entryKey,
+        ctx.value,
+        cache
+      );
+    } else {
+      // adds a cache entry
+      await RedisController.setEntry(service, entryKey, ctx.value, cache.ttl);
+    }
 
-  if (cache.useStaleWhileRevalidate) {
-    // adds (or updates) the stale cache entry with the latest value
-    resolution = module.exports.setStaleWhileRevalidateEntry(
-      service,
-      entryKey,
-      ctx.value,
-      cache
-    );
-  } else {
-    // adds a cache entry
-    resolution = RedisController.setEntry(
-      service,
-      entryKey,
-      ctx.value,
-      cache.ttl
-    );
+    // ensuring we call next only with one parameter to prevent from
+    // exiting the middleware chain
+    next(null);
+  } catch (error) {
+    next(error);
   }
-
-  // ensuring we call next only with one parameter to prevent from
-  // exiting the middleware chain
-  resolution.asCallback(error => next(error));
-
-  return true;
 }
 
 module.exports = {

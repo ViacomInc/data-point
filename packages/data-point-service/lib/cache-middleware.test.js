@@ -383,12 +383,12 @@ describe("resolveStaleWhileRevalidateEntry", () => {
     setTimeout.mockRestore();
   });
 
-  it("should exit with undefined if isRevalidatingCacheKey is true", () => {
+  it("should exit with undefined if isRevalidatingCacheKey is true", async () => {
     const mocks = createMocks();
     // by default mock.isRevalidatingCacheKey is set to return false
     mocks.isRevalidatingCacheKey.mockReturnValue(true);
 
-    const result = CacheMiddleware.resolveStaleWhileRevalidateEntry(
+    const result = await CacheMiddleware.resolveStaleWhileRevalidateEntry(
       mocks.service,
       "entryKey",
       cache,
@@ -553,26 +553,21 @@ describe("before", () => {
   }
 
   describe("exit to avoid cache process", () => {
-    it("should call next and return false if no ttl", () => {
+    it("should call next and return false if no ttl", async () => {
       const mocks = createMocks();
       mocks.cache.ttl = undefined;
-      const result = CacheMiddleware.before(
-        mocks.service,
-        mocks.ctx,
-        mocks.next
-      );
-      expect(result).toEqual(false);
+
+      await CacheMiddleware.before(mocks.service, mocks.ctx, mocks.next);
+
       expect(mocks.next).toBeCalledWith();
     });
-    it("should call next and return false if resetCache is true", () => {
+
+    it("should call next and return false if resetCache is true", async () => {
       const mocks = createMocks();
       mocks.ctx.locals.resetCache = true;
-      const result = CacheMiddleware.before(
-        mocks.service,
-        mocks.ctx,
-        mocks.next
-      );
-      expect(result).toEqual(false);
+
+      await CacheMiddleware.before(mocks.service, mocks.ctx, mocks.next);
+
       expect(mocks.next).toBeCalledWith();
     });
   });
@@ -591,8 +586,7 @@ describe("before", () => {
       expect(mocks.getEntry).not.toBeCalled();
     });
 
-    const result = CacheMiddleware.before(mocks.service, mocks.ctx, next);
-    expect(result).toEqual(true);
+    CacheMiddleware.before(mocks.service, mocks.ctx, next);
   });
 
   it("should resolve to basic redis entry if cache.useStaleWhileRevalidate is false and value exists", done => {
@@ -606,8 +600,7 @@ describe("before", () => {
       expect(mocks.getEntry).toBeCalledWith(mocks.service, "mockCacheKey");
     });
 
-    const result = CacheMiddleware.before(mocks.service, mocks.ctx, next);
-    expect(result).toEqual(true);
+    CacheMiddleware.before(mocks.service, mocks.ctx, next);
   });
 
   it("should not call ctx.resolve if stale value does not exists", done => {
@@ -624,8 +617,7 @@ describe("before", () => {
     });
 
     mocks.resolveStaleWhileRevalidateEntry.mockReturnValue(undefined);
-    const result = CacheMiddleware.before(mocks.service, mocks.ctx, next);
-    expect(result).toEqual(true);
+    CacheMiddleware.before(mocks.service, mocks.ctx, next);
   });
 });
 
@@ -663,27 +655,21 @@ describe("after", () => {
   }
 
   describe("exit to avoid cache process", () => {
-    it("should call next and return false if no ttl", () => {
+    it("should call next and return false if no ttl", async () => {
       const mocks = createMocks();
       mocks.cache.ttl = undefined;
-      const result = CacheMiddleware.after(
-        mocks.service,
-        mocks.ctx,
-        mocks.next
-      );
-      expect(result).toEqual(false);
+
+      await CacheMiddleware.after(mocks.service, mocks.ctx, mocks.next);
+
       expect(mocks.next).toBeCalledWith();
     });
 
-    it("should call next and return false if no ttl", () => {
+    it("should call next and return false if no ttl", async () => {
       const mocks = createMocks();
       mocks.ctx.locals.revalidatingCache = true;
-      const result = CacheMiddleware.after(
-        mocks.service,
-        mocks.ctx,
-        mocks.next
-      );
-      expect(result).toEqual(false);
+
+      await CacheMiddleware.after(mocks.service, mocks.ctx, mocks.next);
+
       expect(mocks.next).toBeCalledWith();
     });
   });
@@ -702,8 +688,7 @@ describe("after", () => {
     });
 
     mocks.cache.useStaleWhileRevalidate = true;
-    const result = CacheMiddleware.after(mocks.service, mocks.ctx, next);
-    expect(result).toEqual(true);
+    CacheMiddleware.after(mocks.service, mocks.ctx, next);
   });
 
   it("should call next with only 1 argument to avoid exiting the middleware chain", done => {
@@ -714,8 +699,7 @@ describe("after", () => {
     });
 
     mocks.cache.useStaleWhileRevalidate = false;
-    const result = CacheMiddleware.after(mocks.service, mocks.ctx, next);
-    expect(result).toEqual(true);
+    CacheMiddleware.after(mocks.service, mocks.ctx, next);
   });
 
   it("should set basic redis entry value if cache.useStaleWhileRevalidate is false", done => {
@@ -732,8 +716,7 @@ describe("after", () => {
     });
 
     mocks.cache.useStaleWhileRevalidate = false;
-    const result = CacheMiddleware.after(mocks.service, mocks.ctx, next);
-    expect(result).toEqual(true);
+    CacheMiddleware.after(mocks.service, mocks.ctx, next);
   });
 
   describe("handle error", () => {
@@ -750,8 +733,7 @@ describe("after", () => {
       });
 
       mocks.cache.useStaleWhileRevalidate = true;
-      const result = CacheMiddleware.after(mocks.service, mocks.ctx, next);
-      expect(result).toEqual(true);
+      CacheMiddleware.after(mocks.service, mocks.ctx, next);
     });
 
     it("should call next with error value if setEntry fails", done => {
@@ -765,8 +747,7 @@ describe("after", () => {
       });
 
       mocks.cache.useStaleWhileRevalidate = false;
-      const result = CacheMiddleware.after(mocks.service, mocks.ctx, next);
-      expect(result).toEqual(true);
+      CacheMiddleware.after(mocks.service, mocks.ctx, next);
     });
   });
 });

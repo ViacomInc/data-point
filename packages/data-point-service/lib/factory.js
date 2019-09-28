@@ -1,6 +1,5 @@
 const os = require("os");
 const _ = require("lodash");
-const Promise = require("bluebird");
 const Cache = require("data-point-cache");
 
 const DataPointFactory = require("./data-point-factory");
@@ -87,10 +86,17 @@ function successCreateCache(cache, service) {
   return service;
 }
 
-function createCache(service) {
-  return Cache.create(service.settings.cache)
-    .then(cache => successCreateCache(cache, service))
-    .catch(err => handleCacheError(err, service));
+async function createCache(service) {
+  let cacheService;
+
+  try {
+    const cache = await Cache.create(service.settings.cache);
+    cacheService = successCreateCache(cache, service);
+  } catch (error) {
+    handleCacheError(error, service);
+  }
+
+  return cacheService;
 }
 
 function successDataPoint(dataPoint, service) {
@@ -112,22 +118,26 @@ function bootstrapDataPoint(bootstrap, service) {
   return bootstrap(service);
 }
 
-function createDataPoint(service) {
-  return DataPointFactory.create(service.settings)
-    .then(dataPoint => successDataPoint(dataPoint, service))
-    .then(() => bootstrapDataPoint(setupMiddleware, service));
+async function createDataPoint(service) {
+  const dataPoint = await DataPointFactory.create(service.settings);
+  successDataPoint(dataPoint, service);
+  return bootstrapDataPoint(setupMiddleware, service);
 }
 
-function create(options) {
-  const Service = createServiceObject(options);
-  return Promise.resolve(true)
-    .then(() => createCache(Service))
-    .then(() => createDataPoint(Service))
-    .catch(err => {
-      // eslint-disable-next-line no-console
-      console.error("DataPoint could not initialize");
-      throw err;
-    });
+async function create(options) {
+  let service;
+
+  try {
+    service = createServiceObject(options);
+    await createCache(service); // mutates service object
+    await createDataPoint(service); // mutates service object
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("DataPoint could not initialize");
+    throw error;
+  }
+
+  return service;
 }
 
 module.exports = {
