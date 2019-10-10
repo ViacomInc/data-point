@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 export declare namespace DataPoint {
   interface Accumulator {
     value: any;
@@ -7,5 +9,14 @@ export declare namespace DataPoint {
     trace: boolean;
     context: object;
     traceGraph: [];
+  }
+
+  interface Reducer {
+  }
+
+  interface RDOMElement {
+    type: React.ElementType;
+    props: object;
+    children: Array<RDOMElement | string>;
   }
 }
