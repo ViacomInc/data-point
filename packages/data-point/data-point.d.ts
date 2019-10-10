@@ -19,4 +19,18 @@ export declare namespace DataPoint {
     props: object;
     children: Array<RDOMElement | string>;
   }
+
+  interface RDOMObject {
+    rdom: RDOMElement;
+    html: string;
+  }
+
+  interface TransformExpression {
+  }
+
+  interface ElementSpec {
+    type: string | TransformExpression;
+    props: object | TransformExpression;
+    children: Array<TransformExpression> | TransformExpression;
+  }
 }
