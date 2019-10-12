@@ -8,4 +8,6 @@ export declare namespace DataPoint {
     context: object;
     traceGraph: [];
   }
+
+  interface Reducer {}
 }
