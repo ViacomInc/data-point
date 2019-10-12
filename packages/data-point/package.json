@@ -48,7 +48,6 @@
     "lib/"
   ],
   "dependencies": {
-    "@types/react": "^16.9.5",
     "ajv": "5.2.3",
     "bluebird": "3.5.0",
     "debug": "3.x",
