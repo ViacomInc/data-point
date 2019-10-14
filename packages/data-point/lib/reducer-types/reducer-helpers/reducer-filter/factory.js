@@ -1,32 +1,32 @@
-const REDUCER_FILTER = 'ReducerFilter'
+const REDUCER_FILTER = "ReducerFilter";
 
-module.exports.type = REDUCER_FILTER
+module.exports.type = REDUCER_FILTER;
 
-const HELPER_NAME = 'filter'
+const HELPER_NAME = "filter";
 
-module.exports.name = HELPER_NAME
+module.exports.name = HELPER_NAME;
 
 /**
  * @class
  * @property {string} type
  * @property {reducer} transform
  */
-function ReducerFilter () {
-  this.type = REDUCER_FILTER
-  this.transform = undefined
+function ReducerFilter() {
+  this.type = REDUCER_FILTER;
+  this.transform = undefined;
 }
 
-module.exports.Constructor = ReducerFilter
+module.exports.Constructor = ReducerFilter;
 
 /**
  * @param {Function} createReducer
  * @param {*} source - raw source for a reducer
  * @return {ReducerFilter}
  */
-function create (createReducer, source) {
-  const reducer = new ReducerFilter()
-  reducer.reducer = createReducer(source)
-  return reducer
+function create(createReducer, source) {
+  const reducer = new ReducerFilter();
+  reducer.reducer = createReducer(source);
+  return reducer;
 }
 
-module.exports.create = create
+module.exports.create = create;

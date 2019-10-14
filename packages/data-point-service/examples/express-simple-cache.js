@@ -1,58 +1,59 @@
-const express = require('express')
-const DataPoint = require('data-point')
-const DataPointService = require('../lib')
+const express = require("express");
+const DataPoint = require("data-point");
+const DataPointService = require("../lib");
 
-function server (dataPoint) {
-  const app = express()
+function server(dataPoint) {
+  const app = express();
 
-  app.get('/api/hello-world', (req, res) => {
+  app.get("/api/hello-world", (req, res) => {
     const options = {
       // exposing query to locals will make this object available to all
       // reducers
       locals: {
         query: req.query
       }
-    }
+    };
     dataPoint
       .resolve(`model:HelloWorld`, {}, options)
       .then(value => {
-        const responseText = `${value} (person = "${req.query.person}")`
-        res.send(responseText)
+        const responseText = `${value} (person = "${req.query.person}")`;
+        res.send(responseText);
       })
       .catch(error => {
-        res.status(500).send(error.toString())
-      })
-  })
+        res.status(500).send(error.toString());
+      });
+  });
 
-  app.listen(3000, function () {
-    console.log('listening on port 3000!')
-  })
+  app.listen(3000, () => {
+    // eslint-disable-next-line no-console
+    console.log("listening on port 3000!");
+  });
 }
 
-function createService () {
+function createService() {
   return DataPointService.create({
     DataPoint,
     entities: {
-      'model:HelloWorld': {
+      "model:HelloWorld": {
         value: (input, acc) => {
-          const person = acc.locals.query.person
+          const person = acc.locals.query.person;
           if (!person) {
             throw new Error(
               'Url query parameter "person" is missing. Try appending ?person=Darek at the end of the URL'
-            )
+            );
           }
-          return `Hello ${person}!!`
+          return `Hello ${person}!!`;
         },
         params: {
           cache: {
-            ttl: '10s'
+            ttl: "10s"
           }
         }
       }
     }
   }).then(service => {
-    return service.dataPoint
-  })
+    return service.dataPoint;
+  });
 }
 
-createService().then(server)
+createService().then(server);

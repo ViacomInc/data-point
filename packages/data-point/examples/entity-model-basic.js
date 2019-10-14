@@ -1,7 +1,7 @@
-const assert = require('assert')
-const DataPoint = require('../')
+const assert = require("assert");
+const DataPoint = require("../");
 
-const { Model } = DataPoint
+const { Model } = DataPoint;
 
 const input = {
   a: {
@@ -9,21 +9,21 @@ const input = {
       c: [1, 2, 3]
     }
   }
-}
+};
 
-const getMax = input => {
-  return Math.max.apply(null, input)
-}
+const getMax = value => {
+  return Math.max.apply(null, value);
+};
 
-const multiplyBy = number => input => {
-  return input * number
-}
+const multiplyBy = number => value => {
+  return value * number;
+};
 
-const myModel = Model('myModel', {
-  value: ['$a.b.c', getMax, multiplyBy(10)]
-})
+const myModel = Model("myModel", {
+  value: ["$a.b.c", getMax, multiplyBy(10)]
+});
 
-const dataPoint = DataPoint.create()
+const dataPoint = DataPoint.create();
 dataPoint.resolve(myModel, input).then(output => {
-  assert.strictEqual(output, 30)
-})
+  assert.strictEqual(output, 30);
+});

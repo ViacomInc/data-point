@@ -1,12 +1,12 @@
-const { traceReducer } = require('./trace-graph')
+const { traceReducer } = require("./trace-graph");
 
 const {
   augmentTraceNodeDuration,
   augmentAccumulatorTrace
-} = require('./trace-resolve')
+} = require("./trace-resolve");
 
 module.exports = {
   traceReducer,
   augmentTraceNodeDuration,
   augmentAccumulatorTrace
-}
+};

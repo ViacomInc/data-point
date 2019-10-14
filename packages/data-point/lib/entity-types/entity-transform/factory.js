@@ -1,5 +1,5 @@
-const BaseEntity = require('../base-entity')
-const { resolve } = require('./resolve')
+const BaseEntity = require("../base-entity");
+const { resolve } = require("./resolve");
 
 /**
  * Creates new Entity Object
@@ -7,10 +7,10 @@ const { resolve } = require('./resolve')
  * @param {string} id - Entity id
  * @return {Object} Entity Object
  */
-function create (id, spec) {
-  const entity = {}
-  entity.value = spec
-  return entity
+function create(id, spec) {
+  const entity = {};
+  entity.value = spec;
+  return entity;
 }
 
-module.exports.create = BaseEntity.create('reducer', create, resolve)
+module.exports.create = BaseEntity.create("reducer", create, resolve);

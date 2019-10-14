@@ -1,29 +1,31 @@
-const DataPoint = require('data-point')
-const mocks = require('./async-example.mocks')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const DataPoint = require("data-point");
+
+const mocks = require("./async-example.mocks");
 
 // mock request calls
-mocks()
+mocks();
 
-const { Model, Request } = DataPoint
+const { Model, Request } = DataPoint;
 
-const PersonRequest = Request('PersonRequest', {
-  url: 'https://swapi.co/api/people/{value}/'
-})
+const PersonRequest = Request("PersonRequest", {
+  url: "https://swapi.co/api/people/{value}/"
+});
 
-const PersonModel = Model('PersonModel', {
+const PersonModel = Model("PersonModel", {
   value: {
-    name: '$name',
-    birthYear: '$birth_year'
+    name: "$name",
+    birthYear: "$birth_year"
   }
-})
+});
 
 const options = {
   trace: false // <-- set to true to enable tracing, a file will be created
-}
+};
 
-const dataPoint = DataPoint.create()
+const dataPoint = DataPoint.create();
 
-dataPoint.transform([PersonRequest, PersonModel], 1, options).then(output => {
+dataPoint.transform([PersonRequest, PersonModel], 1, options).then(() => {
   /*
     a file with the name data-point-trace-<timestamp>.json will
     be created.
@@ -65,4 +67,4 @@ dataPoint.transform([PersonRequest, PersonModel], 1, options).then(output => {
           "children": [
               .....
   */
-})
+});

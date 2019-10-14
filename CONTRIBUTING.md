@@ -3,7 +3,7 @@
 > Before contributing, please read our [code of conduct](CODE_OF_CONDUCT.md).
 
 When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change. 
+email, or any other method with the owners of this repository before making a change.
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
@@ -25,7 +25,7 @@ To run the unit tests you may run any of the following commands:
 
 ```bash
 # runs all unit tests with test coverage
-yarn run test 
+yarn run test
 
 # runs all unit tests with test coverage and with watch mode
 yarn run watch
@@ -35,11 +35,15 @@ yarn run watch
 
 **Linting**
 
-We are using [StandardJs](https://standardjs.com/) for linting
+We are using [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) for linting.
+
+**Formatting**
+
+We are using [Prettier](https://prettier.io) for javascript style formatting.
 
 **Programming style**
 
-Aside from trying to follow common Javascript best practices we have made an effort to follow a functional programming approach in our codebase, please help us continue with this pattern. 
+Aside from trying to follow common Javascript best practices we have made an effort to follow a functional programming approach in our codebase, please help us continue with this pattern.
 
 If you are new to Functional programming there is a lot of good documentation out there, but a good introduction is Eric Elliott's Functional Programming Series. You can start with [What is Functional Programming](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0) and the more in depth [Composing Software](https://medium.com/javascript-scene/the-rise-and-fall-and-rise-of-functional-programming-composable-software-c2d91b424c8c#.2dfd6n6qe) posts are really good.
 
@@ -57,17 +61,16 @@ We want `DataPoint` to maintain 100% test coverage for a few reasons. It ensures
 
 Here are a few tips for organizing your tests:
 
-* Use the `describe` blocks to split up logically related tests, and write clear descriptions of what the tests relate to. (See tests in the [`base-entity`](https://github.com/ViacomInc/data-point/blob/b60824509467af599ef12d730a1b6cf8778d0b9d/packages/data-point/lib/entity-types/base-entity/resolve.test.js#L216) for an example.)
-* Break up individual tests to have as few `expect`s in each test as possible. This way if a single `expect` fails for some reason, it immediately gets narrowed down to the one test that failed. Also when `jest` throws the error it'll write the description string in the console, so we'll be able to read the English description of what failed and not read any code to understand the problem. (See [these tests in `reducer-herlpers/utils`](https://github.com/ViacomInc/data-point/blob/b60824509467af599ef12d730a1b6cf8778d0b9d/packages/data-point/lib/reducer-types/reducer-helpers/utils/index.test.js#L5-L45) for an example.)
-* Write simple result expectations directly in the test. Use `toMatchSnapshot()` if there is a large, complex expected result.
-* Write tests for both the passing and the _failing_ scenarios of a function. If a function should throw an error in some circumstance, write a test for that condition. Since the thrown error is likely to be a large object, using `toThrowErrorMatchingSnapshot()` is a good way to test that there was a thrown error and that the error object/message matches the expectation. For an example, see [these tests in `entity-hash/factory`](https://github.com/ViacomInc/data-point/blob/a366091b277e94a8a98da005a4dc578b127ea3db/packages/data-point/lib/entity-types/entity-hash/factory.test.js#L61-L96).
+- Use the `describe` blocks to split up logically related tests, and write clear descriptions of what the tests relate to. (See tests in the [`base-entity`](https://github.com/ViacomInc/data-point/blob/b60824509467af599ef12d730a1b6cf8778d0b9d/packages/data-point/lib/entity-types/base-entity/resolve.test.js#L216) for an example.)
+- Break up individual tests to have as few `expect`s in each test as possible. This way if a single `expect` fails for some reason, it immediately gets narrowed down to the one test that failed. Also when `jest` throws the error it'll write the description string in the console, so we'll be able to read the English description of what failed and not read any code to understand the problem. (See [these tests in `reducer-herlpers/utils`](https://github.com/ViacomInc/data-point/blob/b60824509467af599ef12d730a1b6cf8778d0b9d/packages/data-point/lib/reducer-types/reducer-helpers/utils/index.test.js#L5-L45) for an example.)
+- Write simple result expectations directly in the test. Use `toMatchSnapshot()` if there is a large, complex expected result.
+- Write tests for both the passing and the _failing_ scenarios of a function. If a function should throw an error in some circumstance, write a test for that condition. Since the thrown error is likely to be a large object, using `toThrowErrorMatchingSnapshot()` is a good way to test that there was a thrown error and that the error object/message matches the expectation. For an example, see [these tests in `entity-hash/factory`](https://github.com/ViacomInc/data-point/blob/a366091b277e94a8a98da005a4dc578b127ea3db/packages/data-point/lib/entity-types/entity-hash/factory.test.js#L61-L96).
 
 For more ideas when writing tests, check out this article: http://marclittlemore.com/how-to-write-high-quality-unit-tests/
 
-
 ## Supported Node Versions
 
-We will only be supporting node 6 and above, please make sure the code you use is supported by this version.
+We will only be supporting the node versions mentioned on the engine field on the main package.json, please make sure the code you use is supported by this version.
 
 ## Pull Request Process
 

@@ -1,214 +1,214 @@
 /* eslint-env jest */
 
-const DataPoint = require('../index')
+const DataPoint = require("../index");
 
-const reducers = require('../../test/utils/reducers')
-const entities = require('../../test/definitions/entities')
+const reducers = require("../../test/utils/reducers");
+const entities = require("../../test/definitions/entities");
 
-const Transform = require('./transform')
-const TestData = require('../../test/data.json')
+const Transform = require("./transform");
+const TestData = require("../../test/data.json");
 
-let dataPoint
+let dataPoint;
 
 beforeAll(() => {
   dataPoint = DataPoint.create({
     values: {
-      v1: 'v1'
+      v1: "v1"
     },
     reducers: {
       test: reducers
     },
     entities
-  })
-})
+  });
+});
 
-test('transform - throw error in invalid id(promise)', () => {
-  return Transform.transform(dataPoint, 'INVALID', TestData, {})
+test("transform - throw error in invalid id(promise)", () => {
+  return Transform.transform(dataPoint, "INVALID", TestData, {})
     .catch(err => err)
     .then(res => {
-      expect(res).toBeInstanceOf(Error)
-      expect(res).toMatchSnapshot()
-    })
-})
+      expect(res).toBeInstanceOf(Error);
+      expect(res).toMatchSnapshot();
+    });
+});
 
-describe('transform - should attach input value to accumulator', () => {
-  test('passing undefined', () => {
+describe("transform - should attach input value to accumulator", () => {
+  test("passing undefined", () => {
     return Transform.transform(dataPoint, value => {
-      expect(value).toBe(undefined)
-    })
-  })
+      expect(value).toBe(undefined);
+    });
+  });
 
-  test('passing 0', () => {
+  test("passing 0", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toBe(0)
+        expect(value).toBe(0);
       },
       0
-    )
-  })
+    );
+  });
 
-  test('passing 1', () => {
+  test("passing 1", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toBe(1)
+        expect(value).toBe(1);
       },
       1
-    )
-  })
+    );
+  });
 
-  test('passing empty string', () => {
+  test("passing empty string", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toBe('')
+        expect(value).toBe("");
       },
-      ''
-    )
-  })
+      ""
+    );
+  });
 
-  test('passing a string', () => {
+  test("passing a string", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toBe('Hello World')
+        expect(value).toBe("Hello World");
       },
-      'Hello World'
-    )
-  })
+      "Hello World"
+    );
+  });
 
-  test('passing false', () => {
+  test("passing false", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toBe(false)
+        expect(value).toBe(false);
       },
       false
-    )
-  })
+    );
+  });
 
-  test('passing true', () => {
+  test("passing true", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toBe(true)
+        expect(value).toBe(true);
       },
       true
-    )
-  })
+    );
+  });
 
-  test('passing an array', () => {
+  test("passing an array", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toEqual(['Hello World'])
+        expect(value).toEqual(["Hello World"]);
       },
-      ['Hello World']
-    )
-  })
+      ["Hello World"]
+    );
+  });
 
-  test('passing an object', () => {
+  test("passing an object", () => {
     return Transform.transform(
       dataPoint,
       value => {
-        expect(value).toEqual({ message: 'Hello World' })
+        expect(value).toEqual({ message: "Hello World" });
       },
-      { message: 'Hello World' }
-    )
-  })
-})
+      { message: "Hello World" }
+    );
+  });
+});
 
-test('transform - single reducer', () => {
+test("transform - single reducer", () => {
   const reducer = value => {
-    return value + ' World'
-  }
-  return Transform.transform(dataPoint, reducer, 'Hello').then(res => {
-    expect(res.value).toEqual('Hello World')
-  })
-})
+    return `${value} World`;
+  };
+  return Transform.transform(dataPoint, reducer, "Hello").then(res => {
+    expect(res.value).toEqual("Hello World");
+  });
+});
 
-test('transform - reducer chain', () => {
-  const reducers = [value => value + ' World', value => value + '!!']
-  return Transform.transform(dataPoint, reducers, 'Hello').then(res => {
-    expect(res.value).toEqual('Hello World!!')
-  })
-})
+test("transform - reducer chain", () => {
+  const testReducers = [value => `${value} World`, value => `${value}!!`];
+  return Transform.transform(dataPoint, testReducers, "Hello").then(res => {
+    expect(res.value).toEqual("Hello World!!");
+  });
+});
 
-test('transform - reducer path', () => {
-  return Transform.transform(dataPoint, '$a.b.c', TestData).then(res => {
-    expect(res.value).toEqual([1, 2, 3])
-  })
-})
+test("transform - reducer path", () => {
+  return Transform.transform(dataPoint, "$a.b.c", TestData).then(res => {
+    expect(res.value).toEqual([1, 2, 3]);
+  });
+});
 
-test('transform - reducer mixed', () => {
+test("transform - reducer mixed", () => {
   const getMax = value => {
-    return Math.max.apply(null, value)
-  }
-  return Transform.transform(dataPoint, ['$a.b.c', getMax], TestData).then(
+    return Math.max.apply(null, value);
+  };
+  return Transform.transform(dataPoint, ["$a.b.c", getMax], TestData).then(
     res => {
-      expect(res.value).toEqual(3)
+      expect(res.value).toEqual(3);
     }
-  )
-})
+  );
+});
 
-describe('options argument', () => {
-  test('passing locals', () => {
+describe("options argument", () => {
+  test("passing locals", () => {
     const reducer = (value, acc) => {
-      return acc.locals.greeting + ' World'
-    }
+      return `${acc.locals.greeting} World`;
+    };
 
     const options = {
       locals: {
-        greeting: 'Hello'
+        greeting: "Hello"
       }
-    }
+    };
 
     return Transform.transform(dataPoint, reducer, {}, options).then(res => {
-      expect(res.value).toEqual('Hello World')
-    })
-  })
-})
+      expect(res.value).toEqual("Hello World");
+    });
+  });
+});
 
-describe('resolve', () => {
-  test('transform - resolve', () => {
-    return Transform.resolve(dataPoint, '$a.b.c', TestData).then(value => {
-      expect(value).toEqual([1, 2, 3])
-    })
-  })
-  test('transform - options is last argument', () => {
+describe("resolve", () => {
+  test("transform - resolve", () => {
+    return Transform.resolve(dataPoint, "$a.b.c", TestData).then(value => {
+      expect(value).toEqual([1, 2, 3]);
+    });
+  });
+  test("transform - options is last argument", () => {
     const options = {
       locals: {
-        foo: 'bar'
+        foo: "bar"
       }
-    }
-    return Transform.resolve(dataPoint, '$..locals.foo', {}, options).then(
+    };
+    return Transform.resolve(dataPoint, "$..locals.foo", {}, options).then(
       value => {
-        expect(value).toEqual('bar')
+        expect(value).toEqual("bar");
       }
-    )
-  })
+    );
+  });
 
-  test('transform - execute with 3 arguments', () => {
+  test("transform - execute with 3 arguments", () => {
     const value = {
-      foo: 'bar'
-    }
+      foo: "bar"
+    };
     return Promise.resolve(value)
-      .then(Transform.resolve(dataPoint, '$foo'))
-      .then(value => {
-        expect(value).toEqual('bar')
-      })
-  })
-})
+      .then(Transform.resolve(dataPoint, "$foo"))
+      .then(resolvedValue => {
+        expect(resolvedValue).toEqual("bar");
+      });
+  });
+});
 
-describe('dataPoint.createReducer', () => {
-  test('it should evaluate an existing reducer', () => {
-    const reducer = DataPoint.createReducer(['$a', input => input + 1])
+describe("dataPoint.createReducer", () => {
+  test("it should evaluate an existing reducer", () => {
+    const reducer = DataPoint.createReducer(["$a", input => input + 1]);
     return dataPoint
       .resolve(reducer, { a: 5 })
       .catch(err => err)
       .then(output => {
-        expect(output).toBe(6)
-      })
-  })
-})
+        expect(output).toBe(6);
+      });
+  });
+});

@@ -2,16 +2,16 @@
  * @param {String} key cache key
  * @returns {String} key postfixed with "swr.stale"
  */
-function createSWRStaleKey (key) {
-  return `${key}:swr.stale`
+function createSWRStaleKey(key) {
+  return `${key}:swr.stale`;
 }
 
 /**
  * @param {String} key cache key
  * @returns {String} key postfixed with "swr.control"
  */
-function createSWRControlKey (key) {
-  return `${key}:swr.control`
+function createSWRControlKey(key) {
+  return `${key}:swr.control`;
 }
 
 /**
@@ -19,8 +19,8 @@ function createSWRControlKey (key) {
  * @param {String} key entry key
  * @returns {Promise<Object|undefined>} entry value
  */
-function getEntry (service, key) {
-  return service.cache.get(key)
+function getEntry(service, key) {
+  return service.cache.get(key);
 }
 
 /**
@@ -28,8 +28,8 @@ function getEntry (service, key) {
  * @param {String} key entry key
  * @returns {Promise}
  */
-function deleteEntry (service, key) {
-  return service.cache.del(key)
+function deleteEntry(service, key) {
+  return service.cache.del(key);
 }
 
 /**
@@ -37,8 +37,8 @@ function deleteEntry (service, key) {
  * @param {String} key entry key
  * @returns {Promise<Object|undefined>} entry value
  */
-function getSWRStaleEntry (service, key) {
-  return service.cache.get(createSWRStaleKey(key))
+function getSWRStaleEntry(service, key) {
+  return service.cache.get(createSWRStaleKey(key));
 }
 
 /**
@@ -46,8 +46,8 @@ function getSWRStaleEntry (service, key) {
  * @param {String} key entry key
  * @returns {Promise<Object|undefined>} entry value
  */
-function getSWRControlEntry (service, key) {
-  return getEntry(service, createSWRControlKey(key))
+function getSWRControlEntry(service, key) {
+  return getEntry(service, createSWRControlKey(key));
 }
 
 /**
@@ -57,8 +57,8 @@ function getSWRControlEntry (service, key) {
  * @param {String} ttl time to live value supported by https://github.com/zeit/ms
  * @returns {Promise}
  */
-function setEntry (service, key, value, ttl) {
-  return service.cache.set(key, value, ttl)
+function setEntry(service, key, value, ttl) {
+  return service.cache.set(key, value, ttl);
 }
 
 /**
@@ -69,8 +69,8 @@ function setEntry (service, key, value, ttl) {
  * @param {Number|String} ttl time to live value supported by https://github.com/zeit/ms
  * @returns {Promise}
  */
-function setSWRStaleEntry (service, key, value, ttl) {
-  return setEntry(service, createSWRStaleKey(key), value, ttl)
+function setSWRStaleEntry(service, key, value, ttl) {
+  return setEntry(service, createSWRStaleKey(key), value, ttl);
 }
 
 /**
@@ -79,8 +79,8 @@ function setSWRStaleEntry (service, key, value, ttl) {
  * @param {String} ttl time to live value supported by https://github.com/zeit/ms
  * @returns {Promise}
  */
-function setSWRControlEntry (service, key, ttl, value) {
-  return setEntry(service, createSWRControlKey(key), value, ttl)
+function setSWRControlEntry(service, key, ttl, value) {
+  return setEntry(service, createSWRControlKey(key), value, ttl);
 }
 
 /**
@@ -89,8 +89,8 @@ function setSWRControlEntry (service, key, ttl, value) {
  * @param {String} ttl time to live value supported by https://github.com/zeit/ms
  * @returns {Promise}
  */
-function deleteSWRControlEntry (service, key) {
-  return deleteEntry(service, createSWRControlKey(key))
+function deleteSWRControlEntry(service, key) {
+  return deleteEntry(service, createSWRControlKey(key));
 }
 
 module.exports = {
@@ -104,4 +104,4 @@ module.exports = {
   setEntry,
   setSWRControlEntry,
   setSWRStaleEntry
-}
+};

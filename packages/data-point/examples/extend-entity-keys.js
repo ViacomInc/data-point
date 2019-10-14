@@ -1,28 +1,30 @@
-const dataPoint = require('../').create()
-const assert = require('assert')
+/* eslint-disable no-console */
+const assert = require("assert");
+
+const dataPoint = require("../").create();
 
 dataPoint.addEntities({
-  'entry:Base': {
+  "entry:Base": {
     before: input => {
-      return input + 'before'
+      return `${input}before`;
     },
     after: input => {
-      return input + 'after'
+      return `${input}after`;
     }
   },
 
   // extends entry:Base
-  'entry:Extended -> entry:Base': {
+  "entry:Extended -> entry:Base": {
     // entry:Base's `before` and
     // `after` get merged with
     // this entity
     value: input => {
-      return input + ' value '
+      return `${input} value `;
     }
   }
-})
+});
 
-dataPoint.resolve('entry:Extended', '').then(output => {
-  assert.strictEqual(output, 'before value after')
-  console.log(output)
-})
+dataPoint.resolve("entry:Extended", "").then(output => {
+  assert.strictEqual(output, "before value after");
+  console.log(output);
+});

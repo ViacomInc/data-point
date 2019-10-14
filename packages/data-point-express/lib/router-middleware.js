@@ -1,6 +1,8 @@
-const _ = require('lodash')
-const RouteMap = require('./route-map')
-const RouteMiddleware = require('./route-middleware')
+const express = require("express");
+const _ = require("lodash");
+
+const RouteMap = require("./route-map");
+const RouteMiddleware = require("./route-middleware");
 
 /**
  * create API Middleware route
@@ -8,28 +10,32 @@ const RouteMiddleware = require('./route-middleware')
  * @param {string} entityId
  * @return {function}
  */
-function createApiRoute (dataPoint) {
-  return function createDataPointRoute (entityId) {
-    return RouteMiddleware.create(dataPoint, entityId)
-  }
+function createApiRoute(dataPoint) {
+  return function createDataPointRoute(entityId) {
+    return RouteMiddleware.create(dataPoint, entityId);
+  };
 }
 
-function createRoutes (app, rootPath, routes, dataPoint) {
-  return RouteMap.createRoutes(app, rootPath, routes, createApiRoute(dataPoint))
+function createRoutes(app, rootPath, routes, dataPoint) {
+  return RouteMap.createRoutes(
+    app,
+    rootPath,
+    routes,
+    createApiRoute(dataPoint)
+  );
 }
 
-function setupRouter (router, routes, dataPoint) {
+function setupRouter(router, routes, dataPoint) {
   if (_.isEmpty(routes)) {
-    throw new Error('Routes option must be provided')
+    throw new Error("Routes option must be provided");
   }
 
-  return createRoutes(router, '/', routes, dataPoint)
+  return createRoutes(router, "/", routes, dataPoint);
 }
 
-function create (dataPoint, routes) {
-  const express = require('express')
-  const router = express.Router()
-  return setupRouter(router, routes, dataPoint)
+function create(dataPoint, routes) {
+  const router = express.Router();
+  return setupRouter(router, routes, dataPoint);
 }
 
 module.exports = {
@@ -37,4 +43,4 @@ module.exports = {
   createRoutes,
   setupRouter,
   create
-}
+};

@@ -5,11 +5,11 @@
  * @param {ReducerAssign} reducerAssign
  * @returns {Promise}
  */
-function resolve (manager, resolveReducer, accumulator, reducerAssign) {
-  const reducer = reducerAssign.reducer
+function resolve(manager, resolveReducer, accumulator, reducerAssign) {
+  const reducer = reducerAssign.reducer;
   return resolveReducer(manager, accumulator, reducer).then(value => {
-    return Object.assign({}, accumulator.value, value)
-  })
+    return Object.assign({}, accumulator.value, value);
+  });
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

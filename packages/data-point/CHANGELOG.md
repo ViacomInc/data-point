@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.4](https://github.com/ViacomInc/data-point/compare/data-point@3.4.3...data-point@3.4.4) (2019-09-26)
+
+**Note:** Version bump only for package data-point
+
+
+
+
+
+## [3.4.3](https://github.com/ViacomInc/data-point/compare/data-point@3.4.2...data-point@3.4.3) (2019-07-30)
+
+
+### Bug Fixes
+
+* Fix bug when the input to a reducer list is undefined ([#354](https://github.com/ViacomInc/data-point/issues/354)) ([82c3b95](https://github.com/ViacomInc/data-point/commit/82c3b95)), closes [#353](https://github.com/ViacomInc/data-point/issues/353)
+
+
+
+
+
 ## [3.4.2](https://github.com/ViacomInc/data-point/compare/data-point@3.4.1...data-point@3.4.2) (2019-07-15)
 
 **Note:** Version bump only for package data-point

@@ -1,10 +1,10 @@
-const REDUCER_DEFAULT = 'ReducerDefault'
+const REDUCER_DEFAULT = "ReducerDefault";
 
-module.exports.type = REDUCER_DEFAULT
+module.exports.type = REDUCER_DEFAULT;
 
-const HELPER_NAME = 'withDefault'
+const HELPER_NAME = "withDefault";
 
-module.exports.name = HELPER_NAME
+module.exports.name = HELPER_NAME;
 
 /**
  * this is used as a decorator
@@ -15,8 +15,8 @@ module.exports.name = HELPER_NAME
  * @param {*} value
  * @return {reducer}
  */
-function create (createReducer, source, value) {
-  return createReducer(source, { default: value })
+function create(createReducer, source, value) {
+  return createReducer(source, { default: value });
 }
 
-module.exports.create = create
+module.exports.create = create;

@@ -1,55 +1,64 @@
-const { resolve } = require('./resolve')
-const createReducer = require('../../reducer-types').create
-const deepFreeze = require('deep-freeze')
-const constant = require('lodash/constant')
-const defaultTo = require('lodash/defaultTo')
-const reducerHelpers = require('../../reducer-types/reducer-helpers')
-const parseCompose = require('../parse-compose')
-const BaseEntity = require('../base-entity')
-const { validateModifiers } = require('../validate-modifiers')
+const deepFreeze = require("deep-freeze");
+const constant = require("lodash/constant");
+const defaultTo = require("lodash/defaultTo");
+
+const { resolve } = require("./resolve");
+const createReducer = require("../../reducer-types").create;
+const reducerHelpers = require("../../reducer-types/reducer-helpers");
+const parseCompose = require("../parse-compose");
+const BaseEntity = require("../base-entity");
+const { validateModifiers } = require("../validate-modifiers");
 const {
   getTypeCheckSourceWithDefault
-} = require('../../helpers/type-check-helpers')
+} = require("../../helpers/type-check-helpers");
 
-const modifierKeys = ['omitKeys', 'pickKeys', 'mapKeys', 'addValues', 'addKeys']
+const modifierKeys = [
+  "omitKeys",
+  "pickKeys",
+  "mapKeys",
+  "addValues",
+  "addKeys"
+];
 
 const modifiers = {
   omit: reducerHelpers.stubFactories.omit,
   pick: reducerHelpers.stubFactories.pick,
   map: reducerHelpers.stubFactories.map,
   assign: reducerHelpers.stubFactories.assign
-}
+};
 
 /**
  * @param {Array<Object>} composeSpec
  * @return {Reducer}
  */
-function createCompose (composeSpec) {
+function createCompose(composeSpec) {
   const specList = composeSpec.map(modifier => {
-    let spec
+    let spec;
+    // eslint-disable-next-line default-case
     switch (modifier.type) {
-      case 'omitKeys':
-        spec = modifiers.omit(modifier.spec)
-        break
-      case 'pickKeys':
-        spec = modifiers.pick(modifier.spec)
-        break
-      case 'mapKeys':
-        spec = modifier.spec
-        break
-      case 'addValues':
-        const values = deepFreeze(defaultTo(modifier.spec, {}))
-        spec = modifiers.assign(constant(values))
-        break
-      case 'addKeys':
-        spec = modifiers.assign(modifier.spec)
-        break
+      case "omitKeys":
+        spec = modifiers.omit(modifier.spec);
+        break;
+      case "pickKeys":
+        spec = modifiers.pick(modifier.spec);
+        break;
+      case "mapKeys":
+        spec = modifier.spec;
+        break;
+      case "addValues": {
+        const values = deepFreeze(defaultTo(modifier.spec, {}));
+        spec = modifiers.assign(constant(values));
+        break;
+      }
+      case "addKeys":
+        spec = modifiers.assign(modifier.spec);
+        break;
     }
 
-    return spec
-  })
+    return spec;
+  });
 
-  return createReducer(specList)
+  return createReducer(specList);
 }
 
 /**
@@ -58,24 +67,24 @@ function createCompose (composeSpec) {
  * @param {string} id - Entity id
  * @return {Object} Entity Object
  */
-function create (id, spec) {
-  validateModifiers(id, spec, modifierKeys.concat('compose'))
+function create(id, spec) {
+  validateModifiers(id, spec, modifierKeys.concat("compose"));
 
   const outputType = getTypeCheckSourceWithDefault(
-    'hash',
-    'object',
+    "hash",
+    "object",
     spec.outputType
-  )
+  );
 
-  const entity = {}
-  entity.spec = spec
-  entity.outputType = outputType
-  const compose = parseCompose.parse(id, modifierKeys, spec)
+  const entity = {};
+  entity.spec = spec;
+  entity.outputType = outputType;
+  const compose = parseCompose.parse(id, modifierKeys, spec);
   if (compose.length) {
-    entity.compose = createCompose(compose)
+    entity.compose = createCompose(compose);
   }
 
-  return entity
+  return entity;
 }
 
-module.exports.create = BaseEntity.create('hash', create, resolve)
+module.exports.create = BaseEntity.create("hash", create, resolve);

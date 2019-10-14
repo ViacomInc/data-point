@@ -1,1 +1,1 @@
-module.exports = require('./validate-modifiers')
+module.exports = require("./validate-modifiers");

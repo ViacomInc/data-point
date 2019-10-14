@@ -1,30 +1,31 @@
-const { test } = require('bench-trial')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { test } = require("bench-trial");
 
-const expected = true
+const expected = true;
 
-function testPromise (done) {
+function testPromise(done) {
   Promise.resolve(true).then(() => {
-    done(null, true)
-  })
+    done(null, true);
+  });
 }
 
-function testSetTimeOut (done) {
+function testSetTimeOut(done) {
   setTimeout(() => {
-    done(null, true)
-  }, 0)
+    done(null, true);
+  }, 0);
 }
 
 module.exports = [
   {
     async: true,
-    name: 'promise',
+    name: "promise",
     test: test(testPromise, expected),
     benchmark: testPromise
   },
   {
     async: true,
-    name: 'timeout',
+    name: "timeout",
     test: test(testSetTimeOut, expected),
     benchmark: testSetTimeOut
   }
-]
+];

@@ -1,3 +1,4 @@
 module.exports = {
-  resolve: require('./resolve').resolve
-}
+  // eslint-disable-next-line global-require
+  resolve: require("./resolve").resolve
+};

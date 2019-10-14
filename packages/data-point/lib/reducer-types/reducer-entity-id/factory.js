@@ -1,8 +1,8 @@
-const _ = require('lodash')
+const _ = require("lodash");
 
-const REDUCER_ENTITY_ID = 'ReducerEntityId'
+const REDUCER_ENTITY_ID = "ReducerEntityId";
 
-module.exports.type = REDUCER_ENTITY_ID
+module.exports.type = REDUCER_ENTITY_ID;
 
 /**
  * Defines a entity reducer
@@ -11,49 +11,49 @@ module.exports.type = REDUCER_ENTITY_ID
  * @property {string} name - name of the reducer
  * @property {string} entityType - type of entity
  */
-function ReducerEntityId () {
-  this.type = REDUCER_ENTITY_ID
-  this.name = ''
-  this.entityType = null
-  this.asCollection = false
-  this.hasEmptyConditional = false
+function ReducerEntityId() {
+  this.type = REDUCER_ENTITY_ID;
+  this.name = "";
+  this.entityType = null;
+  this.asCollection = false;
+  this.hasEmptyConditional = false;
 }
 
-module.exports.ReducerEntityId = ReducerEntityId
+module.exports.ReducerEntityId = ReducerEntityId;
 
 /**
  * @param {*} source
  * @returns {boolean}
  */
-function isType (source) {
+function isType(source) {
   return (
     _.isString(source) &&
     source.match(/^([^$][\w.]*):([\w.-]+)(\[])?$/) !== null
-  )
+  );
 }
 
-module.exports.isType = isType
+module.exports.isType = isType;
 
 /**
  * @param {Function} createReducer
  * @param {string} source
  * @return {reducer}
  */
-function create (createReducer, source) {
-  const reducer = new ReducerEntityId()
-  const tokens = source.split(':')
+function create(createReducer, source) {
+  const reducer = new ReducerEntityId();
+  const tokens = source.split(":");
 
-  const entityType = tokens[0]
-  reducer.hasEmptyConditional = entityType.indexOf('?') === 0
-  reducer.entityType = entityType.replace(/^\?/, '')
+  const entityType = tokens[0];
+  reducer.hasEmptyConditional = entityType.indexOf("?") === 0;
+  reducer.entityType = entityType.replace(/^\?/, "");
 
-  const name = tokens[1]
-  reducer.asCollection = name.slice(-2) === '[]'
-  reducer.name = name.replace(/\[]$/, '')
+  const name = tokens[1];
+  reducer.asCollection = name.slice(-2) === "[]";
+  reducer.name = name.replace(/\[]$/, "");
 
-  reducer.id = `${reducer.entityType}:${reducer.name}`
+  reducer.id = `${reducer.entityType}:${reducer.name}`;
 
-  return reducer
+  return reducer;
 }
 
-module.exports.create = create
+module.exports.create = create;

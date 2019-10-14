@@ -1,18 +1,18 @@
-const Promise = require('bluebird')
-const set = require('lodash/fp/set')
-const debug = require('debug')('data-point-service:cache')
-const StaleWhileRevalidate = require('./stale-while-revalidate')
-const EntityCacheParams = require('./entity-cache-params')
+const Promise = require("bluebird");
+const set = require("lodash/fp/set");
+const debug = require("debug")("data-point-service:cache");
+const StaleWhileRevalidate = require("./stale-while-revalidate");
+const EntityCacheParams = require("./entity-cache-params");
 
-const RedisController = require('./redis-controller')
+const RedisController = require("./redis-controller");
 
 /**
  * @param {Function} cacheKey function to generate a cache key
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {String} generated cache key
  */
-function generateKey (cacheKey, ctx) {
-  return cacheKey ? cacheKey(ctx) : `entity:${ctx.context.id}`
+function generateKey(cacheKey, ctx) {
+  return cacheKey ? cacheKey(ctx) : `entity:${ctx.context.id}`;
 }
 
 /**
@@ -21,18 +21,18 @@ function generateKey (cacheKey, ctx) {
  * @param {String} entryKey entity cache key
  * @returns {Function<Boolean>} function that returns true
  */
-function revalidateSuccess (service, entityId, entryKey) {
+function revalidateSuccess(service, entityId, entryKey) {
   return () => {
-    // external revalidation flag is overriden by the new stale state therefore
+    // external revalidation flag is overridden by the new stale state therefore
     // no need to remove the revalidation state externally
-    service.staleWhileRevalidate.removeLocalRevalidationFlag(entryKey)
+    service.staleWhileRevalidate.removeLocalRevalidationFlag(entryKey);
     debug(
-      'Succesful revalidation entityId: %s with cache key: %s',
+      "Successful revalidation entityId: %s with cache key: %s",
       entityId,
       entryKey
-    )
-    return true
-  }
+    );
+    return true;
+  };
 }
 
 /**
@@ -41,14 +41,14 @@ function revalidateSuccess (service, entityId, entryKey) {
  * @param {Object} cache cache configuration
  * @returns {Function}
  */
-function updateSWREntry (service, entryKey, cache) {
+function updateSWREntry(service, entryKey, cache) {
   /**
    * @param {Accumulator} acc
    */
-  return acc => {
-    debug('Updating cache key: %s with new stale value', entryKey)
-    return service.staleWhileRevalidate.addEntry(entryKey, acc.value, cache)
-  }
+  return value => {
+    debug("Updating cache key: %s with new stale value", entryKey);
+    return service.staleWhileRevalidate.addEntry(entryKey, value, cache);
+  };
 }
 
 /**
@@ -57,17 +57,18 @@ function updateSWREntry (service, entryKey, cache) {
  * @param {String} entryKey entity cache key
  * @returns {Function}
  */
-function catchRevalidateError (service, entityId, entryKey) {
+function catchRevalidateError(service, entityId, entryKey) {
   /**
    * @param {Error} error
    */
   return error => {
+    // eslint-disable-next-line no-console
     console.error(
-      'Could not revalidate entityId: %s with cache key: %s\n',
+      "Could not revalidate entityId: %s with cache key: %s\n",
       entityId,
       entryKey,
       error
-    )
+    );
 
     // remove revalidation flags to allow a new revalidation to happen
     // if there is an error at this point will not bubble it up, this is
@@ -77,43 +78,44 @@ function catchRevalidateError (service, entityId, entryKey) {
     return service.staleWhileRevalidate
       .clearAllRevalidationFlags(entryKey)
       .catch(clearError => {
+        // eslint-disable-next-line no-console
         console.error(
-          'Error while clearing revalidation flags for cache key: %s',
+          "Error while clearing revalidation flags for cache key: %s",
           entryKey,
           clearError
-        )
-      })
-  }
+        );
+      });
+  };
 }
 
 /**
  * @param {*} staleEntry value of entry stored in cache stores
  * @param {RevalidationState} revalidationState cacheKey's revalidation state
  */
-function shouldTriggerRevalidate (staleEntry, revalidationState) {
+function shouldTriggerRevalidate(staleEntry, revalidationState) {
   // we only want to revalidate if:
   //  - stale response exists
   //  - external control entry has expired (not on SWR_CONTROL_STALE or SWR-CONTROL-REVALIDATING)
   //  - is not currently being revalidated locally
   return (
-    typeof staleEntry !== 'undefined' &&
+    typeof staleEntry !== "undefined" &&
     revalidationState.hasExternalEntryExpired &&
     !revalidationState.isRevalidatingLocally()
-  )
+  );
 }
 
-function addRevalidationFlags (service, entryKey, revalidateTimeout) {
+function addRevalidationFlags(service, entryKey, revalidateTimeout) {
   return service.staleWhileRevalidate.addRevalidationFlags(
     entryKey,
     revalidateTimeout
-  )
+  );
 }
 
-function resolveFromAccumulator (service, entryKey, reducer, accumulator) {
+function resolveFromAccumulator(service, entryKey, reducer, accumulator) {
   return () => {
-    debug('Resolve entryKey: %s with entityId: %s', entryKey, reducer.id)
-    return service.dataPoint.resolveFromAccumulator(reducer, accumulator)
-  }
+    debug("Resolve entryKey: %s with entityId: %s", entryKey, reducer.id);
+    return service.dataPoint.resolveFromAccumulator(reducer, accumulator);
+  };
 }
 
 /**
@@ -123,36 +125,30 @@ function resolveFromAccumulator (service, entryKey, reducer, accumulator) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {Promise}
  */
-function revalidateEntry (service, entryKey, cache, ctx) {
-  const entityId = ctx.context.id
+function revalidateEntry(service, entryKey, cache, ctx) {
+  const entityId = ctx.context.id;
 
   const revalidatingCache = {
     entityId,
     entryKey
-  }
+  };
 
   // this object serves as a flag is set to bypass cache middleware execution
   const revalidateContext = set(
-    'locals.revalidatingCache',
+    "locals.revalidatingCache",
     revalidatingCache,
     ctx
-  )
+  );
 
-  debug('Revalidating entityId: %s with cache key: %s', entityId, entryKey)
-
-  const {
-    updateSWREntry,
-    revalidateSuccess,
-    catchRevalidateError
-  } = module.exports
+  debug("Revalidating entityId: %s with cache key: %s", entityId, entryKey);
 
   return addRevalidationFlags(service, entryKey, cache.revalidateTimeout)
     .then(
       resolveFromAccumulator(service, entryKey, ctx.context, revalidateContext)
     )
-    .then(updateSWREntry(service, entryKey, cache))
-    .then(revalidateSuccess(service, entityId, entryKey))
-    .catch(catchRevalidateError(service, entityId, entryKey))
+    .then(module.exports.updateSWREntry(service, entryKey, cache))
+    .then(module.exports.revalidateSuccess(service, entityId, entryKey))
+    .catch(module.exports.catchRevalidateError(service, entityId, entryKey));
 }
 
 /**
@@ -161,15 +157,16 @@ function revalidateEntry (service, entryKey, cache, ctx) {
  * @param {String} currentEntryKey entry key
  * @returns {Boolean} true if revalidating entryKey matches current key
  */
-function isRevalidatingCacheKey (ctx, currentEntryKey) {
-  const revalidatingCache = ctx.locals.revalidatingCache
-  return (revalidatingCache && revalidatingCache.entryKey) === currentEntryKey
+function isRevalidatingCacheKey(ctx, currentEntryKey) {
+  const revalidatingCache = ctx.locals.revalidatingCache;
+  return (revalidatingCache && revalidatingCache.entryKey) === currentEntryKey;
 }
 
-function resolveStaleWhileRevalidate (service) {
+function resolveStaleWhileRevalidate(service) {
+  // eslint-disable-next-line no-param-reassign
   service.staleWhileRevalidate =
-    service.staleWhileRevalidate || StaleWhileRevalidate.create(service)
-  return service.staleWhileRevalidate
+    service.staleWhileRevalidate || StaleWhileRevalidate.create(service);
+  return service.staleWhileRevalidate;
 }
 
 /**
@@ -187,46 +184,40 @@ function resolveStaleWhileRevalidate (service) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @returns {Promise<Object|undefined>} cached stale value
  */
-function resolveStaleWhileRevalidateEntry (service, entryKey, cache, ctx) {
-  // NOTE: pulling through module.exports allows us to test if they were called
-  const {
-    resolveStaleWhileRevalidate,
-    isRevalidatingCacheKey,
-    shouldTriggerRevalidate,
-    revalidateEntry
-  } = module.exports
-
+function resolveStaleWhileRevalidateEntry(service, entryKey, cache, ctx) {
   // IMPORTANT: we only want to bypass an entity that is being revalidated and
   // that matches the same cache entry key, otherwise all child entities will
-  // be needlesly resolved
-  if (isRevalidatingCacheKey(ctx, entryKey)) {
+  // be needlessly resolved
+  if (module.exports.isRevalidatingCacheKey(ctx, entryKey)) {
     // bypass the rest forces entity to get resolved
-    return undefined
+    return undefined;
   }
 
-  const staleWhileRevalidate = resolveStaleWhileRevalidate(service)
+  const staleWhileRevalidate = module.exports.resolveStaleWhileRevalidate(
+    service
+  );
 
   // cleanup on a new tick so it does not block current process, the clear
   // method is throttled for performance
-  setTimeout(staleWhileRevalidate.invalidateLocalFlags, 0)
+  setTimeout(staleWhileRevalidate.invalidateLocalFlags, 0);
 
   const tasks = [
     staleWhileRevalidate.getRevalidationState(entryKey),
     staleWhileRevalidate.getEntry(entryKey)
-  ]
+  ];
 
   return Promise.all(tasks).then(results => {
-    const revalidationState = results[0]
-    const staleEntry = results[1]
+    const revalidationState = results[0];
+    const staleEntry = results[1];
 
-    if (shouldTriggerRevalidate(staleEntry, revalidationState)) {
+    if (module.exports.shouldTriggerRevalidate(staleEntry, revalidationState)) {
       // IMPORTANT: revalidateEntry operates on a new thread
-      revalidateEntry(service, entryKey, cache, ctx)
+      module.exports.revalidateEntry(service, entryKey, cache, ctx);
     } // Otherwise means its a cold start and must be resolved outside
 
     // return stale entry regardless
-    return staleEntry
-  })
+    return staleEntry;
+  });
 }
 
 /**
@@ -236,11 +227,11 @@ function resolveStaleWhileRevalidateEntry (service, entryKey, cache, ctx) {
  * @param {Object} cache cache configuration
  * @returns {Promise} Resolution of adding an entry to the cache
  */
-function setStaleWhileRevalidateEntry (service, entryKey, value, cache) {
+function setStaleWhileRevalidateEntry(service, entryKey, value, cache) {
   const staleWhileRevalidate = module.exports.resolveStaleWhileRevalidate(
     service
-  )
-  return staleWhileRevalidate.addEntry(entryKey, value, cache)
+  );
+  return staleWhileRevalidate.addEntry(entryKey, value, cache);
 }
 
 /**
@@ -248,32 +239,35 @@ function setStaleWhileRevalidateEntry (service, entryKey, value, cache) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @param {Function} next Middleware callback
  */
-function before (service, ctx, next) {
-  const { generateKey, resolveStaleWhileRevalidateEntry } = module.exports
-
-  const cache = EntityCacheParams.getCacheParams(ctx.context.params)
+function before(service, ctx, next) {
+  const cache = EntityCacheParams.getCacheParams(ctx.context.params);
 
   if (!cache.ttl || ctx.locals.resetCache === true) {
-    next()
-    return false
+    next();
+    return false;
   }
 
-  const entryKey = generateKey(cache.cacheKey, ctx)
+  const entryKey = module.exports.generateKey(cache.cacheKey, ctx);
 
   Promise.resolve(cache.useStaleWhileRevalidate)
     .then(useStaleWhileRevalidate => {
       return useStaleWhileRevalidate
-        ? resolveStaleWhileRevalidateEntry(service, entryKey, cache, ctx)
-        : RedisController.getEntry(service, entryKey)
+        ? module.exports.resolveStaleWhileRevalidateEntry(
+            service,
+            entryKey,
+            cache,
+            ctx
+          )
+        : RedisController.getEntry(service, entryKey);
     })
     .then(value => {
       if (value !== undefined) {
-        next(null, value)
+        next(null, value);
       }
     })
-    .asCallback(next)
+    .asCallback(next);
 
-  return true
+  return true;
 }
 
 /**
@@ -281,33 +275,31 @@ function before (service, ctx, next) {
  * @param {DataPoint.Accumulator} ctx DataPoint Accumulator object
  * @param {Function} next Middleware callback
  */
-function after (service, ctx, next) {
-  const { generateKey, setStaleWhileRevalidateEntry } = module.exports
-
-  const cache = EntityCacheParams.getCacheParams(ctx.context.params)
+function after(service, ctx, next) {
+  const cache = EntityCacheParams.getCacheParams(ctx.context.params);
 
   // do nothing if:
   // - cache is not configured, or
   // - its at the process of revalidating, then lets skip any further calls
   if (!cache.ttl || ctx.locals.revalidatingCache) {
     // do nothing
-    next()
-    return false
+    next();
+    return false;
   }
 
   // from here below ttl is assumed to be true
-  const entryKey = generateKey(cache.cacheKey, ctx)
+  const entryKey = module.exports.generateKey(cache.cacheKey, ctx);
 
-  let resolution
+  let resolution;
 
   if (cache.useStaleWhileRevalidate) {
     // adds (or updates) the stale cache entry with the latest value
-    resolution = setStaleWhileRevalidateEntry(
+    resolution = module.exports.setStaleWhileRevalidateEntry(
       service,
       entryKey,
       ctx.value,
       cache
-    )
+    );
   } else {
     // adds a cache entry
     resolution = RedisController.setEntry(
@@ -315,14 +307,14 @@ function after (service, ctx, next) {
       entryKey,
       ctx.value,
       cache.ttl
-    )
+    );
   }
 
   // ensuring we call next only with one parameter to prevent from
   // exiting the middleware chain
-  resolution.asCallback(error => next(error))
+  resolution.asCallback(error => next(error));
 
-  return true
+  return true;
 }
 
 module.exports = {
@@ -338,4 +330,4 @@ module.exports = {
   shouldTriggerRevalidate,
   before,
   after
-}
+};

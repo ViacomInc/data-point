@@ -1,3 +1,4 @@
 module.exports = {
-  create: require('./factory').create
-}
+  // eslint-disable-next-line global-require
+  create: require("./factory").create
+};

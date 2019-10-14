@@ -1,6 +1,6 @@
 {
   "name": "data-point-cache",
-  "version": "3.3.2",
+  "version": "4.0.1",
   "description": "DataPoint Cache Layer",
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -16,11 +16,11 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "ioredis-mock": "^3.3.1"
+    "ioredis-mock": "^4.12.1"
   },
   "dependencies": {
     "bluebird": "3.5.1",
-    "ioredis": "3.1.4",
+    "ioredis": "4.12.2",
     "lodash": "^4.17.11",
     "ms": "2.x"
   },

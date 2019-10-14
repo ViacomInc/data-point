@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.2](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.0.1...data-point-express@5.0.2) (2019-09-26)
+
+**Note:** Version bump only for package data-point-express
+
+
+
+
+
+## [5.0.1](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.0.0...data-point-express@5.0.1) (2019-07-30)
+
+**Note:** Version bump only for package data-point-express
+
+
+
+
+
+# [5.0.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@4.1.5...data-point-express@5.0.0) (2019-07-24)
+
+
+### Code Refactoring
+
+* update ioredis version ([37712d1](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/commit/37712d1)), closes [#349](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/issues/349)
+
+
+### BREAKING CHANGES
+
+* new ioredis version has breaking changes
+
+
+
+
+
 ## [4.1.5](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@4.1.4...data-point-express@4.1.5) (2019-07-15)
 
 **Note:** Version bump only for package data-point-express

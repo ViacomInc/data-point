@@ -1,6 +1,6 @@
-const Promise = require('bluebird')
+const Promise = require("bluebird");
 
-const utils = require('../../utils')
+const utils = require("../../utils");
 
 /**
  * @param {Object} manager
@@ -9,22 +9,24 @@ const utils = require('../../utils')
  * @param {ReducerList} reducerList
  * @returns {Promise}
  */
-function resolve (manager, resolveReducer, accumulator, reducerList) {
-  const reducers = reducerList.reducers
+function resolve(manager, resolveReducer, accumulator, reducerList) {
+  const reducers = reducerList.reducers;
   if (reducers.length === 0) {
-    return Promise.resolve(undefined)
+    return Promise.resolve(undefined);
   }
 
+  const initialValue =
+    accumulator.value === undefined ? null : accumulator.value;
   const result = Promise.reduce(
     reducers,
     (value, reducer) => {
-      const itemContext = utils.set(accumulator, 'value', value)
-      return resolveReducer(manager, itemContext, reducer)
+      const itemContext = utils.set(accumulator, "value", value);
+      return resolveReducer(manager, itemContext, reducer);
     },
-    accumulator.value
-  )
+    initialValue
+  );
 
-  return result
+  return result;
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

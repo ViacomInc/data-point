@@ -1,4 +1,4 @@
-const BaseEntity = require('../../entity-types/base-entity/resolve')
+const BaseEntity = require("../../entity-types/base-entity/resolve");
 
 /**
  * Resolve an Entity Reducer, actual entity resolution is delegated
@@ -9,15 +9,15 @@ const BaseEntity = require('../../entity-types/base-entity/resolve')
  * @param {ReducerEntityId} reducer
  * @returns {Promise<Accumulator>}
  */
-function resolve (manager, resolveReducer, accumulator, reducer) {
-  const entity = manager.entities.get(reducer.id)
+function resolve(manager, resolveReducer, accumulator, reducer) {
+  const entity = manager.entities.get(reducer.id);
   return BaseEntity.resolve(
     manager,
     resolveReducer,
     accumulator,
     reducer,
     entity
-  )
+  );
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

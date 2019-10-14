@@ -1,5 +1,5 @@
-const Promise = require('bluebird')
-const pick = require('lodash/pick')
+const Promise = require("bluebird");
+const pick = require("lodash/pick");
 
 /**
  * @param {Object} manager
@@ -8,8 +8,8 @@ const pick = require('lodash/pick')
  * @param {ReducerPick} reducerPick
  * @returns {Promise}
  */
-function resolve (manager, resolveReducer, accumulator, reducerPick) {
-  return Promise.resolve(pick(accumulator.value, reducerPick.keys))
+function resolve(manager, resolveReducer, accumulator, reducerPick) {
+  return Promise.resolve(pick(accumulator.value, reducerPick.keys));
 }
 
-module.exports.resolve = resolve
+module.exports.resolve = resolve;

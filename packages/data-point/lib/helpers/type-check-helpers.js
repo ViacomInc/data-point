@@ -1,4 +1,4 @@
-const typeCheckFunctions = require('./type-check-functions').defaults
+const typeCheckFunctions = require("./type-check-functions").defaults;
 
 const modifiers = {
   __proto__: null,
@@ -9,21 +9,21 @@ const modifiers = {
   error: typeCheckFunctions.isError,
   array: typeCheckFunctions.isArray,
   object: typeCheckFunctions.isObject
-}
+};
 
 /**
  * @param {*} source - for creating a reducer that does type checking
  * @return {*}
  */
-function normalizeTypeCheckSource (source) {
+function normalizeTypeCheckSource(source) {
   if (Array.isArray(source)) {
-    return source.map(r => normalizeTypeCheckSource(r))
+    return source.map(r => normalizeTypeCheckSource(r));
   }
 
-  return modifiers[source] || source
+  return modifiers[source] || source;
 }
 
-module.exports.normalizeTypeCheckSource = normalizeTypeCheckSource
+module.exports.normalizeTypeCheckSource = normalizeTypeCheckSource;
 
 /**
  * @param {string} defaultType
@@ -31,18 +31,18 @@ module.exports.normalizeTypeCheckSource = normalizeTypeCheckSource
  * @throws if specType !== defaultType but it's a key in the modifiers object
  * @return {*}
  */
-function getTypeCheckSourceWithDefault (entityType, defaultType, specType) {
+function getTypeCheckSourceWithDefault(entityType, defaultType, specType) {
   if (!specType || specType === defaultType) {
-    return defaultType
+    return defaultType;
   }
 
   if (modifiers[specType]) {
     throw new Error(
       `${entityType} entities do not support the "${specType}" outputType!`
-    )
+    );
   }
 
-  return [defaultType, specType]
+  return [defaultType, specType];
 }
 
-module.exports.getTypeCheckSourceWithDefault = getTypeCheckSourceWithDefault
+module.exports.getTypeCheckSourceWithDefault = getTypeCheckSourceWithDefault;

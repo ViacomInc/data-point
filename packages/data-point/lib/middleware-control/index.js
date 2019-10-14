@@ -1,1 +1,1 @@
-module.exports = require('./middleware').execute
+module.exports = require("./middleware").execute;
