@@ -1,5 +1,4 @@
 const ms = require("ms");
-const Promise = require("bluebird");
 
 const RedisClient = require("./redis-client");
 const InMemory = require("./in-memory");
@@ -16,11 +15,10 @@ function normalizeMilliseconds(value) {
   return typeof value === "string" ? ms(value) : value;
 }
 
-function set(cache, key, value, ttl = "20m") {
-  const ttlms = normalizeMilliseconds(ttl);
-  return cache.redis
-    .set(key, value, ttlms)
-    .then(() => cache.local.set(key, value, cache.settings.localTTL));
+async function set(cache, key, value, ttl = "20m") {
+  const ttlMs = normalizeMilliseconds(ttl);
+  await cache.redis.set(key, value, ttlMs);
+  return cache.local.set(key, value, cache.settings.localTTL);
 }
 
 /**
@@ -28,35 +26,35 @@ function set(cache, key, value, ttl = "20m") {
  * @param {String} key cache key
  * @returns {Promise<*>} undefined should be interpreted as not found
  */
-function getFromStore(cache, key) {
-  return Promise.resolve(cache.local.get(key)).then(entry => {
-    // if we still have it stored locally return the value, skip everything else
-    if (typeof entry !== "undefined") {
-      return entry;
-    }
-    // if no longer in local memory, then get from redis
-    return cache.redis.get(key).then(value => {
-      // could be a race condition where by the time we get here the value
-      // already was removed, so then skip local cache and move on
-      if (typeof value === "undefined") {
-        return undefined;
-      }
+async function getFromStore(cache, key) {
+  const entry = await cache.local.get(key);
 
-      // update local cache (short ttl) for any consecutive calls
-      cache.local.set(key, value, cache.settings.localTTL);
+  // if we still have it stored locally return the value, skip everything else
+  if (typeof entry !== "undefined") {
+    return entry;
+  }
 
-      return value;
-    });
-  });
+  // if no longer in local memory, then get from redis
+  const value = await cache.redis.get(key);
+
+  // could be a race condition where by the time we get here the value
+  // already was removed, so then skip local cache and move on
+  if (typeof value === "undefined") {
+    return undefined;
+  }
+
+  // update local cache (short ttl) for any consecutive calls
+  cache.local.set(key, value, cache.settings.localTTL);
+
+  return value;
 }
 
-function get(cache, key) {
-  return cache.redis.exists(key).then(exists => {
-    if (exists) {
-      return module.exports.getFromStore(cache, key);
-    }
-    return cache.local.del(key);
-  });
+async function get(cache, key) {
+  const exists = await cache.redis.exists(key);
+  if (exists) {
+    return module.exports.getFromStore(cache, key);
+  }
+  return cache.local.del(key);
 }
 
 /**
@@ -80,9 +78,10 @@ function bootstrapAPI(cache) {
   return cache;
 }
 
-function create(options) {
+async function create(options) {
   const settings = Object.assign({}, DefaultSettings, options);
-  const Cache = {
+
+  const cache = {
     settings,
     redis: null,
     local: null,
@@ -90,20 +89,14 @@ function create(options) {
     get: null,
     del: null
   };
-  return Promise.resolve(Cache)
-    .then(cache => {
-      return RedisClient.create(cache.settings).then(redis => {
-        // eslint-disable-next-line no-param-reassign
-        cache.redis = redis;
-        return cache;
-      });
-    })
-    .then(cache => {
-      // eslint-disable-next-line no-param-reassign
-      cache.local = InMemory.create();
-      return cache;
-    })
-    .then(bootstrapAPI);
+
+  const redis = await RedisClient.create(cache.settings);
+  // eslint-disable-next-line no-param-reassign
+  cache.redis = redis;
+  // eslint-disable-next-line no-param-reassign
+  cache.local = InMemory.create();
+
+  return bootstrapAPI(cache);
 }
 
 module.exports = {
