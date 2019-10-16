@@ -42,20 +42,23 @@ function createErrorMessage(err) {
   };
 }
 
-function resolveReducer(dataPoint, reducer, options, res, initialValue = {}) {
-  dataPoint
-    .transform(reducer, initialValue, options)
-    .then(acc => {
-      if (typeof acc.value === "string") {
-        res.send(acc.value);
-        return;
-      }
-      res.json(acc.value);
-    })
-    .catch(err => {
-      res.status(400).send(createErrorMessage(err));
-    })
-    .done();
+async function resolveReducer(
+  dataPoint,
+  reducer,
+  options,
+  res,
+  initialValue = {}
+) {
+  try {
+    const acc = await dataPoint.transform(reducer, initialValue, options);
+    if (typeof acc.value === "string") {
+      res.send(acc.value);
+      return;
+    }
+    res.json(acc.value);
+  } catch (error) {
+    res.status(400).send(createErrorMessage(error));
+  }
 }
 
 module.exports = {

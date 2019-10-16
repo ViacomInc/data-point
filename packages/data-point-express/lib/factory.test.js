@@ -14,7 +14,7 @@ jest.mock("../../data-point-cache/lib/io-redis", () => {
 describe("create - all middleware", () => {
   let service;
   const consoleWarn = console.warn;
-  beforeAll(() => {
+  beforeAll(async () => {
     console.warn = () => {};
     const options = {
       entities: {
@@ -23,9 +23,7 @@ describe("create - all middleware", () => {
         })
       }
     };
-    return Factory.create(options).then(dpService => {
-      service = dpService;
-    });
+    service = await Factory.create(options);
   });
 
   afterAll(() => {
