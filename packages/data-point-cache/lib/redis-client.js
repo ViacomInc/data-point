@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 const ms = require("ms");
-const Promise = require("bluebird");
 const IORedis = require("./io-redis");
 
 function reconnectOnError(err) {
@@ -74,22 +73,24 @@ function getFromRedisResult(res) {
   return res[0] ? decode(res[0][1]) : undefined;
 }
 
-function get(cache, key) {
+async function get(cache, key) {
   const redis = cache.redis;
-  return redis
+  const res = await redis
     .pipeline()
     .get(key)
-    .exec()
-    .then(getFromRedisResult);
+    .exec();
+
+  return getFromRedisResult(res);
 }
 
-function exists(cache, key) {
+async function exists(cache, key) {
   const redis = cache.redis;
-  return redis
+  const res = await redis
     .pipeline()
     .exists(key)
-    .exec()
-    .then(res => res[0][1] === 1);
+    .exec();
+
+  return res[0][1] === 1;
 }
 
 function del(cache, key) {
@@ -110,8 +111,8 @@ function bootstrap(cache) {
   return cache;
 }
 
-function create(options = {}) {
-  const Cache = {
+async function create(options = {}) {
+  const cache = {
     redis: null,
     set: null,
     get: null,
@@ -119,15 +120,12 @@ function create(options = {}) {
     exists: null,
     options
   };
-  return Promise.resolve(Cache)
-    .then(cache => {
-      return factory(cache.options.redis).then(redis => {
-        // eslint-disable-next-line no-param-reassign
-        cache.redis = redis;
-        return cache;
-      });
-    })
-    .then(bootstrap);
+
+  const redis = await factory(cache.options.redis);
+  // eslint-disable-next-line no-param-reassign
+  cache.redis = redis;
+
+  return bootstrap(cache);
 }
 
 module.exports = {
