@@ -619,6 +619,18 @@ describe("before", () => {
     mocks.resolveStaleWhileRevalidateEntry.mockReturnValue(undefined);
     CacheMiddleware.before(mocks.service, mocks.ctx, next);
   });
+
+  it("should call next with error if revalidation fails", done => {
+    const revalidationError = new Error("revalidation failed");
+    const mocks = createMocks();
+
+    const next = createNext(done, () => {
+      expect(next).toBeCalledWith(revalidationError);
+    });
+
+    mocks.resolveStaleWhileRevalidateEntry.mockRejectedValue(revalidationError);
+    CacheMiddleware.before(mocks.service, mocks.ctx, next);
+  });
 });
 
 describe("after", () => {
