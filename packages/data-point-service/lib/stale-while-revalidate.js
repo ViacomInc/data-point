@@ -43,14 +43,15 @@ function revalidationExternalFactory(service) {
       debug("Removing external Control - %s", entryKey);
       return RedisController.deleteSWRControlEntry(service, entryKey);
     },
-    exists: entryKey => {
-      return RedisController.getSWRControlEntry(service, entryKey).then(
-        controlEntryValue => {
-          const entryExists = typeof controlEntryValue !== "undefined";
-          debug("External control exists: %s - %s", entryExists, entryKey);
-          return entryExists;
-        }
+    exists: async entryKey => {
+      const controlEntryValue = await RedisController.getSWRControlEntry(
+        service,
+        entryKey
       );
+
+      const entryExists = typeof controlEntryValue !== "undefined";
+      debug("External control exists: %s - %s", entryExists, entryKey);
+      return entryExists;
     }
   };
 }
@@ -62,22 +63,22 @@ function revalidationExternalFactory(service) {
  * @param {Object} cache cache configuration
  * @returns {Promise}
  */
-function addEntry(service, entryKey, value, cache) {
+async function addEntry(service, entryKey, value, cache) {
   debug("Adding entry - %s", entryKey);
-  return RedisController.setSWRStaleEntry(
+  await RedisController.setSWRStaleEntry(
     service,
     entryKey,
     value,
     cache.staleWhileRevalidateTtl
-  ).then(() => {
-    debug("Setting control to status: %s - %s", SWR_CONTROL_STALE, entryKey);
-    return RedisController.setSWRControlEntry(
-      service,
-      entryKey,
-      cache.ttl,
-      SWR_CONTROL_STALE
-    );
-  });
+  );
+
+  debug("Setting control to status: %s - %s", SWR_CONTROL_STALE, entryKey);
+  return RedisController.setSWRControlEntry(
+    service,
+    entryKey,
+    cache.ttl,
+    SWR_CONTROL_STALE
+  );
 }
 
 /**
@@ -132,14 +133,14 @@ function clearAllRevalidationFlags(revalidation, entryKey) {
  * @param {String} entryKey cache entry key
  * @returns {Promise<RevalidationState>} Object with revalidation state
  */
-function getRevalidationState(revalidation, entryKey) {
-  return revalidation.external.exists(entryKey).then(externalEntryExists => {
-    const hasExternalEntryExpired = externalEntryExists === false;
-    return {
-      hasExternalEntryExpired,
-      isRevalidatingLocally: () => revalidation.local.exists(entryKey)
-    };
-  });
+async function getRevalidationState(revalidation, entryKey) {
+  const externalEntryExists = await revalidation.external.exists(entryKey);
+
+  const hasExternalEntryExpired = externalEntryExists === false;
+  return {
+    hasExternalEntryExpired,
+    isRevalidatingLocally: () => revalidation.local.exists(entryKey)
+  };
 }
 
 /**
