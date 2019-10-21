@@ -1,7 +1,5 @@
 /* eslint-env jest */
 
-const Promise = require("bluebird");
-
 const ResolveEntity = require("./resolve");
 const createReducer = require("../../reducer-types").create;
 const resolveReducer = require("../../reducer-types").resolve;
@@ -33,51 +31,6 @@ beforeAll(() => {
 
 afterEach(() => {
   dataPoint.middleware.clear();
-});
-
-describe("ResolveEntity.resolveErrorReducers", () => {
-  test("It should reject if no reducer is provided", () => {
-    const error = new Error("Test");
-    const accumulator = helpers.createAccumulator(
-      {},
-      {
-        context: {
-          error: null
-        }
-      }
-    );
-    return ResolveEntity.resolveErrorReducers(
-      dataPoint,
-      error,
-      accumulator,
-      resolveReducer
-    )
-      .catch(err => err)
-      .then(result => {
-        expect(result).toBeInstanceOf(Error);
-        expect(result).toHaveProperty("message", "Test");
-      });
-  });
-
-  test("It should handle error if reducer is provided", () => {
-    const err = new Error("Test");
-    const accumulator = helpers.createAccumulator(
-      {},
-      {
-        context: {
-          error: createReducer((value, acc, next) => next(null, "pass"))
-        }
-      }
-    );
-    return ResolveEntity.resolveErrorReducers(
-      dataPoint,
-      err,
-      accumulator,
-      resolveReducer
-    ).then(result => {
-      expect(result).toEqual("pass");
-    });
-  });
 });
 
 describe("getCurrentReducer", () => {
@@ -162,239 +115,176 @@ describe("ResolveEntity.createCurrentAccumulator", () => {
   });
 });
 
-describe("ResolveEntity.resolveMiddleware", () => {
-  test("It should execute a middleware", () => {
-    dataPoint.middleware.use("request:before", (acc, next) => {
-      acc.value = "bar";
-      next(null);
-    });
-
-    const acc = helpers.createAccumulator("foo");
-    return ResolveEntity.resolveMiddleware(
-      dataPoint,
-      acc,
-      "request:before"
-    ).then(result => {
-      expect(result).toEqual("bar");
-    });
-  });
-
-  test("It should execute a middleware that forces an error to bypass the promise chain", () => {
-    dataPoint.middleware.use("request:before", (acc, next) => {
-      next(null, "bar");
-    });
-
-    const acc = helpers.createAccumulator("foo");
-    return ResolveEntity.resolveMiddleware(dataPoint, acc, "request:before")
-      .catch(reason => reason)
-      .then(reason => {
-        expect(reason).toBeInstanceOf(Error);
-        expect(reason).toHaveProperty("name", "bypass");
-        expect(reason).toHaveProperty("bypass", true);
-        expect(reason).toHaveProperty("bypassValue", "bar");
-      });
-  });
-});
-
 describe("ResolveEntity.resolveEntity", () => {
-  test("It should resolve entity", () => {
-    return resolveEntity("model:asIs", "foo").then(result => {
-      expect(result).toBe("foo");
-    });
+  test("It should resolve entity", async () => {
+    const result = await resolveEntity("model:asIs", "foo");
+    expect(result).toBe("foo");
   });
 
-  test("It should attach entityId to error", () => {
+  test("It should attach entityId to error", async () => {
     const rejectResolver = () => Promise.reject(new Error("test"));
-    return resolveEntity("hash:asIs", undefined, undefined, rejectResolver)
-      .catch(error => error)
-      .then(val => {
-        expect(val).toHaveProperty("entityId", "hash:asIs");
-      });
+    await expect(
+      resolveEntity("hash:asIs", undefined, undefined, rejectResolver)
+    ).rejects.toHaveProperty("entityId", "hash:asIs");
   });
 
-  test("It should log trace calls when set to true", () => {
+  test("It should log trace calls when set to true", async () => {
     /* eslint-disable no-console */
     const consoleTime = console.time;
     const consoleTimeEnd = console.timeEnd;
     console.time = jest.fn();
     console.timeEnd = jest.fn();
-    return resolveEntity("model:traced", "foo", {
+
+    const result = await resolveEntity("model:traced", "foo", {
       trace: true
-    }).then(result => {
-      expect(console.time).toBeCalled();
-      expect(console.timeEnd).toBeCalled();
-      expect(console.time.mock.calls).toMatchSnapshot();
-      expect(console.timeEnd.mock.calls).toMatchSnapshot();
-      expect(result).toEqual("foo");
-      console.time = consoleTime;
-      console.timeEnd = consoleTimeEnd;
     });
+    expect(console.time).toBeCalled();
+    expect(console.timeEnd).toBeCalled();
+    expect(console.time.mock.calls).toMatchSnapshot();
+    expect(console.timeEnd.mock.calls).toMatchSnapshot();
+    expect(result).toEqual("foo");
+    console.time = consoleTime;
+    console.timeEnd = consoleTimeEnd;
     /* eslint-enable no-console */
   });
 
-  test("It should resolve through bypass", () => {
+  test("It should resolve through bypass", async () => {
     dataPoint.middleware.use("hash:before", (acc, next) => {
       next(null, { data: "bar" });
     });
-    return resolveEntity("hash:asIs", "foo").then(result => {
-      expect(result).toEqual({ data: "bar" });
-    });
+
+    const result = await resolveEntity("hash:asIs", "foo");
+    expect(result).toEqual({ data: "bar" });
   });
 
-  test("it should catch errors from middleware", () => {
+  test("it should catch errors from middleware", async () => {
     dataPoint.middleware.use("hash:before", () => {
       throw new Error("test");
     });
-    return resolveEntity("hash:asIs", "foo")
-      .catch(err => err)
-      .then(err => {
-        expect(err).toHaveProperty("message", "test");
-      });
+    await expect(resolveEntity("hash:asIs", "foo")).rejects.toHaveProperty(
+      "message",
+      "test"
+    );
   });
 
-  test("inputType - throws error if inputType does not pass", () => {
-    return resolveEntity("model:c.0", "foo")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+  test("inputType - throws error if inputType does not pass", async () => {
+    await expect(
+      resolveEntity("model:c.0", "foo")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("inputType - if typeCheck passes then resolve normal", () => {
-    return resolveEntity("model:c.0", 1).then(result => {
-      expect(result).toEqual(1);
-    });
+  test("inputType - if typeCheck passes then resolve normal", async () => {
+    const result = await resolveEntity("model:c.0", 1);
+    expect(result).toEqual(1);
   });
 });
 
 describe("ResolveEntity.resolveEntity outputType", () => {
-  test("throws error if value does not pass typeCheck", () => {
-    return resolveEntity("model:c.1", 1)
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+  test("throws error if value does not pass typeCheck", async () => {
+    await expect(
+      resolveEntity("model:c.1", 1)
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("throws error if before method returns value that does not pass typeCheck", () => {
-    return resolveEntity("model:c.5", "some string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+  test("throws error if before method returns value that does not pass typeCheck", async () => {
+    await expect(
+      resolveEntity("model:c.5", "some string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("throws error if middleware before returns value that does not pass typeCheck", () => {
+  test("throws error if middleware before returns value that does not pass typeCheck", async () => {
     dataPoint.middleware.use("model:before", (acc, next) => {
       next(null, 1);
     });
 
-    return resolveEntity("model:c.1", "some string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+    await expect(
+      resolveEntity("model:c.1", "some string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("throws error if global before middleware returns value that does not pass typeCheck", () => {
+  test("throws error if global before middleware returns value that does not pass typeCheck", async () => {
     dataPoint.middleware.use("before", (acc, next) => {
       next(null, 1);
     });
 
-    return resolveEntity("model:c.1", "some string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+    await expect(
+      resolveEntity("model:c.1", "some string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("throws error if after method returns value that does not pass typeCheck", () => {
-    return resolveEntity("model:c.4", "some string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+  test("throws error if after method returns value that does not pass typeCheck", async () => {
+    await expect(
+      resolveEntity("model:c.4", "some string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("throws error if after middleware returns value that does not pass typeCheck", () => {
+  test("throws error if after middleware returns value that does not pass typeCheck", async () => {
     dataPoint.middleware.use("model:after", (acc, next) => {
       next(null, 1);
     });
 
-    return resolveEntity("model:c.1", "some string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+    await expect(
+      resolveEntity("model:c.1", "some string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("throws error if global after middleware returns value that does not pass typeCheck", () => {
+  test("throws error if global after middleware returns value that does not pass typeCheck", async () => {
     dataPoint.middleware.use("after", (acc, next) => {
       next(null, 1);
     });
 
-    return resolveEntity("model:c.1", "some string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+    await expect(
+      resolveEntity("model:c.1", "some string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("passes if error method returns value with correct type", () => {
-    return resolveEntity("model:c.6", "string").then(result => {
-      expect(result).toBe("error string");
-    });
+  test("passes if error method returns value with correct type", async () => {
+    const result = await resolveEntity("model:c.6", "string");
+    expect(result).toBe("error string");
   });
 
-  test("throws if error method does not return value with correct type", () => {
-    return resolveEntity("model:c.7", "string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+  test("throws if error method does not return value with correct type", async () => {
+    await expect(
+      resolveEntity("model:c.7", "string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("is bypassed if error throws error", () => {
-    return resolveEntity("model:c.8", "string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+  test("is bypassed if error throws error", async () => {
+    await expect(
+      resolveEntity("model:c.8", "string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("passes if error method catches typeCheck errors and returns value", () => {
-    return resolveEntity("model:c.9", "string").then(result => {
-      expect(result).toBe("string from error");
-    });
+  test("passes if error method catches typeCheck errors and returns value", async () => {
+    const result = await resolveEntity("model:c.9", "string");
+    expect(result).toBe("string from error");
   });
 
-  test("fails if error method catches typeCheck errors and returns bad value", () => {
-    return resolveEntity("model:c.10", "string")
-      .catch(e => e)
-      .then(e => {
-        expect(e).toMatchSnapshot();
-      });
+  test("fails if error method catches typeCheck errors and returns bad value", async () => {
+    await expect(
+      resolveEntity("model:c.10", "string")
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("resolves normally if typeCheck passes", () => {
-    return resolveEntity("model:c.1", "foo").then(result => {
-      expect(result).toEqual("foo");
-    });
+  test("resolves normally if typeCheck passes", async () => {
+    const result = await resolveEntity("model:c.1", "foo");
+    expect(result).toEqual("foo");
   });
 
-  test("does not change acc.value", () => {
-    return resolveEntity("model:c.2", "my string").then(result => {
-      expect(result).toEqual("my string");
-    });
+  test("does not change acc.value", async () => {
+    const result = await resolveEntity("model:c.2", "my string");
+    expect(result).toEqual("my string");
   });
 
-  test("throws error if custom typeCheck fails", () => {
-    return resolveEntity("model:c.3", 123)
-      .catch(e => e)
-      .then(result => {
-        expect(result).toBeInstanceOf(Error);
-        expect(result).toMatchSnapshot();
-      });
+  test("throws error if custom typeCheck fails", async () => {
+    await expect(
+      resolveEntity("model:c.3", 123)
+    ).rejects.toThrowErrorMatchingSnapshot();
+  });
+
+  test("does not attempt to execute outputType if it does not exists", async () => {
+    const result = await resolveEntity("model:c.11");
+    expect(result).toEqual("all good");
   });
 });
 
@@ -412,40 +302,38 @@ describe("ResolveEntity.resolve", () => {
     );
   };
 
-  test("It should resolve as single entity", () => {
-    return resolve("model:asIs", "foo").then(result => {
-      expect(result).toEqual("foo");
-    });
+  test("It should resolve as single entity", async () => {
+    const result = await resolve("model:asIs", "foo");
+    expect(result).toEqual("foo");
   });
 
-  test("It should resolve as collection", () => {
-    return resolve("model:asIs[]", ["foo"]).then(result => {
-      expect(result).toEqual(["foo"]);
-    });
+  test("It should resolve as collection", async () => {
+    const result = await resolve("model:asIs[]", ["foo"]);
+    expect(result).toEqual(["foo"]);
   });
-  test("It should return undefined if accumulator is not Array", () => {
-    return resolve("model:asIs[]", {}).then(result => {
-      expect(result).toBeUndefined();
-    });
+  test("It should return undefined if accumulator is not Array", async () => {
+    const result = await resolve("model:asIs[]", {});
+    expect(result).toBeUndefined();
   });
-  test("It should not execute resolver if flag hasEmptyConditional is true and value is empty", () => {
-    return resolve("?model:asIs", undefined).then(result => {
-      expect(result).toBeUndefined();
-    });
+  test("It should not execute resolver if flag hasEmptyConditional is true and value is empty", async () => {
+    const result = await resolve("?model:asIs", undefined);
+    expect(result).toBeUndefined();
   });
 
-  test("It should execute resolver if flag hasEmptyConditional is true and value is not empty", () => {
-    return resolve("?model:asIs", "foo").then(result => {
-      expect(result).toEqual("foo");
-    });
+  test("It should execute resolver if flag hasEmptyConditional is true and value is not empty", async () => {
+    const result = await resolve("?model:asIs", "foo");
+    expect(result).toEqual("foo");
   });
 
-  test("It should execute resolver only on non empty items of collection if hasEmptyConditional is set", () => {
-    return resolve("?model:asIs[]", ["a", undefined, "b", null, "c"]).then(
-      result => {
-        expect(result).toEqual(["a", undefined, "b", null, "c"]);
-      }
-    );
+  test("It should execute resolver only on non empty items of collection if hasEmptyConditional is set", async () => {
+    const result = await resolve("?model:asIs[]", [
+      "a",
+      undefined,
+      "b",
+      null,
+      "c"
+    ]);
+    expect(result).toEqual(["a", undefined, "b", null, "c"]);
   });
 });
 
@@ -475,34 +363,31 @@ describe("entity lifecycle methods", () => {
     return stack;
   }
 
-  test("It should resolve methods in the correct order with no error", () => {
+  test("It should resolve methods in the correct order with no error", async () => {
     const stack = [];
 
     addMiddleware(stack);
 
-    return dataPoint
-      .resolve("model:lifecycles", [], {
-        locals: {
-          before: () => pushToStack(stack, "before"),
-          value: () => pushToStack(stack, "value"),
-          after: () => pushToStack(stack, "after"),
-          error: () => pushToStack(stack, "error")
-        }
-      })
-      .catch(err => err)
-      .then(output => {
-        expect(output).toEqual([
-          "before [middleware]",
-          "model:before [middleware]",
-          "before",
-          "value",
-          "after",
-          "model:after [middleware]",
-          "after [middleware]"
-        ]);
-      });
+    const result = await dataPoint.resolve("model:lifecycles", [], {
+      locals: {
+        before: () => pushToStack(stack, "before"),
+        value: () => pushToStack(stack, "value"),
+        after: () => pushToStack(stack, "after"),
+        error: () => pushToStack(stack, "error")
+      }
+    });
+
+    expect(result).toEqual([
+      "before [middleware]",
+      "model:before [middleware]",
+      "before",
+      "value",
+      "after",
+      "model:after [middleware]",
+      "after [middleware]"
+    ]);
   });
-  test("It should resolve methods in the correct order when error is thrown", () => {
+  test("It should resolve methods in the correct order when error is thrown", async () => {
     const stack = [];
 
     addMiddleware(stack);
@@ -512,23 +397,20 @@ describe("entity lifecycle methods", () => {
       throw new Error();
     });
 
-    return dataPoint
-      .resolve("model:lifecycles", [], {
-        locals: {
-          before: () => pushToStack(stack, "before"),
-          value: () => pushToStack(stack, "value"),
-          after: () => pushToStack(stack, "after"),
-          error: () => pushToStack(stack, "error")
-        }
-      })
-      .catch(err => err)
-      .then(output => {
-        expect(output).toEqual([
-          "before [middleware]",
-          "model:before [middleware]",
-          "model:before [middleware with error]",
-          "error"
-        ]);
-      });
+    const result = await dataPoint.resolve("model:lifecycles", [], {
+      locals: {
+        before: () => pushToStack(stack, "before"),
+        value: () => pushToStack(stack, "value"),
+        after: () => pushToStack(stack, "after"),
+        error: () => pushToStack(stack, "error")
+      }
+    });
+
+    expect(result).toEqual([
+      "before [middleware]",
+      "model:before [middleware]",
+      "model:before [middleware with error]",
+      "error"
+    ]);
   });
 });

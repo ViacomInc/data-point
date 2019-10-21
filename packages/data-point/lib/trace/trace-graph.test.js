@@ -176,10 +176,9 @@ describe("writeTraceGraph", () => {
     mockDateNow.mockRestore();
     mockWriteFileP.mockRestore();
   });
-  it("should write graph to disk", () => {
+  it("should write graph to disk", async () => {
     const traceGraph = createTraceGraph();
-    return TraceGraph.writeTraceGraph(traceGraph).then(() => {
-      expect(mockWriteFileP.mock.calls[0]).toMatchSnapshot();
-    });
+    await TraceGraph.writeTraceGraph(traceGraph);
+    expect(mockWriteFileP.mock.calls[0]).toMatchSnapshot();
   });
 });

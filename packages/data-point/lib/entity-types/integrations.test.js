@@ -3,7 +3,6 @@
 
 const _ = require("lodash");
 const nock = require("nock");
-const Promise = require("bluebird");
 const FixtureStore = require("../../test/utils/fixture-store");
 const TestData = require("../../test/data.json");
 const Model = require("./entity-model");
@@ -19,34 +18,33 @@ beforeEach(() => {
   dataPoint.middleware.clear();
 });
 
-test("Entry#resolve - branch/leaf nesting", () => {
-  return dataPoint.resolve("hash:branchLeafNesting", TestData).then(result => {
-    expect(result).toEqual({
-      label: "1",
-      leafs: [
-        {
-          label: "1.0",
-          leafs: []
-        },
-        {
-          label: "1.1",
-          leafs: [
-            {
-              label: "1.1.0",
-              leafs: []
-            },
-            {
-              label: "1.1.1",
-              leafs: []
-            }
-          ]
-        }
-      ]
-    });
+test("Entry#resolve - branch/leaf nesting", async () => {
+  const result = await dataPoint.resolve("hash:branchLeafNesting", TestData);
+  expect(result).toEqual({
+    label: "1",
+    leafs: [
+      {
+        label: "1.0",
+        leafs: []
+      },
+      {
+        label: "1.1",
+        leafs: [
+          {
+            label: "1.1.0",
+            leafs: []
+          },
+          {
+            label: "1.1.1",
+            leafs: []
+          }
+        ]
+      }
+    ]
   });
 });
 
-test("Request should use resolved value as url, when url is missing", () => {
+test("Request should use resolved value as url, when url is missing", async () => {
   const expected = {
     ok: true
   };
@@ -55,12 +53,11 @@ test("Request should use resolved value as url, when url is missing", () => {
     .get("/source1")
     .reply(200, expected);
 
-  return dataPoint.resolve("request:a3.1", {}).then(result => {
-    expect(result).toEqual(expected);
-  });
+  const result = await dataPoint.resolve("request:a3.1", {});
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve - resolve request", () => {
+test("Entry#resolve - resolve request", async () => {
   const expected = {
     ok: true
   };
@@ -69,12 +66,11 @@ test("Entry#resolve - resolve request", () => {
     .get("/source1")
     .reply(200, expected);
 
-  return dataPoint.resolve("entry:callRequest", {}).then(result => {
-    expect(result).toEqual(expected);
-  });
+  const result = await dataPoint.resolve("entry:callRequest", {});
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve - request uses locals object", () => {
+test("Entry#resolve - request uses locals object", async () => {
   const expected = {
     ok: true
   };
@@ -88,14 +84,16 @@ test("Entry#resolve - request uses locals object", () => {
       itemPath: "/source1"
     }
   };
-  return dataPoint
-    .resolve("entry:callDynamicRequestFromLocals", {}, options)
-    .then(result => {
-      expect(result).toEqual(expected);
-    });
+  const result = await dataPoint.resolve(
+    "entry:callDynamicRequestFromLocals",
+    {},
+    options
+  );
+
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve - resolve hash with request", () => {
+test("Entry#resolve - resolve hash with request", async () => {
   const expected = {
     ok: true
   };
@@ -104,12 +102,11 @@ test("Entry#resolve - resolve hash with request", () => {
     .get("/source1")
     .reply(200, expected);
 
-  return dataPoint.resolve("entry:hashThatCallsRequest", {}).then(result => {
-    expect(result).toEqual(expected);
-  });
+  const result = await dataPoint.resolve("entry:hashThatCallsRequest", {});
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve - resolve hash with request and hash reducers", () => {
+test("Entry#resolve - resolve hash with request and hash reducers", async () => {
   const expected = {
     newOk: "trueok",
     ok: true
@@ -121,14 +118,15 @@ test("Entry#resolve - resolve hash with request and hash reducers", () => {
       ok: true
     });
 
-  return dataPoint
-    .resolve("entry:callHashWithRequestAndExtendResult", {})
-    .then(result => {
-      expect(result).toEqual(expected);
-    });
+  const result = await dataPoint.resolve(
+    "entry:callHashWithRequestAndExtendResult",
+    {}
+  );
+
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve - resolve model with multiple sources", () => {
+test("Entry#resolve - resolve model with multiple sources", async () => {
   const expected = {
     s1: "source1",
     s2: "source2"
@@ -146,14 +144,15 @@ test("Entry#resolve - resolve model with multiple sources", () => {
       source: "source2"
     });
 
-  return dataPoint
-    .resolve("entry:callHashThatCallsMultipleRequests", {})
-    .then(result => {
-      expect(result).toEqual(expected);
-    });
+  const result = await dataPoint.resolve(
+    "entry:callHashThatCallsMultipleRequests",
+    {}
+  );
+
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve - resolve model with dynamic sources collection", () => {
+test("Entry#resolve - resolve model with dynamic sources collection", async () => {
   const expected = [
     {
       result: "source2"
@@ -188,12 +187,11 @@ test("Entry#resolve - resolve model with dynamic sources collection", () => {
       result: "source3"
     });
 
-  return dataPoint
-    .resolve("entry:nestedRequests", {})
-    .then(result => expect(result).toEqual(expected));
+  const result = await dataPoint.resolve("entry:nestedRequests", {});
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve:middleware(entry:after) - gets called", () => {
+test("Entry#resolve:middleware(entry:after) - gets called", async () => {
   const expected = {
     ok: true
   };
@@ -209,31 +207,30 @@ test("Entry#resolve:middleware(entry:after) - gets called", () => {
     next(null);
   });
 
-  return dataPoint.resolve("entry:callRequest", {}).then(result => {
-    expect(result).toEqual(expected);
-  });
+  const result = await dataPoint.resolve("entry:callRequest", {});
+  expect(result).toEqual(expected);
 });
 
-test("Entry#resolve - run schema, fail if invalid", () => {
-  return dataPoint
-    .resolve("schema:checkHashSchemaInvalid", TestData)
-    .catch(err => err)
-    .then(result => expect(result).toBeInstanceOf(Error));
+test("Entry#resolve - run schema, fail if invalid", async () => {
+  await expect(
+    dataPoint.resolve("schema:checkHashSchemaInvalid", TestData)
+  ).rejects.toThrowErrorMatchingSnapshot();
 });
 
-test("Entry#resolve - run schema, pass value if valid", () => {
-  return dataPoint
-    .resolve("schema:checkHashSchemaValid", TestData)
-    .then(result => expect(result).toBeTruthy());
+test("Entry#resolve - run schema, pass value if valid", async () => {
+  const result = await dataPoint.resolve(
+    "schema:checkHashSchemaValid",
+    TestData
+  );
+  expect(result).toBeTruthy();
 });
 
-test("Model Entity Instance", () => {
+test("Model Entity Instance", async () => {
   const model = Model("myModel", {
     value: value => value * 10
   });
-  return dataPoint
-    .resolve(model, 10)
-    .then(result => expect(result).toEqual(100));
+  const result = await dataPoint.resolve(model, 10);
+  expect(result).toEqual(100);
 });
 
 describe("trace feature", () => {
@@ -246,7 +243,7 @@ describe("trace feature", () => {
     mockhrTime.mockRestore();
   });
 
-  test("trace via options parameter", () => {
+  test("trace via options parameter", async () => {
     let calls = 0;
     const NS_PER_SEC = 1e9;
     mockhrTime = jest.spyOn(process, "hrtime").mockImplementation(() => {
@@ -262,16 +259,14 @@ describe("trace feature", () => {
         return Promise.resolve(true);
       });
 
-    return dataPoint
-      .resolve("model:tracedViaOptions", TestData, {
-        trace: true
-      })
-      .then(() => {
-        expect(mockWriteFileP.mock.calls).toMatchSnapshot();
-      });
+    await dataPoint.resolve("model:tracedViaOptions", TestData, {
+      trace: true
+    });
+
+    expect(mockWriteFileP.mock.calls).toMatchSnapshot();
   });
 
-  test("trace via entity params", () => {
+  test("trace via entity params", async () => {
     const consoleTime = console.time;
     const consoleTimeEnd = console.timeEnd;
 
@@ -288,47 +283,45 @@ describe("trace feature", () => {
         id
       });
     };
-    return dataPoint.resolve("model:tracedViaParams", TestData).then(() => {
-      console.time = consoleTime;
-      console.timeEnd = consoleTimeEnd;
-      const ids = _.map(timeIds, "id");
-      expect(ids[0]).toContain("⧖ model:tracedViaParams:");
-    });
+    await dataPoint.resolve("model:tracedViaParams", TestData);
+    console.time = consoleTime;
+    console.timeEnd = consoleTimeEnd;
+    const ids = _.map(timeIds, "id");
+    expect(ids[0]).toContain("⧖ model:tracedViaParams:");
   });
 });
 
 describe("handle undefined value", () => {
-  test("HashEntity - should throw error", () => {
-    return dataPoint
-      .resolve("hash:noValue", {})
-      .catch(e => e)
-      .then(res => {
-        expect(res).toBeInstanceOf(Error);
-      });
+  test("HashEntity - should throw error", async () => {
+    await expect(dataPoint.resolve("hash:noValue", {})).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+"Entity type check failed!
+Expected type: object
+Actual type: string
+Input value: 'invalid'"
+`);
   });
 
-  test("CollectionEntity - should throw error", () => {
-    return dataPoint
-      .resolve("collection:noValue", {})
-      .catch(e => e)
-      .then(res => {
-        expect(res).toBeInstanceOf(Error);
-      });
+  test("CollectionEntity - should throw error", async () => {
+    await expect(dataPoint.resolve("collection:noValue", {})).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+"Entity type check failed!
+Expected type: array
+Actual type: string
+Input value: 'invalid'"
+`);
   });
 
-  test("CollectionEntity - should ignore input", () => {
+  test("CollectionEntity - should ignore input", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
         ok: true
       });
-    return dataPoint
-      .resolve("request:a1", {})
-      .catch(e => e)
-      .then(res => {
-        expect(res).toEqual({
-          ok: true
-        });
-      });
+    const result = await dataPoint.resolve("request:a1", {});
+
+    expect(result).toEqual({
+      ok: true
+    });
   });
 });

@@ -1,5 +1,3 @@
-const Promise = require("bluebird");
-
 const utils = require("../../../utils");
 const { reducerPredicateIsTruthy } = require("../utils");
 
@@ -10,14 +8,33 @@ const { reducerPredicateIsTruthy } = require("../utils");
  * @param {ReducerFilter} reducerFilter
  * @returns {Promise}
  */
-function resolve(manager, resolveReducer, accumulator, reducerFilter) {
+async function resolve(manager, resolveReducer, accumulator, reducerFilter) {
   const reducer = reducerFilter.reducer;
-  return Promise.filter(accumulator.value, itemValue => {
+
+  if (!Array.isArray(accumulator.value)) {
+    throw new Error(
+      `Expecting an array or an iterable object but got ${accumulator.value}`
+    );
+  }
+
+  const promises = accumulator.value.map(async itemValue => {
     const itemContext = utils.set(accumulator, "value", itemValue);
-    return resolveReducer(manager, itemContext, reducer).then(value => {
-      return reducerPredicateIsTruthy(reducer, value);
-    });
+    const resolvedValue = await resolveReducer(manager, itemContext, reducer);
+    return {
+      value: itemValue,
+      match: reducerPredicateIsTruthy(reducer, resolvedValue)
+    };
   });
+
+  const values = await Promise.all(promises);
+
+  return values.reduce((matches, result) => {
+    if (result.match) {
+      matches.push(result.value);
+    }
+
+    return matches;
+  }, []);
 }
 
 module.exports.resolve = resolve;

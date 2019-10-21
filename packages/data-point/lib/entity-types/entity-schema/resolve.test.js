@@ -29,18 +29,21 @@ beforeAll(() => {
 });
 
 describe("schema.resolve", () => {
-  test("handle failure errors", () => {
-    const promise = transform("schema:a.1.0", { foo: 1 });
-    return promise.catch(err => {
-      expect(err.name).toBe("InvalidSchema");
-      expect(err.errors).toHaveLength(1);
-    });
+  test("handle failure errors", async () => {
+    let error;
+    try {
+      await transform("schema:a.1.0", { foo: 1 });
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error.name).toBe("InvalidSchema");
+    expect(error.errors).toHaveLength(1);
   });
 
-  test("pass context back if no errors", () => {
+  test("pass context back if no errors", async () => {
     const promise = transform("schema:a.1.0", { foo: 1, bar: "1" });
-    return promise.then(result => {
-      expect(result).toEqual({ foo: 1, bar: "1" });
-    });
+    const result = await promise;
+    expect(result).toEqual({ foo: 1, bar: "1" });
   });
 });

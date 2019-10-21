@@ -16,18 +16,20 @@ beforeAll(() => {
 });
 
 describe("ReducerFilter#resolve", () => {
-  test("It should return empty array when reducer is empty reducer list", () => {
+  test("It should return empty array when reducer is empty reducer list", async () => {
     const value = [true, true];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, []);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual([]);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual([]);
   });
 
-  test("It should filter an array of objects", () => {
+  test("It should filter an array of objects", async () => {
     const value = [
       {
         a: 1
@@ -38,19 +40,21 @@ describe("ReducerFilter#resolve", () => {
     ];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, ["$a", a => a > 1]);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual([
-          {
-            a: 2
-          }
-        ]);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual([
+      {
+        a: 2
+      }
+    ]);
   });
 
   describe("ReducerFind#resolve with reducer objects", () => {
-    test("it should filter values that resolve with falsy keys", () => {
+    test("it should filter values that resolve with falsy keys", async () => {
       const value = [
         {
           a: undefined
@@ -87,33 +91,32 @@ describe("ReducerFilter#resolve", () => {
       const reducer = Factory.create(Reducer.create, {
         a: "$a"
       });
-      return Resolve.resolve(
+      const result = await Resolve.resolve(
         manager,
         Reducer.resolve,
         accumulator,
         reducer
-      ).then(result => {
-        expect(result).toEqual([
-          {
-            a: "undefined"
-          },
-          {
-            a: 0
-          },
-          {
-            a: "hello"
-          },
-          {
-            a: 5
-          },
-          {
-            a: []
-          },
-          {
-            a: {}
-          }
-        ]);
-      });
+      );
+      expect(result).toEqual([
+        {
+          a: "undefined"
+        },
+        {
+          a: 0
+        },
+        {
+          a: "hello"
+        },
+        {
+          a: 5
+        },
+        {
+          a: []
+        },
+        {
+          a: {}
+        }
+      ]);
     });
   });
 });

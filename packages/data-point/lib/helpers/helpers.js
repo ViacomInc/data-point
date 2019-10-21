@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const Promise = require("bluebird");
+const util = require("util");
 const resolveReducer = require("../reducer-types").resolve;
 const AccumulatorFactory = require("../accumulator/factory");
 
@@ -51,9 +51,10 @@ function reducifyAll(source, methodList) {
 
 module.exports.reducifyAll = reducifyAll;
 
-function mockReducer(reducer, acc) {
-  const pcb = Promise.promisify(reducer);
-  return pcb(acc.value, acc).then(val => ({ value: val }));
+async function mockReducer(reducer, acc) {
+  const pcb = util.promisify(reducer);
+  const value = await pcb(acc.value, acc);
+  return { value };
 }
 
 module.exports.mockReducer = mockReducer;

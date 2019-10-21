@@ -30,21 +30,18 @@ describe("ReducerPath#resolve", () => {
     const expected = {
       a: 1
     };
-    return resolve(expected, "$").then(result => expect(result).toBe(expected));
+    expect(resolve(expected, "$")).toBe(expected);
   });
 
   test("resolve to context scope", () => {
     const expected = {
       a: 1
     };
-    return resolve(expected, "$..value").then(result =>
-      expect(result).toBe(expected)
-    );
+
+    expect(resolve(expected, "$..value")).toBe(expected);
   });
 
   test("resolve to context scope, access locals", () => {
-    return resolve({}, "$..locals.a[0]").then(result =>
-      expect(result).toBe("testA")
-    );
+    expect(resolve({}, "$..locals.a[0]")).toBe("testA");
   });
 });

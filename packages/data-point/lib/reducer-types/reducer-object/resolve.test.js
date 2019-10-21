@@ -15,7 +15,7 @@ beforeAll(() => {
 });
 
 describe("resolve#reducerObject.resolve", () => {
-  it("should return an empty object when the reducer object is empty", () => {
+  it("should return an empty object when the reducer object is empty", async () => {
     const reducer = createReducerObject(createReducer, {});
 
     const accumulator = AccumulatorFactory.create({
@@ -28,17 +28,16 @@ describe("resolve#reducerObject.resolve", () => {
       }
     });
 
-    return resolveReducerObject(
+    const result = await resolveReducerObject(
       dataPoint,
       resolveReducer,
       accumulator,
       reducer
-    ).then(result => {
-      expect(result).toEqual({});
-    });
+    );
+    expect(result).toEqual({});
   });
 
-  it("should resolve a nested reducer object #1", () => {
+  it("should resolve a nested reducer object #1", async () => {
     const reducer = createReducerObject(createReducer, {
       x: constant([1, 2]),
       y: {
@@ -63,31 +62,30 @@ describe("resolve#reducerObject.resolve", () => {
       }
     });
 
-    return resolveReducerObject(
+    const result = await resolveReducerObject(
       dataPoint,
       resolveReducer,
       accumulator,
       reducer
-    ).then(result => {
-      expect(result).toEqual({
-        x: [1, 2],
-        y: {
-          a: {
-            p1: 1,
-            p2: {
-              p3: 2
-            }
-          },
-          b: {
-            z: 2
+    );
+    expect(result).toEqual({
+      x: [1, 2],
+      y: {
+        a: {
+          p1: 1,
+          p2: {
+            p3: 2
           }
         },
-        zPlusOne: 3
-      });
+        b: {
+          z: 2
+        }
+      },
+      zPlusOne: 3
     });
   });
 
-  it("should resolve a nested reducer object #2", () => {
+  it("should resolve a nested reducer object #2", async () => {
     const reducer = createReducerObject(createReducer, {
       x: "$c.x",
       y: "$c.y",
@@ -115,30 +113,29 @@ describe("resolve#reducerObject.resolve", () => {
       }
     });
 
-    return resolveReducerObject(
+    const result = await resolveReducerObject(
       dataPoint,
       resolveReducer,
       accumulator,
       reducer
-    ).then(result => {
-      expect(result).toEqual({
-        x: "X",
-        y: "Y",
-        z: {
-          a: "A",
-          b: "B",
-          c: {
-            x: "$c.x",
-            y: {
-              y2: "$c.y"
-            },
-            z: ["$c.z"]
-          }
+    );
+    expect(result).toEqual({
+      x: "X",
+      y: "Y",
+      z: {
+        a: "A",
+        b: "B",
+        c: {
+          x: "$c.x",
+          y: {
+            y2: "$c.y"
+          },
+          z: ["$c.z"]
         }
-      });
+      }
     });
   });
-  it("should move object values to different levels of nesting", () => {
+  it("should move object values to different levels of nesting", async () => {
     const accumulator = AccumulatorFactory.create({
       value: {
         a: {
@@ -163,21 +160,20 @@ describe("resolve#reducerObject.resolve", () => {
       ]
     });
 
-    return resolveReducerObject(
+    const result = await resolveReducerObject(
       dataPoint,
       resolveReducer,
       accumulator,
       reducer
-    ).then(result => {
-      expect(result).toEqual({
-        x: {
-          a: 1
-        },
-        y: {
-          a: 1,
-          b: 2
-        }
-      });
+    );
+    expect(result).toEqual({
+      x: {
+        a: 1
+      },
+      y: {
+        a: 1,
+        b: 2
+      }
     });
   });
 });
