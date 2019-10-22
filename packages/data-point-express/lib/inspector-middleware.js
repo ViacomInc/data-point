@@ -33,10 +33,9 @@ function create(dataPoint) {
   const router = Express.Router();
 
   router.use(bodyParser.json());
-  router.get("/", (req, res) => {
-    InspectorUi.getInspector().then(html => {
-      res.send(html);
-    });
+  router.get("/", async (req, res) => {
+    const html = await InspectorUi.getInspector();
+    res.send(html);
   });
 
   router.post("/", (req, res, next) => {

@@ -27,13 +27,14 @@ function createMiddleware(service) {
   });
 }
 
-function create(options) {
+async function create(options) {
   const dpInjection = {
     DataPoint
   };
   const dpOptions = Object.assign({}, options, dpInjection);
 
-  return Service.create(dpOptions).then(createMiddleware);
+  const service = await Service.create(dpOptions);
+  return createMiddleware(service);
 }
 
 module.exports = {
