@@ -155,7 +155,7 @@ describe("resolveUrl", () => {
 });
 
 describe("resolveOptions", () => {
-  test("It should set acc.options", () => {
+  test("It should set acc.options", async () => {
     const acc = {
       value: {
         subdomain: "bar"
@@ -170,17 +170,16 @@ describe("resolveOptions", () => {
       }
     };
 
-    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
-      expect(result.options).toEqual({
-        method: "GET",
-        json: true,
-        url: "http://foo.com/bar",
-        port: 80
-      });
+    const result = await Resolve.resolveOptions(acc, resolveReducerBound);
+    expect(result.options).toEqual({
+      method: "GET",
+      json: true,
+      url: "http://foo.com/bar",
+      port: 80
     });
   });
 
-  test("It should set acc.options and override defaults", () => {
+  test("It should set acc.options and override defaults", async () => {
     const acc = {
       value: {
         method: "POST",
@@ -201,16 +200,15 @@ describe("resolveOptions", () => {
       }
     };
 
-    return Resolve.resolveOptions(acc, resolveReducerBound).then(result => {
-      expect(result.options).toEqual({
-        method: "POST",
-        json: true,
-        port: 80,
-        url: "http://foo.com/bar",
-        qs: {
-          testProp: 1
-        }
-      });
+    const result = await Resolve.resolveOptions(acc, resolveReducerBound);
+    expect(result.options).toEqual({
+      method: "POST",
+      json: true,
+      port: 80,
+      url: "http://foo.com/bar",
+      qs: {
+        testProp: 1
+      }
     });
   });
 });
@@ -273,7 +271,7 @@ describe("getRequestOptions", () => {
 });
 
 describe("resolveRequest", () => {
-  test("resolve reducer locals", () => {
+  test("resolve reducer locals", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
@@ -287,14 +285,13 @@ describe("resolveRequest", () => {
       }
     };
 
-    return Resolve.resolveRequest(acc).then(result => {
-      expect(result).toEqual({
-        ok: true
-      });
+    const result = await Resolve.resolveRequest(acc);
+    expect(result).toEqual({
+      ok: true
     });
   });
 
-  test("log errors when request fails", () => {
+  test("log errors when request fails", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(404, "not found");
@@ -307,11 +304,9 @@ describe("resolveRequest", () => {
       value: "foo"
     };
     _.set(acc, "reducer.spec.id", "test:test");
-    return Resolve.resolveRequest(acc)
-      .catch(e => e)
-      .then(result => {
-        expect(result.message).toMatchSnapshot();
-      });
+    await expect(
+      Resolve.resolveRequest(acc)
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 });
 
@@ -522,74 +517,68 @@ describe("inspect", () => {
 });
 
 describe("resolve", () => {
-  test("simplest json call", () => {
+  test("simplest json call", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
         ok: true
       });
 
-    return transform("request:a1", null).then(result => {
-      expect(result).toEqual({
-        ok: true
-      });
+    const result = await transform("request:a1", null);
+    expect(result).toEqual({
+      ok: true
     });
   });
 
-  it("should use acc.value as url when request.url is not defined", () => {
+  it("should use acc.value as url when request.url is not defined", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
         ok: true
       });
 
-    return transform("request:a3", "http://remote.test/source1").then(
-      result => {
-        expect(result).toEqual({
-          ok: true
-        });
-      }
-    );
+    const result = await transform("request:a3", "http://remote.test/source1");
+    expect(result).toEqual({
+      ok: true
+    });
   });
 
-  test("interpolate data that's returned from the value lifecycle method", () => {
+  test("interpolate data that's returned from the value lifecycle method", async () => {
     nock("http://remote.test")
       .get("/source5")
       .reply(200, {
         ok: true
       });
 
-    return transform("request:a1.4", {
+    const result = await transform("request:a1.4", {
       source: "source5"
-    }).then(result => {
-      expect(result).toEqual({
-        ok: true
-      });
+    });
+    expect(result).toEqual({
+      ok: true
     });
   });
 
-  test("url injections", () => {
+  test("url injections", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
         ok: true
       });
 
-    return transform("request:a1.0", {}).then(result => {
-      expect(result).toEqual({
-        ok: true
-      });
+    const result = await transform("request:a1.0", {});
+    expect(result).toEqual({
+      ok: true
     });
   });
 
-  test("it should inject locals value with string template", () => {
+  test("it should inject locals value with string template", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
         ok: true
       });
 
-    return transform(
+    const result = await transform(
       "request:a3.2",
       {},
       {
@@ -597,41 +586,43 @@ describe("resolve", () => {
           itemPath: "/source1"
         }
       }
-    ).then(result => {
-      expect(result).toEqual({
-        ok: true
-      });
+    );
+    expect(result).toEqual({
+      ok: true
     });
   });
 
-  test("it should use options.baseURL to create a request URL", () => {
+  test("it should use options.baseURL to create a request URL", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
         ok: true
       });
 
-    return transform("request:a4", {}).then(result => {
-      expect(result).toEqual({
-        ok: true
-      });
+    const result = await transform("request:a4", {});
+    expect(result).toEqual({
+      ok: true
     });
   });
 
-  test("it should omit options.auth when encountering an error", () => {
+  test("it should omit options.auth when encountering an error", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(404);
 
-    return transform("request:a9", {}).catch(err => {
-      expect(err.statusCode).toEqual(404);
-      expect(err.message).toMatchSnapshot();
+    let error;
+    try {
+      await transform("request:a9", {});
+    } catch (err) {
+      error = err;
+    }
 
-      // credentials are still available in the raw error.options
-      expect(err.options.auth).toEqual({
-        user: "cool_user",
-        pass: "super_secret!"
-      });
+    expect(error.statusCode).toEqual(404);
+    expect(error.message).toMatchSnapshot();
+    // credentials are still available in the raw error.options
+    expect(error.options.auth).toEqual({
+      user: "cool_user",
+      pass: "super_secret!"
     });
   });
 });

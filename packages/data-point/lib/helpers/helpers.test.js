@@ -48,14 +48,13 @@ describe("helpers.reducifyAll", () => {
 });
 
 describe("helpers.mockReducer", () => {
-  test("test reducerTest", () => {
+  test("test reducerTest", async () => {
     const reducerTest = a => (value, acc, done) => {
       done(null, value * a);
     };
 
-    return helpers.mockReducer(reducerTest(2), { value: 100 }).then(result => {
-      expect(result.value).toBe(200);
-    });
+    const result = await helpers.mockReducer(reducerTest(2), { value: 100 });
+    expect(result.value).toBe(200);
   });
 });
 

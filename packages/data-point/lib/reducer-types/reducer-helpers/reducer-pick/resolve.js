@@ -1,4 +1,3 @@
-const Promise = require("bluebird");
 const pick = require("lodash/pick");
 
 /**
@@ -9,7 +8,7 @@ const pick = require("lodash/pick");
  * @returns {Promise}
  */
 function resolve(manager, resolveReducer, accumulator, reducerPick) {
-  return Promise.resolve(pick(accumulator.value, reducerPick.keys));
+  return pick(accumulator.value, reducerPick.keys);
 }
 
 module.exports.resolve = resolve;

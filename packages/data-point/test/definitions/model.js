@@ -99,5 +99,14 @@ module.exports = {
     before: () => 1,
     error: () => 2,
     outputType: "string"
+  },
+
+  "model:c.11": {
+    value: () => {
+      throw new Error("no outputType check");
+    },
+    error: () => {
+      return "all good";
+    }
   }
 };

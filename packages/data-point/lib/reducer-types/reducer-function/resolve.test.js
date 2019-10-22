@@ -13,7 +13,7 @@ beforeAll(() => {
 });
 
 describe("resolve#filter.resolve", () => {
-  test("resolves node style callback", () => {
+  test("resolves node style callback", async () => {
     const accumulator = AccumulatorFactory.create({
       value: "test"
     });
@@ -22,28 +22,34 @@ describe("resolve#filter.resolve", () => {
       done(null, `${value}node`)
     );
 
-    return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
-      .then(result => {
-        expect(result).toBe("testnode");
-      });
+    const result = await resolveFunction.resolve(
+      dataPoint,
+      resolveReducer,
+      accumulator,
+      reducer
+    );
+
+    expect(result).toBe("testnode");
   });
 
-  test("resolves a sync function", () => {
+  test("resolves a sync function", async () => {
     const accumulator = AccumulatorFactory.create({
       value: "test"
     });
 
     const reducer = reducerFactory.create(value => `${value}sync`);
 
-    return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
-      .then(result => {
-        expect(result).toBe("testsync");
-      });
+    const result = await resolveFunction.resolve(
+      dataPoint,
+      resolveReducer,
+      accumulator,
+      reducer
+    );
+
+    expect(result).toBe("testsync");
   });
 
-  test("resolves a promise function", () => {
+  test("resolves a promise function", async () => {
     const accumulator = AccumulatorFactory.create({
       value: "test"
     });
@@ -52,14 +58,17 @@ describe("resolve#filter.resolve", () => {
       Promise.resolve(`${value}promise`)
     );
 
-    return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
-      .then(result => {
-        expect(result).toBe("testpromise");
-      });
+    const result = await resolveFunction.resolve(
+      dataPoint,
+      resolveReducer,
+      accumulator,
+      reducer
+    );
+
+    expect(result).toBe("testpromise");
   });
 
-  test("rejects if callback passes error as first param", () => {
+  test("rejects if callback passes error as first param", async () => {
     const accumulator = AccumulatorFactory.create({
       value: "test"
     });
@@ -68,11 +77,8 @@ describe("resolve#filter.resolve", () => {
       return done(new Error("Test"));
     });
 
-    return resolveFunction
-      .resolve(dataPoint, resolveReducer, accumulator, reducer)
-      .catch(err => err)
-      .then(err => {
-        expect(err).toHaveProperty("message", "Test");
-      });
+    await expect(
+      resolveFunction.resolve(dataPoint, resolveReducer, accumulator, reducer)
+    ).rejects.toHaveProperty("message", "Test");
   });
 });

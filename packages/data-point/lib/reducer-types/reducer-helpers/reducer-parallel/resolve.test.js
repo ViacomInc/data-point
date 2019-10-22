@@ -16,17 +16,19 @@ beforeAll(() => {
 });
 
 describe("ReducerOmit#resolve", () => {
-  test("return empty array when no reducers are provided", () => {
+  test("return empty array when no reducers are provided", async () => {
     const value = [];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, []);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual(value);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual(value);
   });
-  test("returns array of length 3 when 3 reducers are provided", () => {
+  test("returns array of length 3 when 3 reducers are provided", async () => {
     const value = {
       a: 1,
       b: 2,
@@ -41,17 +43,19 @@ describe("ReducerOmit#resolve", () => {
       ["$c", input => input + 2],
       DataPoint.parallel(["$a", "$b", "$c"])
     ]);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual([
-          1,
-          {
-            b: 2
-          },
-          5,
-          [1, 2, 3]
-        ]);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual([
+      1,
+      {
+        b: 2
+      },
+      5,
+      [1, 2, 3]
+    ]);
   });
 });

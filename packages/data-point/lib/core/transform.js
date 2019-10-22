@@ -1,5 +1,4 @@
 const _ = require("lodash");
-const Promise = require("bluebird");
 
 const Reducer = require("../reducer-types");
 const AccumulatorFactory = require("../accumulator/factory");
@@ -26,7 +25,7 @@ function resolveFromAccumulator(manager, reducerSource, context) {
 
 module.exports.resolveFromAccumulator = resolveFromAccumulator;
 
-function reducerResolve(manager, reducerSource, value, options) {
+async function reducerResolve(manager, reducerSource, value, options) {
   const contextOptions = getOptions(options);
   const context = AccumulatorFactory.create({
     value,
@@ -36,25 +35,41 @@ function reducerResolve(manager, reducerSource, value, options) {
     values: manager.values.getStore()
   });
 
-  const result = resolveFromAccumulator(manager, reducerSource, context).then(
-    resolvedValue => utils.set(context, "value", resolvedValue)
+  const resolvedValue = await resolveFromAccumulator(
+    manager,
+    reducerSource,
+    context
   );
 
-  return !context.trace ? result : result.then(Trace.traceReducer);
+  const resolvedContext = utils.set(context, "value", resolvedValue);
+
+  return !context.trace ? resolvedContext : Trace.traceReducer(resolvedContext);
 }
 
-function transform(manager, reducerSource, value, options, done) {
-  return Promise.resolve()
-    .then(() => reducerResolve(manager, reducerSource, value, options))
-    .asCallback(done);
+async function transform(manager, reducerSource, value, options, done) {
+  let acc;
+  try {
+    acc = await reducerResolve(manager, reducerSource, value, options);
+    if (done) {
+      done(null, acc);
+      return undefined;
+    }
+  } catch (error) {
+    if (done) {
+      done(error);
+    } else {
+      throw error;
+    }
+  }
+
+  return acc;
 }
 
 module.exports.transform = transform;
 
-function resolve(manager, reducerSource, value, options) {
-  return Promise.resolve()
-    .then(() => reducerResolve(manager, reducerSource, value, options))
-    .then(acc => acc.value);
+async function resolve(manager, reducerSource, value, options) {
+  const acc = await reducerResolve(manager, reducerSource, value, options);
+  return acc.value;
 }
 
 module.exports.resolve = _.curry(resolve, 3);

@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const Promise = require("bluebird");
+const util = require("util");
 
 const REDUCER_FUNCTION = "ReducerFunction";
 
@@ -58,7 +58,7 @@ function create(createReducer, source) {
   // if the arity is 3, we expect a Node Style
   // callback function with the form of (value, acc, done)
   if (source.length === 3) {
-    reducer.body = Promise.promisify(source);
+    reducer.body = util.promisify(source);
   } else {
     reducer.body = source;
   }
