@@ -4,8 +4,13 @@ const DataPoint = require("../");
 
 const { Model, Request } = DataPoint;
 
+const mocks = require("./async-example.mocks");
+
+// mock request calls
+mocks();
+
 const PersonRequest = Request("PersonRequest", {
-  url: "https://swapi.co/api/people/{value}"
+  url: "https://swapi.co/api/people/{value}/"
 });
 
 const PersonModel = Model("PersonModel", {
