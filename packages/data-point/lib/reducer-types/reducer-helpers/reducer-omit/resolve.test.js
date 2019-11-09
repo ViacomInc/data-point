@@ -23,11 +23,14 @@ describe("ReducerOmit#resolve", () => {
     };
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, []);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual(value);
-      }
+    const result = Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+
+    expect(result).toEqual(value);
   });
 
   test("It should omit the given keys", () => {
@@ -38,12 +41,15 @@ describe("ReducerOmit#resolve", () => {
     };
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, ["a", "b", "q"]);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual({
-          c: 3
-        });
-      }
+    const result = Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+
+    expect(result).toEqual({
+      c: 3
+    });
   });
 });

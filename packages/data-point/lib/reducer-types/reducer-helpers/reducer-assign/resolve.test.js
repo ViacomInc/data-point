@@ -23,20 +23,22 @@ beforeAll(() => {
 });
 
 describe("ReducerAssign#resolve", () => {
-  test("It should work for empty objects", () => {
+  test("It should work for empty objects", async () => {
     const accumulator = AccumulatorFactory.create({
       value: {}
     });
 
     const reducer = Factory.create(Reducer.create, () => ({}));
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual({});
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual({});
   });
 
-  test("It should work for valid input", () => {
+  test("It should work for valid input", async () => {
     const accumulator = AccumulatorFactory.create({
       value: {
         a: 1,
@@ -45,18 +47,20 @@ describe("ReducerAssign#resolve", () => {
     });
 
     const reducer = Factory.create(Reducer.create, "reducer:a");
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual({
-          a: 1,
-          b: 22,
-          c: 33
-        });
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual({
+      a: 1,
+      b: 22,
+      c: 33
+    });
   });
 
-  test("It should not merge nested objects", () => {
+  test("It should not merge nested objects", async () => {
     const accumulator = AccumulatorFactory.create({
       value: {
         a: 1,
@@ -73,15 +77,17 @@ describe("ReducerAssign#resolve", () => {
       }
     }));
 
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual({
-          a: 1,
-          b: {
-            b: 2
-          }
-        });
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual({
+      a: 1,
+      b: {
+        b: 2
+      }
+    });
   });
 });

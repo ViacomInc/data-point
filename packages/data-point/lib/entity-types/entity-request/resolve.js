@@ -1,6 +1,5 @@
 const _ = require("lodash");
 const fp = require("lodash/fp");
-const Promise = require("bluebird");
 const rp = require("request-promise");
 
 const utils = require("../../utils");
@@ -81,13 +80,12 @@ module.exports.resolveUrl = resolveUrl;
  * @param {Function} resolveReducer
  * @return {Promise<Accumulator>}
  */
-function resolveOptions(accumulator, resolveReducer) {
+async function resolveOptions(accumulator, resolveReducer) {
   const url = resolveUrl(accumulator);
   const specOptions = accumulator.reducer.spec.options;
-  return resolveReducer(accumulator, specOptions).then(value => {
-    const options = getRequestOptions(url, value);
-    return utils.assign(accumulator, { options });
-  });
+  const value = await resolveReducer(accumulator, specOptions);
+  const options = getRequestOptions(url, value);
+  return utils.assign(accumulator, { options });
 }
 
 module.exports.resolveOptions = resolveOptions;
@@ -153,43 +151,45 @@ module.exports.inspect = inspect;
  * @param {Function} resolveReducer
  * @return {Promise<Accumulator>}
  */
-function resolveRequest(acc) {
+async function resolveRequest(acc) {
   const options = Object.assign({}, acc.options, {
     resolveWithFullResponse: true
   });
 
-  const request = rp(options);
-  inspect(acc, request);
-  return request
-    .then(res => res.body)
-    .catch(error => {
-      // remove auth objects from acc and error for printing to console
-      const redactedAcc = fp.set("options.auth", "[omitted]", acc);
-      const redactedError = fp.set("options.auth", "[omitted]", error);
+  try {
+    const request = rp(options);
+    inspect(acc, request);
 
-      const message = [
-        "Entity info:",
-        "\n  - Id: ",
-        _.get(redactedAcc, "reducer.spec.id"),
-        "\n",
-        utils.inspectProperties(
-          redactedAcc,
-          ["options", "params", "value"],
-          "  "
-        ),
-        "\n  Request:\n",
-        utils.inspectProperties(
-          redactedError,
-          ["error", "message", "statusCode", "options", "body"],
-          "  "
-        )
-      ].join("");
+    const response = await request;
+    return response.body;
+  } catch (error) {
+    // remove auth objects from acc and error for printing to console
+    const redactedAcc = fp.set("options.auth", "[omitted]", acc);
+    const redactedError = fp.set("options.auth", "[omitted]", error);
 
-      // attaching to error so it can be exposed by a handler outside datapoint
-      // eslint-disable-next-line no-param-reassign
-      error.message = `${error.message}\n\n${message}`;
-      throw error;
-    });
+    const message = [
+      "Entity info:",
+      "\n  - Id: ",
+      _.get(redactedAcc, "reducer.spec.id"),
+      "\n",
+      utils.inspectProperties(
+        redactedAcc,
+        ["options", "params", "value"],
+        "  "
+      ),
+      "\n  Request:\n",
+      utils.inspectProperties(
+        redactedError,
+        ["error", "message", "statusCode", "options", "body"],
+        "  "
+      )
+    ].join("");
+
+    // attaching to error so it can be exposed by a handler outside datapoint
+    // eslint-disable-next-line no-param-reassign
+    error.message = `${error.message}\n\n${message}`;
+    throw error;
+  }
 }
 
 module.exports.resolveRequest = resolveRequest;
@@ -199,10 +199,9 @@ module.exports.resolveRequest = resolveRequest;
  * @param {Function} resolveReducer
  * @return {Promise<Accumulator>}
  */
-function resolve(acc, resolveReducer) {
-  return Promise.resolve(acc)
-    .then(itemContext => resolveOptions(itemContext, resolveReducer))
-    .then(itemContext => resolveRequest(itemContext, resolveReducer));
+async function resolve(acc, resolveReducer) {
+  const itemContext = await resolveOptions(acc, resolveReducer);
+  return resolveRequest(itemContext, resolveReducer);
 }
 
 module.exports.resolve = resolve;

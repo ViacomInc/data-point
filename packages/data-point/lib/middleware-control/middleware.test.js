@@ -1,22 +1,19 @@
 /* eslint-env jest */
 
-const _ = require("lodash");
-
 const middleware = require("./middleware");
 
-test("middleware#run - with no middleware", () => {
+test("middleware#run - with no middleware", async () => {
   const stack = [];
 
   const expected = {
     foo: "foo"
   };
 
-  return middleware.execute(expected, stack).then(context => {
-    expect(context).toEqual(expected);
-  });
+  const context = await middleware.execute(expected, stack);
+  expect(context).toEqual(expected);
 });
 
-test("middleware#run - execute 1 middleware", () => {
+test("middleware#run - execute 1 middleware", async () => {
   const stack = [
     (acc, next) => {
       acc.bar = "bar";
@@ -29,12 +26,11 @@ test("middleware#run - execute 1 middleware", () => {
     bar: "bar"
   };
 
-  return middleware.execute(expected, stack).then(context => {
-    expect(context).toEqual(expected);
-  });
+  const context = await middleware.execute(expected, stack);
+  expect(context).toEqual(expected);
 });
 
-test("middleware#run - catch unhandled error", () => {
+test("middleware#run - catch unhandled error", async () => {
   const stack = [
     () => {
       throw new Error("unhandled");
@@ -46,13 +42,12 @@ test("middleware#run - catch unhandled error", () => {
     bar: "bar"
   };
 
-  return middleware.execute(expected, stack).catch(err => {
-    expect(_.isError(err)).toBeTruthy();
-    expect(err.message).toBe("unhandled");
-  });
+  await expect(
+    middleware.execute(expected, stack)
+  ).toThrowErrorMatchingInlineSnapshot(`"received is not a function"`);
 });
 
-test("middleware#run - pass programmed middleware error", () => {
+test("middleware#run - pass programmed middleware error", async () => {
   const stack = [
     (acc, next) => {
       next(new Error("planned"));
@@ -64,13 +59,12 @@ test("middleware#run - pass programmed middleware error", () => {
     bar: "bar"
   };
 
-  return middleware.execute(expected, stack).catch(err => {
-    expect(_.isError(err)).toBeTruthy();
-    expect(err.message).toBe("planned");
-  });
+  await expect(
+    middleware.execute(expected, stack)
+  ).toThrowErrorMatchingInlineSnapshot(`"received is not a function"`);
 });
 
-test("middleware#run - with multiple middleware methods", () => {
+test("middleware#run - with multiple middleware methods", async () => {
   const stack = [
     (acc, next) => {
       acc.a = "a";
@@ -92,12 +86,11 @@ test("middleware#run - with multiple middleware methods", () => {
     c: "c"
   };
 
-  return middleware.execute(expected, stack).then(context => {
-    expect(context).toEqual(expected);
-  });
+  const context = await middleware.execute(expected, stack);
+  expect(context).toEqual(expected);
 });
 
-test("middleware#run - exit chain when ___done set to true", () => {
+test("middleware#run - exit chain when ___done set to true", async () => {
   const stack = [
     (acc, next) => {
       acc.a = "a";
@@ -122,12 +115,11 @@ test("middleware#run - exit chain when ___done set to true", () => {
     b: "b"
   };
 
-  return middleware.execute(expected, stack).then(context => {
-    expect(context).toEqual(expected);
-  });
+  const context = await middleware.execute(expected, stack);
+  expect(context).toEqual(expected);
 });
 
-test("middleware#run - exit when next is called with two parameters, value should be second parameter", () => {
+test("middleware#run - exit when next is called with two parameters, value should be second parameter", async () => {
   const stack = [
     (acc, next) => {
       next(null);
@@ -143,9 +135,8 @@ test("middleware#run - exit when next is called with two parameters, value shoul
 
   const acc = {};
 
-  return middleware.execute(acc, stack).then(context => {
-    expect(context.value).toEqual("b");
-  });
+  const context = await middleware.execute(acc, stack);
+  expect(context.value).toEqual("b");
 });
 
 test("middleware#run - only one call to next with resolved value should be used", async () => {
@@ -166,7 +157,7 @@ test("middleware#run - only one call to next with resolved value should be used"
   );
 });
 
-test("middleware#run - exit chain on error", () => {
+test("middleware#run - exit chain on error", async () => {
   const stack = [
     (acc, next) => {
       acc.a = "a";
@@ -189,7 +180,7 @@ test("middleware#run - exit chain on error", () => {
     b: "b"
   };
 
-  return middleware.execute(expected, stack).catch(err => {
-    expect(_.isError(err)).toBeTruthy();
-  });
+  await expect(
+    middleware.execute(expected, stack)
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"planned"`);
 });

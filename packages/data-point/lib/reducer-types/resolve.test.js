@@ -16,74 +16,72 @@ beforeAll(() => {
   manager = fixtureStore.create();
 });
 
-function resolve(source, options, value) {
+async function resolve(source, options, value) {
   const reducer = Factory.create(source, options);
   const accumulator = AccumulatorFactory.create({ value });
-  return Resolve.resolve(manager, accumulator, reducer).catch(e => e);
+  try {
+    return Resolve.resolve(manager, accumulator, reducer);
+  } catch (e) {
+    return e;
+  }
 }
 
 describe("reducer#resolve", () => {
-  test("It should work for valid input", () => {
+  test("It should work for valid input", async () => {
     const source = reducers.addCollectionValues();
     const value = testData.a.b.c;
     const options = {};
-    return resolve(source, options, value).then(result => {
-      expect(result).toEqual(6);
-    });
+    const result = await resolve(source, options, value);
+    expect(result).toEqual(6);
   });
 
-  test("It should throw error for invalid input", () => {
+  test("It should throw error for invalid input", async () => {
     const accumulator = AccumulatorFactory.create({
       value: testData.a.b.c
     });
 
     const reducer = { type: "INVALID TYPE" };
-    expect(() => {
-      Resolve.resolve(manager, accumulator, reducer);
-    }).toThrowErrorMatchingSnapshot();
+    await expect(
+      Resolve.resolve(manager, accumulator, reducer)
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test("It should return undefined when no default is provided", () => {
+  test("It should return undefined when no default is provided", async () => {
     const source = "$a";
     const value = { a: undefined };
     const options = {};
-    return resolve(source, options, value).then(result => {
-      expect(result).toBeUndefined();
-    });
+    const result = await resolve(source, options, value);
+    expect(result).toBeUndefined();
   });
 });
 
 describe("reducer#resolve with default value", () => {
-  test("do not overwrite false", () => {
+  test("do not overwrite false", async () => {
     const source = "$a";
     const value = { a: false };
     const options = { default: 500 };
-    return resolve(source, options, value).then(result => {
-      expect(result).toBe(false);
-    });
+    const result = await resolve(source, options, value);
+    expect(result).toBe(false);
   });
-  test("do not overwrite true", () => {
+  test("do not overwrite true", async () => {
     const source = "$a";
     const value = { a: true };
     const options = { default: 500 };
-    return resolve(source, options, value).then(result => {
-      expect(result).toBe(true);
-    });
+    const result = await resolve(source, options, value);
+    expect(result).toBe(true);
   });
-  test("overwrite undefined", () => {
+  test("overwrite undefined", async () => {
     const source = "$a";
     const value = { a: undefined };
     const options = { default: 500 };
-    return resolve(source, options, value).then(result => {
-      expect(result).toBe(500);
-    });
+    const result = await resolve(source, options, value);
+    expect(result).toBe(500);
   });
-  test("overwrite undefined with function as default", () => {
+  test("overwrite undefined with function as default", async () => {
     const source = "$a";
     const value = { a: undefined };
     const options = { default: () => 500 };
-    return resolve(source, options, value).then(result => {
-      expect(result).toBe(500);
-    });
+    const result = await resolve(source, options, value);
+    expect(result).toBe(500);
   });
 });

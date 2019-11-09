@@ -1,4 +1,3 @@
-const Promise = require("bluebird");
 const omit = require("lodash/omit");
 
 /**
@@ -9,7 +8,7 @@ const omit = require("lodash/omit");
  * @returns {Promise}
  */
 function resolve(manager, resolveReducer, accumulator, reducerOmit) {
-  return Promise.resolve(omit(accumulator.value, reducerOmit.keys));
+  return omit(accumulator.value, reducerOmit.keys);
 }
 
 module.exports.resolve = resolve;

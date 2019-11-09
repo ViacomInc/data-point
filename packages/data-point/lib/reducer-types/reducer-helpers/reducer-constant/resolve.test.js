@@ -7,7 +7,7 @@ const constant = DataPoint.constant;
 const dataPoint = DataPoint.create();
 
 describe("ReducerConstant#resolve", () => {
-  test("constant with nested object", () => {
+  test("constant with nested object", async () => {
     const source = {
       a: "$a",
       b: 1,
@@ -17,28 +17,24 @@ describe("ReducerConstant#resolve", () => {
     };
     const input = {};
 
-    return dataPoint
-      .transform(constant(source), input)
-      .then(result => expect(result.value).toEqual(source));
+    const result = await dataPoint.transform(constant(source), input);
+    expect(result.value).toEqual(source);
   });
 
-  test("constant with a function", () => {
+  test("constant with a function", async () => {
     const source = () => {
       throw new Error();
     };
     const input = 1;
 
-    return dataPoint
-      .transform(constant(source), input)
-      .catch(e => e)
-      .then(result => {
-        expect(result).not.toBeInstanceOf(Error);
-        expect(result.value).toEqual(source);
-        expect(() => result.value()).toThrow();
-      });
+    const result = await dataPoint.transform(constant(source), input);
+
+    expect(result).not.toBeInstanceOf(Error);
+    expect(result.value).toEqual(source);
+    expect(() => result.value()).toThrow();
   });
 
-  test("constants inside of a ReducerObject", () => {
+  test("constants inside of a ReducerObject", async () => {
     const source = {
       a: "$a",
       b: "$b",
@@ -55,15 +51,14 @@ describe("ReducerConstant#resolve", () => {
       }
     };
 
-    return dataPoint.transform(source, input).then(result =>
-      expect(result.value).toEqual({
-        a: 1,
-        b: 2,
-        c: {
-          a: "$c.a"
-        },
-        d: 1
-      })
-    );
+    const result = await dataPoint.transform(source, input);
+    expect(result.value).toEqual({
+      a: 1,
+      b: 2,
+      c: {
+        a: "$c.a"
+      },
+      d: 1
+    });
   });
 });

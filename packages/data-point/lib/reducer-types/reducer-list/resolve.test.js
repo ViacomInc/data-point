@@ -18,69 +18,73 @@ beforeAll(() => {
 });
 
 describe("resolve#reducer.resolve - with valid reducers", () => {
-  test("empty reducer list should return undefined", () => {
+  test("empty reducer list should return undefined", async () => {
     const accumulator = AccumulatorFactory.create({
       value: true
     });
 
     const reducerList = createReducerList(createReducer, []);
 
-    return resolveReducerList(
+    const result = await resolveReducerList(
       manager,
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result).toBeUndefined());
+    );
+    expect(result).toBeUndefined();
   });
 
-  test("one reducer", () => {
+  test("one reducer", async () => {
     const accumulator = AccumulatorFactory.create({
       value: testData
     });
 
     const reducerList = createReducerList(createReducer, "$a.g");
 
-    return resolveReducerList(
+    const result = await resolveReducerList(
       manager,
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result).toEqual(testData.a.g));
+    );
+    expect(result).toEqual(testData.a.g);
   });
 
-  test("multiple reducers", () => {
+  test("multiple reducers", async () => {
     const accumulator = AccumulatorFactory.create({
       value: testData
     });
 
     const reducerList = createReducerList(createReducer, "$a.g | $g1");
 
-    return resolveReducerList(
+    const result = await resolveReducerList(
       manager,
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result).toBe(1));
+    );
+    expect(result).toBe(1);
   });
 });
 
 describe("resolve#reducer.resolve - reducer model", () => {
-  test("simplest model", () => {
+  test("simplest model", async () => {
     const accumulator = AccumulatorFactory.create({
       value: testData
     });
 
     const reducerList = createReducerList(createReducer, "hash:asIs");
 
-    return resolveReducerList(
+    const result = await resolveReducerList(
       manager,
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => expect(result).toEqual(testData));
+    );
+    expect(result).toEqual(testData);
   });
 
-  test("it returns original input after piping through hash:asIs", () => {
+  test("it returns original input after piping through hash:asIs", async () => {
     const accumulator = AccumulatorFactory.create({
       value: testData
     });
@@ -90,19 +94,18 @@ describe("resolve#reducer.resolve - reducer model", () => {
       "hash:asIs | hash:a.1"
     );
 
-    return resolveReducerList(
+    const result = await resolveReducerList(
       manager,
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result => {
-      expect(result).toEqual(testData.a.h);
-    });
+    );
+    expect(result).toEqual(testData.a.h);
   });
 });
 
 describe("resolve#reducer.resolve - reducer request", () => {
-  test("simplest request", () => {
+  test("simplest request", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, {
@@ -115,19 +118,18 @@ describe("resolve#reducer.resolve - reducer request", () => {
 
     const reducerList = createReducerList(createReducer, "request:a1");
 
-    return resolveReducerList(
+    const result = await resolveReducerList(
       manager,
       resolveReducer,
       accumulator,
       reducerList
-    ).then(result =>
-      expect(result).toEqual({
-        ok: true
-      })
     );
+    expect(result).toEqual({
+      ok: true
+    });
   });
 
-  test("multiple models for reducer request", () => {
+  test("multiple models for reducer request", async () => {
     nock("http://remote.test")
       .get("/source1")
       .reply(200, "http://remote.test/source2");
@@ -144,15 +146,14 @@ describe("resolve#reducer.resolve - reducer request", () => {
 
     const reducer = createReducerList(createReducer, "request:a1 | request:a3");
 
-    return resolveReducerList(
+    const result = await resolveReducerList(
       manager,
       resolveReducer,
       accumulator,
       reducer
-    ).then(result => {
-      expect(result).toEqual({
-        ok: true
-      });
+    );
+    expect(result).toEqual({
+      ok: true
     });
   });
 });

@@ -1,12 +1,12 @@
 const fs = require("fs");
-const Promise = require("bluebird");
+const util = require("util");
 
 // this module is used to cover circular references
 const stringify = require("json-stringify-safe");
 
 const { NS_PER_SEC, nanoToMillisecond } = require("./time-helpers");
 
-const writeFileP = Promise.promisify(fs.writeFile);
+const writeFileP = util.promisify(fs.writeFile);
 module.exports.writeFileP = writeFileP;
 
 /**
@@ -123,8 +123,10 @@ function writeTraceGraph(traceGraph) {
 
 module.exports.writeTraceGraph = writeTraceGraph;
 
-function traceReducer(acc) {
-  return writeTraceGraph(acc.traceGraph).return(acc);
+async function traceReducer(acc) {
+  await writeTraceGraph(acc.traceGraph);
+
+  return acc;
 }
 
 module.exports.traceReducer = traceReducer;

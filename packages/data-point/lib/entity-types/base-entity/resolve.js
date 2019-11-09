@@ -1,7 +1,6 @@
 const debug = require("debug");
 const memoize = require("lodash/memoize");
 const merge = require("lodash/merge");
-const Promise = require("bluebird");
 
 const middleware = require("../../middleware");
 const utils = require("../../utils");
@@ -17,56 +16,6 @@ function createDebugEntity(entityType) {
 // debug scope gets memoize so it is not as expensive, it will only create one
 // per entity type
 const debugEntity = memoize(createDebugEntity);
-
-/**
- * @param {Object} manager
- * @param {Error} error
- * @param {Accumulator} accumulator
- * @param {Function} resolveReducer
- * @returns {Promise}
- */
-function resolveErrorReducers(manager, error, accumulator, resolveReducer) {
-  const errorReducer = accumulator.reducer.spec.error;
-  if (!errorReducer) {
-    return Promise.reject(error);
-  }
-
-  const errorAccumulator = utils.set(accumulator, "value", error);
-  return resolveReducer(manager, errorAccumulator, errorReducer);
-}
-
-module.exports.resolveErrorReducers = resolveErrorReducers;
-
-/**
- * @param {Promise} promise
- * @param {*} condition
- * @param {Accumulator} accumulator
- * @param {Function} callback
- * @returns {Promise}
- */
-function addToPromiseChain(promise, condition, accumulator, callback) {
-  if (!condition) {
-    return promise;
-  }
-
-  return promise.then(result => {
-    return callback(utils.set(accumulator, "value", result));
-  });
-}
-
-/**
- * @param {Error} error
- * @returns {*} bypass value
- * @throws rethrows error if bypass was not found
- */
-function handleByPassError(error) {
-  // checking if this is an error to bypass the `then` chain
-  if (error.bypass === true) {
-    return error.bypassValue;
-  }
-
-  throw error;
-}
 
 /**
  * @param {Reducer} reducer
@@ -128,57 +77,14 @@ function createCurrentAccumulator(accumulator, reducer, entity) {
 
 module.exports.createCurrentAccumulator = createCurrentAccumulator;
 
-/**
- * Resolves a middleware, this method contains a 'hack'
- * which consists in using an error to bypass the
- * chain of promise then that come after it.
- *
- * If there is a better/faster more elegant way to do this
- * then pls let me know and send a PR
- *
- * @param {Object} manager - dataPoint instance
- * @param {Promise} promise - should resolve to the current accumulator
- * @param {string} name - name of middleware to execute
- * @returns {Promise}
- */
-function resolveMiddleware(manager, accumulator, name) {
-  return middleware
-    .resolve(manager, name, accumulator)
-    .then(middlewareResult => {
-      // eslint-disable-next-line no-underscore-dangle
-      if (middlewareResult.___resolve === true) {
-        accumulator.debug(accumulator.uid, "- will bypass");
-        // doing this until proven wrong :)
-        const err = new Error("bypassing middleware");
-        err.name = "bypass";
-        err.bypass = true;
-        err.bypassValue = middlewareResult.value;
-        throw err;
-      }
-
-      return middlewareResult.value;
-    });
-}
-
-module.exports.resolveMiddleware = resolveMiddleware;
-
-/**
- * @param {Object} manager
- * @param {Accumulator} accumulator
- * @param {Reducer} reducer
- * @param {Function} resolveReducer
- * @returns {Promise}
- */
-function typeCheck(manager, accumulator, reducer, resolveReducer) {
-  // returns original accumulator if there's no error
-  // this helps prevent type check reducers from mutating the value, but
-  // it's still possible to modify the value by reference when it's an object
-  return resolveReducer(manager, accumulator, reducer).return(
-    accumulator.value
+function resolveMiddleware(manager, middlewareName, accumulator, value) {
+  return middleware.resolve(
+    manager,
+    middlewareName,
+    utils.set(accumulator, "value", value)
   );
 }
 
-module.exports.typeCheck = typeCheck;
 /**
  * @param {Object} manager
  * @param {Function} resolveReducer
@@ -187,20 +93,20 @@ module.exports.typeCheck = typeCheck;
  * @param {Object} entity
  * @returns {Promise}
  */
-function resolveEntity(manager, resolveReducer, accumulator, reducer, entity) {
+async function resolveEntity(
+  manager,
+  resolveReducer,
+  accumulator,
+  reducer,
+  entity
+) {
   const currentAccumulator = createCurrentAccumulator(
     accumulator,
     reducer,
     entity
   );
 
-  const {
-    inputType,
-    value,
-    before,
-    after,
-    outputType
-  } = currentAccumulator.reducer.spec;
+  const spec = currentAccumulator.reducer.spec;
 
   const trace = currentAccumulator.context.params.trace === true;
 
@@ -213,98 +119,147 @@ function resolveEntity(manager, resolveReducer, accumulator, reducer, entity) {
 
   currentAccumulator.debug(currentAccumulator.uid, "- resolve:start");
 
-  let result = Promise.resolve(currentAccumulator.value);
+  let value = currentAccumulator.value;
 
-  result = addToPromiseChain(result, inputType, currentAccumulator, acc =>
-    typeCheck(manager, acc, inputType, resolveReducer)
-  );
+  let byPass = false;
 
-  result = addToPromiseChain(
-    result,
-    manager.middleware.store.has("before"),
-    currentAccumulator,
-    acc => resolveMiddleware(manager, acc, "before")
-  );
+  try {
+    if (spec.inputType) {
+      await resolveReducer(manager, currentAccumulator, spec.inputType);
+    }
 
-  const middlewareEntityBefore = `${reducer.entityType}:before`;
-  result = addToPromiseChain(
-    result,
-    manager.middleware.store.has(middlewareEntityBefore),
-    currentAccumulator,
-    acc => resolveMiddleware(manager, acc, middlewareEntityBefore)
-  );
-
-  result = addToPromiseChain(result, before, currentAccumulator, acc =>
-    resolveReducer(manager, acc, before)
-  );
-
-  result = addToPromiseChain(result, value, currentAccumulator, acc =>
-    resolveReducer(manager, acc, value)
-  );
-
-  result = result.then(resultValue => {
-    currentAccumulator.debug(currentAccumulator.uid, "- resolve");
-    const acc = utils.set(currentAccumulator, "value", resultValue);
-    return entity.resolve(acc, resolveReducer.bind(null, manager));
-  });
-
-  result = addToPromiseChain(result, after, currentAccumulator, acc =>
-    resolveReducer(manager, acc, after)
-  );
-
-  const middlewareEntityAfter = `${reducer.entityType}:after`;
-  result = addToPromiseChain(
-    result,
-    manager.middleware.store.has(middlewareEntityAfter),
-    currentAccumulator,
-    acc => resolveMiddleware(manager, acc, middlewareEntityAfter)
-  );
-
-  result = addToPromiseChain(
-    result,
-    manager.middleware.store.has("after"),
-    currentAccumulator,
-    acc => resolveMiddleware(manager, acc, "after")
-  );
-
-  result = result.catch(handleByPassError);
-
-  result = addToPromiseChain(result, outputType, currentAccumulator, acc =>
-    typeCheck(manager, acc, outputType, resolveReducer)
-  );
-
-  return result
-    .catch(error => {
-      // attach entity information to help debug
-      // eslint-disable-next-line no-param-reassign
-      error.entityId = currentAccumulator.reducer.spec.id;
-
-      let errorResult = resolveErrorReducers(
+    if (manager.middleware.store.has("before")) {
+      const middlewareResult = await resolveMiddleware(
         manager,
-        error,
+        "before",
         currentAccumulator,
-        resolveReducer
+        value
       );
 
-      errorResult = addToPromiseChain(
-        errorResult,
-        outputType,
+      // eslint-disable-next-line no-underscore-dangle
+      if (middlewareResult.___resolve === true) {
+        byPass = true;
+        value = middlewareResult.value;
+      }
+    }
+
+    const middlewareEntityBefore = `${reducer.entityType}:before`;
+    if (!byPass && manager.middleware.store.has(middlewareEntityBefore)) {
+      const middlewareResult = await resolveMiddleware(
+        manager,
+        middlewareEntityBefore,
         currentAccumulator,
-        acc => typeCheck(manager, acc, outputType, resolveReducer)
+        value
       );
 
-      return errorResult;
-    })
-    .then(finalValue => {
-      if (trace === true) {
-        // eslint-disable-next-line no-console
-        console.timeEnd(timeId);
+      // eslint-disable-next-line no-underscore-dangle
+      if (middlewareResult.___resolve === true) {
+        byPass = true;
+        value = middlewareResult.value;
+      }
+    }
+
+    if (!byPass) {
+      if (spec.before) {
+        value = await resolveReducer(
+          manager,
+          utils.set(currentAccumulator, "value", value),
+          spec.before
+        );
       }
 
-      currentAccumulator.debug(currentAccumulator.uid, `- resolve:end`);
+      if (spec.value) {
+        value = await resolveReducer(
+          manager,
+          utils.set(currentAccumulator, "value", value),
+          spec.value
+        );
+      }
 
-      return finalValue;
-    });
+      currentAccumulator.debug(currentAccumulator.uid, "- resolve");
+      value = await entity.resolve(
+        utils.set(currentAccumulator, "value", value),
+        resolveReducer.bind(null, manager)
+      );
+
+      if (spec.after) {
+        value = await resolveReducer(
+          manager,
+          utils.set(currentAccumulator, "value", value),
+          spec.after
+        );
+      }
+    }
+
+    const middlewareEntityAfter = `${reducer.entityType}:after`;
+    if (manager.middleware.store.has(middlewareEntityAfter)) {
+      const middlewareResult = await resolveMiddleware(
+        manager,
+        middlewareEntityAfter,
+        currentAccumulator,
+        value
+      );
+
+      // eslint-disable-next-line no-underscore-dangle
+      if (middlewareResult.___resolve === true) {
+        byPass = true;
+        value = middlewareResult.value;
+      }
+    }
+
+    if (!byPass && manager.middleware.store.has("after")) {
+      const middlewareResult = await resolveMiddleware(
+        manager,
+        "after",
+        currentAccumulator,
+        value
+      );
+
+      // eslint-disable-next-line no-underscore-dangle
+      if (middlewareResult.___resolve === true) {
+        byPass = true;
+        value = middlewareResult.value;
+      }
+    }
+
+    if (spec.outputType) {
+      await resolveReducer(
+        manager,
+        utils.set(currentAccumulator, "value", value),
+        spec.outputType
+      );
+    }
+  } catch (error) {
+    // attach entity information to help debug
+    // eslint-disable-next-line no-param-reassign
+    error.entityId = currentAccumulator.reducer.spec.id;
+
+    if (!spec.error) {
+      throw error;
+    }
+
+    value = await resolveReducer(
+      manager,
+      utils.set(currentAccumulator, "value", error),
+      spec.error
+    );
+
+    if (spec.outputType) {
+      await resolveReducer(
+        manager,
+        utils.set(currentAccumulator, "value", value),
+        spec.outputType
+      );
+    }
+  } finally {
+    if (trace === true) {
+      // eslint-disable-next-line no-console
+      console.timeEnd(timeId);
+    }
+    currentAccumulator.debug(currentAccumulator.uid, `- resolve:end`);
+  }
+
+  return value;
 }
 
 module.exports.resolveEntity = resolveEntity;
@@ -317,11 +272,11 @@ module.exports.resolveEntity = resolveEntity;
  * @param {Object} entity
  * @returns {Promise<Accumulator>}
  */
-function resolve(manager, resolveReducer, accumulator, reducer, entity) {
+async function resolve(manager, resolveReducer, accumulator, reducer, entity) {
   const hasEmptyConditional = reducer.hasEmptyConditional;
 
   if (hasEmptyConditional && utils.isFalsy(accumulator.value)) {
-    return Promise.resolve(accumulator.value);
+    return accumulator.value;
   }
 
   if (!reducer.asCollection) {
@@ -329,10 +284,10 @@ function resolve(manager, resolveReducer, accumulator, reducer, entity) {
   }
 
   if (!Array.isArray(accumulator.value)) {
-    return Promise.resolve(undefined);
+    return undefined;
   }
 
-  return Promise.map(accumulator.value, itemValue => {
+  const promises = accumulator.value.map(itemValue => {
     if (hasEmptyConditional && utils.isFalsy(itemValue)) {
       return itemValue;
     }
@@ -340,6 +295,8 @@ function resolve(manager, resolveReducer, accumulator, reducer, entity) {
     const itemCtx = utils.set(accumulator, "value", itemValue);
     return resolveEntity(manager, resolveReducer, itemCtx, reducer, entity);
   });
+
+  return Promise.all(promises);
 }
 
 module.exports.resolve = resolve;

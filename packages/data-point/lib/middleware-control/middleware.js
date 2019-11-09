@@ -1,7 +1,7 @@
 const once = require("lodash/once");
 const attempt = require("lodash/attempt");
 const isError = require("lodash/isError");
-const Promise = require("bluebird");
+const util = require("util");
 
 /**
  *
@@ -54,4 +54,4 @@ function run(accumulator, stackSpec, done) {
   return next();
 }
 
-module.exports.execute = Promise.promisify(run);
+module.exports.execute = util.promisify(run);

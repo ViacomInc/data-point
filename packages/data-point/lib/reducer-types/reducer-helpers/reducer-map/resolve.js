@@ -1,4 +1,3 @@
-const Promise = require("bluebird");
 const utils = require("../../../utils");
 
 /**
@@ -10,10 +9,13 @@ const utils = require("../../../utils");
  */
 function resolve(manager, resolveReducer, accumulator, reducerMap) {
   const reducer = reducerMap.reducer;
-  return Promise.map(accumulator.value, itemValue => {
+
+  const promises = accumulator.value.map(itemValue => {
     const itemContext = utils.set(accumulator, "value", itemValue);
     return resolveReducer(manager, itemContext, reducer);
   });
+
+  return Promise.all(promises);
 }
 
 module.exports.resolve = resolve;

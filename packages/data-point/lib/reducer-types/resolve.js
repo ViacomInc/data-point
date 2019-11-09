@@ -1,5 +1,3 @@
-const Promise = require("bluebird");
-
 const ReducerEntity = require("./reducer-entity");
 const ReducerEntityId = require("./reducer-entity-id");
 const ReducerFunction = require("./reducer-function");
@@ -54,12 +52,12 @@ function getResolveFunction(reducer) {
  * @param {Reducer} reducer
  * @returns {Promise}
  */
-function resolveReducer(manager, accumulator, reducer) {
+async function resolveReducer(manager, accumulator, reducer) {
   // this conditional is here because BaseEntity#resolve
   // does not check that lifecycle methods are defined
   // before trying to resolve them
   if (!reducer) {
-    return Promise.resolve(accumulator.value);
+    return accumulator.value;
   }
 
   const isTracing = accumulator.trace;
@@ -73,17 +71,17 @@ function resolveReducer(manager, accumulator, reducer) {
   const resolve = getResolveFunction(reducer);
 
   // NOTE: recursive call
-  let result = resolve(manager, resolveReducer, acc, reducer);
+  let result = await resolve(manager, resolveReducer, acc, reducer);
 
   if (hasDefault(reducer)) {
     // eslint-disable-next-line no-underscore-dangle
     const _default = reducer[DEFAULT_VALUE].value;
     const resolveDefault = reducers.ReducerDefault.resolve;
-    result = result.then(value => resolveDefault(value, _default));
+    result = await resolveDefault(result, _default);
   }
 
   if (isTracing) {
-    result = result.then(trace.augmentTraceNodeDuration(traceNode));
+    await trace.augmentTraceNodeDuration(traceNode)();
   }
 
   return result;

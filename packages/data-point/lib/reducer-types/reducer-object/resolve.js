@@ -1,4 +1,3 @@
-const Promise = require("bluebird");
 const set = require("lodash/set");
 
 /**
@@ -8,17 +7,23 @@ const set = require("lodash/set");
  * @param {ReducerObject} reducer
  * @returns {Promise}
  */
-function resolve(manager, resolveReducer, accumulator, reducer) {
+async function resolve(manager, resolveReducer, accumulator, reducer) {
   const result = reducer.source();
+
   if (reducer.reducers.length === 0) {
-    return Promise.resolve(result);
+    return result;
   }
 
-  return Promise.map(reducer.reducers, ({ reducer: itemReducer, path }) => {
-    return resolveReducer(manager, accumulator, itemReducer).then(value => {
-      set(result, path, value);
-    });
-  }).then(() => result);
+  const promises = reducer.reducers.map(
+    async ({ reducer: itemReducer, path }) => {
+      const value = await resolveReducer(manager, accumulator, itemReducer);
+      return set(result, path, value);
+    }
+  );
+
+  await Promise.all(promises);
+
+  return result;
 }
 
 module.exports.resolve = resolve;

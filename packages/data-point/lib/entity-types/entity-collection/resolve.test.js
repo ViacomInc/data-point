@@ -34,14 +34,10 @@ beforeEach(() => {
 });
 
 describe("Collection entity type checking", () => {
-  function resolveInvalid(entity, data) {
-    return dataPoint
-      .resolve(entity, data)
-      .catch(err => err)
-      .then(result => {
-        expect(result).toBeInstanceOf(Error);
-        expect(result).toMatchSnapshot();
-      });
+  async function resolveInvalid(entity, data) {
+    await expect(
+      dataPoint.resolve(entity, data)
+    ).rejects.toThrowErrorMatchingSnapshot();
   }
   test("should throw error from default outputType reducer when output is not valid", () => {
     return resolveInvalid("collection:ObjectsNotAllowed", testData);
@@ -55,97 +51,87 @@ describe("Collection entity type checking", () => {
 });
 
 describe("entity.collection.map", () => {
-  test("should resolve map Transform", () => {
-    return transform("collection:b.1", testData.a.d).then(result => {
-      expect(result).toEqual([2, 4]);
-    });
+  test("should resolve map Transform", async () => {
+    const result = await transform("collection:b.1", testData.a.d);
+    expect(result).toEqual([2, 4]);
   });
 
-  test("should return array with undefined elements if map reducer is empty list", () => {
-    return transform("collection:b.2", testData.a.b.c).then(result => {
-      expect(result).toEqual([undefined, undefined, undefined]);
-    });
+  test("should return array with undefined elements if map reducer is empty list", async () => {
+    const result = await transform("collection:b.2", testData.a.b.c);
+    expect(result).toEqual([undefined, undefined, undefined]);
   });
 });
 
 describe("entity.collection.filter", () => {
-  test("should resolve filter Transform", () => {
-    return transform("collection:c.1", testData.a.d).then(result => {
-      expect(result).toEqual([
-        {
-          d1: 2
-        }
-      ]);
-    });
+  test("should resolve filter Transform", async () => {
+    const result = await transform("collection:c.1", testData.a.d);
+    expect(result).toEqual([
+      {
+        d1: 2
+      }
+    ]);
   });
 
-  test("it should resolve filter transform for collection containing filter property", () => {
-    return transform("collection:c.2", testData.a.b.c).then(result => {
-      expect(result).toEqual([1, 3]);
-    });
+  test("it should resolve filter transform for collection containing filter property", async () => {
+    const result = await transform("collection:c.2", testData.a.b.c);
+    expect(result).toEqual([1, 3]);
   });
 
-  test("should return empty array if filter reducer is empty list", () => {
-    return transform("collection:c.3", testData.a.b.c).then(result => {
-      expect(result).toEqual([]);
-    });
+  test("should return empty array if filter reducer is empty list", async () => {
+    const result = await transform("collection:c.3", testData.a.b.c);
+    expect(result).toEqual([]);
   });
 });
 
 describe("entity.collection.find", () => {
-  test("should resolve find Transform", () => {
-    return transform("collection:d.1", testData.a.b.c).then(result => {
-      expect(result).toEqual(1);
-    });
+  test("should resolve find Transform", async () => {
+    const result = await transform("collection:d.1", testData.a.b.c);
+    expect(result).toEqual(1);
   });
 
-  test("should resolve to undefined if none found", () => {
-    return transform("collection:d.2", testData.a.b.c).then(result => {
-      expect(result).toBeUndefined();
-    });
+  test("should resolve to undefined if none found", async () => {
+    const result = await transform("collection:d.2", testData.a.b.c);
+    expect(result).toBeUndefined();
   });
 
-  test("should return undefined if find reducer is empty list", () => {
-    return transform("collection:d.3", testData.a.b.c).then(result => {
-      expect(result).toEqual(undefined);
-    });
+  test("should return undefined if find reducer is empty list", async () => {
+    const result = await transform("collection:d.3", testData.a.b.c);
+    expect(result).toEqual(undefined);
   });
 });
 
 describe("entity.collection.compose", () => {
-  test("should resolve one modifier", () => {
-    return transform("collection:j.1", testData.a.d).then(result => {
-      expect(result).toEqual([2, 4]);
-    });
+  test("should resolve one modifier", async () => {
+    const result = await transform("collection:j.1", testData.a.d);
+    expect(result).toEqual([2, 4]);
   });
 
-  test("should resolve multiple modifiers", () => {
-    return transform("collection:j.2", testData.a.d).then(result => {
-      expect(result).toBe(10);
-    });
+  test("should resolve multiple modifiers", async () => {
+    const result = await transform("collection:j.2", testData.a.d);
+    expect(result).toBe(10);
   });
 
-  test("map should handle error and rethrow with appended information", () => {
-    return transform("collection:j.3", testData)
-      .catch(err => err)
-      .then(result => {
-        expect(result).toBeInstanceOf(Error);
-      });
+  test("map should handle error and rethrow with appended information", async () => {
+    await expect(
+      transform("collection:j.3", testData)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Cannot read property 'map' of undefined"`
+    );
   });
 
-  test("find should handle error and rethrow with appended information", () => {
-    return transform("collection:j.4", testData)
-      .catch(err => err)
-      .then(result => {
-        expect(result).toBeInstanceOf(Error);
-      });
+  test("find should handle error and rethrow with appended information", async () => {
+    await expect(
+      transform("collection:j.4", testData)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Cannot read property 'length' of undefined"`
+    );
   });
 
-  test("filter should handle error and rethrow with appended information", () => {
-    return transform("collection:j.5", testData)
-      .catch(err => err)
-      .then(result => {
-        expect(result).toBeInstanceOf(Error);
-      });
+  test("filter should handle error and rethrow with appended information", async () => {
+    await expect(
+      transform("collection:j.5", testData)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Expecting an array or an iterable object but got undefined"`
+    );
   });
 });

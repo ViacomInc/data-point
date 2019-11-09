@@ -10,7 +10,7 @@ const helpers = require("../../helpers");
 let dataPoint;
 let resolveReducerBound;
 
-function transform(entityId, value, options) {
+async function transform(entityId, value, options) {
   const reducer = dataPoint.entities.get(entityId);
   const accumulator = helpers.createAccumulator(
     value,
@@ -21,9 +21,8 @@ function transform(entityId, value, options) {
       options
     )
   );
-  return Promise.resolve(true).then(() =>
-    resolveEntryEntity(accumulator, resolveReducerBound)
-  );
+
+  return resolveEntryEntity(accumulator, resolveReducerBound);
 }
 
 beforeAll(() => {
@@ -32,14 +31,12 @@ beforeAll(() => {
 });
 
 describe("Entry.resolve", () => {
-  test("Entry#resolve - resolve empty", () => {
-    return transform("entry:a0").then(result => {
-      expect(result).toEqual({});
-    });
+  test("Entry#resolve - resolve empty", async () => {
+    const result = await transform("entry:a0");
+    expect(result).toEqual({});
   });
-  test("Entry#resolve - resolve context", () => {
-    return transform("entry:a1", testData.foo).then(result => {
-      expect(result).toEqual(1);
-    });
+  test("Entry#resolve - resolve context", async () => {
+    const result = await transform("entry:a1", testData.foo);
+    expect(result).toEqual(1);
   });
 });

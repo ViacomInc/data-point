@@ -16,18 +16,20 @@ beforeAll(() => {
 });
 
 describe("ReducerMap#resolve", () => {
-  test("It should return array with undefined elements when reducer is empty list", () => {
+  test("It should return array with undefined elements when reducer is empty list", async () => {
     const value = [true, true];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, []);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual([undefined, undefined]);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual([undefined, undefined]);
   });
 
-  test("It should map an array of objects", () => {
+  test("It should map an array of objects", async () => {
     const value = [
       {
         a: 1
@@ -38,10 +40,12 @@ describe("ReducerMap#resolve", () => {
     ];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, ["$a", a => a + 1]);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual([2, 3]);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual([2, 3]);
   });
 });

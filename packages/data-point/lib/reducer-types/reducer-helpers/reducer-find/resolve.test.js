@@ -16,18 +16,20 @@ beforeAll(() => {
 });
 
 describe("ReducerFind#resolve", () => {
-  test("It should return undefined when input is an empty array", () => {
+  test("It should return undefined when input is an empty array", async () => {
     const value = [];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, []);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toBeUndefined();
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toBeUndefined();
   });
 
-  test("It should find a matching object", () => {
+  test("It should find a matching object", async () => {
     const value = [
       {
         a: 1
@@ -38,27 +40,31 @@ describe("ReducerFind#resolve", () => {
     ];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, ["$a", a => a > 1]);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual({
-          a: 2
-        });
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual({
+      a: 2
+    });
   });
 
-  test("it should find a matching item that's falsy", () => {
+  test("it should find a matching item that's falsy", async () => {
     const value = [0, 1, 2];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, input => input === 0);
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toBe(0);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toBe(0);
   });
 
-  test("It should return undefined when no match is found", () => {
+  test("It should return undefined when no match is found", async () => {
     const value = [
       {
         a: 1
@@ -69,16 +75,18 @@ describe("ReducerFind#resolve", () => {
     ];
     const accumulator = AccumulatorFactory.create({ value });
     const reducer = Factory.create(Reducer.create, "$c");
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toBeUndefined();
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toBeUndefined();
   });
 });
 
 describe("ReducerFind#resolve with reducer objects", () => {
-  test("it should not find a match when keys are null or undefined", () => {
+  test("it should not find a match when keys are null or undefined", async () => {
     const value = [
       {
         a: undefined,
@@ -94,14 +102,16 @@ describe("ReducerFind#resolve with reducer objects", () => {
       a: "$a",
       b: "$b"
     });
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toBeUndefined();
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toBeUndefined();
   });
 
-  test("it should match the item with truthy keys", () => {
+  test("it should match the item with truthy keys", async () => {
     const value = [
       {
         a: true,
@@ -125,10 +135,12 @@ describe("ReducerFind#resolve with reducer objects", () => {
       a: "$a",
       b: "$b"
     });
-    return Resolve.resolve(manager, Reducer.resolve, accumulator, reducer).then(
-      result => {
-        expect(result).toEqual(value[3]);
-      }
+    const result = await Resolve.resolve(
+      manager,
+      Reducer.resolve,
+      accumulator,
+      reducer
     );
+    expect(result).toEqual(value[3]);
   });
 });
