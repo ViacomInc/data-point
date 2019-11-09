@@ -49,9 +49,7 @@ If you are new to Functional programming there is a lot of good documentation ou
 
 **Javascript API restrictions**
 
-We want DataPoint to be accessible to users from Node 6.x and above, because of this we would like to stick to Node 6 LTS full compatibility without the use of any transpilers.
-
-That said, for asynchronous code please rely on using BlueBird's promise api.
+We want DataPoint to be accessible to users from Node 10.x and above, because of this we would like to stick to Node 10 LTS full compatibility without the use of any transpilers.
 
 **Testing Style**
 
