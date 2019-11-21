@@ -1,7 +1,6 @@
 /* eslint-env jest */
 
 const _ = require("lodash");
-const Promise = require("bluebird");
 
 const mockDebug = jest.fn();
 jest.mock("debug", () => {

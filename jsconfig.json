@@ -1,19 +1,10 @@
 {
-    "compilerOptions": {
-        "target": "ES6"
-    },
-    "exclude": [
-        "node_modules"
-    ],
-    "include": [
-        "lib/**/*",
-        "test/**/*"
-    ],
-    "typeAcquisition": {
-        "include": [
-            "lodash",
-            "jest",
-            "bluebird"
-        ]
-    }
+  "compilerOptions": {
+    "target": "ES6"
+  },
+  "exclude": ["node_modules"],
+  "include": ["lib/**/*", "test/**/*"],
+  "typeAcquisition": {
+    "include": ["lodash", "jest"]
+  }
 }

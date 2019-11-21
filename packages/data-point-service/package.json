@@ -19,7 +19,6 @@
     "data-point": "^3.4.5"
   },
   "dependencies": {
-    "bluebird": "3.5.1",
     "data-point-cache": "^4.0.1",
     "debug": "3.x",
     "lodash": "^4.17.11",
