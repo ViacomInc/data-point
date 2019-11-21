@@ -1,0 +1,15 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:lodash:20180130':
+    - lib-upgrader > inquirer-bluebird > inquirer > lodash:
+        patched: '2019-11-21T21:12:42.304Z'
+    - lib-upgrader > jscodeshift > babel-core > lodash:
+        patched: '2019-11-21T21:12:42.304Z'
+    - lib-upgrader > jscodeshift > babel-core > babel-plugin-proto-to-assign > lodash:
+        patched: '2019-11-21T21:12:42.304Z'
+  'npm:minimatch:20160620':
+    - lib-upgrader > jscodeshift > babel-core > minimatch:
+        patched: '2019-11-21T21:12:42.304Z'
