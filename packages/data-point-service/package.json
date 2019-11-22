@@ -1,6 +1,6 @@
 {
   "name": "data-point-service",
-  "version": "4.2.6",
+  "version": "4.3.0",
   "description": "DataPoint as a Service",
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -16,10 +16,10 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "data-point": "^3.4.5"
+    "data-point": "^3.5.0"
   },
   "dependencies": {
-    "data-point-cache": "^4.0.1",
+    "data-point-cache": "^4.1.0",
     "debug": "3.x",
     "lodash": "^4.17.11",
     "ms": "2.x"

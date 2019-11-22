@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.6...data-point-service@4.3.0) (2019-11-22)
+
+
+### Features
+
+* **data-point-service:** migrate to async/await from bluebird promises ([#439](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/issues/439)) ([ca7d270](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/commit/ca7d270)), closes [#434](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/issues/434)
+
+
+
+
+
 ## [4.2.6](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.5...data-point-service@4.2.6) (2019-10-14)
 
 **Note:** Version bump only for package data-point-service

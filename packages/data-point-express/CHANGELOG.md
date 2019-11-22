@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.0.3...data-point-express@5.1.0) (2019-11-22)
+
+
+### Features
+
+* **data-point-express:** migrate to use async/await ([#443](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/issues/443)) ([ed41ea9](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/commit/ed41ea9)), closes [#434](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/issues/434)
+
+
+
+
+
 ## [5.0.3](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.0.2...data-point-express@5.0.3) (2019-10-14)
 
 **Note:** Version bump only for package data-point-express

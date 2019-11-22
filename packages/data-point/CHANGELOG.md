@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/ViacomInc/data-point/compare/data-point@3.4.5...data-point@3.5.0) (2019-11-22)
+
+
+### Features
+
+* **data-point:** migrate to async/await ([#446](https://github.com/ViacomInc/data-point/issues/446)) ([8c28361](https://github.com/ViacomInc/data-point/commit/8c28361)), closes [#434](https://github.com/ViacomInc/data-point/issues/434)
+
+
+
+
+
 ## [3.4.5](https://github.com/ViacomInc/data-point/compare/data-point@3.4.4...data-point@3.4.5) (2019-10-14)
 
 **Note:** Version bump only for package data-point

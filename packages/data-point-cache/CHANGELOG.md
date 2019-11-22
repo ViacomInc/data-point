@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/compare/data-point-cache@4.0.1...data-point-cache@4.1.0) (2019-11-22)
+
+
+### Features
+
+* **data-point-cache:** migrate to async/await ([#436](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/issues/436)) ([432ccd9](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/commit/432ccd9)), closes [#434](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/issues/434)
+
+
+
+
+
 ## [4.0.1](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/compare/data-point-cache@4.0.0...data-point-cache@4.0.1) (2019-09-26)
 
 **Note:** Version bump only for package data-point-cache
