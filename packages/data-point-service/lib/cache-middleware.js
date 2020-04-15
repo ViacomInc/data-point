@@ -144,15 +144,21 @@ async function revalidateEntry(service, entryKey, cache, ctx) {
   try {
     await addRevalidationFlags(service, entryKey, cache.revalidateTimeout);
 
-    const acc = await resolveFromAccumulator(
+    const value = await resolveFromAccumulator(
       service,
       entryKey,
       ctx.context,
       revalidateContext
     )();
 
-    await module.exports.updateSWREntry(service, entryKey, cache)(acc);
-    await module.exports.revalidateSuccess(service, entityId, entryKey);
+    // check that the value passes the outputType before adding the new entry
+    const outputType = ctx.reducer.spec.outputType;
+    if (outputType) {
+      await service.dataPoint.resolveFromAccumulator(outputType, ctx);
+    }
+
+    await module.exports.updateSWREntry(service, entryKey, cache)(value);
+    await module.exports.revalidateSuccess(service, entityId, entryKey)();
   } catch (error) {
     module.exports.catchRevalidateError(service, entityId, entryKey)(error);
   }
@@ -297,6 +303,12 @@ async function after(service, ctx, next) {
   try {
     // from here below ttl is assumed to be true
     const entryKey = module.exports.generateKey(cache.cacheKey, ctx);
+
+    // check that the value passes the outputType before adding the new entry
+    const outputType = ctx.reducer.spec.outputType;
+    if (outputType) {
+      await service.dataPoint.resolveFromAccumulator(outputType, ctx);
+    }
 
     if (cache.useStaleWhileRevalidate) {
       // adds (or updates) the stale cache entry with the latest value

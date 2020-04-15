@@ -40,6 +40,9 @@ function createContext() {
     context: {
       params: {},
       id: "model:Foo"
+    },
+    reducer: {
+      spec: {}
     }
   };
 
@@ -276,6 +279,80 @@ describe("revalidateEntry", () => {
           entryKey: "entryKey",
           entityId: "model:Foo"
         }
+      );
+    });
+  });
+
+  describe("outputType check", () => {
+    it("check it runs outputType reducer if set", async () => {
+      const mocks = createMocks();
+      mocks.resolveFromAccumulator = jest.fn().mockResolvedValue(true);
+
+      const ctx = createContext();
+      // we are not executing this, just checking it gets passed
+      ctx.reducer.spec.outputType = "outputType";
+
+      _.set(
+        mocks.service,
+        "dataPoint.resolveFromAccumulator",
+        mocks.resolveFromAccumulator
+      );
+
+      await CacheMiddleware.revalidateEntry(
+        mocks.service,
+        "entryKey",
+        cache,
+        ctx
+      );
+
+      // check outputType gets executed
+      expect(mocks.resolveFromAccumulator).toBeCalledWith(
+        ctx.reducer.spec.outputType,
+        ctx
+      );
+
+      // check updateSWREntry is executed
+      expect(mocks.updateSWREntry).toBeCalledWith(
+        mocks.service,
+        "entryKey",
+        cache
+      );
+    });
+
+    it("check it does not save entry if outputType does not pass", async () => {
+      const mocks = createMocks();
+      const error = new TypeError("bad type");
+
+      mocks.resolveFromAccumulator = jest.fn().mockRejectedValue(error);
+
+      const ctx = createContext();
+      // we are not executing this, just checking it gets passed
+      ctx.reducer.spec.outputType = "outputType";
+
+      _.set(
+        mocks.service,
+        "dataPoint.resolveFromAccumulator",
+        mocks.resolveFromAccumulator
+      );
+
+      await CacheMiddleware.revalidateEntry(
+        mocks.service,
+        "entryKey",
+        cache,
+        ctx
+      );
+
+      // check outputType gets executed
+      expect(mocks.resolveFromAccumulator).toBeCalled();
+
+      // check updateSWREntry is executed
+      expect(mocks.updateSWREntry).not.toBeCalled();
+
+      // error is handled
+      expect(mocks.catchRevalidateError).toBeCalledWith(
+        mocks.service,
+        "model:Foo",
+        "entryKey"
       );
     });
   });
@@ -682,6 +759,73 @@ describe("after", () => {
       await CacheMiddleware.after(mocks.service, mocks.ctx, mocks.next);
 
       expect(mocks.next).toBeCalledWith();
+    });
+  });
+
+  describe("outputType check", () => {
+    it("check it runs outputType reducer if set", done => {
+      const mocks = createMocks();
+
+      mocks.ctx.reducer.spec.outputType = "outputType";
+
+      mocks.resolveFromAccumulator = jest
+        .fn()
+        .mockResolvedValue("resolvedValue");
+
+      _.set(
+        mocks.service,
+        "dataPoint.resolveFromAccumulator",
+        mocks.resolveFromAccumulator
+      );
+
+      const next = createNext(done, () => {
+        expect(mocks.resolveFromAccumulator).toBeCalledWith(
+          mocks.ctx.reducer.spec.outputType,
+          mocks.ctx
+        );
+
+        expect(mocks.setStaleWhileRevalidateEntry).toBeCalledWith(
+          mocks.service,
+          "mockCacheKey",
+          "resolvedValue",
+          mocks.cache
+        );
+        expect(mocks.setEntry).not.toBeCalled();
+      });
+
+      mocks.cache.useStaleWhileRevalidate = true;
+      CacheMiddleware.after(mocks.service, mocks.ctx, next);
+    });
+
+    it("check it does not save entry if outputType does not pass", done => {
+      const mocks = createMocks();
+
+      const error = new TypeError("bad type");
+
+      mocks.resolveFromAccumulator = jest.fn().mockRejectedValue(error);
+
+      _.set(
+        mocks.service,
+        "dataPoint.resolveFromAccumulator",
+        mocks.resolveFromAccumulator
+      );
+
+      mocks.ctx.reducer.spec.outputType = "outputType";
+
+      const next = createNext(done, () => {
+        expect(next).toBeCalledWith(error);
+
+        expect(mocks.resolveFromAccumulator).toBeCalledWith(
+          mocks.ctx.reducer.spec.outputType,
+          mocks.ctx
+        );
+
+        expect(mocks.setStaleWhileRevalidateEntry).not.toBeCalled();
+        expect(mocks.setEntry).not.toBeCalled();
+      });
+
+      mocks.cache.useStaleWhileRevalidate = true;
+      CacheMiddleware.after(mocks.service, mocks.ctx, next);
     });
   });
 
