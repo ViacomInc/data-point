@@ -6,10 +6,10 @@
  *  2. cache key is created with a unique string hash based on the schema used.
  *
  *  This will cause the following behaviors:
- *  - Every time the schema changes, the cache key changes, this will force a cache revalidation.
+ *  - Every time the schema changes the cache's key also changes, this will force a cache revalidation.
  *  - After the revalidation, if the output type does not pass, the entry will not be added.
  *  - **IMPORTANT**: if you are using stale-while-revalidate, and the cache validation fails,
- *    it will continue to serve the stale value until it its TTL dies.
+ *    it will continue to serve the stale value until its TTL dies.
  */
 
 const express = require("express");
@@ -63,7 +63,6 @@ const jsonSchema = {
 
 const HelloWorld = DataPoint.Model("HelloWorld", {
   value: (input, acc) => {
-    // const id = parseInt(acc.locals.query.id, 10);
     const id = acc.locals.query.id;
     const phone = acc.locals.query.phone;
     return {
@@ -97,7 +96,6 @@ function server(dataPoint) {
     dataPoint
       .resolve(HelloWorld, {}, options)
       .then(value => {
-        // const responseText = `${value} (person = "${req.query.person}")`;
         res.send(value);
       })
       .catch(error => {
