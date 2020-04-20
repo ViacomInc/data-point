@@ -19,74 +19,72 @@ $ npm install data-point-cache
 
 Create a new DataPoint Service Object
 
-
 ```js
 factory.create(options):Promise<Service>
 ```
 
 Properties of the `options` argument:
 
-| option | type | description |
-|:---|:---|:---|
-| **cache** | `Object` | cache specific settings |
-| **cache.isRequired** | `Boolean` | false by default, if true it will throw an error |
-| **cache.redis** | `Object` | **redis** settings passed to the [ioredis](https://github.com/luin/ioredis/blob/master/API.md#new-redisport-host-options) constructor. For key prefixing, set [keyPrefix](https://github.com/luin/ioredis#transparent-key-prefixing) through `cache.redis.keyPrefix`; if the value is not provided then [os.hostname()](https://nodejs.org/api/os.html#os_os_hostname) will be used. |
+| option               | type      | description                                                                                                                                                                                                                                                                                                                                                                          |
+| :------------------- | :-------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **cache**            | `Object`  | cache specific settings                                                                                                                                                                                                                                                                                                                                                              |
+| **cache.isRequired** | `Boolean` | false by default, if true it will throw an error                                                                                                                                                                                                                                                                                                                                     |
+| **cache.redis**      | `Object`  | **redis** settings passed to the [ioredis](https://github.com/luin/ioredis/blob/master/API.md#new-redisport-host-options) constructor. For key prefixing, set [keyPrefix](https://github.com/luin/ioredis#transparent-key-prefixing) through `cache.redis.keyPrefix`; if the value is not provided then [os.hostname()](https://nodejs.org/api/os.html#os_os_hostname) will be used. |
 
-This method returns a Promise that resolves to a Service Object. 
+This method returns a Promise that resolves to a Service Object.
 
-The Service Object holds a reference to a dataPoint instance. 
+The Service Object holds a reference to a dataPoint instance.
 
 ```js
 const options = {
   entities: {
-    'reducer:foo': (input, acc) => 'bar'
+    "reducer:foo": (input, acc) => "bar"
   }
-}
-factory.create(options)
-  .then((service) => {
-    return service.dataPoint.transform('reducer:foo')
+};
+factory
+  .create(options)
+  .then(service => {
+    return service.dataPoint.transform("reducer:foo");
   })
-  .then((output) => {
-    console.log(output)
+  .then(output => {
+    console.log(output);
     // bar
-  })
+  });
 ```
 
 ## Express example
 
 ```js
-const express = require('express')
-const DataPoint = require('data-point')
-const DataPointService = require('data-point-service')
+const express = require("express");
+const DataPoint = require("data-point");
+const DataPointService = require("data-point-service");
 
-function server (dataPoint) {
-  const app = express()
+function server(dataPoint) {
+  const app = express();
 
-  app.get('/api/hello-world', (req, res) => {
-    dataPoint.resolve(`entry:HelloWorld`, req.query)
-      .then((output) => {
-        res.send(output)
-      })
-  })
+  app.get("/api/hello-world", (req, res) => {
+    dataPoint.resolve(`entry:HelloWorld`, req.query).then(output => {
+      res.send(output);
+    });
+  });
 
-  app.listen(3000, function () {
-    console.log('listening on port 3000!')
-  })
+  app.listen(3000, function() {
+    console.log("listening on port 3000!");
+  });
 }
 
-function createService () {
+function createService() {
   return DataPointService.create({
     DataPoint,
     entities: {
-      'reducer:HelloWorld': (input, acc) => 'Hello World!!'
+      "reducer:HelloWorld": (input, acc) => "Hello World!!"
     }
-  }).then((service) => {
-    return service.dataPoint
-  })
+  }).then(service => {
+    return service.dataPoint;
+  });
 }
 
-createService()
-  .then(server)
+createService().then(server);
 ```
 
 ## <a name="entity-params-cache">Configure entity's cache settings</a>
@@ -108,7 +106,7 @@ To configure an entity's cache settings you must set cache configuration through
 ### cache.ttl
 
 ```js
-ttl: String|Number
+ttl: String | Number;
 ```
 
 Use `cache.ttl` to set an entity's cache entry **Time To Live** value. When this value is a `string` it is expected to be written using the format supported by [ms](https://www.npmjs.com/package/ms).
@@ -169,24 +167,30 @@ DataPointService.create({
 ### cache.revalidateTimeout
 
 ```js
-revalidateTimeout: String|Number
+revalidateTimeout: String | Number;
 ```
 
-*defaults to*: `5s`
+_defaults to_: `5s`
 
-`revalidateTimeout` is the time a revalidation process has before it times-out, the value is expected to be written as a string (eg. `'20m'`) following the format supported by [ms](https://www.npmjs.com/package/ms). When revalidation starts a **revalidation flag** is set which blocks revalidation duplicates from happening. Once the revalidation times-out the revalidation flag will be removed and the **key** will be unblocked for being revalidated again. If omitted it defaults to 5 seconds. 
+`revalidateTimeout` is the time a revalidation process has before it times-out, the value is expected to be written as a string (eg. `'20m'`) following the format supported by [ms](https://www.npmjs.com/package/ms). When revalidation starts a **revalidation flag** is set which blocks revalidation duplicates from happening. Once the revalidation times-out the revalidation flag will be removed and the **key** will be unblocked for being revalidated again. If omitted it defaults to 5 seconds.
 
 This value is only used when `staleWhileRevalidate` is also set.
 
 ## Revalidation and concurrency
 
-When an entity is requested for the first time it will be considered a _cold lookup_, once the entity is resolved a cache entry will be saved on **redis**. For the key's life set by the entity's `ttl` (and `staleWhileRevalidate`) the entity will return the value (considered **stale**) from the **redis** store. Once a new request is made for the key and it's `ttl` has expired a revalidation will be triggered _on the background_; when a revalidation starts a revalidation **flag** will be added to prevent new calls of duplicating the revalidation process. 
+When an entity is requested for the first time it will be considered a _cold lookup_, once the entity is resolved a cache entry will be saved on **redis**. For the key's life set by the entity's `ttl` (and `staleWhileRevalidate`) the entity will return the value (considered **stale**) from the **redis** store. Once a new request is made for the key and it's `ttl` has expired a revalidation will be triggered _on the background_; when a revalidation starts a revalidation **flag** will be added to prevent new calls of duplicating the revalidation process.
 
-Revalidation flags are saved **locally** (in memory - they get cleared once their timeout expires) and also added to the redis store to be accessed by multiple node instances sharing the same keys. The **local** flag is to prevent duplicate revalidation by a single instance, because it is in memory it is an instant lookup; the **remote** flag (redis) is to prevent multiple instances of attempting to revalidate the same request.  
+Revalidation flags are saved **locally** (in memory - they get cleared once their timeout expires) and also added to the redis store to be accessed by multiple node instances sharing the same keys. The **local** flag is to prevent duplicate revalidation by a single instance, because it is in memory it is an instant lookup; the **remote** flag (redis) is to prevent multiple instances of attempting to revalidate the same request.
 
 In the case the revalidation fails the flag will be removed to allow a new revalidation to be triggered.
 
 It is important to know that once the `staleWhileRevalidate` delta has also expired a background revalidation will no longer be triggered and cold lookup will be triggered instead. For this reason it is important to carefully set the cache settings to have a solid caching strategy.
+
+### Validation
+
+If an entity's `outputType` reducer is set, revalidation will execute it before storing the new entry in cache. If the validation fails the entry will not be stored.
+
+In the case revalidation happens via `stale-while-revalidate` and `outputType` does not pass then stale value will be served until the stale value expires on its own.
 
 ## <a name="contributing">Contributing</a>
 
@@ -194,4 +198,4 @@ Please read [CONTRIBUTING.md](https://github.com/ViacomInc/data-point/blob/maste
 
 ## <a name="license">License</a>
 
-This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details
+This project is licensed under the Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details
