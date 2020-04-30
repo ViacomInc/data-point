@@ -21,11 +21,17 @@
   "dependencies": {
     "ioredis": "4.12.2",
     "lodash": "^4.17.11",
-    "ms": "2.x"
+    "ms": "2.x",
+    "snyk": "^1.316.1"
   },
   "keywords": [
     "cache",
     "redis",
     "ioredis"
-  ]
+  ],
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
