@@ -24,7 +24,8 @@
     "data-point-cache": "^4.1.0",
     "debug": "3.x",
     "lodash": "^4.17.11",
-    "ms": "2.x"
+    "ms": "2.x",
+    "snyk": "^1.316.1"
   },
   "peerDependencies": {
     "data-point": "^3.4.0",
@@ -38,5 +39,10 @@
     "reduce",
     "request",
     "model"
-  ]
+  ],
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
