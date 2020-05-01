@@ -25,7 +25,8 @@
   "dependencies": {
     "body-parser": "1.18.2",
     "data-point-service": "^4.3.0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "snyk": "^1.316.1"
   },
   "peerDependencies": {
     "data-point": "^3.4.0",
@@ -43,5 +44,10 @@
     "reduce",
     "request",
     "model"
-  ]
+  ],
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
