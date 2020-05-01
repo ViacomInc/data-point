@@ -20,10 +20,16 @@
   "dependencies": {
     "jscodeshift": "0.x",
     "lib-upgrader": "1.x",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "snyk": "^1.316.1"
   },
   "keywords": [
     "data-point",
     "codemods"
-  ]
+  ],
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
