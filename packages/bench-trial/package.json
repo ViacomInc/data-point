@@ -22,6 +22,12 @@
     "benchmark": "^2.1.4",
     "bluebird": "^3.5.1",
     "chalk": "^2.3.0",
-    "commander": "^2.13.0"
-  }
+    "commander": "^2.13.0",
+    "snyk": "^1.316.1"
+  },
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
