@@ -54,10 +54,16 @@
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.11",
     "request": "2.82.0",
-    "request-promise": "4.2.2"
+    "request-promise": "4.2.2",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "benchmark": "2.1.4",
     "nock": "^8.0.0"
-  }
+  },
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
