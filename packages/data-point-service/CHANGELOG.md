@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.3.0...data-point-service@4.4.0) (2020-05-26)
+
+
+### Features
+
+* **data-point-service:** run outputType before adding entry ([#452](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/issues/452)) ([97f54f0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/commit/97f54f0)), closes [#451](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/issues/451)
+
+
+
+
+
 # [4.3.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.6...data-point-service@4.3.0) (2019-11-22)
 
 

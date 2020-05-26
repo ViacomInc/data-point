@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.1.0...data-point-express@5.1.1) (2020-05-26)
+
+**Note:** Version bump only for package data-point-express
+
+
+
+
+
 # [5.1.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.0.3...data-point-express@5.1.0) (2019-11-22)
 
 
