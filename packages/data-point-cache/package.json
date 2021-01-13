@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "ioredis": "4.12.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.20",
     "ms": "2.x"
   },
   "keywords": [
