@@ -23,7 +23,7 @@
   "dependencies": {
     "data-point-cache": "^4.1.0",
     "debug": "3.x",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.20",
     "ms": "2.x"
   },
   "peerDependencies": {
