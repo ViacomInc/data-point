@@ -20,7 +20,7 @@
   "dependencies": {
     "jscodeshift": "0.x",
     "lib-upgrader": "1.x",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.20"
   },
   "keywords": [
     "data-point",
