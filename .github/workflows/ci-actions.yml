@@ -1,7 +1,7 @@
 name: CI Actions
 on: [push, pull_request]
 jobs:
-  on-Push:
+  integration-check:
     runs-on: ubuntu-latest
     strategy:
       matrix:
