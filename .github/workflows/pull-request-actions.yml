@@ -1,0 +1,20 @@
+name: GitHub Actions Demo
+on: [pull_request]
+jobs:
+  on-Push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn install
+      - run: yarn prettier --check "**/*.js"
+      - run: yarn run lint
+      - run: yarn test -- --maxWorkers=4
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
