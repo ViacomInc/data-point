@@ -1,18 +1,28 @@
 /* eslint-disable no-console */
 const ms = require("ms");
 const IORedis = require("./io-redis");
+const backoff = require("./backoff");
 
 function reconnectOnError(err) {
   console.error("ioredis - reconnectOnError", err.toString());
   return true;
 }
 
-function redisDecorator(redis, resolve, reject) {
+function redisDecorator(redis, options = {}, resolve, reject) {
+  const bus = options.bus;
   let wasConnected = false;
-  redis.on("error", error => {
+
+  redis.on("error", async error => {
     if (!wasConnected) {
       redis.disconnect();
       reject(error);
+
+      if (options.retryInitialConnection) {
+        backoff(redis.connect).then(() =>
+          bus.emit("redis:backoff:reconnected")
+        );
+      }
+
       return;
     }
     console.error("ioredis - error", error.toString());
@@ -41,7 +51,7 @@ function factory(options) {
       reconnectOnError
     });
     const redis = new IORedis(opts);
-    redisDecorator(redis, resolve, reject);
+    redisDecorator(redis, options, resolve, reject);
   });
 }
 

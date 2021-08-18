@@ -210,19 +210,13 @@ describe("get/set/exists", () => {
 });
 
 describe("redisDecorator", () => {
-  const consoleError = console.error;
-  const consoleInfo = console.info;
-  afterAll(() => {
-    console.error = consoleError;
-    console.info = consoleInfo;
-  });
   test("It should execute resolve when ready", done => {
     const redis = new EventEmitter();
     const resolve = result => {
       expect(redis === result).toBeTruthy();
       done();
     };
-    RedisClient.redisDecorator(redis, resolve, () => {});
+    RedisClient.redisDecorator(redis, {}, resolve, () => {});
     redis.emit("ready");
   });
 
@@ -233,7 +227,7 @@ describe("redisDecorator", () => {
       expect(redis.disconnect).toBeCalled();
       done();
     };
-    RedisClient.redisDecorator(redis, () => {}, reject);
+    RedisClient.redisDecorator(redis, {}, () => {}, reject);
     redis.emit("error", new Error("test"));
   });
 
@@ -241,7 +235,7 @@ describe("redisDecorator", () => {
     const redis = new EventEmitter();
     // eslint-disable-next-line no-console
     console.error = jest.fn();
-    RedisClient.redisDecorator(redis, () => {});
+    RedisClient.redisDecorator(redis, {}, () => {});
     redis.emit("connect");
     redis.emit("error", new Error("test"));
     // eslint-disable-next-line no-console
@@ -258,5 +252,45 @@ describe("redisDecorator", () => {
     redis.emit("connect");
     // eslint-disable-next-line no-console
     expect(console.info).toBeCalled();
+  });
+
+  test.skip("It should use the Fibonacci backoff strategy to reconnect", done => {
+    jest.useFakeTimers();
+
+    const redis = new EventEmitter();
+    const bus = new EventEmitter();
+    const redisOpts = { retryInitialConnection: true, bus };
+
+    console.error = jest.fn();
+    redis.disconnect = jest.fn();
+    redis.connect = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("Connection error 2"))
+      .mockRejectedValueOnce(new Error("Connection error 3"))
+      .mockRejectedValueOnce(new Error("Connection error 4"))
+      .mockResolvedValueOnce("connected");
+
+    RedisClient.redisDecorator(redis, redisOpts, jest.fn, jest.fn);
+    redis.emit("error", "Connection error 1");
+
+    bus.on("redis:backoff:reconnected", () => {
+      expect(redis.connect).toHaveBeenCalledTimes(4);
+      expect(console.error).toHaveBeenCalledWith("Connection error 2");
+      expect(console.error).toHaveBeenCalledWith("Connection error 3");
+      expect(console.error).toHaveBeenCalledWith("Connection error 4");
+      expect(console.log).toHaveBeenCalledWith(
+        "data-point-cache - retrying in 2s"
+      );
+      expect(console.log).toHaveBeenCalledWith(
+        "data-point-cache - retrying in 3s"
+      );
+      expect(console.log).toHaveBeenCalledWith(
+        "data-point-cache - retrying in 5s"
+      );
+      done();
+    });
+
+    jest.runAllTimers();
+    jest.clearAllTimers();
   });
 });
