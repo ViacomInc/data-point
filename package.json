@@ -22,7 +22,7 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^27.0.1",
     "all-contributors-cli": "^6.7.0",
     "commitizen": "^3.1.1",
     "cz-conventional-changelog": "2.1.0",
@@ -30,7 +30,7 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
-    "jest": "^24.8.0",
+    "jest": "^27.0.6",
     "lerna": "^3.15.0",
     "lint-staged": "^9.2.0",
     "prettier": "1.18.2",

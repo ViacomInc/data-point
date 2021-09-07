@@ -253,44 +253,4 @@ describe("redisDecorator", () => {
     // eslint-disable-next-line no-console
     expect(console.info).toBeCalled();
   });
-
-  test.skip("It should use the Fibonacci backoff strategy to reconnect", done => {
-    jest.useFakeTimers();
-
-    const redis = new EventEmitter();
-    const bus = new EventEmitter();
-    const redisOpts = { retryInitialConnection: true, bus };
-
-    console.error = jest.fn();
-    redis.disconnect = jest.fn();
-    redis.connect = jest
-      .fn()
-      .mockRejectedValueOnce(new Error("Connection error 2"))
-      .mockRejectedValueOnce(new Error("Connection error 3"))
-      .mockRejectedValueOnce(new Error("Connection error 4"))
-      .mockResolvedValueOnce("connected");
-
-    RedisClient.redisDecorator(redis, redisOpts, jest.fn, jest.fn);
-    redis.emit("error", "Connection error 1");
-
-    bus.on("redis:backoff:reconnected", () => {
-      expect(redis.connect).toHaveBeenCalledTimes(4);
-      expect(console.error).toHaveBeenCalledWith("Connection error 2");
-      expect(console.error).toHaveBeenCalledWith("Connection error 3");
-      expect(console.error).toHaveBeenCalledWith("Connection error 4");
-      expect(console.log).toHaveBeenCalledWith(
-        "data-point-cache - retrying in 2s"
-      );
-      expect(console.log).toHaveBeenCalledWith(
-        "data-point-cache - retrying in 3s"
-      );
-      expect(console.log).toHaveBeenCalledWith(
-        "data-point-cache - retrying in 5s"
-      );
-      done();
-    });
-
-    jest.runAllTimers();
-    jest.clearAllTimers();
-  });
 });

@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 const ms = require("ms");
+const { backOff } = require("exponential-backoff");
+const EventEmitter = require("events");
 const IORedis = require("./io-redis");
-const backoff = require("./backoff");
 
 function reconnectOnError(err) {
   console.error("ioredis - reconnectOnError", err.toString());
@@ -9,7 +10,7 @@ function reconnectOnError(err) {
 }
 
 function redisDecorator(redis, options = {}, resolve, reject) {
-  const bus = options.bus;
+  const emitter = new EventEmitter();
   let wasConnected = false;
 
   redis.on("error", async error => {
@@ -17,10 +18,13 @@ function redisDecorator(redis, options = {}, resolve, reject) {
       redis.disconnect();
       reject(error);
 
-      if (options.retryInitialConnection) {
-        backoff(redis.connect).then(() =>
-          bus.emit("redis:backoff:reconnected")
-        );
+      if (options.backoff.enable) {
+        await backOff(redis.connect, {
+          numOfAttempts: 100,
+          startingDelay: 1000,
+          ...options.backoff.options
+        });
+        emitter.emit("redis:backoff:reconnected");
       }
 
       return;
@@ -121,21 +125,31 @@ function bootstrap(cache) {
   return cache;
 }
 
+class RedisInstance {
+  constructor(options = {}) {
+    this.cache = {
+      redis: null,
+      set: null,
+      get: null,
+      del: null,
+      exists: null,
+      options
+    };
+
+    this.emitter = new EventEmitter();
+    this.emitter.on("redis:backoff:reconnected", () => {
+      console.log("Redis reconnected successfully");
+    });
+  }
+
+  async init() {
+    this.cache.redis = await factory(this.cache.options.redis);
+    return bootstrap(this.cache);
+  }
+}
+
 async function create(options = {}) {
-  const cache = {
-    redis: null,
-    set: null,
-    get: null,
-    del: null,
-    exists: null,
-    options
-  };
-
-  const redis = await factory(cache.options.redis);
-  // eslint-disable-next-line no-param-reassign
-  cache.redis = redis;
-
-  return bootstrap(cache);
+  return new RedisInstance(options).init();
 }
 
 module.exports = {
