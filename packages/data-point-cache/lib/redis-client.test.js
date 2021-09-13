@@ -72,6 +72,21 @@ describe("create", () => {
   });
 });
 
+describe("create with backoff", () => {
+  test("It should create a new redis promisified instance with retry strategy", async () => {
+    const redisClient = await RedisClient.create({ backoff: { enable: true } });
+
+    redisClient.redis.emit("error");
+    console.log(redisClient.redis.get);
+
+    expect(typeof redisClient.redis.get === "function").toBeTruthy();
+
+    redisClient.redis.emit("connect");
+    console.log(redisClient.redis.get);
+    expect(typeof redisClient.redis.get === "function").toBeTruthy();
+  });
+});
+
 describe("get/set/exists", () => {
   test("It should test get/set/exists functionality", () => {
     return RedisClient.create().then(redisClient => {

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const ms = require("ms");
+const _ = require("lodash");
 const { backOff } = require("exponential-backoff");
 const EventEmitter = require("events");
 const IORedis = require("./io-redis");
@@ -10,7 +11,6 @@ function reconnectOnError(err) {
 }
 
 function redisDecorator(redis, options = {}, resolve, reject) {
-  const emitter = new EventEmitter();
   let wasConnected = false;
 
   redis.on("error", async error => {
@@ -24,7 +24,7 @@ function redisDecorator(redis, options = {}, resolve, reject) {
           startingDelay: 1000,
           ...options.backoff.options
         });
-        emitter.emit("redis:backoff:reconnected");
+        options.backoff.bus.emit("redis:backoff:reconnected");
       }
 
       return;
@@ -127,6 +127,7 @@ function bootstrap(cache) {
 
 class RedisInstance {
   constructor(options = {}) {
+    this.emitter = new EventEmitter();
     this.cache = {
       redis: null,
       set: null,
@@ -136,13 +137,15 @@ class RedisInstance {
       options
     };
 
-    this.emitter = new EventEmitter();
     this.emitter.on("redis:backoff:reconnected", () => {
-      console.log("Redis reconnected successfully");
+      this.init();
     });
   }
 
   async init() {
+    if (_.get(this.cache, "options.backoff.enable")) {
+      this.cache.options.backoff.bus = this.emitter;
+    }
     this.cache.redis = await factory(this.cache.options.redis);
     return bootstrap(this.cache);
   }
