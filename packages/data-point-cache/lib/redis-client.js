@@ -138,6 +138,7 @@ class RedisInstance {
     };
 
     this.emitter.on("redis:backoff:reconnected", () => {
+      _.set(this.cache, "options.backoff.enable", false);
       this.init();
     });
   }
