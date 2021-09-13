@@ -30,7 +30,7 @@ test("middleware#run - execute 1 middleware", async () => {
   expect(context).toEqual(expected);
 });
 
-test.skip("middleware#run - catch unhandled error", async () => {
+test("middleware#run - catch unhandled error", async () => {
   const stack = [
     () => {
       throw new Error("unhandled");
@@ -47,7 +47,7 @@ test.skip("middleware#run - catch unhandled error", async () => {
   ).toThrowErrorMatchingInlineSnapshot(`"received is not a function"`);
 });
 
-test.skip("middleware#run - pass programmed middleware error", async () => {
+test("middleware#run - pass programmed middleware error", async () => {
   const stack = [
     (acc, next) => {
       next(new Error("planned"));
