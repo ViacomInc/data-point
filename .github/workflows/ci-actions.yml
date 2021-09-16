@@ -15,6 +15,6 @@ jobs:
       - run: yarn prettier --check "**/*.js"
       - run: yarn run lint
       - run: yarn test -- --maxWorkers=4
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      # - uses: codecov/codecov-action@v1
+      #  with:
+      #    token: ${{ secrets.CODECOV_TOKEN }}
