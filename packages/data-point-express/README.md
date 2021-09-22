@@ -6,7 +6,7 @@
 
 ## Requirements
 
-- Node 8 LTS (or higher)
+- Node 10 LTS (or higher)
 - [Redis](https://redis.io/) (Optional for development)
 - Peer dependencies: [data-point](https://www.npmjs.com/package/data-point), [Express](https://www.npmjs.com/package/express)
 
