@@ -14,6 +14,7 @@ function redisDecorator(redis, options = {}, resolve, reject) {
   let wasConnected = false;
 
   redis.on("error", async error => {
+    console.error("ioredis - error", error.toString());
     if (!wasConnected) {
       redis.disconnect();
       reject(error);
@@ -26,10 +27,7 @@ function redisDecorator(redis, options = {}, resolve, reject) {
         });
         options.backoff.bus.emit("redis:backoff:reconnected");
       }
-
-      return;
     }
-    console.error("ioredis - error", error.toString());
   });
 
   redis.on("ready", () => {
