@@ -1,5 +1,8 @@
 /* eslint-disable no-console */
 const ms = require("ms");
+const _ = require("lodash");
+const { backOff } = require("exponential-backoff");
+const EventEmitter = require("events");
 const IORedis = require("./io-redis");
 
 function reconnectOnError(err) {
@@ -7,13 +10,23 @@ function reconnectOnError(err) {
   return true;
 }
 
-function redisDecorator(redis, resolve, reject) {
+function redisDecorator(redis, options = {}, resolve, reject) {
   let wasConnected = false;
-  redis.on("error", error => {
+
+  redis.on("error", async error => {
     console.error("ioredis - error", error.toString());
     if (!wasConnected) {
       redis.disconnect();
       reject(error);
+
+      if (options.backoff.enable) {
+        await backOff(redis.connect, {
+          numOfAttempts: 100,
+          startingDelay: 1000,
+          ...options.backoff.options
+        });
+        options.backoff.bus.emit("redis:backoff:reconnected");
+      }
     }
   });
 
@@ -40,7 +53,7 @@ function factory(options) {
       reconnectOnError
     });
     const redis = new IORedis(opts);
-    redisDecorator(redis, resolve, reject);
+    redisDecorator(redis, options, resolve, reject);
   });
 }
 
@@ -110,21 +123,35 @@ function bootstrap(cache) {
   return cache;
 }
 
+class RedisInstance {
+  constructor(options = {}) {
+    this.emitter = new EventEmitter();
+    this.cache = {
+      redis: null,
+      set: null,
+      get: null,
+      del: null,
+      exists: null,
+      options
+    };
+
+    this.emitter.on("redis:backoff:reconnected", () => {
+      _.set(this.cache, "options.backoff.enable", false);
+      this.init();
+    });
+  }
+
+  async init() {
+    if (_.get(this.cache, "options.backoff.enable")) {
+      this.cache.options.backoff.bus = this.emitter;
+    }
+    this.cache.redis = await factory(this.cache.options.redis);
+    return bootstrap(this.cache);
+  }
+}
+
 async function create(options = {}) {
-  const cache = {
-    redis: null,
-    set: null,
-    get: null,
-    del: null,
-    exists: null,
-    options
-  };
-
-  const redis = await factory(cache.options.redis);
-  // eslint-disable-next-line no-param-reassign
-  cache.redis = redis;
-
-  return bootstrap(cache);
+  return new RedisInstance(options).init();
 }
 
 module.exports = {

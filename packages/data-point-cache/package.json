@@ -21,7 +21,8 @@
   "dependencies": {
     "ioredis": "4.12.2",
     "lodash": "^4.17.20",
-    "ms": "2.x"
+    "ms": "2.x",
+    "exponential-backoff": "3.1.0"
   },
   "keywords": [
     "cache",

@@ -72,6 +72,21 @@ describe("create", () => {
   });
 });
 
+describe("create with backoff", () => {
+  test("It should create a new redis promisified instance with retry strategy", async () => {
+    const redisClient = await RedisClient.create({ backoff: { enable: true } });
+
+    redisClient.redis.emit("error");
+    console.log(redisClient.redis.get);
+
+    expect(typeof redisClient.redis.get === "function").toBeTruthy();
+
+    redisClient.redis.emit("connect");
+    console.log(redisClient.redis.get);
+    expect(typeof redisClient.redis.get === "function").toBeTruthy();
+  });
+});
+
 describe("get/set/exists", () => {
   test("It should test get/set/exists functionality", () => {
     return RedisClient.create().then(redisClient => {
@@ -210,19 +225,13 @@ describe("get/set/exists", () => {
 });
 
 describe("redisDecorator", () => {
-  const consoleError = console.error;
-  const consoleInfo = console.info;
-  afterAll(() => {
-    console.error = consoleError;
-    console.info = consoleInfo;
-  });
   test("It should execute resolve when ready", done => {
     const redis = new EventEmitter();
     const resolve = result => {
       expect(redis === result).toBeTruthy();
       done();
     };
-    RedisClient.redisDecorator(redis, resolve, () => {});
+    RedisClient.redisDecorator(redis, {}, resolve, () => {});
     redis.emit("ready");
   });
 
@@ -233,7 +242,7 @@ describe("redisDecorator", () => {
       expect(redis.disconnect).toBeCalled();
       done();
     };
-    RedisClient.redisDecorator(redis, () => {}, reject);
+    RedisClient.redisDecorator(redis, {}, () => {}, reject);
     redis.emit("error", new Error("test"));
   });
 
@@ -241,7 +250,7 @@ describe("redisDecorator", () => {
     const redis = new EventEmitter();
     // eslint-disable-next-line no-console
     console.error = jest.fn();
-    RedisClient.redisDecorator(redis, () => {});
+    RedisClient.redisDecorator(redis, {}, () => {});
     redis.emit("connect");
     redis.emit("error", new Error("test"));
     // eslint-disable-next-line no-console
