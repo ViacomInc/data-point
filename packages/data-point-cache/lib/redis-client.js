@@ -10,12 +10,11 @@ function reconnectOnError(err) {
 function redisDecorator(redis, resolve, reject) {
   let wasConnected = false;
   redis.on("error", error => {
+    console.error("ioredis - error", error.toString());
     if (!wasConnected) {
       redis.disconnect();
       reject(error);
-      return;
     }
-    console.error("ioredis - error", error.toString());
   });
 
   redis.on("ready", () => {
