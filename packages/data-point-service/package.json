@@ -16,7 +16,7 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "ajv": "5.2.3",
+    "ajv": "6.12.3",
     "data-point": "^3.5.0",
     "object-hash": "2.0.3"
   },
