@@ -107,6 +107,17 @@
         "question",
         "code"
       ]
+    },
+    {
+      "login": "schiavig",
+      "name": "Giampiero Schiavi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85735845?v=4",
+      "profile": "https://github.com/schiavig",
+      "contributions": [
+        "code",
+        "test",
+        "bug"
+      ]
     }
   ],
   "repoType": "github"

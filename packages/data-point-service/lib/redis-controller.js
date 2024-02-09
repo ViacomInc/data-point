@@ -94,6 +94,7 @@ function deleteSWRControlEntry(service, key) {
 }
 
 /**
+ * Delete stale entry by key
  * @param {Service} service Service instance
  * @param {String} key entry key
  * @returns {Promise}
