@@ -93,11 +93,22 @@ function deleteSWRControlEntry(service, key) {
   return deleteEntry(service, createSWRControlKey(key));
 }
 
+/**
+ * @param {Service} service Service instance
+ * @param {String} key entry key
+ * @returns {Promise}
+ */
+function deleteSWRStaleEntry(service, key) {
+  const staleKey = createSWRStaleKey(key);
+  return deleteEntry(service, staleKey);
+}
+
 module.exports = {
   createSWRControlKey,
   createSWRStaleKey,
   deleteEntry,
   deleteSWRControlEntry,
+  deleteSWRStaleEntry,
   getEntry,
   getSWRControlEntry,
   getSWRStaleEntry,

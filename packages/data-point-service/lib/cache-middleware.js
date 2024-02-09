@@ -243,6 +243,10 @@ function before(service, ctx, next) {
   const cache = EntityCacheParams.getCacheParams(ctx.context.params);
 
   if (!cache.ttl || ctx.locals.resetCache === true) {
+    if (ctx.locals.resetCache === true) {
+      const currentEntryKey = module.exports.generateKey(cache.cacheKey, ctx);
+      RedisController.deleteSWRStaleEntry(service, currentEntryKey);
+    }
     next();
     return false;
   }

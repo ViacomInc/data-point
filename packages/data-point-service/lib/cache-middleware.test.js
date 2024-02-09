@@ -549,6 +549,10 @@ describe("before", () => {
       .spyOn(RedisController, "getEntry")
       .mockReturnValue("noTTLEntry");
 
+    mocks.deleteSWRStaleEntry = jest
+      .spyOn(RedisController, "deleteSWRStaleEntry")
+      .mockReturnValue(Promise.resolve());
+
     return mocks;
   }
 
@@ -564,7 +568,7 @@ describe("before", () => {
       expect(result).toEqual(false);
       expect(mocks.next).toBeCalledWith();
     });
-    it("should call next and return false if resetCache is true", () => {
+    it("should delete stale and call next returning false if resetCache is true", () => {
       const mocks = createMocks();
       mocks.ctx.locals.resetCache = true;
       const result = CacheMiddleware.before(
@@ -572,6 +576,7 @@ describe("before", () => {
         mocks.ctx,
         mocks.next
       );
+      expect(mocks.deleteSWRStaleEntry).toBeCalled();
       expect(result).toEqual(false);
       expect(mocks.next).toBeCalledWith();
     });
