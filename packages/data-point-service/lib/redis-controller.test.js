@@ -147,3 +147,15 @@ describe("deleteSWRControlEntry", () => {
     expect(service.cache.del).toBeCalledWith("key:swr.control");
   });
 });
+
+describe("deleteSWRStaleEntry", () => {
+  it("should delete a stale entry", () => {
+    const service = {
+      cache: {
+        del: jest.fn()
+      }
+    };
+    RedisController.deleteSWRStaleEntry(service, "key");
+    expect(service.cache.del).toBeCalledWith("key:swr.stale");
+  });
+});
