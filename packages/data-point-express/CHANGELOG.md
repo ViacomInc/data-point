@@ -3,17 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [5.1.0-alpha.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.0.4-alpha.0...data-point-express@5.1.0-alpha.0) (2024-09-10)
-
-
-### Features
-
-* **Update ioredis, ioredis-mock to latest versions:** ([#496](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/issues/496)) ([38370a8](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/commit/38370a8))
-
-
-
-
-
 ## [5.0.3](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-express/compare/data-point-express@5.0.2...data-point-express@5.0.3) (2019-10-14)
 
 **Note:** Version bump only for package data-point-express
