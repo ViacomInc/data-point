@@ -16,11 +16,11 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "ioredis-mock": "^4.12.1"
+    "ioredis-mock": "8.9.0"
   },
   "dependencies": {
     "bluebird": "3.5.1",
-    "ioredis": "4.12.2",
+    "ioredis": "5.4.1",
     "lodash": "^4.17.11",
     "ms": "2.x"
   },

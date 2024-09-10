@@ -19,8 +19,8 @@
     "body-parser": "1.18.2",
     "data-point": "^3.4.5",
     "express": "^4.16.2",
-    "ioredis": "4.12.2",
-    "ioredis-mock": "^4.12.1"
+    "ioredis": "5.4.1",
+    "ioredis-mock": "8.9.0"
   },
   "dependencies": {
     "bluebird": "3.5.0",
