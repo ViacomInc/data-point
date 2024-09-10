@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0-alpha.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/compare/data-point-cache@4.0.1...data-point-cache@4.1.0-alpha.0) (2024-09-10)
+
+
+### Features
+
+* **Update ioredis, ioredis-mock to latest versions:** ([#496](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/issues/496)) ([38370a8](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/commit/38370a8))
+
+
+
+
+
 ## [4.0.1](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-cache/compare/data-point-cache@4.0.0...data-point-cache@4.0.1) (2019-09-26)
 
 **Note:** Version bump only for package data-point-cache
