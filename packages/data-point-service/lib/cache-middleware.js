@@ -316,7 +316,7 @@ function after(service, ctx, next) {
 
   // ensuring we call next only with one parameter to prevent from
   // exiting the middleware chain
-  resolution.asCallback(error => next(error));
+  resolution.then(() => next(null), error => next(error));
 
   return true;
 }
