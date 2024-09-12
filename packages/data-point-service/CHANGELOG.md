@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.9-alpha.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.2.8-alpha.0...data-point-service@4.2.9-alpha.0) (2024-09-12)
+
+
+### Bug Fixes
+
+* **data-point-service:** Slight fix to utilize native promise call ([c5db4d9](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/commit/c5db4d9))
+
+
+
+
+
 ## [4.2.8-alpha.0](https://github.com/ViacomInc/data-point/tree/master/packages/data-point-service/compare/data-point-service@4.3.0-alpha.0...data-point-service@4.2.8-alpha.0) (2024-09-10)
 
 **Note:** Version bump only for package data-point-service
