@@ -16,14 +16,14 @@
     "email": "acatl.pacheco@viacom.com"
   },
   "devDependencies": {
-    "body-parser": "1.18.2",
+    "body-parser": "1.20.3",
     "data-point": "^3.5.0",
     "express": "^4.16.2",
     "ioredis": "4.12.2",
     "ioredis-mock": "^4.12.1"
   },
   "dependencies": {
-    "body-parser": "1.18.2",
+    "body-parser": "1.20.3",
     "data-point-service": "^4.4.0",
     "lodash": "^4.17.20"
   },
