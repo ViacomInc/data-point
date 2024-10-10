@@ -2069,7 +2069,7 @@ dataPoint.addEntities({
 
 ### Request
 
-Requests a remote source, using [request-promise](https://github.com/request/request-promise) behind the scenes. The features supported by `request-promise` are exposed/supported by Request entity.
+Requests a remote source, using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) behind the scenes. The features supported by `fetch` are exposed/supported by Request entity.
 
 **SYNOPSIS**
 
@@ -2097,7 +2097,7 @@ dataPoint.addEntities({
 | *before*     | [Reducer](#reducers) | reducer to be resolved **before** the entity resolution |
 | *value*      | [Reducer](#reducers) | the result of this reducer is the input when resolving **url** and **options**
 | *url*        | [StringTemplate](#requesturl-as-stringtemplate) | String value to resolve the request's url |
-| *options*    | [Reducer](#reducers) | reducer that returns an object to use as [request-promise](https://github.com/request/request-promise) options
+| *options*    | [Reducer](#reducers) | reducer that returns an object to use as [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) options
 | *after*      | [Reducer](#reducers) | reducer to be resolved **after** the entity resolution |
 | *error*      | [Reducer](#reducers) | reducer to be resolved in case of an error |
 | *outputType* | String, [Reducer](#reducers) | [type checks](#entity-type-check) the entity's output value, but does not mutate it |

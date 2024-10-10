@@ -1,11 +1,8 @@
 const _ = require("lodash");
 const fp = require("lodash/fp");
 const Promise = require("bluebird");
-const rp = require("request-promise");
 
 const utils = require("../../utils");
-
-let debugIdCounter = 0;
 
 /**
  * request's default options
@@ -23,14 +20,26 @@ const REQUEST_DEFAULT_OPTIONS = {
  */
 function getRequestOptions(url, specOptions) {
   const options = _.defaults({}, specOptions, REQUEST_DEFAULT_OPTIONS);
-  // this makes it possible to modify
-  // the url in the options reducer
-  options.url = options.url || url;
+
+  let requestUrl;
+  // Make a new URL using URL object.
   if (options.baseUrl) {
-    options.uri = options.uri || options.url;
-    options.url = "";
+    const uri = options.uri || options.url || url;
+    requestUrl = new URL(uri, options.baseUrl);
+  } else {
+    requestUrl = new URL(options.url || url);
   }
 
+  options.url = requestUrl.toString();
+  // If there are additional query params from qs then we need to add/append them here.
+  // We'll then reuse the requestUrl to form the proper requestUrl to be passed to options.url
+  if (options.qs) {
+    const queryParams = new URLSearchParams([
+      ...Array.from(requestUrl.searchParams.entries()),
+      ...Object.entries(options.qs)
+    ]);
+    options.url = `${requestUrl.origin}${requestUrl.pathname}?${queryParams}`;
+  }
   return options;
 }
 
@@ -94,78 +103,40 @@ module.exports.resolveOptions = resolveOptions;
 
 /**
  * @param {Accumulator} acc
- */
-function inspect(acc, request) {
-  const paramInspect = acc.params && acc.params.inspect;
-  if (paramInspect === true) {
-    utils.inspect(acc, {
-      options: acc.options,
-      value: acc.value
-    });
-    return true;
-  }
-
-  if (typeof paramInspect === "function") {
-    // some of this logic borrows from https://github.com/request/request-debug
-    debugIdCounter += 1;
-    const debugId = debugIdCounter;
-    const data = {
-      debugId,
-      type: "request",
-      uri: request.uri.href,
-      method: request.method,
-      headers: _.cloneDeep(request.headers)
-    };
-    if (request.body) {
-      data.body = request.body.toString("utf8");
-    }
-    _.attempt(paramInspect, acc, data);
-    // This promise chain should not be returned,
-    // because it is only being used to trigger
-    // the paramInspect callback
-    request
-      .then(res => {
-        _.attempt(paramInspect, acc, {
-          debugId,
-          type: "response",
-          statusCode: res.statusCode,
-          headers: res.headers
-        });
-      })
-      .catch(error => {
-        _.attempt(paramInspect, acc, {
-          debugId,
-          type: "error",
-          statusCode: error.statusCode,
-          headers: error.headers
-        });
-      });
-    return true;
-  }
-
-  return false;
-}
-
-module.exports.inspect = inspect;
-
-/**
- * @param {Accumulator} acc
  * @param {Function} resolveReducer
  * @return {Promise<Accumulator>}
  */
 function resolveRequest(acc) {
-  const options = Object.assign({}, acc.options, {
-    resolveWithFullResponse: true
-  });
+  const options = Object.assign({}, acc.options);
 
-  const request = rp(options);
-  inspect(acc, request);
-  return request
-    .then(res => res.body)
-    .catch(error => {
+  const request = new Request(options.url, options);
+
+  return fetch(request)
+    .then(async res => {
+      // 404 Handler
+      if (!res.ok) {
+        throw new Error("fetch unsuccessful 2XX response not recieved", {
+          cause: res
+        });
+      }
+
+      const resBody = await res.text();
+
+      // check if response is set to return as json (set true in default request option)
+      // otherwise return response as default fetch Response object
+      if (options.json) {
+        // if body is JSON parse it. If not try, stringify then parse it.
+        try {
+          return JSON.parse(resBody);
+        } catch (e) {
+          return JSON.parse(JSON.stringify(resBody));
+        }
+      }
+      return res;
+    })
+    .catch(async error => {
       // remove auth objects from acc and error for printing to console
       const redactedAcc = fp.set("options.auth", "[omitted]", acc);
-      const redactedError = fp.set("options.auth", "[omitted]", error);
 
       const message = [
         "Entity info:",
@@ -176,18 +147,28 @@ function resolveRequest(acc) {
           redactedAcc,
           ["options", "params", "value"],
           "  "
-        ),
-        "\n  Request:\n",
-        utils.inspectProperties(
-          redactedError,
-          ["error", "message", "statusCode", "options", "body"],
-          "  "
         )
-      ].join("");
+      ];
+
+      // Retrieve error text from response and store it back in response (for easier usage with inspectProperties later)
+      const response = error.cause;
+      if (response) {
+        const errorText = await response.text();
+        response.bodyText = errorText;
+        response.error_message = error.message;
+        message.push(
+          "\n  Response:\n",
+          utils.inspectProperties(
+            response,
+            ["error_message", "status", "statusText", "bodyText"],
+            "  "
+          )
+        );
+      }
 
       // attaching to error so it can be exposed by a handler outside datapoint
       // eslint-disable-next-line no-param-reassign
-      error.message = `${error.message}\n\n${message}`;
+      error.message = `${error.message}\n\n${message.join("")}`;
       throw error;
     });
 }

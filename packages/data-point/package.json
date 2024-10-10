@@ -52,13 +52,12 @@
     "bluebird": "3.5.0",
     "debug": "3.x",
     "deep-freeze": "0.0.1",
+    "jest": "^28.1.1",
     "json-stringify-safe": "^5.0.1",
-    "lodash": "^4.17.11",
-    "request": "2.82.0",
-    "request-promise": "4.2.2"
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "benchmark": "2.1.4",
-    "nock": "^8.0.0"
+    "nock": "^14.0.0-beta.15"
   }
 }

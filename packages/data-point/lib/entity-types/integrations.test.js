@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 /* eslint-env jest */
-
 const _ = require("lodash");
 const nock = require("nock");
 const Promise = require("bluebird");

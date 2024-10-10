@@ -1,7 +1,6 @@
 /* eslint-env jest */
 
 const nock = require("nock");
-
 const createReducerList = require("./index").create;
 const resolveReducerList = require("./index").resolve;
 const createReducer = require("../index").create;

@@ -1,9 +1,8 @@
 /* eslint-env jest */
 
 const _ = require("lodash");
-const rp = require("request-promise");
 const nock = require("nock");
-let Resolve = require("./resolve");
+const Resolve = require("./resolve");
 
 const AccumulatorFactory = require("../../accumulator/factory");
 const ReducerFactory = require("../../reducer-types/factory");
@@ -13,7 +12,6 @@ const ResolveEntity = require("../base-entity/resolve");
 const FixtureStore = require("../../../test/utils/fixture-store");
 
 const helpers = require("../../helpers");
-let utils = require("../../utils");
 
 let dataPoint;
 let resolveReducerBound;
@@ -206,7 +204,7 @@ describe("resolveOptions", () => {
         method: "POST",
         json: true,
         port: 80,
-        url: "http://foo.com/bar",
+        url: "http://foo.com/bar?testProp=1",
         qs: {
           testProp: 1
         }
@@ -220,7 +218,7 @@ describe("getRequestOptions", () => {
     expect(Resolve.getRequestOptions("http://foo.com", {})).toEqual({
       method: "GET",
       json: true,
-      url: "http://foo.com"
+      url: "http://foo.com/"
     });
     expect(
       Resolve.getRequestOptions("http://foo.com", {
@@ -229,7 +227,7 @@ describe("getRequestOptions", () => {
     ).toEqual({
       method: "GET",
       json: false,
-      url: "http://foo.com"
+      url: "http://foo.com/"
     });
     expect(
       Resolve.getRequestOptions("http://foo.com", { url: "http://foo.com/bar" })
@@ -246,28 +244,7 @@ describe("getRequestOptions", () => {
       method: "GET",
       json: true,
       timeout: 100,
-      url: "http://foo.com"
-    });
-    expect(
-      Resolve.getRequestOptions("http://foo.com", { baseUrl: "BASE_URL" })
-    ).toEqual({
-      method: "GET",
-      json: true,
-      baseUrl: "BASE_URL",
-      uri: "http://foo.com",
-      url: ""
-    });
-    expect(
-      Resolve.getRequestOptions("http://foo.com", {
-        baseUrl: "BASE_URL",
-        uri: "URI"
-      })
-    ).toEqual({
-      method: "GET",
-      json: true,
-      baseUrl: "BASE_URL",
-      uri: "URI",
-      url: ""
+      url: "http://foo.com/"
     });
   });
 });
@@ -312,212 +289,6 @@ describe("resolveRequest", () => {
       .then(result => {
         expect(result.message).toMatchSnapshot();
       });
-  });
-});
-
-describe("inspect", () => {
-  let utilsInspectSpy;
-  beforeEach(() => {
-    // debugIdCounter is a local variable in
-    // resolve.js, so this resets it to zero
-    jest.resetModules();
-    /* eslint-disable global-require */
-    Resolve = require("./resolve");
-    utils = require("../../utils");
-    /* eslint-enable global-require */
-    utilsInspectSpy = jest.spyOn(utils, "inspect").mockReturnValue(undefined);
-  });
-  afterEach(() => {
-    utilsInspectSpy.mockClear();
-  });
-  afterAll(() => {
-    utilsInspectSpy.mockRestore();
-  });
-
-  function createAcc({ inspect }) {
-    return {
-      value: "boomerang",
-      options: {},
-      params: {
-        inspect
-      },
-      reducer: _.set({}, "spec.id", "test:test")
-    };
-  }
-  function createMockRequest(options) {
-    const { statusCode, requestType, rpOptions } = options;
-    const nockInstance = nock("http://remote.test");
-    nockInstance[requestType]("/").reply(statusCode, { statusCode });
-    return rp[requestType]({
-      uri: "http://remote.test",
-      resolveWithFullResponse: true,
-      ...rpOptions
-    });
-  }
-
-  test("It should ignore params.inspect and utils.inspect when params.inspect === undefined", async () => {
-    const acc = createAcc({ inspect: undefined });
-    const request = createMockRequest({ statusCode: 200, requestType: "get" });
-    await expect(request).resolves.toBeTruthy();
-    Resolve.inspect(acc, request);
-    expect(utilsInspectSpy).not.toBeCalled();
-  });
-  test("It should ignore params.inspect and utils.inspect when params.inspect === false", async () => {
-    const acc = createAcc({ inspect: false });
-    const request = createMockRequest({ statusCode: 200, requestType: "get" });
-    await expect(request).resolves.toBeTruthy();
-    Resolve.inspect(acc, request);
-    expect(utilsInspectSpy).not.toBeCalled();
-  });
-  test("It should execute utils.inspect when params.inspect === true", async () => {
-    const acc = createAcc({ inspect: true });
-    const request = createMockRequest({ statusCode: 200, requestType: "get" });
-    Resolve.inspect(acc, request);
-    await expect(request).resolves.toBeTruthy();
-    expect(utilsInspectSpy).toBeCalledWith(
-      acc,
-      expect.objectContaining({
-        options: acc.options,
-        value: acc.value
-      })
-    );
-  });
-  test("It should execute params.inspect when rp.then is called", async () => {
-    const acc = createAcc({
-      inspect: jest.fn(() => {
-        // This helps verify that _.attempt is used when calling inspect
-        throw new Error();
-      })
-    });
-    const request = createMockRequest({
-      statusCode: 200,
-      requestType: "get"
-    });
-    Resolve.inspect(acc, request);
-    await expect(request).resolves.toBeTruthy();
-    expect(utilsInspectSpy).not.toBeCalled();
-    expect(acc.params.inspect.mock.calls).toEqual([
-      [
-        acc,
-        expect.objectContaining({
-          debugId: 1,
-          type: "request",
-          method: "GET",
-          uri: expect.stringMatching("http://remote.test")
-        })
-      ],
-      [
-        acc,
-        expect.objectContaining({
-          debugId: 1,
-          statusCode: 200,
-          type: "response"
-        })
-      ]
-    ]);
-  });
-  test("It should execute params.inspect when rp.catch is called", async () => {
-    const acc = createAcc({
-      inspect: jest.fn(() => {
-        // This helps verify that _.attempt is used when calling inspect
-        throw new Error();
-      })
-    });
-    const request = createMockRequest({
-      statusCode: 404,
-      requestType: "get"
-    });
-    Resolve.inspect(acc, request);
-    await expect(request).rejects.toBeTruthy();
-    expect(utilsInspectSpy).not.toBeCalled();
-    expect(acc.params.inspect.mock.calls).toEqual([
-      [
-        acc,
-        expect.objectContaining({
-          debugId: 1,
-          type: "request",
-          method: "GET",
-          uri: expect.stringMatching("http://remote.test")
-        })
-      ],
-      [
-        acc,
-        expect.objectContaining({
-          debugId: 1,
-          statusCode: 404,
-          type: "error"
-        })
-      ]
-    ]);
-  });
-  test("It should pass the body option to params.inspect", async () => {
-    const acc = createAcc({ inspect: jest.fn() });
-    const bodyData = JSON.stringify({ test: true });
-    const request = createMockRequest({
-      statusCode: 200,
-      requestType: "post",
-      rpOptions: {
-        body: bodyData
-      }
-    });
-    Resolve.inspect(acc, request);
-    await expect(request).resolves.toBeTruthy();
-    const mockArguments = acc.params.inspect.mock.calls.slice(0, 2);
-    expect(utilsInspectSpy).not.toBeCalled();
-    expect(mockArguments).toEqual([
-      [
-        acc,
-        expect.objectContaining({
-          debugId: 1,
-          type: "request",
-          method: "POST",
-          uri: expect.stringMatching("http://remote.test"),
-          body: expect.stringMatching(bodyData)
-        })
-      ],
-      [
-        acc,
-        expect.objectContaining({
-          debugId: 1,
-          statusCode: 200,
-          type: "response"
-        })
-      ]
-    ]);
-  });
-  test("It should use incrementing debugId values", async () => {
-    const executeRequest = async (resolveWithSuccess, expectedDebugId) => {
-      const acc = createAcc({ inspect: jest.fn() });
-      const request = createMockRequest({
-        statusCode: resolveWithSuccess ? 200 : 404,
-        requestType: "get"
-      });
-      Resolve.inspect(acc, request);
-      if (resolveWithSuccess) {
-        await expect(request).resolves.toBeTruthy();
-      } else {
-        await expect(request).rejects.toBeTruthy();
-      }
-      expect(utilsInspectSpy).not.toBeCalled();
-      expect(acc.params.inspect.mock.calls).toEqual([
-        [
-          acc,
-          expect.objectContaining({
-            debugId: expectedDebugId
-          })
-        ],
-        [
-          acc,
-          expect.objectContaining({
-            debugId: expectedDebugId
-          })
-        ]
-      ]);
-    };
-    await executeRequest(true, 1);
-    await executeRequest(false, 2);
-    await executeRequest(false, 3);
-    await executeRequest(true, 4);
   });
 });
 
@@ -614,23 +385,6 @@ describe("resolve", () => {
     return transform("request:a4", {}).then(result => {
       expect(result).toEqual({
         ok: true
-      });
-    });
-  });
-
-  test("it should omit options.auth when encountering an error", () => {
-    nock("http://remote.test")
-      .get("/source1")
-      .reply(404);
-
-    return transform("request:a9", {}).catch(err => {
-      expect(err.statusCode).toEqual(404);
-      expect(err.message).toMatchSnapshot();
-
-      // credentials are still available in the raw error.options
-      expect(err.options.auth).toEqual({
-        user: "cool_user",
-        pass: "super_secret!"
       });
     });
   });

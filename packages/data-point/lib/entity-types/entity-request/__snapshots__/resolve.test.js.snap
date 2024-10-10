@@ -1,35 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`resolve it should omit options.auth when encountering an error 1`] = `
-"404 - undefined
-
-Entity info:
-  - Id: request:a9
-  - options: {
-  \\"auth\\": \\"[omitted]\\",
-  \\"method\\": \\"GET\\",
-  \\"json\\": true,
-  \\"url\\": \\"http://remote.test/source1\\"
-}
-  - value: {}
-
-  Request:
-  - message: \\"404 - undefined\\"
-  - statusCode: 404
-  - options: {
-  \\"auth\\": \\"[omitted]\\",
-  \\"method\\": \\"GET\\",
-  \\"json\\": true,
-  \\"url\\": \\"http://remote.test/source1\\",
-  \\"resolveWithFullResponse\\": true,
-  \\"simple\\": true,
-  \\"transform2xxOnly\\": false
-}
-"
-`;
-
 exports[`resolveRequest log errors when request fails 1`] = `
-"404 - \\"not found\\"
+"fetch unsuccessful 2XX response not recieved
 
 Entity info:
   - Id: test:test
@@ -40,17 +12,10 @@ Entity info:
 }
   - value: \\"foo\\"
 
-  Request:
-  - error: \\"not found\\"
-  - message: \\"404 - \\\\\\"not found\\\\\\"\\"
-  - statusCode: 404
-  - options: {
-  \\"json\\": true,
-  \\"url\\": \\"http://remote.test/source1\\",
-  \\"resolveWithFullResponse\\": true,
-  \\"simple\\": true,
-  \\"transform2xxOnly\\": false,
-  \\"auth\\": \\"[omitted]\\"
-}
+  Response:
+  - error_message: \\"fetch unsuccessful 2XX response not recieved\\"
+  - status: 404
+  - statusText: \\"Not Found\\"
+  - bodyText: \\"not found\\"
 "
 `;

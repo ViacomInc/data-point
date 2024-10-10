@@ -6,6 +6,10 @@
     "node": true,
     "jest": true
   },
+  "globals": {
+    "fetch": false,
+    "Request": false
+  },
   "rules": {
     "prettier/prettier": ["error"],
     "prefer-destructuring": [0],
