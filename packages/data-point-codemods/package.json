@@ -18,7 +18,7 @@
     "data-point-codemods": "data-point-codemods.js"
   },
   "dependencies": {
-    "jscodeshift": "0.x",
+    "jscodeshift": "17.1.0",
     "lib-upgrader": "1.x",
     "lodash": "^4.17.20"
   },
