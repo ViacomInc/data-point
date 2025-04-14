@@ -7,22 +7,20 @@ const helpers = require("./helpers");
 const entityTypes = require("./entity-types").definitions;
 const { createTypeCheckReducer } = require("./helpers/type-check-functions");
 
+// eslint-disable-next-line no-unused-vars
 const deprecatedEntitiesTypesAccess = util.deprecate(
   () => entityTypes,
   "DataPoint.entities is being deprecated, please access entity factories directly from DataPoint. (e.g. DataPoint.Model"
 );
+// eslint-disable-next-line no-unused-vars
 const deprecatedHelpersAccess = util.deprecate(
   () => helpers.helpers,
   "DataPoint.helpers is being deprecated, please access helper methods directly from DataPoint. (e.g. DataPoint.map"
 );
 
 module.exports = {
-  get entities() {
-    return deprecatedEntitiesTypesAccess();
-  },
-  get helpers() {
-    return deprecatedHelpersAccess();
-  },
+  entities: entityTypes,
+  helpers: helpers.helpers,
   ...entityTypes,
   ...helpers.helpers,
   create: core.create,
